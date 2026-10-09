@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norte · S13 — Qualidade no build e PR da validação nativa · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s13.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#norte--s13--qualidade-no-build-e-pr-da-validação-nativa" data-id="norte--s13--qualidade-no-build-e-pr-da-validação-nativa">Norte · S13 — Qualidade no build e PR da validação nativa</a><a class="n2" href="#1-objetivo-e-resultado" data-id="1-objetivo-e-resultado">1. Objetivo e resultado</a><a class="n2" href="#2-onde-isso-está-no-mapa" data-id="2-onde-isso-está-no-mapa">2. Onde isso está no mapa</a><a class="n2" href="#3-conceitos" data-id="3-conceitos">3. Conceitos</a><a class="n2" href="#4-termos-da-sessão" data-id="4-termos-da-sessão">4. Termos da sessão</a><a class="n2" href="#5-dúvidas-e-respostas" data-id="5-dúvidas-e-respostas">5. Dúvidas e respostas</a><a class="n2" href="#6-divergências" data-id="6-divergências">6. Divergências</a><a class="n2" href="#7-avaliação" data-id="7-avaliação">7. Avaliação</a><a class="n2" href="#8-pontos-a-melhorar" data-id="8-pontos-a-melhorar">8. Pontos a melhorar</a><a class="n2" href="#9-perguntas-de-recuperação" data-id="9-perguntas-de-recuperação">9. Perguntas de recuperação</a><a class="n2" href="#10-preparação-para-a-s14" data-id="10-preparação-para-a-s14">10. Preparação para a S14</a></aside>
+<main class="conteudo"><article>
+<h1 id="norte--s13--qualidade-no-build-e-pr-da-validação-nativa">Norte · S13 — Qualidade no build e PR da validação nativa</h1>
+<p><strong>06/10/2026 · M1 · 2h43 líquidas</strong> (14:25–15:07, 15:18–16:37, 18:00–18:42) · fora da sessão: 1h</p>
+<h2 id="1-objetivo-e-resultado">1. Objetivo e resultado</h2>
+<p><strong>Objetivo:</strong> fazer o build cobrar as convenções do Norte. <strong>Cumprido</strong>, e mais:</p>
+<ul>
+<li><strong>Ponto a revisitar da S12 reconstruído:</strong> você chegou sozinho a &quot;a validação roda no caminho
+HTTP, antes do <code>Executar</code>, então é integração&quot;.</li>
+<li><strong>PR #2 mesclado:</strong> validação nativa, pasta por funcionalidade, <code>.http</code> do módulo e <code>CLAUDE.md</code>.</li>
+<li><strong>Qualidade no build:</strong> <code>Directory.Build.props</code>, <code>.editorconfig</code> e <code>Directory.Packages.props</code>,
+com o <strong>ADR-004</strong>.</li>
+<li><strong>O cadeado visto funcionando:</strong> o <code>IDE0161</code> no <code>PedidosModulo</code> e o <code>CS8604</code> sem o <code>!</code>.</li>
+<li><strong>PR #3 mesclado.</strong></li>
+<li><strong>Problema da S14 visto:</strong> uma exceção no <code>Executar</code> devolve 500 sem formato padrão.</li>
+</ul>
+<h2 id="2-onde-isso-está-no-mapa">2. Onde isso está no mapa</h2>
+<p><strong>Nível 1, a solution.</strong> Nada mudou em módulo ou funcionalidade; mudaram as <strong>regras com que todos
+os projetos compilam</strong>. O guia ganhou a <strong><a href="../parte-4.html#parte-4--o-build-cobra-as-convenções">Parte 4</a></strong>.</p>
+<h2 id="3-conceitos">3. Conceitos</h2>
+<p><strong><code>Directory.Build.props</code> e <code>TreatWarningsAsErrors</code></strong> → <a href="../parte-4.html#41-directorybuildprops-e-treatwarningsaserrors-a-configuração-comum-e-o-aviso-que-vira-erro">4.1</a></p>
+<table>
+<thead>
+<tr>
+<th>Como era</th>
+<th>Como é agora</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TargetFramework</code>/<code>Nullable</code> repetidos em cada <code>.csproj</code></td>
+<td>uma vez, no <code>Directory.Build.props</code> da raiz</td>
+<td>projeto novo herda tudo</td>
+</tr>
+<tr>
+<td><code>CS8604</code> amarelo e o build passa</td>
+<td><code>error CS8604</code> e o build para</td>
+<td>o aviso não fica &quot;para depois&quot;</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ganho:</strong> a convenção é cobrada no build local e no CI, sem depender de quem revisa.
+<strong>Preço:</strong> com qualquer aviso, nem um rascunho compila.</p>
+<p><strong><code>.editorconfig</code> e analyzers</strong> → <a href="../parte-4.html#42-editorconfig-e-analyzers-as-convenções-do-norte-cobradas-pelo-compilador">4.2</a></p>
+<table>
+<thead>
+<tr>
+<th>Como era</th>
+<th>Como é agora</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&quot;aqui é <em>file-scoped</em>&quot;, dito na revisão</td>
+<td><code>csharp_style_namespace_declarations = file_scoped</code> + <code>IDE0161</code> <code>warning</code></td>
+<td>o build acusa</td>
+</tr>
+<tr>
+<td>exceção combinada de boca</td>
+<td>seção <code>[tests/**.cs]</code> com o motivo</td>
+<td>exceção documentada e restrita</td>
+</tr>
+</tbody>
+</table>
+<p>Três famílias de regra: <strong>IDE</strong> (estilo), <strong>CA</strong> (qualidade) e <strong>CS</strong> (compilador). Cada regra de
+estilo tem duas linhas: a <strong>opção</strong> e a <strong>severidade</strong>.</p>
+<p><strong>Central Package Management</strong> → <a href="../parte-4.html#43-central-package-management-uma-versão-por-pacote-num-lugar-só">4.3</a></p>
+<table>
+<thead>
+<tr>
+<th>Como era</th>
+<th>Como é agora</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Version=&quot;...&quot;</code> em cada <code>PackageReference</code></td>
+<td><code>PackageVersion</code> no <code>Directory.Packages.props</code>; <code>PackageReference</code> sem versão</td>
+<td>uma versão por pacote, atualização numa linha</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Prévia da S14: tratamento global de exceções</strong></p>
+<table>
+<thead>
+<tr>
+<th>Como era (.NET 6)</th>
+<th>Como é agora</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>middleware próprio com <code>try/catch</code>, ou <code>ExceptionFilter</code></td>
+<td><code>UseExceptionHandler</code> + <code>IExceptionHandler</code></td>
+<td>vem pronto no framework</td>
+</tr>
+<tr>
+<td>JSON de erro inventado por cada equipe</td>
+<td><code>AddProblemDetails()</code> (RFC 7807)</td>
+<td>formato padrão, com <code>traceId</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-termos-da-sessão">4. Termos da sessão</h2>
+<ul>
+<li><strong>Analyzer:</strong> código que roda no build e reporta problemas (IDE, CA).</li>
+<li><strong>Severidade:</strong> <code>none</code> · <code>silent</code> · <code>suggestion</code> · <code>warning</code> · <code>error</code>.</li>
+<li><strong><code>AnalysisMode</code>:</strong> quantas regras de qualidade viram aviso (<code>Default</code> → <code>Recommended</code> → <code>All</code>).</li>
+<li><strong>CPM:</strong> Central Package Management.</li>
+<li><strong>400 × 500:</strong> 400 é erro do cliente (dado inválido); 500 é falha do servidor.</li>
+<li><strong>Página de exceção do desenvolvedor:</strong> mostra o rastro do erro; só existe em <code>Development</code>.</li>
+<li><strong>Problem Details:</strong> formato padrão de erro HTTP (<code>type</code>, <code>title</code>, <code>status</code>, <code>traceId</code>…).</li>
+</ul>
+<h2 id="5-dúvidas-e-respostas">5. Dúvidas e respostas</h2>
+<ul>
+<li><strong>&quot;Hoje só alteramos o <code>CLAUDE.md</code>; de onde vem esse PR?&quot;</strong> → O PR #2 apresentava o trabalho da
+<strong>S12</strong>. Hoje só entrou o commit do <code>CLAUDE.md</code>. (Falha minha: pedi sem situar.)</li>
+<li><strong>&quot;Isso é o mesmo que concentrar os erros num lugar só?&quot;</strong> → Sim, é o <em>tratamento global de
+exceções</em>. Ver a tabela da prévia da S14.</li>
+<li><strong>&quot;Em 2027 as empresas estarão em .NET 8/9; terei as respostas?&quot;</strong> → Quase tudo de hoje existe
+desde o .NET 7/8 (só a validação nativa é exclusiva do 10). O .NET 11 ainda está em RC1, com
+lançamento previsto para novembro. O 8 e o 9 saem de suporte em nov/2026 (a conferir). A resposta
+definitiva vem do <code>Vagas.md</code>, na revisão do fim de M1.</li>
+<li><strong>&quot;A frase 'evitar avisos nunca corrigidos' não é o preço?&quot;</strong> → É o <strong>ganho</strong> (o que eu evito). O
+<strong>preço</strong> é o que eu pago: com qualquer aviso, o build quebra.</li>
+</ul>
+<h2 id="6-divergências">6. Divergências</h2>
+<p>Nenhuma nova. Preocupação registrada: atualidade do .NET 10 × mercado (volta no fim de M1).</p>
+<h2 id="7-avaliação">7. Avaliação</h2>
+<p><strong>Você fez bem:</strong></p>
+<ul>
+<li>reconstruiu a revisita até a conclusão;</li>
+<li>acertou 2 das 3 previsões;</li>
+<li>corrigiu o <code>IDE0161</code> sozinho;</li>
+<li>escreveu o <strong>&quot;Por quê&quot;</strong> e o <strong>preço</strong> do PR #2 sem pista;</li>
+<li>formulou o problema do 500;</li>
+<li>deu uma autoavaliação calibrada (3,5).</li>
+</ul>
+<p><strong>Onde travou:</strong></p>
+<ul>
+<li>a frase do critério unidade × integração (veio por exposição);</li>
+<li>aviso × erro (&quot;passava, não sei por quê&quot;);</li>
+<li>o <strong>preço</strong> no PR #3 e na resposta de entrevista.</li>
+</ul>
+<p><strong>O que eu conduzi mal:</strong></p>
+<ul>
+<li>uma pergunta composta;</li>
+<li>o PR #2 pedido sem contexto;</li>
+<li>uma resposta em evolução (&quot;Ops&quot;);</li>
+<li>uma pergunta abstrata;</li>
+<li>um cenário de produção impreciso;</li>
+<li><strong>arquivos de configuração aplicados sem percorrer cada propriedade</strong> (diagnóstico seu).</li>
+</ul>
+<h2 id="8-pontos-a-melhorar">8. Pontos a melhorar</h2>
+<ul>
+<li><strong>Você:</strong> separar <strong>ganho</strong> (o que evito) de <strong>preço</strong> (o que pago) em toda decisão.</li>
+<li><strong>Eu:</strong>
+<ul>
+<li>percorrer linha a linha todo arquivo meu antes de você aplicar;</li>
+<li>situar a origem antes de pedir texto;</li>
+<li>conferir o cenário antes de perguntar.</li>
+</ul>
+</li>
+</ul>
+<h2 id="9-perguntas-de-recuperação">9. Perguntas de recuperação</h2>
+<ol>
+<li>Antes da S13, um aviso <code>CS8604</code> (possível nulo) no <code>CadastrarFichaProdutoEndpoint.Executar</code>
+deixava o build passar. Que propriedade, em que arquivo, faz o build falhar hoje?</li>
+<li>Qual o <strong>preço</strong> de ligar o <code>TreatWarningsAsErrors</code> no Norte, no dia a dia de quem programa?</li>
+<li>O <code>.editorconfig</code> exige namespace com escopo de arquivo (<code>IDE0161</code>). Sem o
+<code>EnforceCodeStyleInBuild</code> no <code>Directory.Build.props</code>, o <code>dotnet build</code> acusaria o namespace com
+chaves do <code>PedidosModulo</code>?</li>
+<li>Com a Central Package Management, onde fica a versão do pacote <code>xunit</code>, e o que acontece se
+alguém escrever <code>Version=&quot;2.9.0&quot;</code> no <code>PackageReference</code> de um <code>.csproj</code>?</li>
+<li>Hoje, sem nenhuma configuração de erros, a API do Norte rodando em <strong>produção</strong> recebe um POST
+que faz o <code>Executar</code> lançar exceção. O que o cliente recebe?</li>
+<li>Se a regra &quot;SKU com menos de 5 caracteres é recusado&quot; for um <code>if</code> <strong>dentro</strong> do <code>Executar</code>, o
+teste dela vai para a unidade ou para a integração?</li>
+</ol>
+<h2 id="10-preparação-para-a-s14">10. Preparação para a S14</h2>
+<ul>
+<li><strong>Título:</strong> <code>Norte · S14 — ProblemDetails e tratamento global de exceções</code>.</li>
+<li><strong>Mover no Projeto:</strong> <code>claude/HIST-S12.md</code>, <code>claude/HIST-S13.md</code> e <code>claude/GUIA-DOTNET-P4.md</code>
+para a raiz.</li>
+<li><strong>Cópia local:</strong> acrescentar o <code>GUIA-DOTNET-P4.md</code> e o índice novo em <code>estudos\</code>.</li>
+<li><strong>Anexar na abertura:</strong> o <code>PROMPT-NORTE-ESTADO-ATUAL.md</code> atual (eu devolvo inteiro).</li>
+<li><strong>Sábado:</strong> reconstrução + <strong>Parte 4</strong>, com os arquivos do repositório abertos ao lado.</li>
+</ul>
+<hr />
+<h3 id="respostas">Respostas</h3><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li><code>TreatWarningsAsErrors</code> = <code>true</code>, no <code>Directory.Build.props</code> da raiz.</li>
+<li>Com qualquer aviso o build quebra, e sem build a API não roda: nem um rascunho ou experimento
+roda sem corrigir antes. (Aceito porque o <code>null</code> em produção custa mais.)</li>
+<li><strong>Não.</strong> As regras <code>IDE</code> só apareceriam no editor.</li>
+<li>No <code>Directory.Packages.props</code> (<code>PackageVersion</code>). Com <code>Version</code> no <code>.csproj</code>: <strong>erro de build</strong>.</li>
+<li><strong>500 sem corpo.</strong> O rastro completo só aparece em <code>Development</code>.</li>
+<li><strong>Unidade:</strong> a regra mora no <code>Executar</code>, e o teste de unidade passa por ele.</li>
+</ol>
+</details>
+</article>
+<footer class="rodape">Atualizado em 09/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

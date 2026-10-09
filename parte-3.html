@@ -1,0 +1,1942 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parte 3 — A funcionalidade e o primeiro teste · Norte · Estudo</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/codigo.css">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+</head>
+<body data-chave="parte-3.html" data-prefixo="">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="index.html">Início</a><a href="guia.html" class=ativo>Guia</a><a href="estudos.html">Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#guia-net-moderno--parte-3-a-primeira-funcionalidade-e-o-primeiro-teste-s11–" data-id="guia-net-moderno--parte-3-a-primeira-funcionalidade-e-o-primeiro-teste-s11–">GUIA .NET MODERNO — Parte 3: a primeira funcionalidade e o primeiro …</a><a class="n1" href="#parte-3--a-primeira-funcionalidade-e-o-primeiro-teste" data-id="parte-3--a-primeira-funcionalidade-e-o-primeiro-teste">PARTE 3 — A primeira funcionalidade e o primeiro teste</a><a class="n2" href="#31-a-funcionalidade-no-estilo-repr-request-endpoint-repository" data-id="31-a-funcionalidade-no-estilo-repr-request-endpoint-repository">3.1 A funcionalidade no estilo REPR: Request, Endpoint, Repository</a><a class="n2" href="#32-record-dados-que-entram-e-saem" data-id="32-record-dados-que-entram-e-saem">3.2 record: dados que entram e saem</a><a class="n2" href="#33-respostas-tipadas-created-validationproblem-e-o-400-no-formato-problemdetails" data-id="33-respostas-tipadas-created-validationproblem-e-o-400-no-formato-problemdetails">3.3 Respostas tipadas: Created, ValidationProblem e o 400 no formato…</a><a class="n2" href="#34-arquivo-http-as-requisições-da-api-dentro-do-repositório" data-id="34-arquivo-http-as-requisições-da-api-dentro-do-repositório">3.4 Arquivo .http: as requisições da API dentro do repositório</a><a class="n2" href="#35-o-projeto-de-testes-xunit-referência-e-internalsvisibleto" data-id="35-o-projeto-de-testes-xunit-referência-e-internalsvisibleto">3.5 O projeto de testes: xUnit, referência e InternalsVisibleTo</a><a class="n2" href="#36-anatomia-de-um-teste-arrange-act-assert" data-id="36-anatomia-de-um-teste-arrange-act-assert">3.6 Anatomia de um teste: Arrange, Act, Assert</a><a class="n2" href="#37-vermelho-→-verde-como-saber-que-o-teste-protege-a-regra" data-id="37-vermelho-→-verde-como-saber-que-o-teste-protege-a-regra">3.7 Vermelho → verde: como saber que o teste protege a regra</a><a class="n2" href="#38-a-sintaxe-mais-curta-do-c-moderno-o-que-já-apareceu-no-norte" data-id="38-a-sintaxe-mais-curta-do-c-moderno-o-que-já-apareceu-no-norte">3.8 A sintaxe mais curta do C# moderno (o que já apareceu no Norte)</a><a class="n2" href="#39-diagnóstico-os-problemas-da-s11-e-como-achar-a-causa" data-id="39-diagnóstico-os-problemas-da-s11-e-como-achar-a-causa">3.9 Diagnóstico: os problemas da S11 e como achar a causa</a><a class="n2" href="#310-como-pensar-um-teste-da-frase-do-negócio-ao-assert" data-id="310-como-pensar-um-teste-da-frase-do-negócio-ao-assert">3.10 Como pensar um teste: da frase do negócio ao Assert</a><a class="n2" href="#311-validação-nativa-do-net-10-a-regra-de-entrada-declarada-no-request" data-id="311-validação-nativa-do-net-10-a-regra-de-entrada-declarada-no-request">3.11 Validação nativa do .NET 10: a regra de entrada declarada no Re…</a><a class="n2" href="#312-teste-de-integração-com-webapplicationfactory-o-teste-passa-por-onde-a-regra-mora" data-id="312-teste-de-integração-com-webapplicationfactory-o-teste-passa-por-onde-a-regra-mora">3.12 Teste de integração com WebApplicationFactory: o teste passa po…</a><a class="n2" href="#313-pasta-por-funcionalidade-o-que-é-de-um-caso-de-uso-fica-junto" data-id="313-pasta-por-funcionalidade-o-que-é-de-um-caso-de-uso-fica-junto">3.13 Pasta por funcionalidade: o que é de um caso de uso fica junto</a><a class="n2" href="#314-diagnóstico-os-problemas-da-s12-e-como-achar-a-causa" data-id="314-diagnóstico-os-problemas-da-s12-e-como-achar-a-causa">3.14 Diagnóstico: os problemas da S12 e como achar a causa</a><a class="n2" href="#315-erros-da-api-em-formato-padrão-addproblemdetails-useexceptionhandler-e-usestatuscodepages" data-id="315-erros-da-api-em-formato-padrão-addproblemdetails-useexceptionhandler-e-usestatuscodepages">3.15 Erros da API em formato padrão: AddProblemDetails(), UseExcepti…</a><a class="n2" href="#316-dublê-de-teste-e-ambiente-do-teste-trocar-uma-peça-só-no-teste" data-id="316-dublê-de-teste-e-ambiente-do-teste-trocar-uma-peça-só-no-teste">3.16 Dublê de teste e ambiente do teste: trocar uma peça só no teste</a><a class="n2" href="#317-diagnóstico-os-problemas-da-s14-e-como-achar-a-causa" data-id="317-diagnóstico-os-problemas-da-s14-e-como-achar-a-causa">3.17 Diagnóstico: os problemas da S14 e como achar a causa</a><a class="n2" href="#juntando-tudo" data-id="juntando-tudo">Juntando tudo</a><a class="n2" href="#teste-se-sem-consultar-uma-pergunta-por-vez" data-id="teste-se-sem-consultar-uma-pergunta-por-vez">Teste-se (sem consultar; uma pergunta por vez)</a></aside>
+<main class="conteudo"><article>
+<h1 id="guia-net-moderno--parte-3-a-primeira-funcionalidade-e-o-primeiro-teste-s11–">GUIA .NET MODERNO — Parte 3: a primeira funcionalidade e o primeiro teste (S11–)</h1>
+<p>Parte do <strong><code>GUIA-DOTNET-MODERNO.md</code></strong>. O índice, a legenda 🧠/🔎, o roteiro de estudo e o &quot;onde
+estamos&quot; ficam lá. Este arquivo só muda quando uma entrada da Parte 3 muda ou quando entra uma
+entrada nova.</p>
+<p><strong>Criado em:</strong> 02/10/2026 (S11) · <strong>Versão:</strong> 1.2 (08/10/2026, S14 — entradas 3.15 a 3.17;
+correção da 3.11; atualizações em 3.3, 3.7 e 3.12)</p>
+<hr />
+<p><a id="parte-3"></a></p>
+<h1 id="parte-3--a-primeira-funcionalidade-e-o-primeiro-teste">PARTE 3 — A primeira funcionalidade e o primeiro teste</h1>
+<p><strong>Onde isso fica no mapa (<a href="parte-0-1.html#parte-0--o-mapa-dos-n%C3%ADveis">Parte 0</a>):</strong> os níveis 1 e 2, solution
+e módulos, já estavam prontos. A Parte 3 é o <strong>nível 3, a funcionalidade</strong>: uma ação de negócio
+dentro de um módulo. É também o primeiro passo do caminho da requisição. Como ficou na S14:</p>
+<pre class="highlight"><code>HTTP POST /catalogo/fichas-produto
+  → [UseExceptionHandler + UseStatusCodePages]     host: todo erro sai no formato padrão (3.15)
+  → MapPost (CatalogoModulo)                       liga a rota ao método
+  → validação nativa ([Required] no Request)       recusa a entrada inválida — 400 com todos os erros
+  → CadastrarFichaProdutoEndpoint.Executar         cria e guarda
+  → FichaProdutoRepository                         guarda (hoje em memória; amanhã EF Core)
+  ← 201 Created   (ou, se algo falhar: 400 / 404 / 500, sempre em application/problem+json)
+</code></pre>
+
+<p>O <strong>teste de unidade</strong> chama o <code>Executar</code> direto, sem HTTP. O <strong>teste de integração</strong> faz a
+requisição de verdade e passa por todas as etapas (<a href="#312-teste-de-integra%C3%A7%C3%A3o-com-webapplicationfactory-o-teste-passa-por-onde-a-regra-mora">3.12</a>). O teste do 500 troca uma peça só
+dentro do teste (<a href="#316-dubl%C3%AA-de-teste-e-ambiente-do-teste-trocar-uma-pe%C3%A7a-s%C3%B3-no-teste">3.16</a>).</p>
+<hr />
+<p><a id="g3-1"></a></p>
+<h2 id="31-a-funcionalidade-no-estilo-repr-request-endpoint-repository">3.1 A funcionalidade no estilo REPR: <code>Request</code>, <code>Endpoint</code>, <code>Repository</code><button class="estudada" data-id="31-a-funcionalidade-no-estilo-repr-request-endpoint-repository" type="button">Marcar como estudada</button></h2>
+<blockquote>
+<p><strong>De → para</strong></p>
+<ul>
+<li><strong>No mercado:</strong> <em>REPR pattern</em> (Request–Endpoint–Response), divulgado por Steve Smith
+(&quot;Ardalis&quot;) e usado por bibliotecas como FastEndpoints. Também aparece como <em>Handler</em> no lugar
+de <em>Endpoint</em>. É a base do <em>Vertical Slice</em> (M2).</li>
+<li><strong>No laboratório:</strong> <code>CadastrarFichaProdutoRequest</code> · <code>CadastrarFichaProdutoEndpoint.Executar</code> ·
+<code>FichaProdutoRepository</code>.</li>
+<li><strong>No seu mundo:</strong> <code>Controllers/</code> + <code>DTOs/</code> + <code>Services/</code> + <code>Repositories/</code>.</li>
+</ul>
+</blockquote>
+<p><strong>Em uma frase:</strong> cada funcionalidade tem <strong>o que entra</strong> (<code>Request</code>), <strong>o que ela faz</strong>
+(<code>Endpoint</code>) e <strong>o que sai</strong> (<code>Response</code>). <strong>Onde se guarda</strong> fica com o <code>Repository</code>. O papel de
+cada um está no <strong>sufixo do nome</strong>, não na pasta.</p>
+<p><strong>Pergunta que responde:</strong> &quot;quem faz o quê, agora que não há <code>Controller</code> nem <code>Service</code>?&quot;</p>
+<table>
+<thead>
+<tr>
+<th>Como era (Clean com pastas técnicas)</th>
+<th>Como é agora (Norte)</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Controllers/FichaProdutoController.cs</code> com <code>[HttpPost]</code></td>
+<td><code>grupo.MapPost(&quot;/fichas-produto&quot;, CadastrarFichaProdutoEndpoint.Executar);</code></td>
+<td>O &quot;controller&quot; virou uma linha que liga a rota ao método</td>
+</tr>
+<tr>
+<td><code>DTOs/CadastrarFichaProdutoDto.cs</code></td>
+<td><code>CadastrarFichaProdutoRequest</code> (<code>record</code>)</td>
+<td><code>Dto</code> → <code>Request</code>; e é um <code>record</code> (<a href="#32-record-dados-que-entram-e-saem">3.2</a>)</td>
+</tr>
+<tr>
+<td><code>Services/FichaProdutoService.Cadastrar()</code></td>
+<td><code>CadastrarFichaProdutoEndpoint.Executar()</code></td>
+<td>Um service por <strong>entidade</strong> vira um método por <strong>funcionalidade</strong></td>
+</tr>
+<tr>
+<td><code>Repositories/FichaProdutoRepository.cs</code></td>
+<td><code>FichaProdutoRepository</code></td>
+<td>Mesmo papel. Hoje guarda numa lista</td>
+</tr>
+<tr>
+<td><code>IActionResult</code></td>
+<td><code>Results&lt;Created&lt;FichaProduto&gt;, ValidationProblem&gt;</code></td>
+<td>Os retornos possíveis ficam no tipo (<a href="#33-respostas-tipadas-created-validationproblem-e-o-400-no-formato-problemdetails">3.3</a>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O código do Norte (S11, com um <code>if</code>; na S12 viraram três e depois saíram):</strong></p>
+<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">CadastrarFichaProdutoEndpoint</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">Results</span><span class="o">&lt;</span><span class="n">Created</span><span class="o">&lt;</span><span class="n">FichaProduto</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">ValidationProblem</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Executar</span><span class="p">(</span>
+<span class="w">        </span><span class="n">CadastrarFichaProdutoRequest</span><span class="w"> </span><span class="n">request</span><span class="p">,</span><span class="w">   </span><span class="c1">// vem do CORPO da requisição (JSON), pelo tipo</span>
+<span class="w">        </span><span class="n">FichaProdutoRepository</span><span class="w"> </span><span class="n">fichas</span><span class="p">)</span><span class="w">          </span><span class="c1">// vem da DI, pelo tipo</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kt">string</span><span class="p">.</span><span class="n">IsNullOrWhiteSpace</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Sku</span><span class="p">))</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="kt">var</span><span class="w"> </span><span class="n">erros</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="p">[]</span><span class="o">&gt;</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="p">{</span><span class="w"> </span><span class="s">"sku"</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s">"O SKU é obrigatório."</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
+<span class="w">            </span><span class="p">};</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">ValidationProblem</span><span class="p">(</span><span class="n">erros</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">ficha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FichaProduto</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Sku</span><span class="p">,</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="n">Descricao</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s">""</span><span class="p">,</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="n">Ncm</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s">""</span><span class="p">);</span>
+<span class="w">        </span><span class="n">fichas</span><span class="p">.</span><span class="n">Adicionar</span><span class="p">(</span><span class="n">ficha</span><span class="p">);</span>
+
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">Created</span><span class="p">(</span><span class="s">$"/catalogo/fichas-produto/{ficha.Sku}"</span><span class="p">,</span><span class="w"> </span><span class="n">ficha</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+<blockquote>
+<p><strong>Atualização S12.</strong> A regra cresceu para <strong>&quot;Ficha exige SKU, descrição e NCM&quot;</strong> (três <code>if</code>), e
+depois os <code>if</code> <strong>saíram</strong>: a validação passou a ser nativa (<a href="#311-valida%C3%A7%C3%A3o-nativa-do-net-10-a-regra-de-entrada-declarada-no-request">3.11</a>). O arquivo foi para a
+pasta <code>CadastrarFichaProduto/</code> (<a href="#313-pasta-por-funcionalidade-o-que-%C3%A9-de-um-caso-de-uso-fica-junto">3.13</a>). O <code>Executar</code> hoje só cria e guarda.</p>
+</blockquote>
+<p><strong>Ponte com limite.</strong> O <code>Executar</code> faz o papel do service que você usava, <strong>mas atende uma
+funcionalidade só</strong>. Um <code>FichaProdutoService</code> cresceria com <code>Cadastrar</code>, <code>Alterar</code>, <code>Excluir</code> e
+<code>Listar</code> no mesmo arquivo. Aqui, cada um vira o seu próprio <code>Endpoint</code>. E o <code>FichaProdutoRepository</code>
+de hoje <strong>é provisório</strong>: quando o EF Core entrar, decide-se se ele vira um repositório de verdade
+ou se o <code>DbContext</code> basta.</p>
+<p><strong>Por que usamos · alternativa · custo.</strong> Usamos porque a funcionalidade fica inteira num lugar
+(fácil de achar e de testar) e porque o teste chama o método direto, sem &quot;mockar&quot; nada. A
+alternativa é o controller com service, que é comum nos projetos existentes. O custo dela: o
+service por entidade cresce sem limite e mistura regras de funcionalidades diferentes. O custo da
+nossa: mais arquivos pequenos, e quem vem de pastas técnicas estranha no começo (você, S11).</p>
+<p><strong>Quando não usar:</strong> numa API com dois ou três endpoints triviais, o próprio lambda no <code>MapGet</code>
+basta (forma 1 de <a href="parte-0-1.html#19-minimal-apis-as-formas-de-declarar-um-endpoint-e-o-mapgroup">1.9</a>).</p>
+<p><strong>Na entrevista.</strong> <em>&quot;Como você organiza uma API nova?&quot;</em> → &quot;Por funcionalidade: cada uma com o seu
+request, o seu endpoint e a sua resposta, no padrão REPR. Fica fácil achar tudo o que 'cadastrar
+ficha' faz e testar isoladamente. O custo é ter mais arquivos, e o time precisa combinar os nomes.&quot;</p>
+<p><strong>Erros comuns.</strong> Achar que &quot;não tem service, então não tem lugar para a regra&quot; (a regra está no
+<code>Executar</code>, ou, para regra de entrada, no <code>Request</code> — <a href="#311-valida%C3%A7%C3%A3o-nativa-do-net-10-a-regra-de-entrada-declarada-no-request">3.11</a>). Nome que diz <strong>como</strong> e não
+<strong>o quê</strong>: o mentor chamou o repositório de <code>FichasProdutoEmMemoria</code> e o papel sumiu (correção da S11).</p>
+<p>🧠 os quatro papéis e o sufixo de cada um; por que um método por funcionalidade. · 🔎 o nome
+&quot;REPR&quot;.</p>
+<p><strong>Onde foi visto · status:</strong> S11 · feito com esqueleto do mentor · S12: regra do NCM e da descrição
+escritas <strong>sem esqueleto</strong>.</p>
+<hr />
+<p><a id="g3-2"></a></p>
+<h2 id="32-record-dados-que-entram-e-saem">3.2 <code>record</code>: dados que entram e saem<button class="estudada" data-id="32-record-dados-que-entram-e-saem" type="button">Marcar como estudada</button></h2>
+<blockquote>
+<p><strong>De → para</strong></p>
+<ul>
+<li><strong>No mercado:</strong> <em>records</em>, <em>immutable DTOs</em>, <em>value equality</em> (C# 9, .NET 5).</li>
+<li><strong>No laboratório:</strong> <code>FichaProduto</code> e <code>CadastrarFichaProdutoRequest</code>.</li>
+<li><strong>No seu mundo:</strong> DTOs como <code>class</code> com <code>{ get; set; }</code>.</li>
+</ul>
+</blockquote>
+<p><strong>Em uma frase:</strong> um <code>record</code> declara em uma linha um tipo de dados <strong>imutável</strong> que <strong>compara
+pelo valor</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Como era (<code>class</code>)</th>
+<th>Como é agora (<code>record</code>)</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>class</code> com propriedades <code>{ get; set; }</code> e construtor escrito à mão</td>
+<td><code>record FichaProduto(string Sku, string Descricao, string Ncm);</code></td>
+<td>O compilador gera o construtor e as propriedades</td>
+</tr>
+<tr>
+<td>propriedades com <code>set</code></td>
+<td>propriedades <code>init</code></td>
+<td>O objeto não muda depois de criado</td>
+</tr>
+<tr>
+<td>dois objetos com os mesmos dados são <strong>diferentes</strong></td>
+<td>dois records com os mesmos dados são <strong>iguais</strong></td>
+<td>Comparação por valor: o teste compara a ficha inteira de uma vez</td>
+</tr>
+<tr>
+<td>copiar mudando um campo: <code>new</code> + copiar tudo à mão</td>
+<td><code>var outra = ficha with { Ncm = &quot;40151000&quot; };</code></td>
+<td><code>with</code> cria uma cópia alterada</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Onde isso apareceu no teste:</strong></p>
+<pre class="highlight"><code><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">FichaProduto</span><span class="p">(</span><span class="s">"LUV-001"</span><span class="p">,</span><span class="w"> </span><span class="s">"Luva nitrilica"</span><span class="p">,</span><span class="w"> </span><span class="s">"40151900"</span><span class="p">),</span><span class="w"> </span><span class="n">criado</span><span class="p">.</span><span class="n">Value</span><span class="p">);</span>
+<span class="c1">// funciona porque FichaProduto é record: compara Sku, Descricao e Ncm.</span>
+<span class="c1">// com uma class comum, compararia a referência e falharia.</span>
+</code></pre>
+
+<p><strong>Ponte com limite.</strong> O <code>record</code> lembra o seu DTO, <strong>mas</strong> é imutável e compara por valor. Serve
+para <strong>dados que entram e saem</strong>. <strong>Não</strong> serve para entidade com regra que muda de estado: em M2
+o <code>Pedido</code> vai ser <code>class</code>, com métodos que protegem as regras. A <code>FichaProduto</code> é <code>record</code> hoje
+porque, por enquanto, é só dado.</p>
+<p><strong>Na entrevista.</strong> <em>&quot;Quando você usa <code>record</code>?&quot;</em> → &quot;Para dados imutáveis: request, response,
+value object. A igualdade por valor ajuda em teste e em comparação. Para entidade com
+identidade e estado que muda, uso <code>class</code>.&quot;</p>
+<p>🧠 imutável + igualdade por valor; quando não usar. · 🔎 a sintaxe do <code>with</code>.</p>
+<p><strong>Onde foi visto · status:</strong> S11 · usado (você: &quot;muito melhor hoje&quot;) · S12: atributos de validação
+nos parâmetros do <code>record</code> (<a href="#311-valida%C3%A7%C3%A3o-nativa-do-net-10-a-regra-de-entrada-declarada-no-request">3.11</a>).</p>
+<hr />
+<p><a id="g3-3"></a></p>
+<h2 id="33-respostas-tipadas-created-validationproblem-e-o-400-no-formato-problemdetails">3.3 Respostas tipadas: <code>Created</code>, <code>ValidationProblem</code> e o 400 no formato <code>ProblemDetails</code><button class="estudada" data-id="33-respostas-tipadas-created-validationproblem-e-o-400-no-formato-problemdetails" type="button">Marcar como estudada</button></h2>
+<blockquote>
+<p><strong>De → para</strong></p>
+<ul>
+<li><strong>No mercado:</strong> <em>TypedResults</em>, <em>Results&lt;T1, T2&gt;</em> (<em>union return types</em>), <em>ProblemDetails</em>
+(RFC 9110/9457), <em>validation problem</em>.</li>
+<li><strong>No laboratório:</strong> o retorno do <code>CadastrarFichaProdutoEndpoint.Executar</code>.</li>
+<li><strong>No seu mundo:</strong> <code>IActionResult</code> com <code>Ok()</code>, <code>BadRequest(ModelState)</code>, <code>CreatedAtAction()</code>.</li>
+</ul>
+</blockquote>
+<p><strong>Em uma frase:</strong> o tipo <code>Results&lt;Created&lt;FichaProduto&gt;, ValidationProblem&gt;</code> diz, na assinatura,
+que o endpoint devolve <strong>ou</strong> 201 com uma ficha <strong>ou</strong> 400 com erros de validação.</p>
+<table>
+<thead>
+<tr>
+<th>Como era</th>
+<th>Como é agora</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>return CreatedAtAction(nameof(Obter), new { sku }, ficha);</code></td>
+<td><code>return TypedResults.Created($&quot;/catalogo/fichas-produto/{sku}&quot;, ficha);</code></td>
+<td>URI escrita por você; vira o cabeçalho <code>Location</code></td>
+</tr>
+<tr>
+<td><code>return BadRequest(ModelState);</code></td>
+<td><code>return TypedResults.ValidationProblem(erros);</code></td>
+<td>400 no formato padrão <code>application/problem+json</code></td>
+</tr>
+<tr>
+<td>retorno <code>IActionResult</code>: qualquer coisa</td>
+<td>retorno <code>Results&lt;Created&lt;...&gt;, ValidationProblem&gt;</code></td>
+<td>OpenAPI e teste sabem exatamente o que pode voltar</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O que o cliente recebeu na S11 (pelo <code>.http</code>):</strong></p>
+<pre class="highlight"><code>HTTP/1.1 400 Bad Request
+Content-Type: application/problem+json
+
+{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.1",
+ "title":"One or more validation errors occurred.",
+ "status":400,
+ "errors":{"sku":["O SKU é obrigatório."]}}
+</code></pre>
+
+<p><strong>Por que usamos · alternativa · custo.</strong> O formato <code>ProblemDetails</code> é um padrão (RFC): todo
+cliente sabe ler <code>status</code>, <code>title</code> e <code>errors</code> sem combinar nada com você. A alternativa é cada API
+inventar o próprio JSON de erro, e o custo é cada cliente escrever um tratamento diferente.</p>
+<blockquote>
+<p><strong>Atualização S12.</strong> A checagem saiu do <code>Executar</code> para a <strong>validação nativa</strong> (<a href="#311-valida%C3%A7%C3%A3o-nativa-do-net-10-a-regra-de-entrada-declarada-no-request">3.11</a>).
+Duas diferenças apareceram no <code>.http</code>: as chaves vêm com o nome da propriedade em C# (<code>&quot;Sku&quot;</code>, e
+não <code>&quot;sku&quot;</code>), e o <code>Content-Type</code> veio <code>application/json</code> (sem o <code>problem+json</code>), porque o
+<code>AddProblemDetails</code> ainda não estava registrado.</p>
+<p><strong>Atualização S14.</strong> O <code>AddProblemDetails()</code> <strong>já está registrado</strong> (<a href="#315-erros-da-api-em-formato-padr%C3%A3o-addproblemdetails-useexceptionhandler-e-usestatuscodepages">3.15</a>): o 400 da
+validação nativa agora sai em <code>application/problem+json</code> (visto no <code>.http</code>), com a chave <code>Sku</code>
+(maiúsculo). O <code>Executar</code> ainda declara <code>ValidationProblem</code> no tipo de retorno, mas não o devolve
+mais (a validação responde antes dele): <strong>ajuste pendente</strong> (tipo de retorno × documentação
+OpenAPI; nenhum analyzer acusou).</p>
+</blockquote>
+<p><strong>Na entrevista.</strong> <em>&quot;Por que <code>TypedResults</code> e não <code>Results</code>?&quot;</em> → &quot;Porque o tipo concreto entra na
+assinatura: o OpenAPI documenta as respostas sozinho e o teste lê o resultado como objeto C#, sem
+conversão. Com <code>IResult</code>, nenhum dos dois sabe o que volta.&quot;</p>
+<p>🧠 os retornos possíveis ficam no tipo; por que <code>ProblemDetails</code>. · 🔎 os nomes exatos
+(<code>TypedResults.Created</code>, <code>ValidationProblem</code>), o <code>using Microsoft.AspNetCore.Http.HttpResults</code>.</p>
+<p><strong>Onde foi visto · status:</strong> S1 (aquecimento), S9 (retenção, lacuna no teste), S11 · <strong>usado no
+código e no teste</strong> · S12: retenção ✅ (<code>IsType</code> no teste) · S14: formato padrão ligado no host.</p>
+<hr />
+<p><a id="g3-4"></a></p>
+<h2 id="34-arquivo-http-as-requisições-da-api-dentro-do-repositório">3.4 Arquivo <code>.http</code>: as requisições da API dentro do repositório<button class="estudada" data-id="34-arquivo-http-as-requisições-da-api-dentro-do-repositório" type="button">Marcar como estudada</button></h2>
+<blockquote>
+<p><strong>De → para</strong></p>
+<ul>
+<li><strong>No mercado:</strong> <em>HTTP files</em>, <em>.http / .rest files</em>, <em>REST Client</em>.</li>
+<li><strong>No laboratório:</strong> <code>src/Modulos/Catalogo/Norte.Catalogo/Catalogo.http</code> (desde a S12; antes,
+<code>src/Norte.Api/Norte.Api.http</code>).</li>
+<li><strong>No seu mundo:</strong> Postman, ou o Swagger UI.</li>
+</ul>
+</blockquote>
+<p><strong>Em uma frase:</strong> um arquivo texto com requisições HTTP que o Visual Studio executa com um
+clique em &quot;Send request&quot;.</p>
+<table>
+<thead>
+<tr>
+<th>Como era</th>
+<th>Como é agora</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>coleção do Postman na sua máquina</td>
+<td><code>.http</code> no repositório</td>
+<td>Versionado com o código; o time inteiro tem as mesmas requisições</td>
+</tr>
+<tr>
+<td><code>curl</code> com aspas escapadas no PowerShell</td>
+<td>texto puro, sem escape</td>
+<td>Sem briga com a versão do PowerShell (S11)</td>
+</tr>
+<tr>
+<td>um arquivo só para a API inteira (S11)</td>
+<td><strong>um arquivo por módulo</strong>, na pasta do módulo (S12, proposta sua)</td>
+<td>Cada arquivo fica pequeno; se o módulo virar serviço (M7), as requisições vão junto</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight"><code><span class="err">@HostAddress = http://localhost:5071</span>
+
+<span class="err">### Cadastrar ficha completa (esperado: 201)</span>
+<span class="err">POST {{HostAddress}}/catalogo/fichas-produto</span>
+<span class="err">Content-Type: application/json</span>
+
+<span class="err">{ "sku": "LUV-001", "descricao": "Luva nitrilica", "ncm": "40151900" }</span>
+
+<span class="err">### Cadastrar ficha sem NCM (esperado: 400, erro em ncm)</span>
+<span class="err">POST {{HostAddress}}/catalogo/fichas-produto</span>
+<span class="err">Content-Type: application/json</span>
+
+<span class="err">{ "sku": "LUV-003", "descricao": "Luva nitrilica", "ncm": "" }</span>
+</code></pre>
+
+<p><code>@HostAddress</code> declara uma variável (cada arquivo declara a sua); <code>{{HostAddress}}</code> usa; <code>###</code>
+separa as requisições. <strong>Cada funcionalidade nova acrescenta as suas requisições ao arquivo do
+módulo.</strong> Uma requisição por lado da regra: só o campo que se quer testar fica errado (na S12, a
+antiga &quot;sem SKU&quot; também vinha sem NCM e violava duas regras).</p>
+<p><strong>Não é do .NET 10:</strong> é recurso <strong>da IDE</strong>. Veio do VS Code (extensão REST Client) e das IDEs
+JetBrains; chegou ao Visual Studio 2022 em 2023 (17.5/17.6). Desde o .NET 8, o
+<code>dotnet new webapi</code> já cria o arquivo.</p>
+<p><strong>Ponte com limite.</strong> O <code>.http</code> é <strong>teste manual</strong>: alguém precisa clicar e olhar a resposta.
+<strong>Não</strong> substitui o teste automático (<a href="#36-anatomia-de-um-teste-arrange-act-assert">3.6</a>, <a href="#312-teste-de-integra%C3%A7%C3%A3o-com-webapplicationfactory-o-teste-passa-por-onde-a-regra-mora">3.12</a>), que roda sozinho no
+<code>dotnet test</code> e no CI.</p>
+<p>🧠 manual × automático; por que versionar; um arquivo por módulo. · 🔎 a sintaxe (<code>@</code>, <code>{{}}</code>, <code>###</code>).</p>
+<p><strong>Onde foi visto · status:</strong> S11 · usado · S12: reorganizado por módulo (decisão sua) · S14: usado
+para ver o 404, o 500 e o 400 em <code>problem+json</code>.</p>
+<hr />
+<p><a id="g3-5"></a></p>
+<h2 id="35-o-projeto-de-testes-xunit-referência-e-internalsvisibleto">3.5 O projeto de testes: xUnit, referência e <code>InternalsVisibleTo</code><button class="estudada" data-id="35-o-projeto-de-testes-xunit-referência-e-internalsvisibleto" type="button">Marcar como estudada</button></h2>
+<blockquote>
+<p><strong>De → para</strong></p>
+<ul>
+<li><strong>No mercado:</strong> <em>test project</em>, <em>xUnit</em>, <em>InternalsVisibleTo</em>.</li>
+<li><strong>No laboratório:</strong> <code>tests/Modulos/Catalogo/Norte.Catalogo.Tests/</code>.</li>
+<li><strong>No seu mundo:</strong> projetos <code>*.Tests</code> (se havia).</li>
+</ul>
+</blockquote>
+<p><strong>Em uma frase:</strong> cada módulo tem um projeto de testes no caminho espelhado de <code>src/</code>, que
+referencia o módulo e enxerga o que é <code>internal</code> nele.</p>
+<p><strong>Os comandos (S11):</strong></p>
+<pre class="highlight"><code><span class="n">dotnet</span> <span class="n">new</span> <span class="n">xunit</span> <span class="n">-n</span> <span class="n">Norte</span><span class="p">.</span><span class="n">Catalogo</span><span class="p">.</span><span class="n">Tests</span> <span class="n">-o</span> <span class="n">tests</span><span class="p">/</span><span class="n">Modulos</span><span class="p">/</span><span class="n">Catalogo</span><span class="p">/</span><span class="n">Norte</span><span class="p">.</span><span class="n">Catalogo</span><span class="p">.</span><span class="n">Tests</span>
+<span class="n">dotnet</span> <span class="n">sln</span> <span class="n">Norte</span><span class="p">.</span><span class="n">slnx</span> <span class="n">add</span> <span class="n">tests</span><span class="p">/</span><span class="n">Modulos</span><span class="p">/</span><span class="n">Catalogo</span><span class="p">/</span><span class="n">Norte</span><span class="p">.</span><span class="n">Catalogo</span><span class="p">.</span><span class="n">Tests</span><span class="p">/</span><span class="n">Norte</span><span class="p">.</span><span class="n">Catalogo</span><span class="p">.</span><span class="n">Tests</span><span class="p">.</span><span class="n">csproj</span>
+<span class="n">dotnet</span> <span class="n">add</span> <span class="n">tests</span><span class="p">/</span><span class="n">Modulos</span><span class="p">/</span><span class="n">Catalogo</span><span class="p">/</span><span class="n">Norte</span><span class="p">.</span><span class="n">Catalogo</span><span class="p">.</span><span class="n">Tests</span><span class="p">/</span><span class="n">Norte</span><span class="p">.</span><span class="n">Catalogo</span><span class="p">.</span><span class="n">Tests</span><span class="p">.</span><span class="n">csproj</span> <span class="n">reference</span> <span class="n">src</span><span class="p">/</span><span class="n">Modulos</span><span class="p">/</span><span class="n">Catalogo</span><span class="p">/</span><span class="n">Norte</span><span class="p">.</span><span class="n">Catalogo</span><span class="p">/</span><span class="n">Norte</span><span class="p">.</span><span class="n">Catalogo</span><span class="p">.</span><span class="n">csproj</span>
+</code></pre>
+
+<p><strong>O nome.</strong> <code>Norte.Catalogo.Tests</code>: o sufixo técnico fica em inglês, como <code>Handler</code> e <code>Request</code>
+(ADR-001). O <strong>nome de cada teste</strong> fica em português (<code>Recusa_ficha_sem_sku_e_devolve_400</code>).</p>
+<p><strong>Por que o <code>InternalsVisibleTo</code>.</strong> Pelo ADR-002, tudo no <code>Catalogo</code> é <code>internal</code>
+(<a href="parte-0-1.html#13-public-%C3%97-internal-a-fronteira-garantida-pelo-compilador">1.3</a>), então o projeto de testes não veria o endpoint. No
+<code>Norte.Catalogo.csproj</code>:</p>
+<pre class="highlight"><code><span class="nt">&lt;ItemGroup&gt;</span>
+<span class="w">  </span><span class="nt">&lt;InternalsVisibleTo</span><span class="w"> </span><span class="na">Include=</span><span class="s">"Norte.Catalogo.Tests"</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/ItemGroup&gt;</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Como era</th>
+<th>Como é agora</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>[assembly: InternalsVisibleTo(&quot;...&quot;)]</code> num <code>AssemblyInfo.cs</code></td>
+<td><code>&lt;InternalsVisibleTo Include=&quot;...&quot; /&gt;</code> no <code>.csproj</code></td>
+<td>Mesma função, declarada no projeto</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ponte com limite.</strong> O <code>InternalsVisibleTo</code> abre o <code>internal</code> <strong>só</strong> para o projeto nomeado. O
+<code>Pedidos</code> continua sem enxergar nada do <code>Catalogo</code> além do <code>CatalogoModulo</code> (e, desde o ADR-003,
+dos <code>*Request</code> — <a href="#311-valida%C3%A7%C3%A3o-nativa-do-net-10-a-regra-de-entrada-declarada-no-request">3.11</a>).</p>
+<p><strong>Desde a S12:</strong> o mesmo projeto também tem os <strong>testes de integração</strong> do módulo, em classes
+<code>...ApiTests</code>, com o pacote <code>Microsoft.AspNetCore.Mvc.Testing</code> e referência ao <code>Norte.Api</code>
+(<a href="#312-teste-de-integra%C3%A7%C3%A3o-com-webapplicationfactory-o-teste-passa-por-onde-a-regra-mora">3.12</a>). <strong>Desde a S14</strong>, é o <code>InternalsVisibleTo</code> que permite ao teste do 500 citar o
+<code>FichaProdutoRepository</code> (<code>internal</code>) para trocá-lo (<a href="#316-dubl%C3%AA-de-teste-e-ambiente-do-teste-trocar-uma-pe%C3%A7a-s%C3%B3-no-teste">3.16</a>).</p>
+<p>🧠 por que o teste precisa do <code>InternalsVisibleTo</code>. · 🔎 os comandos e o XML.</p>
+<p><strong>Onde foi visto · status:</strong> S11 · feito pelo mentor (eu faço).</p>
+<hr />
+<p><a id="g3-6"></a></p>
+<h2 id="36-anatomia-de-um-teste-arrange-act-assert">3.6 Anatomia de um teste: Arrange, Act, Assert<button class="estudada" data-id="36-anatomia-de-um-teste-arrange-act-assert" type="button">Marcar como estudada</button></h2>
+<blockquote>
+<p><strong>De → para</strong></p>
+<ul>
+<li><strong>No mercado:</strong> <em>unit test</em>, <em>AAA (Arrange–Act–Assert)</em>, <em>[Fact]</em>, <em>assertions</em>.</li>
+<li><strong>No laboratório:</strong> <code>CadastrarFichaProdutoEndpointTests</code>.</li>
+<li><strong>No seu mundo:</strong> teste de controller com <em>mock</em> do service.</li>
+</ul>
+</blockquote>
+<p><strong>Em uma frase:</strong> um teste <strong>prepara</strong> a entrada (Arrange), <strong>executa</strong> a funcionalidade (Act) e
+<strong>confere</strong> o resultado contra a regra (Assert).</p>
+<p><strong>O teste do Norte, linha por linha (S11):</strong></p>
+<pre class="highlight"><code><span class="na">[Fact]</span><span class="w">                                            </span><span class="c1">// marca o método como teste para o xUnit</span>
+<span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">Recusa_ficha_sem_sku_e_devolve_400</span><span class="p">()</span><span class="w">  </span><span class="c1">// o nome diz a REGRA e o resultado esperado</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Arrange: o que o endpoint receberia da DI e do corpo da requisição</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">repositorio</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FichaProdutoRepository</span><span class="p">();</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CadastrarFichaProdutoRequest</span><span class="p">(</span><span class="k">null</span><span class="p">,</span><span class="w"> </span><span class="s">"Luva nitrilica"</span><span class="p">,</span><span class="w"> </span><span class="s">"40151900"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Act: chama o método direto, sem HTTP e sem subir a API</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">resultado</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CadastrarFichaProdutoEndpoint</span><span class="p">.</span><span class="n">Executar</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">repositorio</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Assert: o resultado é o 400, com erro no campo sku</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">problema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Assert</span><span class="p">.</span><span class="n">IsType</span><span class="o">&lt;</span><span class="n">ValidationProblem</span><span class="o">&gt;</span><span class="p">(</span><span class="n">resultado</span><span class="p">.</span><span class="n">Result</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span><span class="w"> </span><span class="n">problema</span><span class="p">.</span><span class="n">StatusCode</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Contains</span><span class="p">(</span><span class="s">"sku"</span><span class="p">,</span><span class="w"> </span><span class="n">problema</span><span class="p">.</span><span class="n">ProblemDetails</span><span class="p">.</span><span class="n">Errors</span><span class="p">.</span><span class="n">Keys</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+
+<blockquote>
+<p><strong>Atualização S12.</strong> Este teste (e os do NCM e da descrição) <strong>foi apagado</strong>: com a validação
+nativa, a regra saiu do <code>Executar</code>, e o teste de unidade deixou de passar por ela. A recusa hoje
+é testada por integração (<a href="#312-teste-de-integra%C3%A7%C3%A3o-com-webapplicationfactory-o-teste-passa-por-onde-a-regra-mora">3.12</a>). O raciocínio desta entrada continua valendo para tudo
+o que o <code>Executar</code> ainda faz (o teste do 201).</p>
+</blockquote>
+<p><strong>A peça-chave: <code>resultado.Result</code>.</strong> O <code>Results&lt;Created&lt;...&gt;, ValidationProblem&gt;</code> guarda <strong>qual
+dos dois</strong> aconteceu. O <code>Assert.IsType&lt;ValidationProblem&gt;</code> confere o tipo <strong>e</strong> devolve o objeto
+tipado, de onde se lê <code>StatusCode</code> e <code>ProblemDetails</code>. É a resposta da lacuna da S9: com <code>IResult</code>,
+o teste não saberia o que veio.</p>
+<table>
+<thead>
+<tr>
+<th>Como era</th>
+<th>Como é agora</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>new FichaProdutoController(mockService.Object)</code></td>
+<td><code>new FichaProdutoRepository()</code> + <code>Executar(...)</code></td>
+<td>Nada para &quot;mockar&quot;: o método recebe tudo por parâmetro</td>
+</tr>
+<tr>
+<td>converter <code>IActionResult</code> para <code>ObjectResult</code> e ler <code>.StatusCode</code></td>
+<td><code>Assert.IsType&lt;ValidationProblem&gt;(resultado.Result)</code></td>
+<td>O tipo diz o que voltou</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cada Assert precisa poder falhar.</strong> Na S11, duas linhas foram cortadas por isso:</p>
+<ul>
+<li><code>Assert.NotEmpty(Errors)</code>: passaria também com um erro <strong>só de NCM</strong>, então não prova a regra do
+SKU. Trocado por <code>Assert.Contains(&quot;sku&quot;, ...)</code>.</li>
+<li><code>Assert.Null(repositorio.ObterPorSku(&quot;LUV-001&quot;))</code>: nenhuma ficha <code>LUV-001</code> foi enviada nesse
+teste, então a linha era <strong>sempre verdadeira</strong>.</li>
+</ul>
+<p>E na S12 (relatório do Claude local): depois de <code>Assert.IsType&lt;ValidationProblem&gt;</code>, as linhas
+<code>Assert.Equal(400, problema.StatusCode)</code> e <code>Assert.NotNull(problema.ProblemDetails)</code> <strong>não
+conseguem falhar</strong> — o <code>ValidationProblem</code> é sempre 400 e a propriedade nunca é nula. Não estão
+erradas, mas não provam nada a mais.</p>
+<p><strong>Teste de unidade × teste de integração.</strong> Este teste chama o método direto: é rápido e mostra
+exatamente onde quebrou, <strong>mas não passa</strong> pelo que acontece antes do <code>Executar</code> (rota, leitura do
+JSON, DI, <strong>validação</strong>). A S12 mostrou o custo disso na prática: ver <a href="#312-teste-de-integra%C3%A7%C3%A3o-com-webapplicationfactory-o-teste-passa-por-onde-a-regra-mora">3.12</a>.</p>
+<p><strong>Na entrevista.</strong> <em>&quot;Como você testa um endpoint?&quot;</em> → &quot;Teste de unidade chamando o handler direto
+para o que <strong>ele</strong> faz, porque é rápido e aponta o erro exato. E testes de integração pela API, com
+<code>WebApplicationFactory</code>, para o que acontece <strong>antes</strong> dele: rota, serialização, DI e validação. O
+de unidade não pega erro de configuração; o de integração é mais lento.&quot;</p>
+<p><strong>Erros comuns.</strong> Copiar o teste-modelo e esquecer de trocar o <strong>Assert</strong> (você, S11). Assert que
+nunca falha. Nome de teste que não diz a regra (<code>Teste1</code>), ou que diz o contrário
+(<code>Cadastra_ficha_sem_ncm_e_devolve_400</code>, S12: a ficha <strong>não</strong> é cadastrada). Teste que repete
+outro já existente (S12: <code>Cadastra_ficha_com_ncm_e_devolve_201</code> = o teste do 201). <strong>S14:</strong> o
+critério fraco <code>ProblemDetails não nulo</code> (um <code>{}</code> passaria) — o teste do 500 confere status, tipo
+de conteúdo, <code>traceId</code> e a ausência de <code>detail</code> e <code>exception</code> (<a href="#316-dubl%C3%AA-de-teste-e-ambiente-do-teste-trocar-uma-pe%C3%A7a-s%C3%B3-no-teste">3.16</a>).</p>
+<p>🧠 AAA; o nome do teste diz a regra; todo Assert precisa poder falhar; unidade × integração. ·
+🔎 os nomes dos <code>Assert.*</code>.</p>
+<p><strong>Onde foi visto · status:</strong> S11 · 1º teste com esqueleto do mentor; 2º escrito por você com
+revisão · S12: testes do NCM e da descrição <strong>sem ajuda</strong>, Assert certo de primeira · <strong>em
+melhora (núcleo de M1)</strong>.</p>
+<hr />
+<p><a id="g3-7"></a></p>
+<h2 id="37-vermelho-→-verde-como-saber-que-o-teste-protege-a-regra">3.7 Vermelho → verde: como saber que o teste protege a regra<button class="estudada" data-id="37-vermelho-→-verde-como-saber-que-o-teste-protege-a-regra" type="button">Marcar como estudada</button></h2>
+<blockquote>
+<p><strong>De → para</strong></p>
+<ul>
+<li><strong>No mercado:</strong> <em>red–green(–refactor)</em>, <em>TDD</em>, <em>&quot;see the test fail&quot;</em>, <em>mutation testing</em>
+(a versão automatizada da ideia).</li>
+<li><strong>No laboratório:</strong> comentar o <code>if</code> do SKU (S11) ou tirar o <code>[Required]</code> (S12) ou tirar o
+<code>UseExceptionHandler()</code> (S14) e rodar o <code>dotnet test</code>.</li>
+</ul>
+</blockquote>
+<p><strong>Em uma frase:</strong> um teste só prova alguma coisa se você <strong>já o viu falhar</strong> quando a regra
+estava quebrada.</p>
+<p><strong>O que aconteceu na S11, na ordem:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Passo</th>
+<th>Testes existentes</th>
+<th><code>if</code> do SKU</th>
+<th>Resultado</th>
+<th>Por quê</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>só <code>Cadastra_ficha_com_sku_e_devolve_201</code></td>
+<td>comentado</td>
+<td>🟢 1 aprovado</td>
+<td>O teste manda <strong>com</strong> SKU: nunca passa pelo <code>if</code>. <strong>Não protege a regra</strong></td>
+</tr>
+<tr>
+<td>2</td>
+<td>+ <code>Recusa_ficha_sem_sku_e_devolve_400</code></td>
+<td>comentado</td>
+<td>🔴 1 falhou</td>
+<td>Sem o <code>if</code>, o endpoint devolve 201, e o teste exige 400</td>
+</tr>
+<tr>
+<td>3</td>
+<td>os dois</td>
+<td>descomentado</td>
+<td>🟢 2 aprovados</td>
+<td>A regra está lá, e o teste confirma</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Na S12, com a validação nativa:</strong> sem o <code>[Required]</code> da descrição, <strong>só</strong>
+<code>Recusa_ficha_sem_descricao_e_devolve_400</code> ficou vermelho; os do SKU e do NCM seguiram verdes.
+Isso prova que cada teste protege <strong>um</strong> lado da regra, nem mais nem menos.</p>
+<p><strong>Na S14, o caso mais difícil:</strong> o teste do 500 <strong>nasceu verde</strong> e continuou verde sem a linha que
+devia proteger (a página do desenvolvedor de <code>Development</code> fazia o trabalho). Só ficou vermelho
+quando o teste passou a rodar em <code>Production</code> (<a href="#316-dubl%C3%AA-de-teste-e-ambiente-do-teste-trocar-uma-pe%C3%A7a-s%C3%B3-no-teste">3.16</a>). Moral: <strong>o vermelho tem de ser
+visto também em teste que nasce verde</strong> — o ambiente do teste pode estar mascarando a falta.</p>
+<p><strong>A regra do laboratório (decisão sua, 08/10/2026):</strong> <em>todo teste novo precisa ser visto vermelho
+pelo menos uma vez</em> — ou porque foi escrito antes do código, ou porque você tirou o código e ele
+falhou. Não é o TDD completo (teste primeiro, refatoração guiada): é a parte do TDD que dá a
+garantia, sem o custo de mudar o jeito de trabalhar.</p>
+<p><strong>A pergunta que você fez no passo 1, &quot;não deveria dar erro?&quot;, é a pergunta central de quem
+testa.</strong> A resposta: um teste só protege o que ele <strong>exercita</strong>.</p>
+<p><strong>Cuidado com o &quot;vermelho pelo motivo errado&quot;.</strong> A primeira versão do teste da recusa também ficou
+vermelha no passo 2, mas porque o Assert copiado do modelo esperava 201. Com o <code>if</code> de volta, ela
+<strong>continuaria</strong> vermelha. Vermelho só vale como prova quando fica verde ao restaurar a regra.</p>
+<p><strong>Na entrevista.</strong> <em>&quot;Como você sabe que um teste está testando alguma coisa?&quot;</em> → &quot;Eu o vejo falhar.
+Quebro a regra de propósito (comento a linha, tiro o atributo), rodo, e o teste tem de ficar
+vermelho. Depois restauro e ele fica verde. Teste que nunca falhou pode estar passando por acaso.&quot;</p>
+<p>🧠 o ciclo e o porquê; &quot;vermelho pelo motivo errado&quot;; teste que nasce verde também se prova. · 🔎
+o nome <em>mutation testing</em> (ferramenta: Stryker.NET, só como vocabulário).</p>
+<p><strong>Onde foi visto · status:</strong> S11 · feito por você · S12: feito 3 vezes, sem pedir · S14: 4
+combinações vistas no teste do 500; regra adotada em 08/10.</p>
+<hr />
+<p><a id="g3-8"></a></p>
+<h2 id="38-a-sintaxe-mais-curta-do-c-moderno-o-que-já-apareceu-no-norte">3.8 A sintaxe mais curta do C# moderno (o que já apareceu no Norte)<button class="estudada" data-id="38-a-sintaxe-mais-curta-do-c-moderno-o-que-já-apareceu-no-norte" type="button">Marcar como estudada</button></h2>
+<p><strong>Em uma frase:</strong> boa parte do &quot;hoje parece mais curto&quot; (você, S11) são recursos do C# que vieram
+depois da sua prática.</p>
+<table>
+<thead>
+<tr>
+<th>Antes</th>
+<th>Agora</th>
+<th>Recurso</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>classe com construtor e propriedades</td>
+<td><code>record FichaProduto(string Sku, ...)</code></td>
+<td><em>record</em> (C# 9)</td>
+</tr>
+<tr>
+<td><code>new List&lt;FichaProduto&gt;()</code></td>
+<td><code>List&lt;FichaProduto&gt; _fichas = [];</code></td>
+<td><em>collection expression</em> (C# 12)</td>
+</tr>
+<tr>
+<td><code>{ return _fichas.FirstOrDefault(...); }</code></td>
+<td><code>=&gt; _fichas.FirstOrDefault(...);</code></td>
+<td><em>expression-bodied member</em></td>
+</tr>
+<tr>
+<td><code>using System; using System.Linq;</code> …</td>
+<td>nenhum</td>
+<td><em>implicit usings</em> (.NET 6+; <a href="parte-0-1.html#15-implicit-usings-e-os-using-que-faltam-numa-biblioteca">1.5</a>)</td>
+</tr>
+<tr>
+<td><code>namespace X { ... }</code></td>
+<td><code>namespace X;</code></td>
+<td><em>file-scoped namespace</em> (C# 10)</td>
+</tr>
+<tr>
+<td><code>var lista = new List&lt;string&gt;()</code></td>
+<td><code>List&lt;string&gt; lista = new();</code></td>
+<td><em>target-typed new</em> (C# 9)</td>
+</tr>
+<tr>
+<td>classe com construtor que guarda o parâmetro num campo</td>
+<td><code>class CadastrarFichaProdutoApiTests(WebApplicationFactory&lt;Program&gt; fabrica)</code></td>
+<td><em>primary constructor</em> em classe (C# 12; S12)</td>
+</tr>
+<tr>
+<td><code>Func&lt;IServiceProvider, T&gt;</code> escrita com <code>(sp) =&gt; ...</code> quando o parâmetro não é usado</td>
+<td><code>_ =&gt; throw ...</code></td>
+<td><em>discard</em> como nome de parâmetro (S14, <a href="#316-dubl%C3%AA-de-teste-e-ambiente-do-teste-trocar-uma-pe%C3%A7a-s%C3%B3-no-teste">3.16</a>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Padrão do Norte:</strong> <em>file-scoped namespace</em> em todo arquivo novo (apontamento nível 3 da S11).
+Depois de converter, <code>Ctrl+K</code>, <code>Ctrl+D</code> corrige a indentação.</p>
+<p>🔎 tudo nesta tabela é &quot;saber onde encontrar&quot;. O <code>Ctrl+.</code> do Visual Studio sugere a forma nova.</p>
+<p><strong>Onde foi visto · status:</strong> S11 · lido · S12: <em>file-scoped</em> aplicado em todo o <code>Catalogo</code>.</p>
+<hr />
+<p><a id="g3-9"></a></p>
+<h2 id="39-diagnóstico-os-problemas-da-s11-e-como-achar-a-causa">3.9 Diagnóstico: os problemas da S11 e como achar a causa<button class="estudada" data-id="39-diagnóstico-os-problemas-da-s11-e-como-achar-a-causa" type="button">Marcar como estudada</button></h2>
+<table>
+<thead>
+<tr>
+<th>Sintoma</th>
+<th>Causa</th>
+<th>Como achar · como resolver</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dotnet build</code> passa, mas a API <strong>cai ao subir</strong> com <code>InvalidOperationException: The service collection cannot be modified because it is read-only</code></td>
+<td><code>builder.Services.AddProblemDetails()</code> escrito <strong>depois</strong> do <code>var app = builder.Build();</code></td>
+<td>A pilha da exceção aponta a linha do <code>Program.cs</code>. Registro de serviço vai <strong>antes</strong> do <code>Build()</code> (<a href="parte-0-1.html#14-programcs-moderno-de-startupcs-para-builder-e-app">1.4</a>). O compilador <strong>não</strong> pega: é erro de execução</td>
+</tr>
+<tr>
+<td><code>dotnet test</code>: <em>&quot;No test is available in ... .dll&quot;</em> e <code>total: 0</code>, com o arquivo de teste certo e no lugar certo</td>
+<td>DLL de testes antiga, compilada antes de o arquivo novo existir (provável; resolveu com <code>clean</code>)</td>
+<td><code>dotnet clean</code> e depois <code>dotnet test</code>. Antes, conferir: arquivo salvo, na pasta do <code>.csproj</code>, classe e método <code>public</code>, <code>[Fact]</code></td>
+</tr>
+<tr>
+<td><code>curl.exe</code> com <code>-d '{\&quot;sku\&quot;:...}'</code> manda JSON inválido</td>
+<td>O escape <code>\&quot;</code> depende da versão do PowerShell (no 7.3+ chega errado; no 5.1 é obrigatório)</td>
+<td>Usar o arquivo <code>.http</code> (<a href="#34-arquivo-http-as-requisi%C3%A7%C3%B5es-da-api-dentro-do-reposit%C3%B3rio">3.4</a>)</td>
+</tr>
+<tr>
+<td>201 com <code>Location: /fichas/LUV-001</code></td>
+<td>URI do <code>Created</code> montada sem o prefixo do grupo</td>
+<td>A URI do <code>Created</code> é escrita à mão: precisa ser a rota completa (<code>/catalogo/fichas-produto/{sku}</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>Diagnósticos da S12: <a href="#314-diagn%C3%B3stico-os-problemas-da-s12-e-como-achar-a-causa">3.14</a>. Diagnósticos da S14: <a href="#317-diagn%C3%B3stico-os-problemas-da-s14-e-como-achar-a-causa">3.17</a>.</p>
+<hr />
+<p><a id="g3-10"></a></p>
+<h2 id="310-como-pensar-um-teste-da-frase-do-negócio-ao-assert">3.10 Como pensar um teste: da frase do negócio ao Assert<button class="estudada" data-id="310-como-pensar-um-teste-da-frase-do-negócio-ao-assert" type="button">Marcar como estudada</button></h2>
+<blockquote>
+<p><strong>De → para</strong></p>
+<ul>
+<li><strong>No mercado:</strong> <em>Given / When / Then</em> (BDD), <em>test case design</em>, <em>equivalence classes</em>,
+<em>boundary values</em>, <em>one behavior per test</em>.</li>
+<li><strong>No laboratório:</strong> o método de testes do Norte (decisão sua, 02/10): português estruturado
+antes do código, em 4 degraus. <strong>É adaptação do laboratório</strong>, montada sobre o Dado/Quando/Então
+do mercado.</li>
+<li><strong>No seu mundo:</strong> &quot;sempre empurrei com a barriga&quot; (você, S11).</li>
+</ul>
+</blockquote>
+<p><strong>Em uma frase:</strong> o teste nasce de uma <strong>frase do negócio</strong>; o código do teste é só a <strong>tradução</strong>
+dessa frase — o Assert não se inventa, se traduz.</p>
+<p><strong>Os 6 passos:</strong></p>
+<ol>
+<li><strong>A regra numa frase do negócio:</strong> &quot;Ficha exige SKU, descrição e NCM.&quot;</li>
+<li><strong>Um exemplo que respeita e um que quebra</strong> (por lado da regra): ficha completa × ficha sem NCM.</li>
+<li><strong>O que o sistema faz em cada um:</strong> completa → 201 com a ficha; sem NCM → 400 com erro no NCM.</li>
+<li><strong>O nome do teste = a frase do passo 3:</strong> <code>Recusa_ficha_sem_ncm_e_devolve_400</code>.</li>
+<li><strong>O código:</strong> Arrange = o exemplo (só o campo do teste errado) · Act = uma linha ·
+Assert = cada pedaço do passo 3, traduzido.</li>
+<li><strong>Cada Assert consegue falhar?</strong> Prove com 🔴 → 🟢 (<a href="#37-vermelho-%E2%86%92-verde-como-saber-que-o-teste-protege-a-regra">3.7</a>).</li>
+</ol>
+<p><strong>Exemplo resolvido, em português estruturado (S12):</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><code>Cadastra_ficha_com_sku_e_devolve_201</code></th>
+<th><code>Recusa_ficha_sem_ncm_e_devolve_400</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Dado</strong></td>
+<td>uma ficha com SKU <code>LUV-001</code>, descrição e NCM <code>40151900</code></td>
+<td>uma ficha com SKU e descrição, <strong>sem NCM</strong></td>
+</tr>
+<tr>
+<td><strong>Quando</strong></td>
+<td>eu cadastro a ficha</td>
+<td>eu cadastro a ficha</td>
+</tr>
+<tr>
+<td><strong>Então</strong></td>
+<td>201, e a ficha criada é a que eu enviei</td>
+<td>400, e o erro aponta o campo NCM</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Tabela de tradução: frase → Assert (🔎, consulte à vontade):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Frase do &quot;Então&quot;</th>
+<th>Assert</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&quot;o resultado é um 400 de validação&quot;</td>
+<td><code>Assert.IsType&lt;ValidationProblem&gt;(resultado.Result)</code> (unidade) · <code>Assert.Equal(HttpStatusCode.BadRequest, resposta.StatusCode)</code> (integração)</td>
+</tr>
+<tr>
+<td>&quot;o erro aponta o campo X&quot;</td>
+<td><code>Assert.Contains(&quot;X&quot;, problema.Errors.Keys)</code></td>
+</tr>
+<tr>
+<td>&quot;a ficha criada é a que eu enviei&quot;</td>
+<td><code>Assert.Equal(new FichaProduto(...), criado.Value)</code></td>
+</tr>
+<tr>
+<td>&quot;existe / foi guardada&quot;</td>
+<td><code>Assert.NotNull(...)</code></td>
+</tr>
+<tr>
+<td>&quot;não existe / não foi guardada&quot;</td>
+<td><code>Assert.Null(...)</code></td>
+</tr>
+<tr>
+<td>&quot;lança erro&quot;</td>
+<td><code>Assert.Throws&lt;TipoDaExcecao&gt;(() =&gt; ...)</code></td>
+</tr>
+<tr>
+<td>&quot;o cliente recebe 500 em formato padrão, sem vazar a causa&quot; (S14)</td>
+<td><code>Assert.Equal(HttpStatusCode.InternalServerError, ...)</code> + <code>ContentType.MediaType</code> = <code>application/problem+json</code> + <code>Assert.Contains(&quot;traceId&quot;, ...Extensions.Keys)</code> + <code>Assert.Null(problema.Detail)</code> + <code>Assert.DoesNotContain(&quot;exception&quot;, ...Extensions.Keys)</code> (<a href="#316-dubl%C3%AA-de-teste-e-ambiente-do-teste-trocar-uma-pe%C3%A7a-s%C3%B3-no-teste">3.16</a>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Os 4 degraus (um por vez):</strong> (1) ler um teste pronto em português estruturado → (2) escrever só o
+português estruturado, e o mentor revisa o raciocínio → (3) traduzir para código → (4) provar com
+🔴 → 🟢.</p>
+<p><strong>O checklist anti-sobra (decisão sua, 05/10):</strong> ao adaptar um teste-modelo, para <strong>cada linha</strong>
+copiada: <strong>&quot;esta linha ainda é verdade para o caso novo?&quot;</strong>. Na S12 ele pegou: o corpo da
+requisição (só o campo do teste vazio), a chave do Assert e o <code>?? &quot;&quot;</code> que ficou sem sentido no
+<code>Executar</code>. Escapou uma vez: nome e comentário do teste do NCM.</p>
+<p><strong>Não confunda:</strong> um teste por <strong>lado</strong> da regra (3 lados = 3 testes de recusa + o caminho feliz)
+× um teste que confere tudo de uma vez (quando falha, não diz qual lado quebrou).</p>
+<p><strong>Na entrevista.</strong> <em>&quot;Como você decide o que testar?&quot;</em> → &quot;Parto da regra em uma frase de negócio.
+Para cada lado dela, um exemplo que respeita e um que quebra; o resultado esperado vira o nome do
+teste e o Assert. E vejo cada teste falhar com a regra quebrada, para saber que ele protege alguma
+coisa.&quot;</p>
+<p>🧠 os 6 passos; &quot;o Assert é tradução&quot;; um teste por lado da regra. · 🔎 a tabela frase → Assert.</p>
+<p><strong>Onde foi visto · status:</strong> S12 · degrau 1 lido; você pulou o degrau 2 e foi direto ao código, com
+o Assert certo · <strong>em uso</strong> · S14: o &quot;Dado&quot; com dublê <strong>não</strong> foi formulado por você (conteúdo novo;
+o mentor escreveu o teste — <a href="#316-dubl%C3%AA-de-teste-e-ambiente-do-teste-trocar-uma-pe%C3%A7a-s%C3%B3-no-teste">3.16</a>).</p>
+<hr />
+<p><a id="g3-11"></a></p>
+<h2 id="311-validação-nativa-do-net-10-a-regra-de-entrada-declarada-no-request">3.11 Validação nativa do .NET 10: a regra de entrada declarada no <code>Request</code><button class="estudada" data-id="311-validação-nativa-do-net-10-a-regra-de-entrada-declarada-no-request" type="button">Marcar como estudada</button></h2>
+<blockquote>
+<p><strong>De → para</strong></p>
+<ul>
+<li><strong>No mercado:</strong> <em>built-in validation for Minimal APIs</em> (.NET 10), <em>DataAnnotations</em>,
+<code>AddValidation()</code>, <em>validation source generator</em>. Alternativa comum: FluentValidation.</li>
+<li><strong>No laboratório:</strong> <code>[Required]</code> nos parâmetros do <code>CadastrarFichaProdutoRequest</code> +
+<code>services.AddValidation()</code> no <code>AddCatalogo</code> · <strong>ADR-003</strong>.</li>
+<li><strong>No seu mundo:</strong> <code>[Required]</code> no modelo + <code>[ApiController]</code> devolvendo 400 sozinho, nos
+controllers.</li>
+</ul>
+</blockquote>
+<p><strong>Em uma frase:</strong> no .NET 10, uma Minimal API valida a entrada <strong>antes</strong> de chamar o endpoint, a
+partir dos atributos do <code>Request</code>, e devolve 400 com <strong>todos</strong> os erros de uma vez.</p>
+<p><strong>Pergunta que responde:</strong> &quot;onde mora a validação de entrada, agora que não há <code>[ApiController]</code>?&quot;</p>
+<p><strong>O problema que resolveu (visto no <code>.http</code>, S12):</strong> com três <code>if</code> no <code>Executar</code>, uma ficha com
+SKU, descrição e NCM vazios recebia <strong>um</strong> erro (o do SKU), porque cada <code>if</code> faz <code>return</code> no
+primeiro problema. Quem usa a API precisava de três idas e voltas. E cada campo obrigatório novo
+pedia mais 7 linhas iguais.</p>
+<table>
+<thead>
+<tr>
+<th>Como era</th>
+<th>Como é agora (.NET 10)</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>controllers: <code>[Required]</code> + <code>[ApiController]</code> → 400 automático</td>
+<td>Minimal APIs: <code>[Required]</code> no <code>record</code> + <code>services.AddValidation()</code></td>
+<td>Minimal APIs não tinham validação embutida até o .NET 9 (era <code>if</code> ou FluentValidation)</td>
+</tr>
+<tr>
+<td>validação antes da action</td>
+<td>validação <strong>antes do <code>Executar</code></strong>, no caminho da requisição</td>
+<td>o <code>Executar</code> só roda com entrada válida</td>
+</tr>
+<tr>
+<td><code>if</code> manual, um erro por vez (S12, manhã)</td>
+<td>400 com os três erros</td>
+<td>a regra fica declarada, não programada</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O código do Norte (S12):</strong></p>
+<pre class="highlight"><code><span class="c1">// CadastrarFichaProduto/CadastrarFichaProdutoRequest.cs</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">System.ComponentModel.DataAnnotations</span><span class="p">;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">Norte.Catalogo.CadastrarFichaProduto</span><span class="p">;</span>
+
+<span class="k">public</span><span class="w"> </span><span class="k">record</span><span class="w"> </span><span class="nf">CadastrarFichaProdutoRequest</span><span class="p">(</span><span class="w">              </span><span class="c1">// public: exigência do gerador (ADR-003)</span>
+<span class="w">    </span><span class="na">[Required(ErrorMessage = "O SKU é obrigatório.")]</span><span class="w"> </span><span class="kt">string?</span><span class="w"> </span><span class="n">Sku</span><span class="p">,</span>
+<span class="w">    </span><span class="na">[Required(ErrorMessage = "A descrição é obrigatória.")]</span><span class="w"> </span><span class="kt">string?</span><span class="w"> </span><span class="n">Descricao</span><span class="p">,</span>
+<span class="w">    </span><span class="na">[Required(ErrorMessage = "O NCM é obrigatório.")]</span><span class="w"> </span><span class="kt">string?</span><span class="w"> </span><span class="n">Ncm</span><span class="p">);</span>
+</code></pre>
+
+<pre class="highlight"><code><span class="c1">// CatalogoModulo.cs, dentro do AddCatalogo</span>
+<span class="n">services</span><span class="p">.</span><span class="n">AddValidation</span><span class="p">();</span><span class="w">   </span><span class="c1">// no MÓDULO: o gerador só enxerga os tipos do projeto onde é chamado</span>
+</code></pre>
+
+<pre class="highlight"><code><span class="c1">// CadastrarFichaProdutoEndpoint.Executar — os três if saíram</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">ficha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FichaProduto</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Sku</span><span class="o">!</span><span class="p">,</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="n">Descricao</span><span class="o">!</span><span class="p">,</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="n">Ncm</span><span class="o">!</span><span class="p">);</span>
+</code></pre>
+
+<p><strong>Resposta ao POST com os três campos vazios:</strong></p>
+<pre class="highlight"><code>HTTP/1.1 400 Bad Request
+{"title":"One or more validation errors occurred.",
+ "errors":{"Sku":["O SKU é obrigatório"],"Descricao":["A descrição é obrigatória"],"Ncm":["O NCM é obrigatório"]}}
+</code></pre>
+
+<p><strong>Como funciona por baixo.</strong> Um <strong>gerador de código</strong> (<em>source generator</em>, que roda no build)
+procura os tipos usados como parâmetro dos endpoints (<code>MapPost</code>…) e gera o código que lê os
+atributos. O <code>AddValidation()</code> registra esse código e liga um <strong>filtro</strong> que roda antes do
+endpoint. O <code>[Required]</code> recusa <code>null</code>, <code>&quot;&quot;</code> e texto só com espaços (o mesmo que o
+<code>IsNullOrWhiteSpace</code> fazia).</p>
+<p><strong>As três regras que a S12 ensinou (do jeito difícil):</strong></p>
+<ol>
+<li><strong>Só tipos <code>public</code>.</strong> O gerador do .NET 10 ignora <code>internal</code> — <strong>sem erro e sem log</strong>: a
+validação simplesmente não roda e o endpoint aceita qualquer coisa (o nosso 201 com ficha
+vazia). Por isso o ADR-003 abriu uma exceção ao ADR-002 só para os <code>*Request</code>.</li>
+<li><strong><code>AddValidation()</code> no projeto do tipo.</strong> O gerador só cria validação para os tipos do projeto
+onde o <code>AddValidation()</code> é chamado. Como o <code>Request</code> mora no <code>Norte.Catalogo</code>, a chamada fica no
+<code>AddCatalogo</code> — o ponto de entrada do módulo (ADR-002) é o lugar natural. Chamar só no
+<code>Program.cs</code> do host <strong>não</strong> cobre a biblioteca.</li>
+<li><strong>Não precisa mexer no <code>.csproj</code>.</strong> O SDK do .NET 10 já liga o que o gerador precisa
+(<em>interceptors</em>) em todo projeto <code>net10.0</code>. Artigos da época de teste (preview) mandavam
+acrescentar <code>InterceptorsNamespaces</code> — não vale mais (foi a hipótese errada do mentor).</li>
+</ol>
+<p><strong>Por que o <code>!</code> no <code>Executar</code>.</strong> Sem os <code>if</code>, o compilador avisa que <code>request.Sku</code> pode ser nulo
+(CS8604): ele não enxerga a validação, que só existe com a aplicação rodando. O <code>!</code> é uma promessa
+ao compilador: &quot;isso já foi garantido em outro lugar&quot;. Antes, com os <code>if</code>, o <code>!</code> era sobra (o
+<code>IsNullOrWhiteSpace</code> já informava o compilador); agora é necessário. <strong>A promessa só vale se o
+<code>Executar</code> for chamado depois da validação</strong> — e é exatamente isso que o teste de unidade não faz
+(<a href="#312-teste-de-integra%C3%A7%C3%A3o-com-webapplicationfactory-o-teste-passa-por-onde-a-regra-mora">3.12</a>).</p>
+<blockquote>
+<p><strong>Registro S14.</strong> Na <code>main</code> (merge do PR #3), o <code>request.Sku</code> <strong>sem</strong> o <code>!</code> <strong>não compilava</strong>
+(<code>CS8604</code>, confirmado compilando a <code>main</code> numa cópia limpa com <code>git worktree</code>). O <code>!</code> entrou, sem
+ser percebido, no commit do PR #4. A causa de a <code>main</code> ter ficado quebrada <strong>não foi
+investigada</strong>. Sem CI, nada acusou: é um dos motivos da S15 (<a href="#317-diagn%C3%B3stico-os-problemas-da-s14-e-como-achar-a-causa">3.17</a>).</p>
+</blockquote>
+<p><strong>Por que usamos · alternativa · custo — a comparação justa (correção do mentor, S14 parte 2).</strong>
+Na S12, esta entrada tratava o FluentValidation de passagem (&quot;licença aberta, muito comum, mais uma
+dependência&quot;), o que não dava ao leitor como <strong>decidir</strong>. Como você precisa defender A ou B em
+entrevista, a comparação certa é por <strong>critério</strong>, e o critério de escolha é a <strong>complexidade da
+regra</strong> (decisão sua, 06/10):</p>
+<table>
+<thead>
+<tr>
+<th>Critério</th>
+<th>Validação nativa (.NET 10)</th>
+<th>FluentValidation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Onde a regra fica</td>
+<td>em <strong>atributos</strong> no próprio <code>Request</code></td>
+<td>numa <strong>classe validadora</strong> separada (<code>AbstractValidator&lt;T&gt;</code>)</td>
+</tr>
+<tr>
+<td>Regra condicional (&quot;se o canal é X, o campo Y é obrigatório&quot;)</td>
+<td>só com <code>IValidatableObject</code> ou um atributo próprio: código <strong>dentro do tipo</strong></td>
+<td><code>When(...)</code>/<code>Unless(...)</code> na API fluente</td>
+</tr>
+<tr>
+<td>Regra sobre listas (cada item do pedido)</td>
+<td>atributos nos itens; regra <strong>entre</strong> itens exige código próprio</td>
+<td>regras por item e sobre a coleção (<code>RuleForEach</code>)</td>
+</tr>
+<tr>
+<td>Dados de fora / assíncrona (&quot;o SKU existe?&quot;)</td>
+<td><strong>tratar como não suportada</strong> até prova em contrário (hipótese em aberto). Mas isso não é validação de <strong>entrada</strong>: é regra de negócio</td>
+<td>existe regra assíncrona (a conferir ao adotar). Continua sendo regra de negócio e fica no endpoint/domínio</td>
+</tr>
+<tr>
+<td>Composição e reuso</td>
+<td>atributo reutilizável; tipos aninhados pelo gerador</td>
+<td>validador dentro de validador; regras compartilhadas</td>
+</tr>
+<tr>
+<td>Teste</td>
+<td><strong>por integração</strong> (a validação roda antes do handler; S12)</td>
+<td>o validador se testa <strong>sozinho</strong>, sem HTTP (a conferir ao adotar)</td>
+</tr>
+<tr>
+<td>Ligação nas Minimal APIs</td>
+<td><strong>automática</strong>: <code>AddValidation()</code> + filtro</td>
+<td><strong>manual</strong> (chamar o validador no endpoint ou num filtro); não há integração nativa (a conferir antes de adotar)</td>
+</tr>
+<tr>
+<td>Dependência</td>
+<td>nenhuma (faz parte do .NET 10)</td>
+<td>um pacote NuGet; licença aberta (Apache 2.0, verificada em 2025 — <strong>conferir de novo</strong> antes de afirmar)</td>
+</tr>
+<tr>
+<td>O que eu pago</td>
+<td><code>Request</code> <code>public</code> (ADR-003); chaves <code>PascalCase</code>; regra complexa vira código dentro do tipo; teste por integração</td>
+<td><strong>dois estilos</strong> de validação na mesma solution; ligação manual; uma dependência a mais</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Critério do Norte:</strong> <strong>forma</strong> da entrada (obrigatório, tamanho, formato, faixa) → validação
+nativa, levada ao limite no <code>Catalogo</code>; regra <strong>composta, condicional ou sobre listas</strong> →
+FluentValidation, a começar pelo <code>CriarPedido</code> no <code>Pedidos</code> (M1), em 3 passos (tentar com a nativa
+e ver o limite; resolver com FluentValidation + ADR na hora; meia página sua comparando ganho e
+preço). Regra que depende de <strong>dados de fora</strong> → regra de negócio, no endpoint ou no domínio.</p>
+<p><strong>Quando não usar:</strong> regra que depende de dados de fora (ex.: &quot;SKU não pode repetir&quot;, que precisa
+consultar o banco) <strong>não</strong> é validação de entrada: mora no endpoint ou no domínio. A validação
+nativa é para a <strong>forma</strong> da entrada (obrigatório, tamanho, formato).</p>
+<p><strong>Não confunda:</strong> validação de <strong>entrada</strong> (o JSON veio com o que precisa?) × <strong>regra de negócio</strong>
+(isso é permitido agora?). Pergunta de entrevista de M1: &quot;onde fica a validação de entrada e onde
+fica a regra de negócio?&quot;.</p>
+<p><strong>Na entrevista.</strong> <em>&quot;Como você valida entrada numa Minimal API no .NET 10?&quot;</em> → &quot;Com a validação
+nativa: atributos de DataAnnotations no request e <code>AddValidation()</code>. Ela roda antes do handler e
+devolve todos os erros num <code>ProblemDetails</code>. Cuidados: o tipo precisa ser público, a chamada
+precisa estar no projeto do tipo, e a regra passa a ser testada por integração, porque o handler
+chamado direto não passa pela validação. Para regra condicional ou sobre listas, eu avaliaria o
+FluentValidation: ele separa a regra num validador testável sozinho, ao preço de um segundo estilo
+de validação e de ligar o validador à mão.&quot;</p>
+<p><strong>Erros comuns:</strong> <code>Request</code> <code>internal</code> (validação some em silêncio); <code>AddValidation()</code> só no host;
+achar que o teste de unidade continua protegendo a regra; deixar os avisos de nulo no código.</p>
+<p>🧠 roda antes do endpoint; todos os erros de uma vez; só <code>public</code>; <code>AddValidation()</code> no projeto do
+tipo; a consequência para os testes; <strong>o critério pela complexidade da regra e o preço de cada
+lado</strong>. · 🔎 o <code>using System.ComponentModel.DataAnnotations</code>, a sintaxe do
+<code>[Required(ErrorMessage = ...)]</code>, o <code>DisableValidation()</code>.</p>
+<p><strong>Referências:</strong></p>
+<ul>
+<li><a href="https://learn.microsoft.com/en-us/aspnet/core/fundamentals/validation?view=aspnetcore-10.0">Validation in ASP.NET Core (Microsoft Learn, .NET 10)</a> — <strong>oficial</strong>; ler &quot;Register validation across assemblies&quot; e &quot;Troubleshoot generated validation metadata&quot;.</li>
+<li><a href="https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis?view=aspnetcore-10.0#validation-support-in-minimal-apis">Minimal APIs: validation support (Microsoft Learn)</a> — <strong>oficial</strong>.</li>
+<li><a href="https://github.com/dotnet/aspnetcore/blob/release/10.0/src/Validation/gen/Parsers/ValidationsGenerator.TypesParser.cs">Código do gerador, <code>ValidationsGenerator.TypesParser.cs</code> (release/10.0), linhas 77–81</a> — a checagem do <code>public</code>.</li>
+<li><a href="https://timdeschryver.dev/blog/aspnet-10-validating-incoming-models-in-minimal-apis">Tim Deschryver: ASP.NET 10, validating models in Minimal APIs</a> — bom panorama; <strong>atenção</strong>: da época de preview (a parte do <code>InterceptorsNamespaces</code> não vale mais).</li>
+</ul>
+<p><strong>Onde foi visto · status:</strong> S12 · feito por você com tarefa curta; diagnóstico do <code>internal</code> pelo
+Claude local · S14 (parte 2): comparação com o FluentValidation <strong>corrigida</strong> (esta versão) ·
+<strong>novo</strong>.</p>
+<hr />
+<p><a id="g3-12"></a></p>
+<h2 id="312-teste-de-integração-com-webapplicationfactory-o-teste-passa-por-onde-a-regra-mora">3.12 Teste de integração com <code>WebApplicationFactory</code>: o teste passa por onde a regra mora<button class="estudada" data-id="312-teste-de-integração-com-webapplicationfactory-o-teste-passa-por-onde-a-regra-mora" type="button">Marcar como estudada</button></h2>
+<blockquote>
+<p><strong>De → para</strong></p>
+<ul>
+<li><strong>No mercado:</strong> <em>integration test</em>, <code>WebApplicationFactory&lt;TEntryPoint&gt;</code>, <em>in-memory test
+server</em> (<code>TestServer</code>), <code>Microsoft.AspNetCore.Mvc.Testing</code>, <em>class fixture</em>.</li>
+<li><strong>No laboratório:</strong> <code>CadastrarFichaProdutoApiTests</code> (3 testes de recusa + o do 500, S14).</li>
+<li><strong>No seu mundo:</strong> subir a API e testar no Postman, à mão.</li>
+</ul>
+</blockquote>
+<p><strong>Em uma frase:</strong> o <code>WebApplicationFactory&lt;Program&gt;</code> sobe a API <strong>inteira</strong> em memória e o teste
+faz requisições HTTP de verdade — por isso ele cobre tudo o que acontece <strong>antes</strong> do endpoint.</p>
+<p><strong>Pergunta que responde:</strong> &quot;a regra saiu do endpoint; como eu provo que ela continua valendo?&quot;</p>
+<p><strong>A frase-chave: o teste precisa passar por onde a regra mora.</strong></p>
+<pre class="highlight"><code>Requisição HTTP → [rota] → [JSON → Request] → [validação nativa] → Executar → resposta
+                                                     ↑                 ↑
+                                         a regra de entrada     o teste de UNIDADE
+                                         mora aqui (S12)        entra aqui
+                  ↑
+          o teste de INTEGRAÇÃO entra aqui
+</code></pre>
+
+<p><strong>O que aconteceu na S12, na ordem (o &quot;porquê&quot; que não fixou no dia — leia devagar):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Passo</th>
+<th>O que foi feito</th>
+<th>Resultado</th>
+<th>Por quê</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>três <code>if</code> no <code>Executar</code>; 3 testes de recusa de unidade</td>
+<td>🟢</td>
+<td>a regra estava <strong>dentro</strong> do <code>Executar</code>, e o teste chamava o <code>Executar</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>os <code>if</code> saíram; <code>[Required]</code> no <code>Request</code></td>
+<td><code>.http</code>: 400 com os 3 erros ✅</td>
+<td>a regra foi para o caminho HTTP, <strong>antes</strong> do <code>Executar</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>dotnet test</code> (previsão sua: &quot;3 vermelhos&quot;)</td>
+<td>🔴🔴🔴 + 🟢</td>
+<td>o teste de unidade chama o <code>Executar</code> direto: <strong>pula a validação</strong>; o <code>Executar</code> recebe os nulos, cria a ficha (os <code>!</code>) e devolve 201</td>
+</tr>
+<tr>
+<td>4</td>
+<td>3 testes de recusa <strong>de integração</strong></td>
+<td>🟢🟢🟢</td>
+<td>a requisição passa pela validação, como em produção</td>
+</tr>
+<tr>
+<td>5</td>
+<td>os 3 de unidade apagados; o do 201 fica</td>
+<td>4 🟢</td>
+<td>o 201 testa o que o <code>Executar</code> ainda faz (criar e guardar)</td>
+</tr>
+<tr>
+<td>6</td>
+<td>sem o <code>[Required]</code> da descrição</td>
+<td>só o da descrição 🔴</td>
+<td>cada teste protege um lado da regra</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Unidade × integração:</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Teste de unidade (<code>...EndpointTests</code>)</th>
+<th>Teste de integração (<code>...ApiTests</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Chama</td>
+<td>o método <code>Executar</code>, direto</td>
+<td>a API, por HTTP (<code>HttpClient</code>)</td>
+</tr>
+<tr>
+<td>Passa pela rota, JSON, DI e validação?</td>
+<td><strong>não</strong></td>
+<td><strong>sim</strong></td>
+</tr>
+<tr>
+<td>Velocidade</td>
+<td>muito rápido</td>
+<td>mais lento (sobe o host; uma vez por classe)</td>
+</tr>
+<tr>
+<td>Quando falha, aponta</td>
+<td>a linha exata do <code>Executar</code></td>
+<td>&quot;a requisição não deu o esperado&quot; (mais amplo)</td>
+</tr>
+<tr>
+<td>Protege, no Norte</td>
+<td>criar e guardar a ficha (201)</td>
+<td>a regra &quot;Ficha exige SKU, descrição e NCM&quot;</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Como montar (S12):</strong></p>
+<pre class="highlight"><code><span class="n">dotnet</span> <span class="n">add</span> <span class="n">tests</span><span class="p">/</span><span class="n">Modulos</span><span class="p">/</span><span class="n">Catalogo</span><span class="p">/</span><span class="n">Norte</span><span class="p">.</span><span class="n">Catalogo</span><span class="p">.</span><span class="n">Tests</span> <span class="n">package</span> <span class="n">Microsoft</span><span class="p">.</span><span class="n">AspNetCore</span><span class="p">.</span><span class="n">Mvc</span><span class="p">.</span><span class="n">Testing</span>
+<span class="n">dotnet</span> <span class="n">add</span> <span class="n">tests</span><span class="p">/</span><span class="n">Modulos</span><span class="p">/</span><span class="n">Catalogo</span><span class="p">/</span><span class="n">Norte</span><span class="p">.</span><span class="n">Catalogo</span><span class="p">.</span><span class="n">Tests</span> <span class="n">reference</span> <span class="n">src</span><span class="p">/</span><span class="n">Norte</span><span class="p">.</span><span class="n">Api</span>
+</code></pre>
+
+<pre class="highlight"><code><span class="k">using</span><span class="w"> </span><span class="nn">System.Net</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">System.Net.Http.Json</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">Microsoft.AspNetCore.Http</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">Microsoft.AspNetCore.Mvc.Testing</span><span class="p">;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">Norte.Catalogo.Tests.CadastrarFichaProduto</span><span class="p">;</span>
+
+<span class="c1">// IClassFixture: o xUnit cria UMA fábrica (uma API em memória) para todos os testes desta classe.</span>
+<span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nf">CadastrarFichaProdutoApiTests</span><span class="p">(</span><span class="n">WebApplicationFactory</span><span class="o">&lt;</span><span class="n">Program</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fabrica</span><span class="p">)</span>
+<span class="w">    </span><span class="p">:</span><span class="w"> </span><span class="n">IClassFixture</span><span class="o">&lt;</span><span class="n">WebApplicationFactory</span><span class="o">&lt;</span><span class="n">Program</span><span class="o">&gt;&gt;</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="na">[Fact]</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">Recusa_ficha_sem_sku_e_devolve_400</span><span class="p">()</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Arrange: um cliente HTTP falando com a API em memória, e o corpo da requisição</span>
+<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">cliente</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fabrica</span><span class="p">.</span><span class="n">CreateClient</span><span class="p">();</span>
+<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">corpo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">sku</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">""</span><span class="p">,</span><span class="w"> </span><span class="n">descricao</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"Luva nitrilica"</span><span class="p">,</span><span class="w"> </span><span class="n">ncm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"40151900"</span><span class="w"> </span><span class="p">};</span>
+
+<span class="w">        </span><span class="c1">// Act: requisição de verdade — passa pela validação nativa antes do Executar</span>
+<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">resposta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">cliente</span><span class="p">.</span><span class="n">PostAsJsonAsync</span><span class="p">(</span><span class="s">"/catalogo/fichas-produto"</span><span class="p">,</span><span class="w"> </span><span class="n">corpo</span><span class="p">);</span>
+
+<span class="w">        </span><span class="c1">// Assert: 400, com erro no campo Sku (e só a falta do SKU explica o erro)</span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">HttpStatusCode</span><span class="p">.</span><span class="n">BadRequest</span><span class="p">,</span><span class="w"> </span><span class="n">resposta</span><span class="p">.</span><span class="n">StatusCode</span><span class="p">);</span>
+<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">problema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">resposta</span><span class="p">.</span><span class="n">Content</span><span class="p">.</span><span class="n">ReadFromJsonAsync</span><span class="o">&lt;</span><span class="n">HttpValidationProblemDetails</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="n">NotNull</span><span class="p">(</span><span class="n">problema</span><span class="p">);</span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="n">Contains</span><span class="p">(</span><span class="s">"Sku"</span><span class="p">,</span><span class="w"> </span><span class="n">problema</span><span class="p">.</span><span class="n">Errors</span><span class="p">.</span><span class="n">Keys</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Peça</th>
+<th>O que faz</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>WebApplicationFactory&lt;Program&gt;</code></td>
+<td>sobe o <code>Norte.Api</code> (o <code>Program</code> do host) com todos os módulos, em memória, sem porta</td>
+</tr>
+<tr>
+<td><code>IClassFixture&lt;...&gt;</code> + construtor primário</td>
+<td>o xUnit cria <strong>uma</strong> fábrica e a passa para todos os testes da classe</td>
+</tr>
+<tr>
+<td><code>fabrica.CreateClient()</code></td>
+<td>um <code>HttpClient</code> que fala com essa API em memória</td>
+</tr>
+<tr>
+<td><code>PostAsJsonAsync</code></td>
+<td>serializa o objeto para JSON e faz o POST</td>
+</tr>
+<tr>
+<td><code>async Task</code></td>
+<td>o teste espera a resposta HTTP</td>
+</tr>
+<tr>
+<td><code>HttpValidationProblemDetails</code></td>
+<td>o formato do corpo de erro de validação (o mesmo que você viu no <code>.http</code>)</td>
+</tr>
+<tr>
+<td><code>Assert.Contains(&quot;Sku&quot;, ...)</code></td>
+<td>a tradução de &quot;o erro aponta o SKU&quot; — com <code>S</code> maiúsculo, como a validação nativa devolve</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>Program</code> no .NET 10.</strong> Com <code>Program.cs</code> sem classe (<em>top-level statements</em>), o <code>Program</code> era
+<code>internal</code> e o projeto de testes não o enxergava; até o .NET 9 era preciso escrever
+<code>public partial class Program { }</code> no fim do <code>Program.cs</code>. <strong>No .NET 10 o SDK gera isso sozinho.</strong></p>
+<p><strong>Cuidado: estado compartilhado.</strong> A fábrica (e, com ela, o <code>FichaProdutoRepository</code> registrado como
+Singleton) é a <strong>mesma</strong> para todos os testes da classe. Hoje não importa (os testes de recusa não
+guardam nada). Quando um teste depender do que outro guardou — por exemplo, &quot;não aceita SKU
+repetido&quot; —, cada teste precisa usar dados próprios ou um banco limpo. Isso volta com o EF Core e,
+mais adiante, com Testcontainers.</p>
+<blockquote>
+<p><strong>Atualização S14.</strong> A fábrica compartilhada é a base para <strong>trocar uma peça só num teste</strong>: o
+<code>WithWebHostBuilder</code> cria uma <strong>cópia</strong> da API com o ajuste, sem mexer na fábrica dos outros
+testes (no log aparecem dois hosts). Visto no teste do 500 — <a href="#316-dubl%C3%AA-de-teste-e-ambiente-do-teste-trocar-uma-pe%C3%A7a-s%C3%B3-no-teste">3.16</a>. Também vale: por
+padrão, a API do teste roda em ambiente <code>Development</code> (documentação oficial + log).</p>
+</blockquote>
+<p><strong>Ponte com limite.</strong> O teste de integração lembra o teste manual no Postman, <strong>mas</strong> roda sozinho
+no <code>dotnet test</code> (e no CI), sem subir processo nem abrir porta. Ele <strong>não</strong> substitui o teste de
+unidade: é mais lento e, quando falha, aponta menos precisamente.</p>
+<p><strong>Na entrevista.</strong> <em>&quot;Teste de unidade do handler ou teste de integração pela API?&quot;</em> (pergunta do
+banco de M1) → &quot;Os dois, cada um onde a regra mora. O que o handler faz, testo por unidade: é
+rápido e aponta a linha. O que acontece antes dele — rota, serialização, DI, validação — só um
+teste que passe pelo HTTP prova; uso <code>WebApplicationFactory</code>. No .NET 10 isso ficou claro: a
+validação nativa roda antes do handler, então o teste de unidade passaria verde mesmo com a
+validação quebrada.&quot;</p>
+<p><strong>Erros comuns (S12):</strong> achar que o teste de unidade continua protegendo a regra depois que ela
+saiu do endpoint; deixar os testes antigos <strong>comentados</strong> em vez de apagados (com os mesmos nomes
+dos novos, o Test Explorer pareceu mostrar os novos falhando); conferir a chave em minúscula
+(<code>&quot;sku&quot;</code>) quando a validação nativa devolve <code>&quot;Sku&quot;</code>.</p>
+<p>🧠 <strong>o teste precisa passar por onde a regra mora</strong>; unidade × integração (o que cada um prova e o
+custo); por que a validação nativa empurrou a regra para a integração. · 🔎 o pacote, o
+<code>IClassFixture</code>, o <code>CreateClient</code>, o <code>PostAsJsonAsync</code>, o <code>HttpValidationProblemDetails</code>.</p>
+<p><strong>Referências:</strong></p>
+<ul>
+<li><a href="https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-10.0">Integration tests in ASP.NET Core (Microsoft Learn, .NET 10)</a> — <strong>oficial; a leitura principal</strong>: <code>WebApplicationFactory</code>, <code>IClassFixture</code>, <code>CreateClient</code>, troca de serviços no teste (<code>WithWebHostBuilder</code>, <code>ConfigureTestServices</code>), banco de teste, e as seções &quot;SUT environment&quot; e &quot;Set the environment&quot; (conferidas na S14).</li>
+<li><a href="https://github.com/dotnet/aspnetcore/pull/58199">PR dotnet/aspnetcore #58199</a> — por que o <code>public partial class Program { }</code> não é mais preciso.</li>
+<li><a href="https://startdebugging.net/pt-br/2026/07/how-to-write-integration-tests-with-webapplicationfactory-in-aspnetcore-11/">StartDebugging: testes de integração com WebApplicationFactory (pt-BR)</a> — passo a passo; escrito para o .NET 11, o essencial vale para o 10.</li>
+</ul>
+<p><strong>Onde foi visto · status:</strong> S12 · 1º teste escrito pelo mentor (exemplo resolvido); os outros dois
+por você, adaptando o modelo, com 🔴 → 🟢 · <strong>o porquê NÃO fixou (S4 = 1, calibrada) — revisitar na
+S13</strong>, reconstruído por você · S14: o 4º teste (o do 500) usa a mesma fábrica.</p>
+<hr />
+<p><a id="g3-13"></a></p>
+<h2 id="313-pasta-por-funcionalidade-o-que-é-de-um-caso-de-uso-fica-junto">3.13 Pasta por funcionalidade: o que é de um caso de uso fica junto<button class="estudada" data-id="313-pasta-por-funcionalidade-o-que-é-de-um-caso-de-uso-fica-junto" type="button">Marcar como estudada</button></h2>
+<blockquote>
+<p><strong>De → para</strong></p>
+<ul>
+<li><strong>No mercado:</strong> <em>feature folders</em>, <em>Vertical Slice Architecture</em> (M2), <em>package by feature</em>.</li>
+<li><strong>No laboratório:</strong> <code>Norte.Catalogo/CadastrarFichaProduto/</code> (S12, proposta sua).</li>
+<li><strong>No seu mundo:</strong> o <em>feature-first</em> do Flutter (a ponte, <strong>com limite</strong>: aqui o módulo ainda tem
+fronteira própria); no .NET, as pastas técnicas <code>Controllers/Services/Repositories</code>.</li>
+</ul>
+</blockquote>
+<p><strong>Em uma frase:</strong> cada caso de uso tem a sua pasta, com tudo o que só ele usa; o que várias
+funcionalidades do módulo usam fica na raiz do módulo.</p>
+<pre class="highlight"><code>Norte.Catalogo/
+├─ CatalogoModulo.cs              ← ponto de entrada do módulo (ADR-002)
+├─ FichaProduto.cs                ← usado por TODAS as funcionalidades do Catalogo
+├─ FichaProdutoRepository.cs      ← idem
+├─ Catalogo.http                  ← requisições do módulo (3.4)
+└─ CadastrarFichaProduto/         ← um caso de uso
+   ├─ CadastrarFichaProdutoRequest.cs
+   └─ CadastrarFichaProdutoEndpoint.cs
+</code></pre>
+
+<p><strong>O critério:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Usado por</th>
+<th>Mora em</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>uma</strong> funcionalidade só (<code>Request</code>, <code>Endpoint</code>)</td>
+<td>a pasta da funcionalidade</td>
+</tr>
+<tr>
+<td><strong>várias</strong> funcionalidades do módulo (entidade, repositório)</td>
+<td>a raiz do módulo (em M2, talvez uma pasta <code>Dominio/</code>)</td>
+</tr>
+<tr>
+<td><strong>vários módulos</strong></td>
+<td>ninguém: módulo não compartilha tipos; conversa por contrato (ADR-002)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>A dúvida da S12:</strong> &quot;a <code>FichaProduto</code> não vai ser usada por outros módulos, então vai para a pasta
+da funcionalidade?&quot; — Não: o critério é <strong>outras funcionalidades do mesmo módulo</strong>. O futuro
+<code>AlterarFichaProduto</code> (a descrição que muda e vai para a NF-e) vai usar a mesma <code>FichaProduto</code>; se
+ela morasse em <code>CadastrarFichaProduto/</code>, uma fatia dependeria da outra.</p>
+<p><strong>Namespace acompanha a pasta:</strong> <code>Norte.Catalogo.CadastrarFichaProduto</code> (padrão do VS; o analisador
+avisa quando não bate). O código dentro da pasta enxerga os tipos de <code>Norte.Catalogo</code> sem <code>using</code>
+(namespace pai); quem está fora precisa de <code>using Norte.Catalogo.CadastrarFichaProduto;</code>. Os testes
+espelham: <code>Norte.Catalogo.Tests/CadastrarFichaProduto/</code>.</p>
+<p><strong>Mover com <code>git mv</code></strong> (o Git registra como movimento, e o histórico do arquivo continua):</p>
+<pre class="highlight"><code><span class="n">mkdir</span> <span class="s2">"$src/CadastrarFichaProduto"</span>
+<span class="n">git</span> <span class="nb">mv </span><span class="s2">"$src/CadastrarFichaProdutoRequest.cs"</span> <span class="s2">"$src/CadastrarFichaProduto/"</span>
+</code></pre>
+
+<p><strong>Por que agora (e não em M2, como estava previsto).</strong> Com uma funcionalidade só, a pasta ainda não
+resolvia problema; mas o custo de fazer cedo era pequeno (2 arquivos) e o seu incômodo ao ler era
+sinal real. Decisão sua, aceita.</p>
+<p><strong>Na entrevista.</strong> <em>&quot;Por camada técnica ou por funcionalidade?&quot;</em> (banco de M1) → &quot;Por
+funcionalidade: tudo de 'cadastrar ficha' num lugar, fácil de achar, de mudar e de apagar. O custo
+é decidir o que é compartilhado — no meu projeto, entidade e repositório ficam na raiz do módulo, e
+entre módulos nada é compartilhado.&quot;</p>
+<p>🧠 o critério das três linhas. · 🔎 o <code>git mv</code>; o namespace acompanhando a pasta.</p>
+<p><strong>Onde foi visto · status:</strong> S12 · feito por você · <strong>novo</strong>.</p>
+<hr />
+<p><a id="g3-14"></a></p>
+<h2 id="314-diagnóstico-os-problemas-da-s12-e-como-achar-a-causa">3.14 Diagnóstico: os problemas da S12 e como achar a causa<button class="estudada" data-id="314-diagnóstico-os-problemas-da-s12-e-como-achar-a-causa" type="button">Marcar como estudada</button></h2>
+<table>
+<thead>
+<tr>
+<th>Sintoma</th>
+<th>Causa</th>
+<th>Como achar · como resolver</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Breakpoint no teste <strong>não para</strong></td>
+<td>teste executado com <strong>Run</strong>, que não liga o depurador</td>
+<td>Test Explorer → botão direito → <strong>Debug</strong> (ou <code>Ctrl+R</code>, <code>Ctrl+T</code> com o cursor no teste). Bolinha vazia = código diferente do que roda: <em>Rebuild</em></td>
+</tr>
+<tr>
+<td>Validação nativa ligada, mas o POST com campos vazios dá <strong>201</strong>, sem erro nem log</td>
+<td><code>Request</code> <code>internal</code>: o gerador do .NET 10 ignora tipos não-<code>public</code></td>
+<td><code>dotnet build ... -p:EmitCompilerGeneratedFiles=true</code> e abrir <code>obj/**/generated/.../ValidatableInfoResolver.g.cs</code>: se o <code>Request</code> não aparece, o gerador não o viu. Resolver: <code>public</code> (ADR-003)</td>
+</tr>
+<tr>
+<td>Depois de tirar os <code>if</code>, aviso <strong>CS8604</strong> (possível nulo)</td>
+<td>o compilador não enxerga a validação</td>
+<td><code>!</code> nos campos garantidos pela validação (<a href="#311-valida%C3%A7%C3%A3o-nativa-do-net-10-a-regra-de-entrada-declarada-no-request">3.11</a>)</td>
+</tr>
+<tr>
+<td><code>dotnet test</code>: <strong>7 testes, 3 falhando</strong>, quando deveriam ser 4</td>
+<td>os 3 testes de recusa antigos (unidade) ainda estavam no arquivo, comentados ou não, com os <strong>mesmos nomes</strong> dos novos</td>
+<td>ler o nome <strong>completo</strong> (classe + método) na saída do terminal; código que sai é <strong>apagado</strong></td>
+</tr>
+<tr>
+<td>Commit esquecido depois do push</td>
+<td>—</td>
+<td>não reescrever o histórico enviado: commit novo (<code>git commit --amend</code> só <strong>antes</strong> do push)</td>
+</tr>
+<tr>
+<td>Hipótese do mentor: falta <code>InterceptorsNamespaces</code> no <code>.csproj</code></td>
+<td><strong>errada</strong>: o SDK do .NET 10 já liga isso</td>
+<td>conferir na linha de comando do compilador / no targets do SDK antes de acrescentar configuração</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><a id="g3-15"></a></p>
+<h2 id="315-erros-da-api-em-formato-padrão-addproblemdetails-useexceptionhandler-e-usestatuscodepages">3.15 Erros da API em formato padrão: <code>AddProblemDetails()</code>, <code>UseExceptionHandler()</code> e <code>UseStatusCodePages()</code><button class="estudada" data-id="315-erros-da-api-em-formato-padrão-addproblemdetails-useexceptionhandler-e-usestatuscodepages" type="button">Marcar como estudada</button></h2>
+<blockquote>
+<p><strong>De → para</strong></p>
+<ul>
+<li><strong>No mercado:</strong> <em>Problem Details for HTTP APIs</em> (RFC 9457), <code>IProblemDetailsService</code>,
+<em>exception handler middleware</em>, <em>status code pages</em>, <code>application/problem+json</code>.</li>
+<li><strong>No laboratório:</strong> três linhas no <code>Program.cs</code> <strong>do host</strong> (<code>src/Norte.Api/Program.cs</code>) ·
+commit <code>feat(api): padronizar erros com problem details</code> · PR #4.</li>
+<li><strong>No seu mundo:</strong> <code>app.UseExceptionHandler(&quot;/error&quot;)</code> ou um <strong>middleware próprio</strong> (<code>try/catch</code>
+que escreve o JSON na resposta) no <code>Startup.Configure</code>; nos controllers, o <code>[ApiController]</code>
+já transformava erros 4xx em <code>ProblemDetails</code> (conhecimento geral; <strong>não conferido na
+documentação hoje</strong>).</li>
+</ul>
+</blockquote>
+<p><strong>Em uma frase:</strong> três linhas no host fazem <strong>todo</strong> erro 4xx/5xx sair no mesmo formato
+(<code>application/problem+json</code>), sem middleware escrito por você, sem <code>try/catch</code> em endpoint e <strong>sem
+vazar a causa</strong> para o cliente.</p>
+<p><strong>Pergunta que responde:</strong> &quot;o que cada uma dessas linhas faz, <strong>e onde ela entra</strong>?&quot; (a sua dúvida
+de 07/10).</p>
+<p><strong>O problema (visto no <code>.http</code>, S14):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Situação</th>
+<th>Antes</th>
+<th>Depois</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /catalogo/inexistente</code> (404 de rota)</td>
+<td><code>Content-Length: 0</code>, <strong>sem corpo</strong></td>
+<td><code>application/problem+json</code> com <code>type</code>, <code>title</code>, <code>status</code>, <code>traceId</code></td>
+</tr>
+<tr>
+<td>Exceção não tratada, em <code>Development</code></td>
+<td>corpo com <code>detail</code>, <code>exception</code> (rastro, cabeçalhos, caminho) — <strong>vazava</strong></td>
+<td><code>title</code> genérico, <code>status</code>, <code>traceId</code>; <strong>sem</strong> <code>detail</code> nem <code>exception</code></td>
+</tr>
+<tr>
+<td>400 da validação nativa</td>
+<td><code>application/json</code></td>
+<td><code>application/problem+json</code>, com a chave <code>Sku</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>As três linhas:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Linha</th>
+<th>O que faz</th>
+<th>Onde entra</th>
+<th>Sem ela</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>builder.Services.AddProblemDetails();</code></td>
+<td>Registra o serviço que <strong>escreve</strong> o corpo <code>ProblemDetails</code></td>
+<td><strong>Antes</strong> do <code>Build()</code> (é registro de serviço — <a href="parte-0-1.html#14-programcs-moderno-de-startupcs-para-builder-e-app">1.4</a>)</td>
+<td>Os outros dois não têm quem escreva o corpo</td>
+</tr>
+<tr>
+<td><code>app.UseExceptionHandler();</code></td>
+<td><strong>Captura</strong> a exceção não tratada, registra no log e pede o corpo ao serviço</td>
+<td><strong>Depois</strong> do <code>Build()</code>, antes dos <code>Map...</code> (é middleware)</td>
+<td>Em <code>Production</code>, <strong>ninguém captura</strong> (a exceção estoura sem resposta — visto no teste de 08/10); em <code>Development</code>, a página do desenvolvedor captura e mostra o rastro</td>
+</tr>
+<tr>
+<td><code>app.UseStatusCodePages();</code></td>
+<td><strong>Preenche</strong> o corpo de respostas 4xx/5xx que saem <strong>vazias</strong></td>
+<td>idem</td>
+<td>O 404 de rota inexistente continua sem corpo</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Três verbos, três papéis — o ponto que mais confundiu:</strong> o <code>AddProblemDetails()</code> <strong>escreve</strong> o
+corpo; o <code>UseExceptionHandler()</code> <strong>captura</strong> a exceção; o <code>UseStatusCodePages()</code> <strong>preenche</strong> o que
+veio vazio. Nenhum dos três faz o trabalho do outro (S14, partes 1 e 2: a confusão apareceu duas
+vezes).</p>
+<table>
+<thead>
+<tr>
+<th>Como era (<code>Startup.cs</code>)</th>
+<th>Como é agora (<code>Program.cs</code>)</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>app.UseExceptionHandler(&quot;/error&quot;)</code> ou um <code>ErrorHandlingMiddleware</code> próprio com <code>try/catch</code></td>
+<td><code>app.UseExceptionHandler();</code> + <code>AddProblemDetails()</code></td>
+<td>Você não escreve o middleware nem o JSON: o formato é o padrão (RFC)</td>
+</tr>
+<tr>
+<td><code>if (env.IsDevelopment()) app.UseDeveloperExceptionPage();</code></td>
+<td><strong>automático</strong> em <code>Development</code>: o <code>WebApplication.CreateBuilder</code> já liga a página do desenvolvedor</td>
+<td>Ela captura <strong>antes</strong>, com rastro — e foi o que mascarou o teste (<a href="#316-dubl%C3%AA-de-teste-e-ambiente-do-teste-trocar-uma-pe%C3%A7a-s%C3%B3-no-teste">3.16</a>)</td>
+</tr>
+<tr>
+<td>404 sem corpo: aceito como &quot;normal&quot;</td>
+<td><code>app.UseStatusCodePages();</code></td>
+<td>Todo 4xx/5xx vazio ganha o corpo padrão</td>
+</tr>
+<tr>
+<td><code>ConfigureServices(IServiceCollection services)</code></td>
+<td><code>builder.Services.AddProblemDetails();</code> antes do <code>Build()</code></td>
+<td>Mesmo papel: registrar o serviço antes de a aplicação ser construída</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O que acontece num 500, passo a passo:</strong></p>
+<pre class="highlight"><code>requisição → [UseExceptionHandler] → [UseStatusCodePages] → endpoint (a exceção nasce)
+                  ↑ captura; grava a exceção COMPLETA no log; pede o corpo ao ProblemDetails
+resposta ← 500  application/problem+json  { "title": "An error occurred while processing
+           your request.", "status": 500, "traceId": "..." }       (sem detail, sem rastro)
+log      ← fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1] + a exceção
+</code></pre>
+
+<p>A causa <strong>não vai para o cliente</strong>; vai para o <strong>log</strong>. O <code>traceId</code> do corpo é o que o cliente
+informa ao suporte para achar o erro (no formato padrão do console, o <code>traceId</code> <strong>não</strong> aparece na
+linha do log — visto na S14; mostrar escopos no log é assunto da sessão de logging).</p>
+<p><strong>Como ler o log (o que a S14 ensinou):</strong></p>
+<table>
+<thead>
+<tr>
+<th>O que olhar</th>
+<th>O que diz</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A <strong>categoria</strong> na linha <code>fail: &lt;categoria&gt;[1]</code></td>
+<td><strong>quem</strong> registrou o erro. <code>ExceptionHandlerMiddleware</code> = o <code>UseExceptionHandler()</code>. <code>DeveloperExceptionPageMiddleware</code> = a página do desenvolvedor</td>
+</tr>
+<tr>
+<td>O <strong>fim</strong> do rastro (as últimas linhas <code>at ...</code>)</td>
+<td>o middleware <strong>mais externo</strong> que capturou (<code>ExceptionHandlerMiddlewareImpl</code> × <code>DeveloperExceptionPageMiddlewareImpl</code>)</td>
+</tr>
+<tr>
+<td>O <strong>começo</strong> do rastro (as primeiras linhas <code>at ...</code>)</td>
+<td><strong>onde a exceção nasceu</strong> (no teste do 500, a sua linha do <code>throw</code> em <code>CadastrarFichaProdutoApiTests.cs</code>)</td>
+</tr>
+<tr>
+<td>Linhas do <code>Executar</code> no rastro</td>
+<td>no teste do 500, <strong>não aparecem</strong>: a exceção nasce ao montar o parâmetro, <strong>antes</strong> do corpo do <code>Executar</code> (visto)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O cabeçalho <code>Accept</code> (conferido na documentação, S14).</strong> O serviço só escreve o corpo se o
+<code>Accept</code> do cliente aceitar <code>application/json</code>, <code>application/problem+json</code> ou <code>*/*</code>. No teste do
+500, <strong>não</strong> montamos o <code>Accept</code> e o corpo veio em <code>application/problem+json</code> (visto).</p>
+<p><strong>Por que usamos · alternativa · custo (ganho × preço):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Escolha</th>
+<th>O que eu ganho</th>
+<th>O que eu <strong>pago</strong> (e quem paga)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AddProblemDetails()</code> + <code>UseExceptionHandler()</code> (plataforma)</td>
+<td>formato padrão (RFC); nada de middleware próprio; a causa fica no log, não na resposta</td>
+<td>o 500 do cliente é <strong>genérico</strong>: ele não vê a causa, e <strong>quem opera</strong> depende do log e do <code>traceId</code>. Sem controle fino do formato (para isso existe um <code>IExceptionHandler</code> próprio)</td>
+</tr>
+<tr>
+<td><code>UseStatusCodePages()</code></td>
+<td>todo 4xx/5xx vazio ganha corpo padrão</td>
+<td><strong>cliente que já consome a API</strong> e assumia corpo vazio precisa se adaptar (quem só confere o status não muda); o 404 de rota inexistente passa a ter o <strong>mesmo formato genérico</strong> de um 404 de &quot;ficha não encontrada&quot;</td>
+</tr>
+<tr>
+<td>Alternativa: middleware próprio (<code>try/catch</code> + JSON)</td>
+<td>controle total do formato</td>
+<td>você mantém o código; cada cliente aprende um formato novo; o 404 sem corpo <strong>não passa por exceção</strong> e continua sem corpo</td>
+</tr>
+<tr>
+<td>Alternativa: <code>try/catch</code> em cada endpoint</td>
+<td>nada global</td>
+<td>repetição e esquecimento; o que escapar vaza o rastro</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Não confunda:</strong> o <strong>400</strong> da validação (erro <strong>esperado</strong>, do cliente; o corpo traz <code>errors</code>) ×
+o <strong>500</strong> (erro <strong>inesperado</strong>, do servidor; o corpo <strong>não</strong> traz a causa). E exceção <strong>não</strong> é
+fluxo de negócio comum.</p>
+<p><strong><code>IExceptionHandler</code> próprio — não usado.</strong> Só se surgir a necessidade de <strong>mapear uma exceção de
+negócio</strong> para 404 ou 409. Antes de usar, conferir <code>AddExceptionHandler&lt;T&gt;()</code> na página <strong>geral</strong> de
+<em>error handling</em> (a página <em>Handle errors in ASP.NET Core APIs</em> <strong>não</strong> o cobre — conferido na S14).</p>
+<p><strong>Na entrevista.</strong> <em>&quot;Como você trata erros numa API ASP.NET Core moderna? Por que não <code>try/catch</code>
+em todo endpoint?&quot;</em> → &quot;No host, três peças: <code>AddProblemDetails()</code>, <code>UseExceptionHandler()</code> e
+<code>UseStatusCodePages()</code>. Toda exceção não tratada e todo 4xx/5xx vazio saem em
+<code>application/problem+json</code>, e a causa vai para o log, com um <code>traceId</code> que liga um ao outro.
+<code>try/catch</code> em cada endpoint repete código e deixa escapar o que se esquecer. O custo: o cliente
+vê um 500 genérico e quem opera precisa do log; e quem já consumia a API sem corpo precisa se
+adaptar. Para mapear exceção de negócio para um status específico, eu escreveria um
+<code>IExceptionHandler</code>.&quot;</p>
+<p><strong>Erros comuns (S14):</strong> aplicar <strong>1 de 2</strong> linhas da tarefa e só descobrir no experimento; achar que
+o <code>ProblemDetails</code> captura a exceção; achar que a exceção &quot;só acontece&quot; fora de <code>Development</code> (ela
+acontece em qualquer ambiente; o que muda é <strong>quem a captura</strong>); dar um 500 em <code>problem+json</code> como
+prova de sucesso sem olhar quem capturou (era a página do desenvolvedor); ler &quot;custo&quot; como
+trabalho do desenvolvedor, e não como efeito no cliente ou em quem opera.</p>
+<p>🧠 o papel de cada linha (<strong>escreve · captura · preenche</strong>) e onde entra; a causa vai para o log, não
+para o cliente; o preço. · 🔎 os nomes exatos dos três métodos; a ordem no <code>Program.cs</code>.</p>
+<p><strong>Referências:</strong></p>
+<ul>
+<li><em>Handle errors in ASP.NET Core APIs</em> (Microsoft Learn, .NET 10) — <strong>oficial</strong>; ler a parte do <code>AddProblemDetails</code> e do <code>Accept</code>. (Pesquisar o título: o endereço não foi aberto nesta sessão.)</li>
+<li><em>Handle errors in ASP.NET Core</em> (página geral, Microsoft Learn) — <strong>oficial</strong>; é onde está o <code>AddExceptionHandler&lt;T&gt;()</code>.</li>
+</ul>
+<p><strong>Onde foi visto · status:</strong> S14 (partes 1 e 2) · 4 experimentos vistos (500 com a página do
+desenvolvedor, 500 com o <code>UseExceptionHandler()</code>, 404 sem e com corpo, 400 em <code>problem+json</code>) ·
+mecanismo ✅; <strong>capturar × escrever ainda frágil (2×)</strong>; o preço saiu certo pela 1ª vez no PR #4.</p>
+<hr />
+<p><a id="g3-16"></a></p>
+<h2 id="316-dublê-de-teste-e-ambiente-do-teste-trocar-uma-peça-só-no-teste">3.16 Dublê de teste e ambiente do teste: trocar uma peça só no teste<button class="estudada" data-id="316-dublê-de-teste-e-ambiente-do-teste-trocar-uma-peça-só-no-teste" type="button">Marcar como estudada</button></h2>
+<blockquote>
+<p><strong>De → para</strong></p>
+<ul>
+<li><strong>No mercado:</strong> <em>test double</em> (<em>stub</em>, <em>fake</em>, <em>mock</em>), <code>ConfigureTestServices</code>,
+<code>WithWebHostBuilder</code>, <code>UseEnvironment</code>.</li>
+<li><strong>No laboratório:</strong> o teste <code>Erro_inesperado_devolve_500_em_problem_details_sem_vazar_detalhes</code>,
+em <code>CadastrarFichaProdutoApiTests</code> (S14 parte 2).</li>
+<li><strong>No seu mundo:</strong> <code>new Mock&lt;IFichaProdutoService&gt;()</code> com <code>.Setup(...).Throws(...)</code> e
+<code>new Controller(mock.Object)</code>. <strong>Ponte com limite:</strong> aqui não há interface nem biblioteca de
+mock: o que se troca é o <strong>registro na DI</strong>, e a API inteira sobe com a peça trocada.</li>
+</ul>
+</blockquote>
+<p><strong>Em uma frase:</strong> um <strong>dublê de teste</strong> é uma peça colocada no lugar da real, só no teste, para
+provocar uma situação que os dados sozinhos não provocam (aqui, uma falha de dentro).</p>
+<p><strong>Pergunta que responde:</strong> &quot;como provo o caminho de erro, se o código de produção <strong>não</strong> pode ter
+um <code>throw</code> de teste?&quot;</p>
+<p><strong>O que o teste protege.</strong> O <code>UseExceptionHandler()</code> do <code>Program.cs</code>: sem ele, uma exceção
+inesperada vaza o rastro para o cliente. Hoje, <strong>só este teste</strong> o protege. Ele mora no projeto de
+testes do <code>Catalogo</code> apenas porque usa a rota do <code>Catalogo</code> como <strong>gatilho</strong>; a regra é do <strong>host</strong>
+(quando houver um projeto de testes do host, o teste vai para lá).</p>
+<table>
+<thead>
+<tr>
+<th>Como era</th>
+<th>Como é agora</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mock.Setup(x =&gt; x.Cadastrar(...)).Throws(...)</code></td>
+<td><code>servicos.AddSingleton&lt;FichaProdutoRepository&gt;(_ =&gt; throw ...)</code></td>
+<td>Sem biblioteca e sem interface: uma <strong>fábrica</strong> que lança</td>
+</tr>
+<tr>
+<td><code>new Controller(mock.Object)</code></td>
+<td><code>fabrica.WithWebHostBuilder(...).CreateClient()</code></td>
+<td>O teste não monta o objeto: troca o <strong>registro</strong>, e a API inteira sobe com ele</td>
+</tr>
+<tr>
+<td>override de <code>ConfigureServices</code> num <code>Startup</code> de teste</td>
+<td><code>ConfigureTestServices</code></td>
+<td>Roda <strong>depois</strong> do <code>AddCatalogo()</code>: o registro do teste <strong>vence</strong></td>
+</tr>
+<tr>
+<td><code>ASPNETCORE_ENVIRONMENT=Production</code> na máquina</td>
+<td><code>construtor.UseEnvironment(&quot;Production&quot;)</code></td>
+<td>O ambiente é fixado <strong>por teste</strong>, sem mexer na máquina</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O código do Norte (S14):</strong></p>
+<pre class="highlight"><code><span class="c1">/// &lt;summary&gt;</span>
+<span class="c1">/// Protege o &lt;c&gt;UseExceptionHandler()&lt;/c&gt; do &lt;c&gt;Program.cs&lt;/c&gt;: sem ele, uma exceção</span>
+<span class="c1">/// inesperada vaza o rastro do erro para o cliente. O teste força a exceção trocando o</span>
+<span class="c1">/// repositório por um que lança, e confere o 500 em &lt;c&gt;application/problem+json&lt;/c&gt;,</span>
+<span class="c1">/// sem &lt;c&gt;detail&lt;/c&gt; nem &lt;c&gt;exception&lt;/c&gt;.</span>
+<span class="c1">/// O ambiente é &lt;c&gt;Production&lt;/c&gt; de propósito: em &lt;c&gt;Development&lt;/c&gt; a página de exceção</span>
+<span class="c1">/// do desenvolvedor captura o erro e devolve 500 mesmo sem o &lt;c&gt;UseExceptionHandler()&lt;/c&gt;,</span>
+<span class="c1">/// e o teste passaria sem proteger nada.</span>
+<span class="c1">/// &lt;/summary&gt;</span>
+<span class="na">[Fact]</span>
+<span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">Erro_inesperado_devolve_500_em_problem_details_sem_vazar_detalhes</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Dado: a API do teste, em ambiente Production, recebe um repositório que lança exceção</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">cliente</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fabrica</span>
+<span class="w">        </span><span class="p">.</span><span class="n">WithWebHostBuilder</span><span class="p">(</span><span class="n">construtor</span><span class="w"> </span><span class="o">=&gt;</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">construtor</span><span class="p">.</span><span class="n">UseEnvironment</span><span class="p">(</span><span class="s">"Production"</span><span class="p">);</span>
+<span class="w">            </span><span class="n">construtor</span><span class="p">.</span><span class="n">ConfigureTestServices</span><span class="p">(</span><span class="n">servicos</span><span class="w"> </span><span class="o">=&gt;</span>
+<span class="w">                </span><span class="n">servicos</span><span class="p">.</span><span class="n">AddSingleton</span><span class="o">&lt;</span><span class="n">FichaProdutoRepository</span><span class="o">&gt;</span><span class="p">(</span>
+<span class="w">                    </span><span class="n">_</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">InvalidOperationException</span><span class="p">(</span><span class="s">"Falha simulada no repositorio"</span><span class="p">)));</span>
+<span class="w">        </span><span class="p">})</span>
+<span class="w">        </span><span class="p">.</span><span class="n">CreateClient</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Quando: uma ficha válida é enviada</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">corpo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">sku</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"LUV-001"</span><span class="p">,</span><span class="w"> </span><span class="n">descricao</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"Luva nitrilica"</span><span class="p">,</span><span class="w"> </span><span class="n">ncm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"40151900"</span><span class="w"> </span><span class="p">};</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">resposta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">cliente</span><span class="p">.</span><span class="n">PostAsJsonAsync</span><span class="p">(</span><span class="s">"/catalogo/fichas-produto"</span><span class="p">,</span><span class="w"> </span><span class="n">corpo</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Então: o cliente recebe 500, no formato padrão de erro, sem detalhes internos</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">HttpStatusCode</span><span class="p">.</span><span class="n">InternalServerError</span><span class="p">,</span><span class="w"> </span><span class="n">resposta</span><span class="p">.</span><span class="n">StatusCode</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="s">"application/problem+json"</span><span class="p">,</span><span class="w"> </span><span class="n">resposta</span><span class="p">.</span><span class="n">Content</span><span class="p">.</span><span class="n">Headers</span><span class="p">.</span><span class="n">ContentType</span><span class="o">?.</span><span class="n">MediaType</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">problema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">resposta</span><span class="p">.</span><span class="n">Content</span><span class="p">.</span><span class="n">ReadFromJsonAsync</span><span class="o">&lt;</span><span class="n">ProblemDetails</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">NotNull</span><span class="p">(</span><span class="n">problema</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Contains</span><span class="p">(</span><span class="s">"traceId"</span><span class="p">,</span><span class="w"> </span><span class="n">problema</span><span class="p">.</span><span class="n">Extensions</span><span class="p">.</span><span class="n">Keys</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Null</span><span class="p">(</span><span class="n">problema</span><span class="p">.</span><span class="n">Detail</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">DoesNotContain</span><span class="p">(</span><span class="s">"exception"</span><span class="p">,</span><span class="w"> </span><span class="n">problema</span><span class="p">.</span><span class="n">Extensions</span><span class="p">.</span><span class="n">Keys</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+
+<p>Usings novos no arquivo: <code>Microsoft.AspNetCore.Mvc</code> (o <code>ProblemDetails</code>), <code>Microsoft.AspNetCore.TestHost</code>
+(o <code>ConfigureTestServices</code>) e <code>Microsoft.Extensions.DependencyInjection</code> (o <code>AddSingleton</code>).</p>
+<p><strong>Linha a linha:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Trecho</th>
+<th>O que faz</th>
+<th>Por que está assim</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>WithWebHostBuilder(...)</code></td>
+<td>cria uma <strong>cópia</strong> da API com ajustes só para este teste</td>
+<td>os outros testes continuam na fábrica compartilhada</td>
+</tr>
+<tr>
+<td><code>UseEnvironment(&quot;Production&quot;)</code></td>
+<td>a cópia roda em <code>Production</code></td>
+<td>tira a página do desenvolvedor do caminho (veja a tabela abaixo)</td>
+</tr>
+<tr>
+<td><code>ConfigureTestServices(...)</code></td>
+<td>altera os registros <strong>depois</strong> do <code>AddCatalogo()</code></td>
+<td>o registro do teste vence o do módulo</td>
+</tr>
+<tr>
+<td><code>AddSingleton&lt;FichaProdutoRepository&gt;(_ =&gt; throw ...)</code></td>
+<td>registra uma <strong>fábrica</strong> que lança quando alguém pede o repositório</td>
+<td><code>new</code> criaria um repositório <strong>normal</strong>; herdar é impossível (a classe é <code>sealed</code> e não tem interface). O <code>_</code> é o parâmetro (o provedor de serviços), que não usamos</td>
+</tr>
+<tr>
+<td><code>corpo</code> <strong>válido</strong></td>
+<td>passa pela validação nativa</td>
+<td>se fosse inválido, receberíamos 400 e o 500 <strong>nunca</strong> apareceria</td>
+</tr>
+<tr>
+<td>6 verificações</td>
+<td>status, tipo de conteúdo, <code>ProblemDetails</code> não nulo, <code>traceId</code> presente, <strong>sem</strong> <code>detail</code>, <strong>sem</strong> <code>exception</code></td>
+<td>&quot;não nulo&quot; sozinho é critério fraco (<code>{}</code> passaria); as duas últimas cumprem o &quot;sem vazar detalhes&quot; do nome</td>
+</tr>
+</tbody>
+</table>
+<p><strong>De onde vem a exceção (visto no rastro).</strong> Quem pede o repositório é o <strong>framework</strong>, ao montar os
+parâmetros do <code>Executar</code> (<code>request</code> e <code>fichas</code>). A exceção nasce aí, <strong>antes</strong> do corpo do
+<code>Executar</code>.</p>
+<p><strong>Três formas de trocar o repositório (o que foi pesado):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Forma</th>
+<th>Serve?</th>
+<th>Por quê</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AddSingleton(repositorioPreparado)</code> (instância pronta)</td>
+<td>para <strong>dado</strong> (ex.: um repositório com uma ficha dentro)</td>
+<td>o objeto é normal; <strong>não</strong> lança</td>
+</tr>
+<tr>
+<td>herdar de <code>FichaProdutoRepository</code> e sobrescrever</td>
+<td><strong>não</strong></td>
+<td>a classe é <code>internal sealed</code> e não tem interface</td>
+</tr>
+<tr>
+<td><strong>fábrica que lança</strong></td>
+<td><strong>sim</strong></td>
+<td>a exceção nasce quando o repositório é pedido</td>
+</tr>
+<tr>
+<td>(futuro) interface + dublê escrito à mão</td>
+<td>quando o <code>Pedidos</code> depender do <code>Catalogo</code></td>
+<td>aí a interface existe por um motivo real (ADR de contrato)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O que eu pago com esse dublê:</strong> o teste <strong>conhece o tipo concreto</strong> <code>FichaProdutoRepository</code> (só
+compila por causa do <code>InternalsVisibleTo</code> — <a href="#35-o-projeto-de-testes-xunit-refer%C3%AAncia-e-internalsvisibleto">3.5</a>); quando o EF Core entrar e o repositório
+mudar, a troca muda junto; o <code>WithWebHostBuilder</code> sobe <strong>outro</strong> host (mais lento: no log, dois
+hosts).</p>
+<p><strong>O ambiente do teste — a armadilha vista na S14.</strong> Por padrão, a API do teste roda em
+<code>Development</code> (documentação oficial: se o ambiente não é definido, vale <code>Development</code>; o log mostrou
+<code>Hosting environment: Development</code>). Nesse ambiente, a página do desenvolvedor <strong>também</strong> captura a
+exceção e devolve 500. As quatro combinações, <strong>todas vistas rodando</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Linha do <code>Program.cs</code></th>
+<th>Ambiente do teste</th>
+<th>Quem captura</th>
+<th>Resultado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>com <code>UseExceptionHandler()</code></td>
+<td><code>Development</code></td>
+<td><code>UseExceptionHandler()</code></td>
+<td>🟢</td>
+</tr>
+<tr>
+<td><strong>sem</strong> <code>UseExceptionHandler()</code></td>
+<td><code>Development</code></td>
+<td>página do desenvolvedor</td>
+<td>🟢 — <strong>falso positivo</strong> (o teste não protege nada)</td>
+</tr>
+<tr>
+<td><strong>sem</strong> <code>UseExceptionHandler()</code></td>
+<td><code>Production</code></td>
+<td>ninguém</td>
+<td>🔴 — a exceção estoura <strong>na chamada</strong> <code>PostAsJsonAsync</code> do teste</td>
+</tr>
+<tr>
+<td>com <code>UseExceptionHandler()</code></td>
+<td><code>Production</code></td>
+<td><code>UseExceptionHandler()</code></td>
+<td>🟢</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Regra para qualquer teste:</strong> pergunte <strong>&quot;se eu apagar a linha que este teste deveria proteger,
+ele fica vermelho? e o que, no ambiente do teste, pode estar fazendo o trabalho dela?&quot;</strong> Fixe o
+ambiente quando o teste depende de algo que só existe (ou muda) em <code>Development</code> ou em <code>Production</code>.</p>
+<p><strong>O preço de rodar em <code>Production</code>:</strong> <code>Development</code> e <code>Production</code> carregam configurações
+diferentes (por exemplo, um <code>appsettings.Development.json</code>, <strong>não conferido</strong> no Norte hoje). Um
+teste em <code>Production</code> pode falhar por algo que só existe em <code>Development</code>. Use onde o teste
+<strong>exige</strong>, não por padrão.</p>
+<p><strong>O comentário <code>&lt;summary&gt;</code> (decisão sua, 08/10).</strong> O nome do teste diz <strong>o que</strong> ele faz, mas não
+<strong>por que ele existe</strong>. O <code>&lt;summary&gt;</code> registra o porquê e o que ele protege, para quem abrir o
+arquivo meses depois. Não repete o que o código já diz (a regra do Clean Code é essa); o passo a
+passo de conserto fica neste guia, não no teste.</p>
+<p><strong>Limite honesto (opinião do mentor, não prática estabelecida):</strong> o valor prático deste teste é
+<strong>moderado</strong>: ele guarda uma linha de configuração. O seu maior retorno é o raciocínio — &quot;o teste
+tem de poder falhar&quot; — e o mecanismo do dublê, que volta quando o <code>Pedidos</code> depender do <code>Catalogo</code>.</p>
+<p><strong>Na entrevista.</strong> <em>&quot;Como você testa o caminho de erro, se não consegue provocá-lo com dados?&quot;</em> →
+&quot;Troco uma dependência por uma que falha, <strong>só no teste</strong>, pelo registro da DI (<code>ConfigureTestServices</code>),
+sem mexer no código de produção. E confiro que o teste <strong>fica vermelho</strong> quando tiro a configuração
+que ele protege, no ambiente certo: um teste que passa sem a coisa que ele protege não protege nada.&quot;</p>
+<p><strong>Erros comuns (S14):</strong> o teste de erro <strong>verde sem a linha</strong> (ambiente <code>Development</code>); <code>throw</code> no
+código de produção; o único Assert ser &quot;o <code>ProblemDetails</code> não é nulo&quot;; confundir <strong>&quot;produção&quot;</strong> (o
+ambiente <code>Production</code>) com <strong>&quot;a API real&quot;</strong> (a API como sobe pelo <code>Program.cs</code>); corpo <strong>inválido</strong>
+no Dado (o 400 esconde o 500).</p>
+<p>🧠 o dublê serve para provocar o que os dados não provocam; <strong>o teste só protege se ficar vermelho
+sem a linha</strong>; o ambiente pode mascarar. · 🔎 <code>WithWebHostBuilder</code>, <code>ConfigureTestServices</code>,
+<code>UseEnvironment</code>, a sintaxe da fábrica <code>_ =&gt; throw ...</code>.</p>
+<p><strong>Referências:</strong></p>
+<ul>
+<li><a href="https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-10.0">Integration tests in ASP.NET Core (Microsoft Learn, .NET 10)</a> — <strong>oficial</strong>; seções &quot;Inject mock services&quot;, &quot;Customize the client with WithWebHostBuilder&quot;, &quot;SUT environment&quot; e &quot;Set the environment&quot;.</li>
+</ul>
+<p><strong>Onde foi visto · status:</strong> S14 (parte 2) · o <strong>código do teste foi escrito pelo mentor</strong> (exemplo
+resolvido, explicado linha a linha); você rodou, observou as 4 combinações e concluiu que o
+ambiente precisava mudar <strong>antes</strong> de o experimento mostrar · <strong>ainda não escreveu um teste com
+dublê sozinho</strong> (ponto a revisitar).</p>
+<hr />
+<p><a id="g3-17"></a></p>
+<h2 id="317-diagnóstico-os-problemas-da-s14-e-como-achar-a-causa">3.17 Diagnóstico: os problemas da S14 e como achar a causa<button class="estudada" data-id="317-diagnóstico-os-problemas-da-s14-e-como-achar-a-causa" type="button">Marcar como estudada</button></h2>
+<table>
+<thead>
+<tr>
+<th>Sintoma</th>
+<th>Causa</th>
+<th>Como achar · como resolver</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Teste do 500 <strong>verde</strong> sem a linha <code>UseExceptionHandler()</code></td>
+<td>em <code>Development</code>, a página do desenvolvedor captura e devolve 500</td>
+<td>olhar a <strong>categoria</strong> do <code>fail:</code> no log (<code>DeveloperExceptionPageMiddleware</code>); fixar o ambiente no teste: <code>UseEnvironment(&quot;Production&quot;)</code> (<a href="#316-dubl%C3%AA-de-teste-e-ambiente-do-teste-trocar-uma-pe%C3%A7a-s%C3%B3-no-teste">3.16</a>)</td>
+</tr>
+<tr>
+<td>Teste do 500 em <code>Production</code>, sem a linha: o erro aparece <strong>na chamada</strong> <code>PostAsJsonAsync</code>, não num <code>Assert</code></td>
+<td>ninguém capturou a exceção: ela atravessa o servidor de teste e estoura no teste</td>
+<td>é o <strong>vermelho esperado</strong>: significa que o teste protege a linha</td>
+</tr>
+<tr>
+<td><code>dotnet build</code> da <code>main</code> falha com <strong>CS8604</strong> em <code>request.Sku</code></td>
+<td><code>Request</code> com <code>string?</code> e o <code>Executar</code> sem o <code>!</code> que a validação justifica (<a href="#311-valida%C3%A7%C3%A3o-nativa-do-net-10-a-regra-de-entrada-declarada-no-request">3.11</a>)</td>
+<td>compilar a <code>main</code> numa <strong>cópia limpa</strong>: <code>git worktree add ..\norte-main-check main</code>, <code>dotnet build ..\norte-main-check</code>, <code>git worktree remove ..\norte-main-check --force</code>. A causa de a <code>main</code> ter quebrado <strong>não foi investigada</strong>; o CI (S15) acusaria no PR</td>
+</tr>
+<tr>
+<td><code>git diff</code> / <code>git log</code> abrem uma tela que não deixa copiar o texto</td>
+<td>o Git usou um <strong>paginador</strong> (<code>less</code>)</td>
+<td>sair com <code>q</code>; ou usar <code>git --no-pager diff ...</code> / <code>git --no-pager log ...</code></td>
+</tr>
+<tr>
+<td><code>Get-Content tests\...\*ApiTests.cs</code> não acha o arquivo</td>
+<td>os testes <strong>espelham a pasta da funcionalidade</strong> (<a href="#313-pasta-por-funcionalidade-o-que-%C3%A9-de-um-caso-de-uso-fica-junto">3.13</a>): o arquivo está em <code>CadastrarFichaProduto\</code></td>
+<td><code>Get-ChildItem tests -Recurse -Filter *.cs</code> (e ignorar <code>bin</code> e <code>obj</code>)</td>
+</tr>
+<tr>
+<td>O <code>traceId</code> do corpo não aparece na linha do log</td>
+<td>o formato padrão do console <strong>não mostra escopos</strong></td>
+<td>não é erro: ligar escopos no log é assunto da sessão de logging (M1)</td>
+</tr>
+<tr>
+<td><code>git diff</code> mostra <code>Catalogo.http</code> com o primeiro caractere &quot;invisível&quot; removido e uma quebra de linha no fim</td>
+<td>o editor salvando o arquivo (BOM e newline final; <strong>não confirmado</strong> que seja o <code>.editorconfig</code>)</td>
+<td>inofensivo; se atrapalhar um PR, declarar a mistura na descrição</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><a id="juntando-p3"></a></p>
+<h2 id="juntando-tudo">Juntando tudo</h2>
+<p>Uma requisição <code>POST /catalogo/fichas-produto</code> chega ao host. Antes de qualquer rota, o
+<code>UseExceptionHandler()</code> e o <code>UseStatusCodePages()</code> (as duas linhas do host, depois do <code>Build()</code>)
+já envolvem a execução: <strong>qualquer</strong> exceção não tratada ou 4xx/5xx vazio sairá em
+<code>application/problem+json</code>, com a causa no log e o <code>traceId</code> no corpo. O <code>MapPost</code> do
+<code>CatalogoModulo</code> (registrado pelo <code>app.MapCatalogo()</code> no <code>Program.cs</code>) lê o corpo JSON como
+<code>CadastrarFichaProdutoRequest</code>, um <code>record</code> <strong>público</strong> (ADR-003) que mora na pasta da
+funcionalidade, <code>CadastrarFichaProduto/</code>. <strong>Antes</strong> de chamar o endpoint, a validação nativa —
+ligada pelo <code>services.AddValidation()</code> dentro do <code>AddCatalogo</code> — aplica os <code>[Required]</code> da regra
+<strong>&quot;Ficha exige SKU, descrição e NCM&quot;</strong> e, se faltar algo, devolve 400 com <strong>todos</strong> os erros. Com a
+entrada válida, o <code>CadastrarFichaProdutoEndpoint.Executar</code> cria a <code>FichaProduto</code> (os <code>!</code> confiam na
+validação), guarda no <code>FichaProdutoRepository</code> (Singleton, em memória) e devolve 201 com <code>Location</code>.</p>
+<p>Os testes seguem a regra <strong>&quot;o teste passa por onde a regra mora&quot;</strong>: o teste de unidade chama o
+<code>Executar</code> direto e protege o que <strong>ele</strong> faz (criar e guardar); os três testes de integração, com
+<code>WebApplicationFactory&lt;Program&gt;</code>, fazem a requisição de verdade e protegem a regra de entrada, um
+lado por teste — e a prova é ver só um ficar vermelho quando se tira um <code>[Required]</code>. O quarto
+teste de integração troca o repositório por um que lança, <strong>só dentro do teste</strong>, e roda em
+<code>Production</code> para provar que o <code>UseExceptionHandler()</code> é quem protege o cliente — e a prova, de novo,
+é <strong>vê-lo ficar vermelho</strong> quando a linha sai. <strong>Todo teste novo é visto vermelho antes de ser aceito.</strong></p>
+<hr />
+<p><a id="teste-se-p3"></a></p>
+<h2 id="teste-se-sem-consultar-uma-pergunta-por-vez">Teste-se (sem consultar; uma pergunta por vez)</h2>
+<ol>
+<li>No Norte, qual classe faz o papel que o <code>FichaProdutoService.Cadastrar()</code> fazia na arquitetura
+com pastas técnicas?</li>
+<li>O endpoint <code>CadastrarFichaProdutoEndpoint.Executar</code> retorna
+<code>Results&lt;Created&lt;FichaProduto&gt;, ValidationProblem&gt;</code>. Num teste, qual chamada descobre qual dos dois
+resultados aconteceu?</li>
+<li>O teste <code>Cadastra_ficha_com_sku_e_devolve_201</code> envia uma ficha <strong>com</strong> SKU. Se alguém apagar a
+regra que recusa a ficha sem SKU, esse teste fica verde ou vermelho?</li>
+<li>Por que <code>Assert.Equal(new FichaProduto(&quot;LUV-001&quot;, &quot;Luva nitrilica&quot;, &quot;40151900&quot;), criado.Value)</code>
+passa quando <code>FichaProduto</code> é um <code>record</code>?</li>
+<li>Os tipos do módulo <code>Catalogo</code> são <code>internal</code> (ADR-002). O que permite ao projeto
+<code>Norte.Catalogo.Tests</code> usar o <code>CadastrarFichaProdutoEndpoint</code>?</li>
+<li>Um teste confere <code>Assert.NotEmpty(problema.ProblemDetails.Errors)</code> para provar que a ficha sem
+SKU é recusada. Que situação faria esse teste passar sem que a regra do SKU existisse?</li>
+<li>Qual a diferença entre o arquivo <code>.http</code> e o projeto <code>Norte.Catalogo.Tests</code> quanto a quem
+executa e quando?</li>
+<li>Uma ficha chega com SKU, descrição e NCM vazios. Quantos erros a resposta traz com os três <code>if</code>
+no <code>Executar</code>, e quantos com a validação nativa?</li>
+<li>O <code>CadastrarFichaProdutoRequest</code> estava <code>internal</code> e o <code>AddValidation()</code> estava ligado. O que a
+API respondeu ao POST com os campos vazios?</li>
+<li>Por que o <code>services.AddValidation()</code> fica no <code>AddCatalogo</code> e não só no <code>Program.cs</code>?</li>
+<li>Com a validação nativa ligada, um teste de unidade chama o <code>Executar</code> com SKU vazio. Ele recebe
+201 ou 400?</li>
+<li>Que tipo de teste protege a regra &quot;Ficha exige SKU, descrição e NCM&quot; no Norte hoje, e por quê?</li>
+<li><code>FichaProduto</code> fica na raiz do módulo e <code>CadastrarFichaProdutoEndpoint</code> fica em
+<code>CadastrarFichaProduto/</code>. Qual o critério?</li>
+<li>Só com <code>builder.Services.AddProblemDetails()</code> registrado (sem <code>UseExceptionHandler()</code>), em
+<code>Development</code>, o <code>Executar</code> lança uma exceção. Que middleware captura, e quem manda o corpo?</li>
+<li>Das três linhas do <code>Program.cs</code> do Norte (<code>AddProblemDetails()</code>, <code>UseExceptionHandler()</code>,
+<code>UseStatusCodePages()</code>): qual <strong>escreve</strong> o corpo, qual <strong>captura</strong> a exceção e qual <strong>preenche</strong>
+o corpo de um 404 vazio?</li>
+<li>O teste do 500, rodando em <code>Development</code>, continuou verde depois de você tirar o
+<code>UseExceptionHandler()</code>. Por quê, e como o log mostra isso?</li>
+<li>Por que o dublê do teste do 500 é uma <strong>fábrica</strong> (<code>_ =&gt; throw ...</code>) e não um
+<code>new FichaProdutoRepository()</code>?</li>
+<li>Num 500, onde fica a causa da exceção: no corpo da resposta ou em outro lugar? O que o <code>traceId</code>
+liga?</li>
+<li>Qual o <strong>preço</strong> de ligar o <code>UseStatusCodePages()</code> numa API que já tem clientes?</li>
+<li>Uma regra diz: &quot;se o canal da venda é <code>Representante</code>, o campo <code>ComissaoId</code> é obrigatório&quot;. Você
+a faria com a validação nativa ou com o FluentValidation? Por quê, e o que você paga?</li>
+</ol>
+<p><a id="respostas-p3"></a></p>
+<h3 id="respostas">Respostas</h3><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li><code>CadastrarFichaProdutoEndpoint</code>, no método <code>Executar</code> (<a href="#31-a-funcionalidade-no-estilo-repr-request-endpoint-repository">3.1</a>).</li>
+<li><code>Assert.IsType&lt;ValidationProblem&gt;(resultado.Result)</code> (ou <code>Created&lt;FichaProduto&gt;</code>): confere o tipo
+e devolve o objeto tipado (<a href="#36-anatomia-de-um-teste-arrange-act-assert">3.6</a>).</li>
+<li><strong>Verde.</strong> Ele nunca exercita a recusa, então não protege a regra. Quem protege é o teste de
+recusa (<a href="#37-vermelho-%E2%86%92-verde-como-saber-que-o-teste-protege-a-regra">3.7</a>).</li>
+<li>Porque <code>record</code> compara <strong>por valor</strong>: os três campos iguais = objetos iguais. Com <code>class</code>
+comum, compararia a referência e falharia (<a href="#32-record-dados-que-entram-e-saem">3.2</a>).</li>
+<li>O <code>&lt;InternalsVisibleTo Include=&quot;Norte.Catalogo.Tests&quot; /&gt;</code> no <code>Norte.Catalogo.csproj</code>
+(<a href="#35-o-projeto-de-testes-xunit-refer%C3%AAncia-e-internalsvisibleto">3.5</a>).</li>
+<li>Qualquer outro erro de validação, por exemplo um erro <strong>só do NCM</strong>. Por isso o Assert certo é
+<code>Assert.Contains</code> com a chave do campo (<a href="#36-anatomia-de-um-teste-arrange-act-assert">3.6</a>).</li>
+<li>O <code>.http</code> é manual: você clica e olha. O projeto de testes é automático: roda sozinho no
+<code>dotnet test</code> (e, mais adiante, no CI) e falha sem ninguém olhar (<a href="#34-arquivo-http-as-requisi%C3%A7%C3%B5es-da-api-dentro-do-reposit%C3%B3rio">3.4</a>).</li>
+<li>Com os <code>if</code>: <strong>um</strong> (o primeiro <code>return</code>). Com a validação nativa: <strong>três</strong> (<a href="#311-valida%C3%A7%C3%A3o-nativa-do-net-10-a-regra-de-entrada-declarada-no-request">3.11</a>).</li>
+<li><strong>201</strong>, com a ficha vazia gravada: o gerador ignora tipos <code>internal</code>, sem erro nem log
+(<a href="#311-valida%C3%A7%C3%A3o-nativa-do-net-10-a-regra-de-entrada-declarada-no-request">3.11</a>, <a href="#314-diagn%C3%B3stico-os-problemas-da-s12-e-como-achar-a-causa">3.14</a>).</li>
+<li>Porque o gerador só cria validação para os tipos do projeto onde o <code>AddValidation()</code> é chamado,
+e o <code>Request</code> mora no <code>Norte.Catalogo</code> (<a href="#311-valida%C3%A7%C3%A3o-nativa-do-net-10-a-regra-de-entrada-declarada-no-request">3.11</a>).</li>
+<li><strong>201.</strong> A validação roda no caminho HTTP, antes do <code>Executar</code>; chamado direto, o <code>Executar</code>
+não passa por ela (<a href="#312-teste-de-integra%C3%A7%C3%A3o-com-webapplicationfactory-o-teste-passa-por-onde-a-regra-mora">3.12</a>).</li>
+<li><strong>Teste de integração</strong> (<code>CadastrarFichaProdutoApiTests</code>): a regra mora na validação, antes do
+<code>Executar</code>, e só um teste que faz a requisição de verdade passa por lá (<a href="#312-teste-de-integra%C3%A7%C3%A3o-com-webapplicationfactory-o-teste-passa-por-onde-a-regra-mora">3.12</a>).</li>
+<li>Usado por <strong>uma</strong> funcionalidade → pasta dela; usado por <strong>várias</strong> funcionalidades do módulo
+→ raiz (<a href="#313-pasta-por-funcionalidade-o-que-%C3%A9-de-um-caso-de-uso-fica-junto">3.13</a>).</li>
+<li>A <strong>página de exceção do desenvolvedor</strong> (<code>DeveloperExceptionPageMiddleware</code>), ligada sozinha
+pelo <code>CreateBuilder</code> em <code>Development</code>; é ela que manda o corpo, com rastro. O <code>ProblemDetails</code> só
+<strong>escreve</strong> o corpo quando alguém o pede; não captura nada (<a href="#315-erros-da-api-em-formato-padr%C3%A3o-addproblemdetails-useexceptionhandler-e-usestatuscodepages">3.15</a>).</li>
+<li><code>AddProblemDetails()</code> <strong>escreve</strong>; <code>UseExceptionHandler()</code> <strong>captura</strong>; <code>UseStatusCodePages()</code>
+<strong>preenche</strong> o corpo vazio (<a href="#315-erros-da-api-em-formato-padr%C3%A3o-addproblemdetails-useexceptionhandler-e-usestatuscodepages">3.15</a>).</li>
+<li>Porque em <code>Development</code> a página do desenvolvedor captura a exceção e também devolve 500. No log,
+a categoria do <code>fail:</code> muda de <code>ExceptionHandlerMiddleware</code> para
+<code>DeveloperExceptionPageMiddleware</code> (<a href="#315-erros-da-api-em-formato-padr%C3%A3o-addproblemdetails-useexceptionhandler-e-usestatuscodepages">3.15</a>, <a href="#316-dubl%C3%AA-de-teste-e-ambiente-do-teste-trocar-uma-pe%C3%A7a-s%C3%B3-no-teste">3.16</a>).</li>
+<li><code>new</code> cria um repositório <strong>normal</strong>, que não lança; herdar é impossível (<code>internal sealed</code>, sem
+interface). A fábrica só roda quando o framework <strong>pede</strong> o repositório, e aí lança
+(<a href="#316-dubl%C3%AA-de-teste-e-ambiente-do-teste-trocar-uma-pe%C3%A7a-s%C3%B3-no-teste">3.16</a>).</li>
+<li><strong>No log</strong> (<code>fail: ...ExceptionHandlerMiddleware[1]</code> + a exceção completa), não no corpo. O
+<code>traceId</code> do corpo é o que o cliente informa para achar essa entrada no log (<a href="#315-erros-da-api-em-formato-padr%C3%A3o-addproblemdetails-useexceptionhandler-e-usestatuscodepages">3.15</a>).</li>
+<li><strong>Efeito no cliente:</strong> quem já consumia a API e assumia 404 sem corpo precisa se adaptar (quem só
+confere o status não muda); o 404 de rota inexistente passa a ter o mesmo formato genérico de um
+404 de &quot;ficha não encontrada&quot; (<a href="#315-erros-da-api-em-formato-padr%C3%A3o-addproblemdetails-useexceptionhandler-e-usestatuscodepages">3.15</a>).</li>
+<li>É <strong>condicional</strong>, então o critério do Norte aponta para o <strong>FluentValidation</strong> (<code>When(...)</code>); a
+nativa só faria com <code>IValidatableObject</code> ou atributo próprio, com o código dentro do tipo. O
+preço: dois estilos de validação na solution, ligação manual do validador nas Minimal APIs e uma
+dependência a mais (conferir licença e integração antes de adotar) (<a href="#311-valida%C3%A7%C3%A3o-nativa-do-net-10-a-regra-de-entrada-declarada-no-request">3.11</a>).</li>
+</ol>
+</details>
+</article>
+<footer class="rodape">Atualizado em 09/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

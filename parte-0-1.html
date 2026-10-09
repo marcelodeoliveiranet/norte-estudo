@@ -1,0 +1,1332 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Partes 0 e 1 — O mapa e a solution · Norte · Estudo</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/codigo.css">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+</head>
+<body data-chave="parte-0-1.html" data-prefixo="">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="index.html">Início</a><a href="guia.html" class=ativo>Guia</a><a href="estudos.html">Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#guia-net-moderno--parte-0-e-parte-1-s9–s10" data-id="guia-net-moderno--parte-0-e-parte-1-s9–s10">GUIA .NET MODERNO — Parte 0 e Parte 1 (S9–S10)</a><a class="n2" href="#sumário-desta-parte" data-id="sumário-desta-parte">Sumário desta parte</a><a class="n1" href="#parte-0--o-mapa-dos-níveis" data-id="parte-0--o-mapa-dos-níveis">PARTE 0 — O mapa dos níveis</a><a class="n1" href="#parte-1--a-estrutura-da-solution-s9–s10" data-id="parte-1--a-estrutura-da-solution-s9–s10">PARTE 1 — A estrutura da solution (S9–S10)</a><a class="n2" href="#11-solution-no-formato-slnx-e-as-pastas-virtuais-do-visual-studio" data-id="11-solution-no-formato-slnx-e-as-pastas-virtuais-do-visual-studio">1.1 Solution no formato .slnx (e as pastas virtuais do Visual Studio)</a><a class="n2" href="#12-monolito-modular-host--um-projeto-por-módulo" data-id="12-monolito-modular-host--um-projeto-por-módulo">1.2 Monolito modular: host + um projeto por módulo</a><a class="n2" href="#13-public-×-internal-a-fronteira-garantida-pelo-compilador" data-id="13-public-×-internal-a-fronteira-garantida-pelo-compilador">1.3 public × internal: a fronteira garantida pelo compilador</a><a class="n2" href="#14-programcs-moderno-de-startupcs-para-builder-e-app" data-id="14-programcs-moderno-de-startupcs-para-builder-e-app">1.4 Program.cs moderno: de Startup.cs para builder e app</a><a class="n2" href="#15-implicit-usings-e-os-using-que-faltam-numa-biblioteca" data-id="15-implicit-usings-e-os-using-que-faltam-numa-biblioteca">1.5 Implicit usings e os using que faltam numa biblioteca</a><a class="n2" href="#16-frameworkreference-do-aspnet-core" data-id="16-frameworkreference-do-aspnet-core">1.6 FrameworkReference do ASP.NET Core</a><a class="n2" href="#17-métodos-de-extensão" data-id="17-métodos-de-extensão">1.7 Métodos de extensão</a><a class="n2" href="#18-pontos-de-entrada-do-módulo-addcatalogo-e-mapcatalogo" data-id="18-pontos-de-entrada-do-módulo-addcatalogo-e-mapcatalogo">1.8 Pontos de entrada do módulo: AddCatalogo() e MapCatalogo()</a><a class="n2" href="#19-minimal-apis-as-formas-de-declarar-um-endpoint-e-o-mapgroup" data-id="19-minimal-apis-as-formas-de-declarar-um-endpoint-e-o-mapgroup">1.9 Minimal APIs: as formas de declarar um endpoint, e o MapGroup</a><a class="n2" href="#110-diagnóstico-os-erros-da-s9–s10-e-como-achar-a-causa" data-id="110-diagnóstico-os-erros-da-s9–s10-e-como-achar-a-causa">1.10 Diagnóstico: os erros da S9–S10 e como achar a causa</a><a class="n2" href="#111-git-branch-por-objetivo-de-sessão" data-id="111-git-branch-por-objetivo-de-sessão">1.11 Git: branch por objetivo de sessão</a><a class="n2" href="#112-módulo-×-funcionalidade-×-departamento-o-critério-para-criar-módulo" data-id="112-módulo-×-funcionalidade-×-departamento-o-critério-para-criar-módulo">1.12 Módulo × funcionalidade × departamento: o critério para criar m…</a><a class="n1" href="#juntando-tudo-parte-1" data-id="juntando-tudo-parte-1">Juntando tudo (Parte 1)</a><a class="n1" href="#teste-se" data-id="teste-se">Teste-se</a></aside>
+<main class="conteudo"><article>
+<h1 id="guia-net-moderno--parte-0-e-parte-1-s9–s10">GUIA .NET MODERNO — Parte 0 e Parte 1 (S9–S10)</h1>
+<p>Parte do <strong><code>GUIA-DOTNET-MODERNO.md</code></strong> (índice, legenda 🧠/🔎, como estudar e &quot;onde estamos&quot;
+ficam lá). Este arquivo só muda quando uma entrada da Parte 0 ou da Parte 1 muda.</p>
+<p><strong>Última atualização:</strong> 02/10/2026 (divisão do guia; conteúdo = v1.2 da S10) · <strong>Versão:</strong> 1.2</p>
+<hr />
+<h2 id="sumário-desta-parte">Sumário desta parte</h2>
+<ul>
+<li><a href="#parte-0--o-mapa-dos-n%C3%ADveis">Parte 0 — O mapa dos níveis</a></li>
+<li>Parte 1 — A estrutura da solution (S9–S10)
+<ul>
+<li><a href="#11-solution-no-formato-slnx-e-as-pastas-virtuais-do-visual-studio">1.1</a> Solution no formato <code>.slnx</code> (e as pastas virtuais do Visual Studio)</li>
+<li><a href="#12-monolito-modular-host--um-projeto-por-m%C3%B3dulo">1.2</a> Monolito modular: host + um projeto por módulo</li>
+<li><a href="#13-public-%C3%97-internal-a-fronteira-garantida-pelo-compilador">1.3</a> <code>public</code> × <code>internal</code>: a fronteira garantida pelo compilador</li>
+<li><a href="#14-programcs-moderno-de-startupcs-para-builder-e-app">1.4</a> <code>Program.cs</code> moderno: de <code>Startup.cs</code> para <code>builder</code> e <code>app</code></li>
+<li><a href="#15-implicit-usings-e-os-using-que-faltam-numa-biblioteca">1.5</a> <em>Implicit usings</em> e os <code>using</code> que faltam numa biblioteca</li>
+<li><a href="#16-frameworkreference-do-aspnet-core">1.6</a> <code>FrameworkReference</code> do ASP.NET Core</li>
+<li><a href="#17-m%C3%A9todos-de-extens%C3%A3o">1.7</a> Métodos de extensão</li>
+<li><a href="#18-pontos-de-entrada-do-m%C3%B3dulo-addcatalogo-e-mapcatalogo">1.8</a> Pontos de entrada do módulo: <code>AddCatalogo()</code> e <code>MapCatalogo()</code></li>
+<li><a href="#19-minimal-apis-as-formas-de-declarar-um-endpoint-e-o-mapgroup">1.9</a> Minimal APIs: as formas de declarar um endpoint, e o <code>MapGroup</code></li>
+<li><a href="#110-diagn%C3%B3stico-os-erros-da-s9%E2%80%93s10-e-como-achar-a-causa">1.10</a> Diagnóstico: os erros da S9–S10 e como achar a causa</li>
+<li><a href="#111-git-branch-por-objetivo-de-sess%C3%A3o">1.11</a> Git: branch por objetivo de sessão</li>
+<li><a href="#112-m%C3%B3dulo-%C3%97-funcionalidade-%C3%97-departamento-o-crit%C3%A9rio-para-criar-m%C3%B3dulo">1.12</a> Módulo × funcionalidade × departamento: o critério para criar módulo</li>
+</ul>
+</li>
+<li><a href="#juntando-tudo-parte-1">Juntando tudo (Parte 1)</a></li>
+<li><a href="#teste-se">Teste-se</a> · <a href="#respostas">Respostas</a></li>
+</ul>
+<hr />
+<p><a id="parte-0"></a></p>
+<h1 id="parte-0--o-mapa-dos-níveis">PARTE 0 — O mapa dos níveis</h1>
+<p>Antes de qualquer peça, o todo. Um sistema .NET moderno se lê em <strong>quatro níveis</strong>, de fora
+para dentro:</p>
+<pre class="highlight"><code>NÍVEL 1  SOLUTION          Norte.slnx — agrupa os projetos (não executa nada)
+   │
+NÍVEL 2  MÓDULOS           Norte.Api (host)  +  Norte.Catalogo  +  Norte.Pedidos  + ...
+   │                       cada módulo = regras que valem juntas + dados próprios (critério: 1.12)
+   │
+NÍVEL 3  FUNCIONALIDADES   dentro de cada módulo: CadastrarFichaProduto/, ConsultarFichaProduto/...
+   │                       (pasta por funcionalidade — o "feature-first" que você usava no Flutter)
+   │
+NÍVEL 4  CAMADAS           dentro de cada funcionalidade: endpoint → validação → handler →
+                           domínio → EF Core → banco
+</code></pre>
+
+<p>E o <strong>caminho de uma requisição</strong>, que atravessa os níveis:</p>
+<pre class="highlight"><code>HTTP GET /catalogo/status
+   │
+   ▼
+Norte.Api (host) ── app.MapCatalogo() ligou as rotas do módulo
+   │
+   ▼
+Norte.Catalogo ── grupo "/catalogo" ── endpoint "/status"
+   │
+   ▼
+TypedResults.Ok("Catalogo ativo")  →  200 OK
+</code></pre>
+
+<p><strong>Onde estamos agora:</strong> ver o índice (<code>GUIA-DOTNET-MODERNO.md</code>), que é atualizado a cada sessão.</p>
+<p><strong>Comparação com o seu mundo:</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Nos projetos em que você trabalhou</th>
+<th>No Norte</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Nível 2</td>
+<td>projetos por <strong>camada técnica</strong>: <code>Api</code>, <code>Application</code>, <code>Domain</code>, <code>Infrastructure</code></td>
+<td>projetos por <strong>conjunto de regras de negócio</strong>: <code>Catalogo</code>, <code>Pedidos</code>…</td>
+</tr>
+<tr>
+<td>Nível 3</td>
+<td>pastas técnicas: <code>Controllers/</code>, <code>Services/</code>, <code>Repositories/</code></td>
+<td>pastas por funcionalidade</td>
+</tr>
+<tr>
+<td>Nível 4</td>
+<td>a camada é o primeiro corte</td>
+<td>a camada é o último corte, dentro da funcionalidade</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="parte-1--a-estrutura-da-solution-s9–s10">PARTE 1 — A estrutura da solution (S9–S10)</h1>
+<p><a id="g1-1"></a></p>
+<h2 id="11-solution-no-formato-slnx-e-as-pastas-virtuais-do-visual-studio">1.1 Solution no formato <code>.slnx</code> (e as pastas virtuais do Visual Studio)<button class="estudada" data-id="11-solution-no-formato-slnx-e-as-pastas-virtuais-do-visual-studio" type="button">Marcar como estudada</button></h2>
+<blockquote>
+<p><strong>De → para</strong></p>
+<ul>
+<li><strong>Como você vai ouvir no mercado:</strong> <em>SLNX</em>, <em>XML solution format</em>, <em>solution folders</em>.</li>
+<li><strong>No laboratório:</strong> <code>Norte.slnx</code>.</li>
+<li><strong>No seu mundo:</strong> o <code>.sln</code> que o Visual Studio criava, cheio de GUIDs, que dava conflito de merge.</li>
+</ul>
+</blockquote>
+<p><strong>Em uma frase:</strong> o <code>.slnx</code> é o mesmo arquivo de solution de sempre, reescrito em XML curto e
+legível; no .NET 10 é o formato padrão.</p>
+<p><strong>Pergunta que responde:</strong> &quot;que projetos fazem parte deste sistema, e como eles aparecem no IDE?&quot;</p>
+<p><strong>O que é.</strong> A solution <strong>não executa nada</strong>. É uma lista de projetos (e de pastas virtuais para
+organizá-los no IDE), usada pelo Visual Studio, pelo VS Code e pelo <code>dotnet build</code> quando você
+compila &quot;tudo de uma vez&quot;.</p>
+<p><strong>Antes × agora:</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Como era (<code>.sln</code>)</th>
+<th>Como é (<code>.slnx</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Conteúdo</td>
+<td>texto proprietário, GUID por projeto, blocos de configuração repetidos</td>
+<td>XML com a lista de projetos</td>
+</tr>
+<tr>
+<td>Merge</td>
+<td>conflitos frequentes e difíceis de resolver</td>
+<td>conflitos raros e legíveis</td>
+</tr>
+<tr>
+<td><code>dotnet new sln</code></td>
+<td>gerava <code>.sln</code></td>
+<td>gera <code>.slnx</code> (mudança do SDK 10)</td>
+</tr>
+</tbody>
+</table>
+<p>O <code>Norte.slnx</code> real, no fim da S10 (aproximado):</p>
+<pre class="highlight"><code><span class="nt">&lt;Solution&gt;</span>
+<span class="w">  </span><span class="nt">&lt;Folder</span><span class="w"> </span><span class="na">Name=</span><span class="s">"/Solution Items/"</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;File</span><span class="w"> </span><span class="na">Path=</span><span class="s">"CLAUDE.md"</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/Folder&gt;</span>
+<span class="w">  </span><span class="nt">&lt;Folder</span><span class="w"> </span><span class="na">Name=</span><span class="s">"/src/"</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;Project</span><span class="w"> </span><span class="na">Path=</span><span class="s">"src/Norte.Api/Norte.Api.csproj"</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/Folder&gt;</span>
+<span class="w">  </span><span class="nt">&lt;Folder</span><span class="w"> </span><span class="na">Name=</span><span class="s">"/src/Modulos/"</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;Folder</span><span class="w"> </span><span class="na">Name=</span><span class="s">"/src/Modulos/Catalogo/"</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;Project</span><span class="w"> </span><span class="na">Path=</span><span class="s">"src/Modulos/Catalogo/Norte.Catalogo/Norte.Catalogo.csproj"</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/Folder&gt;</span>
+<span class="w">  </span><span class="nt">&lt;Folder</span><span class="w"> </span><span class="na">Name=</span><span class="s">"/src/Modulos/Pedidos/"</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;Project</span><span class="w"> </span><span class="na">Path=</span><span class="s">"src/Modulos/Pedidos/Norte.Pedidos/Norte.Pedidos.csproj"</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/Folder&gt;</span>
+<span class="nt">&lt;/Solution&gt;</span>
+</code></pre>
+
+<p><strong>Pastas da solution × pastas do disco (S10 — a armadilha do Visual Studio).</strong></p>
+<table>
+<thead>
+<tr>
+<th>Onde você cria a pasta no VS</th>
+<th>O que ela é</th>
+<th>Existe no disco?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Na <strong>solution</strong>, acima dos projetos (<code>src</code>, <code>Modulos</code>, <code>Solution Items</code>)</td>
+<td><strong>solution folder</strong>: só um <code>&lt;Folder&gt;</code> no <code>.slnx</code>, para organizar a vista</td>
+<td>❌ <strong>não</strong></td>
+</tr>
+<tr>
+<td><strong>Dentro de um projeto</strong> (botão direito no projeto → Add → New Folder)</td>
+<td>pasta real</td>
+<td>✅ sim</td>
+</tr>
+</tbody>
+</table>
+<p>Na S10, o projeto <code>Norte.Pedido</code> foi criado pelo VS dentro de pastas de solution
+<code>src/Modulos/Pedido</code>, mas fisicamente na raiz (<code>norte\Norte.Pedido\</code>). O VS Code não tem solution
+folders — mostra sempre o disco —, por isso parece &quot;mais honesto&quot;.</p>
+<p><strong>Como trabalhar no VS sem cair nisso:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Situação</th>
+<th>Jeito seguro</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Criar projeto</td>
+<td>Terminal: <code>dotnet new classlib -n Norte.X -o src/Modulos/X/Norte.X</code> + <code>dotnet sln Norte.slnx add ...</code> — o <code>dotnet sln add</code> cria as solution folders <strong>espelhando o disco</strong></td>
+</tr>
+<tr>
+<td>Criar projeto pelo VS</td>
+<td>Criar a pasta física antes e apontar o campo <strong>Location</strong> para ela</td>
+</tr>
+<tr>
+<td>Ver o disco como no VS Code</td>
+<td>Solution Explorer → botão <em>Switch between solutions and available views</em> → <strong>Folder View</strong></td>
+</tr>
+<tr>
+<td>Arquivo fora de projeto (<code>CLAUDE.md</code>, <code>.gitignore</code>)</td>
+<td>O VS o mostra em <strong>Solution Items</strong> (solution folder); o arquivo continua onde está</td>
+</tr>
+<tr>
+<td>Tirar algo da solution</td>
+<td><strong>Remove</strong> (tira da vista). <strong>Delete</strong> apaga o arquivo físico</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Por que usamos · alternativa · custo.</strong> Legibilidade e menos conflito. Alternativa: manter
+<code>.sln</code> (<code>dotnet new sln --format sln</code>). Custo do <code>.slnx</code>: ferramentas antigas de terceiros podem
+não reconhecer. VS 2026, VS Code, Rider e SDK 10 reconhecem.</p>
+<p><strong>Como usar (comandos da S9–S10):</strong></p>
+<pre class="highlight"><code>dotnet<span class="w"> </span>new<span class="w"> </span>sln<span class="w"> </span>-n<span class="w"> </span>Norte<span class="w">                                   </span><span class="c1"># cria Norte.slnx</span>
+dotnet<span class="w"> </span>sln<span class="w"> </span>add<span class="w"> </span>src/Norte.Api<span class="w"> </span>src/Modulos/Catalogo/Norte.Catalogo
+dotnet<span class="w"> </span>sln<span class="w"> </span>Norte.slnx<span class="w"> </span>remove<span class="w"> </span>Norte.Pedido/Norte.Pedido.csproj<span class="w">   </span><span class="c1"># tira da solution (não apaga)</span>
+</code></pre>
+
+<p><strong>Na entrevista.</strong> Raramente perguntam; se aparecer: &quot;é o novo formato de solution, XML, padrão
+no .NET 10; o ganho é legibilidade e menos conflito de merge&quot;.</p>
+<p>🧠 que a solution só organiza, não executa; solution folder não existe no disco. · 🔎 os comandos.</p>
+<p><strong>Onde foi visto · status:</strong> S9 · visto e usado; S10 · solution folders na prática (projeto movido).</p>
+<hr />
+<p><a id="g1-2"></a></p>
+<h2 id="12-monolito-modular-host--um-projeto-por-módulo">1.2 Monolito modular: host + um projeto por módulo<button class="estudada" data-id="12-monolito-modular-host--um-projeto-por-módulo" type="button">Marcar como estudada</button></h2>
+<blockquote>
+<p><strong>De → para</strong></p>
+<ul>
+<li><strong>Como você vai ouvir no mercado:</strong> <em>modular monolith</em>, <em>module</em>, <em>host</em>, <em>composition root</em>.</li>
+<li><strong>No laboratório:</strong> <code>Norte.Api</code> (host) + <code>Norte.Catalogo</code> e <code>Norte.Pedidos</code> (módulos); decisão no <strong>ADR-002</strong>.</li>
+<li><strong>No seu mundo:</strong> a solution com <code>Api</code>/<code>Application</code>/<code>Domain</code>/<code>Infrastructure</code> — um monolito
+cortado por camada, não por negócio.</li>
+</ul>
+</blockquote>
+<p><strong>Em uma frase:</strong> <strong>monolito modular = uma solution, um deploy, vários módulos; cada módulo reúne
+as regras que valem juntas e os seus dados, com as suas funcionalidades, e só conversa com os
+outros pelo contrato público.</strong></p>
+<p><strong>Pergunta que responde:</strong> &quot;como dividir um sistema grande sem pagar o custo de microsserviços?&quot;</p>
+<p><strong>O que é.</strong> Três regras definem o conceito:</p>
+<ol>
+<li><strong>Coesão:</strong> o que muda junto por uma razão de negócio fica no mesmo módulo.</li>
+<li><strong>Contrato público explícito:</strong> cada módulo decide o que os outros podem usar; o resto é interno.</li>
+<li><strong>Nenhum acesso por fora do contrato:</strong> um módulo não usa classe interna nem tabela de outro.</li>
+</ol>
+<p><strong>O corte vertical (por negócio) × o corte horizontal (por técnica):</strong></p>
+<pre class="highlight"><code>Monolito em camadas (seu mundo)        Monolito modular (Norte)
+┌─────────────── Api ───────────────┐   ┌─ Catalogo ─┐ ┌─ Pedidos ─┐
+├──────────── Application ──────────┤   │ endpoints  │ │ endpoints │
+├────────────── Domain ─────────────┤   │ regras     │ │ regras    │
+└─────────── Infrastructure ────────┘   │ dados      │ │ dados     │
+                                         └────────────┘ └───────────┘
+</code></pre>
+
+<p><strong>Monolito modular × microsserviços (a confusão mais comum):</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Monolito modular</th>
+<th>Microsserviços</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Deploys</td>
+<td><strong>1</strong> para o sistema todo</td>
+<td><strong>1 por capacidade</strong> de negócio</td>
+</tr>
+<tr>
+<td>Comunicação entre partes</td>
+<td>chamada em memória, pelo contrato do módulo</td>
+<td>rede (HTTP, mensageria)</td>
+</tr>
+<tr>
+<td>Processo</td>
+<td><strong>um só</strong>, com todas as DLLs dos módulos</td>
+<td>um por serviço</td>
+</tr>
+<tr>
+<td>No Norte</td>
+<td>M1 a M6</td>
+<td>M7: <strong>um</strong> módulo extraído</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O que torna o deploy único NÃO é a solution — é o host.</strong> <code>Norte.Api</code> é o <strong>único projeto
+executável</strong> e <strong>referencia</strong> os projetos dos módulos (que são bibliotecas, <code>.dll</code>). Publicar o
+host gera <strong>um processo</strong> com todas as <code>.dll</code> dentro:</p>
+<pre class="highlight"><code>Norte.slnx  (só organiza; não é executado)
+├── Norte.Api        ← executável (o host)
+│     referencia ↓
+├── Norte.Catalogo   ← biblioteca (.dll)
+└── Norte.Pedidos    ← biblioteca (.dll)
+
+dotnet publish src/Norte.Api  →  Norte.Api.dll + Norte.Catalogo.dll + ...  →  1 processo
+</code></pre>
+
+<blockquote>
+<p><strong>Solution organiza. Host executa. Quantos hosts existem = quantos deploys existem.</strong></p>
+</blockquote>
+<p><strong>Consequência do processo único: os módulos compartilham o destino (S10).</strong></p>
+<table>
+<thead>
+<tr>
+<th>Tipo de bug num módulo</th>
+<th>O que acontece</th>
+<th>Por quê</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Exceção dentro de uma requisição (ex.: <code>NullReferenceException</code> num endpoint do <code>Catalogo</code>)</td>
+<td>só aquela requisição recebe <strong>500</strong>; <code>Pedidos</code> continua respondendo</td>
+<td>o ASP.NET Core captura a exceção da requisição</td>
+</tr>
+<tr>
+<td>Bug que <strong>derruba o processo</strong> (memória esgotada, <code>StackOverflowException</code>, exceção não tratada numa thread de fundo)</td>
+<td><strong>todos os módulos caem</strong></td>
+<td>são DLLs dentro do <strong>mesmo processo</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Módulos ficam isolados <strong>no código</strong> (projetos, <code>internal</code>, contrato), não <strong>em execução</strong>.
+Isolar falha e deploy por módulo é o que microsserviços resolvem (M7), ao custo de rede,
+consistência eventual e operação distribuída.</p>
+<p><strong>Por que um projeto por módulo (opção B) e não pastas num projeto só (opção C).</strong> As duas fazem
+o corte vertical. A diferença é <strong>quem garante a regra 3</strong>:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>C: pastas num projeto só</th>
+<th>B: um projeto por módulo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>internal</code> em C#</td>
+<td><strong>não protege</strong>: vale para o assembly inteiro</td>
+<td><strong>protege</strong>: tipo <code>internal</code> de <code>Norte.Catalogo</code> não existe para <code>Norte.Pedidos</code></td>
+</tr>
+<tr>
+<td>Quem garante a fronteira</td>
+<td>disciplina do time (e testes de arquitetura)</td>
+<td>o <strong>compilador</strong></td>
+</tr>
+<tr>
+<td>Quando a violação aparece</td>
+<td>no code review, se alguém notar</td>
+<td>no build, sempre</td>
+</tr>
+</tbody>
+</table>
+<p>Motivo da escolha <strong>agora</strong> (e não em M3): o entregável de M1 é Catálogo <strong>+ Pedido simples</strong>;
+<code>Pedidos</code> vai precisar de dados de <code>Catalogo</code> ainda neste marco. <strong>Custo:</strong> mais cerimônia —
+um ponto de entrada por módulo (1.8), <code>FrameworkReference</code> (1.6), mais <code>.csproj</code>. <strong>Limite:</strong> o
+projeto separado protege as <strong>classes</strong>, não o <strong>banco</strong>; schema e <code>DbContext</code> por módulo entram
+em M3.</p>
+<p><strong>Ponte com limite.</strong> A pasta do módulo lembra a pasta de feature do Flutter — <strong>mas</strong> aqui o
+módulo vai ganhar banco (schema) e contrato próprios, e outro módulo não poderá ler as tabelas
+dele. E &quot;módulo&quot; aqui <strong>não</strong> é o <em>Module</em> do DDD de Evans (que é um namespace/pacote dentro de um
+modelo): no Norte, cada módulo corresponde a um contexto inteiro (ver 1.12).</p>
+<p><strong>Na entrevista.</strong> <em>&quot;Um monolito modular é um deploy só, dividido por regras de negócio, com
+contrato explícito entre módulos. Separo cada módulo num projeto para o compilador impedir o
+acesso a detalhes internos. O custo é mais cerimônia, os módulos compartilham o processo — um
+vazamento de memória num módulo derruba todos —, e o banco ainda precisa de isolamento próprio.&quot;</em></p>
+<p><strong>Erros comuns.</strong> Achar que o deploy único vem da solution (vem do host). Confundir &quot;um deploy de
+uma capacidade de negócio&quot; (microsserviço) com monolito modular. <strong>Achar que os outros módulos
+seguem vivos quando o processo cai</strong> (você, S10).</p>
+<p>🧠 as 3 regras; o que torna o deploy único; processo compartilhado; B × C e o custo. · 🔎 os comandos para criar projeto e referência.</p>
+<p><strong>Onde foi visto · status:</strong> S9 · exposto; S10 · host/deploy único ✅ sem consulta; falha do
+processo ❌ (corrigido) · <strong>frágil</strong>.</p>
+<hr />
+<p><a id="g1-3"></a></p>
+<h2 id="13-public-×-internal-a-fronteira-garantida-pelo-compilador">1.3 <code>public</code> × <code>internal</code>: a fronteira garantida pelo compilador<button class="estudada" data-id="13-public-×-internal-a-fronteira-garantida-pelo-compilador" type="button">Marcar como estudada</button></h2>
+<blockquote>
+<p><strong>De → para</strong></p>
+<ul>
+<li><strong>No mercado:</strong> <em>access modifiers</em>, <em>encapsulation at assembly level</em>.</li>
+<li><strong>No laboratório:</strong> o ponto de entrada do módulo é <code>public</code>; todo o resto do módulo tende a ser <code>internal</code>.</li>
+<li><strong>No seu mundo:</strong> você provavelmente marcava tudo como <code>public</code> (num projeto por camada, era preciso).</li>
+</ul>
+</blockquote>
+<p><strong>Em uma frase:</strong> em C#, <strong>uma classe sem modificador é <code>internal</code></strong> — visível só dentro do
+próprio projeto; para outro projeto enxergá-la, ela precisa ser <code>public</code>.</p>
+<p><strong>Por que importa no Norte:</strong> é o mecanismo que faz a opção B funcionar. <code>Norte.Api</code> é outro
+projeto: ele só enxerga o que <code>Norte.Catalogo</code> declarar <code>public</code>.</p>
+<pre class="highlight"><code><span class="c1">// Em Norte.Catalogo</span>
+<span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">CatalogoModulo</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span><span class="w">   </span><span class="c1">// o host PRECISA ver: ponto de entrada</span>
+<span class="k">internal</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">FichaProduto</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span><span class="w">           </span><span class="c1">// detalhe interno: ninguém de fora vê</span>
+
+<span class="c1">// Em Norte.Pedidos</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">ficha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FichaProduto</span><span class="p">();</span><span class="w">   </span><span class="c1">// erro CS0122: inacessível devido ao nível de proteção</span>
+</code></pre>
+
+<p><strong>Erro real da S9:</strong> se a classe <code>CatalogoModulo</code> ficar sem <code>public</code>, o host não a encontra
+(o compilador a esconde). Ver 1.10.</p>
+<p>🧠 sem modificador = <code>internal</code>; <code>public</code> = contrato do módulo. · 🔎 o código de erro.</p>
+<p><strong>Onde foi visto · status:</strong> S9 · visto.</p>
+<hr />
+<p><a id="g1-4"></a></p>
+<h2 id="14-programcs-moderno-de-startupcs-para-builder-e-app">1.4 <code>Program.cs</code> moderno: de <code>Startup.cs</code> para <code>builder</code> e <code>app</code><button class="estudada" data-id="14-programcs-moderno-de-startupcs-para-builder-e-app" type="button">Marcar como estudada</button></h2>
+<blockquote>
+<p><strong>De → para</strong></p>
+<ul>
+<li><strong>No mercado:</strong> <em>minimal hosting model</em>, <em>WebApplicationBuilder</em>, <em>top-level statements</em>.</li>
+<li><strong>No laboratório:</strong> o <code>Program.cs</code> do <code>Norte.Api</code>.</li>
+<li><strong>No seu mundo:</strong> <code>Program.cs</code> + <code>Startup.cs</code> com <code>ConfigureServices</code> e <code>Configure</code>.</li>
+</ul>
+</blockquote>
+<p><strong>Em uma frase:</strong> o que estava espalhado em <code>Program.cs</code> + <code>Startup.cs</code> hoje fica num arquivo só,
+em duas fases: <strong>antes do <code>Build()</code></strong> você registra serviços (o antigo <code>ConfigureServices</code>);
+<strong>depois do <code>Build()</code></strong> você monta o pipeline e as rotas (o antigo <code>Configure</code>).</p>
+<p><strong>O de-para (formato padrão):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Como era</th>
+<th>Como é agora</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>class Program</code> + <code>Main</code> + <code>Host.CreateDefaultBuilder(...).UseStartup&lt;Startup&gt;()</code></td>
+<td><em>top-level statements</em> + <code>WebApplication.CreateBuilder(args)</code></td>
+<td>O compilador gera a classe e o <code>Main</code>; os mesmos padrões (appsettings, logging, Kestrel) numa chamada</td>
+</tr>
+<tr>
+<td><code>Configuration</code> injetado no <code>Startup</code></td>
+<td><code>builder.Configuration</code></td>
+<td>Mesmo objeto, outro lugar</td>
+</tr>
+<tr>
+<td><code>ConfigureServices(IServiceCollection services)</code></td>
+<td><code>builder.Services.Add...</code> (<strong>antes</strong> do <code>Build()</code>)</td>
+<td>Mesma coleção, <code>IServiceCollection</code></td>
+</tr>
+<tr>
+<td><code>Configure(IApplicationBuilder app, IWebHostEnvironment env)</code></td>
+<td><code>app.Use...</code> / <code>app.Map...</code> (<strong>depois</strong> do <code>Build()</code>)</td>
+<td>Mesmo pipeline; <code>env</code> virou <code>app.Environment</code></td>
+</tr>
+<tr>
+<td><code>UseRouting()</code> + <code>UseEndpoints(e =&gt; e.MapControllers())</code></td>
+<td><code>app.Map...</code> direto no <code>app</code></td>
+<td>O <code>WebApplication</code> liga o roteamento sozinho</td>
+</tr>
+<tr>
+<td>A divisão entre as fases era garantida pelos dois métodos</td>
+<td>A divisão é a linha <code>builder.Build()</code></td>
+<td>O compilador <strong>não</strong> impede registrar depois; o erro só aparece em execução</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Detalhe importante sobre &quot;versão&quot;:</strong> esse modelo <strong>já existia no .NET 6</strong> — foi a novidade
+daquela versão. Mas a maioria das empresas migrou para o .NET 6 <strong>mantendo</strong> o <code>Startup.cs</code>. Por
+isso o de-para honesto para você é &quot;como você fazia&quot; × &quot;como se faz hoje&quot;.</p>
+<p><strong>Como você fazia:</strong></p>
+<pre class="highlight"><code><span class="c1">// Program.cs</span>
+<span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Program</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span>
+<span class="w">        </span><span class="n">Host</span><span class="p">.</span><span class="n">CreateDefaultBuilder</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+<span class="w">            </span><span class="p">.</span><span class="n">ConfigureWebHostDefaults</span><span class="p">(</span><span class="n">web</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">web</span><span class="p">.</span><span class="n">UseStartup</span><span class="o">&lt;</span><span class="n">Startup</span><span class="o">&gt;</span><span class="p">())</span>
+<span class="w">            </span><span class="p">.</span><span class="n">Build</span><span class="p">()</span>
+<span class="w">            </span><span class="p">.</span><span class="n">Run</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="c1">// Startup.cs</span>
+<span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Startup</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">ConfigureServices</span><span class="p">(</span><span class="n">IServiceCollection</span><span class="w"> </span><span class="n">services</span><span class="p">)</span><span class="w">      </span><span class="c1">// FASE 1: registrar</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">services</span><span class="p">.</span><span class="n">AddControllers</span><span class="p">();</span>
+<span class="w">        </span><span class="n">services</span><span class="p">.</span><span class="n">AddScoped</span><span class="o">&lt;</span><span class="n">IProdutoService</span><span class="p">,</span><span class="w"> </span><span class="n">ProdutoService</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">Configure</span><span class="p">(</span><span class="n">IApplicationBuilder</span><span class="w"> </span><span class="n">app</span><span class="p">)</span><span class="w">                   </span><span class="c1">// FASE 2: pipeline e rotas</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">app</span><span class="p">.</span><span class="n">UseRouting</span><span class="p">();</span>
+<span class="w">        </span><span class="n">app</span><span class="p">.</span><span class="n">UseEndpoints</span><span class="p">(</span><span class="n">endpoints</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">endpoints</span><span class="p">.</span><span class="n">MapControllers</span><span class="p">());</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+<p><strong>Como se faz hoje (o <code>Program.cs</code> do Norte, fim da S10):</strong></p>
+<pre class="highlight"><code><span class="k">using</span><span class="w"> </span><span class="nn">Norte.Catalogo</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">Norte.Pedidos</span><span class="p">;</span>
+
+<span class="kt">var</span><span class="w"> </span><span class="n">builder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">WebApplication</span><span class="p">.</span><span class="n">CreateBuilder</span><span class="p">(</span><span class="n">args</span><span class="p">);</span><span class="w">   </span><span class="c1">// cria o "construtor" da aplicação</span>
+
+<span class="n">builder</span><span class="p">.</span><span class="n">Services</span><span class="p">.</span><span class="n">AddCatalogo</span><span class="p">();</span><span class="w">                     </span><span class="c1">// FASE 1 (= ConfigureServices)</span>
+<span class="n">builder</span><span class="p">.</span><span class="n">Services</span><span class="p">.</span><span class="n">AddPedidos</span><span class="p">();</span>
+
+<span class="kt">var</span><span class="w"> </span><span class="n">app</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">builder</span><span class="p">.</span><span class="n">Build</span><span class="p">();</span><span class="w">                          </span><span class="c1">// fecha a fase 1: os serviços ficam somente-leitura</span>
+
+<span class="n">app</span><span class="p">.</span><span class="n">MapCatalogo</span><span class="p">();</span><span class="w">                                  </span><span class="c1">// FASE 2 (= Configure)</span>
+<span class="n">app</span><span class="p">.</span><span class="n">MapPedidos</span><span class="p">();</span>
+
+<span class="n">app</span><span class="p">.</span><span class="n">Run</span><span class="p">();</span><span class="w">                                          </span><span class="c1">// sobe o servidor (Kestrel) e fica escutando</span>
+</code></pre>
+
+<p><strong>O que NÃO mudou — a injeção de dependência em si.</strong> <code>AddScoped</code>, <code>AddTransient</code>,
+<code>AddSingleton</code> e a injeção pelo construtor continuam <strong>iguais</strong> ao que você usava. Mudou <strong>onde</strong>
+você escreve os registros (<code>builder.Services</code> em vez de <code>ConfigureServices</code>), não <strong>como</strong>.
+A <strong>ordem dos middlewares</strong> também continua importando.</p>
+<p><strong>Por que as duas fases.</strong> O <code>Build()</code> pega a lista de registros e <strong>constrói o contêiner</strong>
+(<code>IServiceProvider</code>). A partir daí a coleção fica <strong>somente leitura</strong>: <strong>adicionar</strong> um serviço
+depois do <code>Build()</code> lança <code>InvalidOperationException</code> (<em>&quot;The service collection cannot be modified
+because it is read-only&quot;</em>). Ordem obrigatória: <strong>registrar → construir → configurar pipeline e
+rotas → rodar</strong>.</p>
+<p><strong>Nuance descoberta pelo seu experimento (S10).</strong> Você moveu <code>builder.Services.AddCatalogo()</code> para
+depois do <code>Build()</code> e <strong>nada aconteceu</strong>. Motivo: o <code>AddCatalogo()</code> ainda não registra nenhum
+serviço (só devolve <code>services</code>). A exceção só acontece quando algo é <strong>adicionado</strong> à coleção.
+Prova: <code>builder.Services.AddProblemDetails()</code> depois do <code>Build()</code> compila, mas a aplicação <strong>não
+sobe</strong>. Lição de diagnóstico: o erro é <strong>de execução, na subida</strong> — o compilador não avisa.</p>
+<p><strong>Ponte com limite.</strong> O <code>Build()</code> faz o papel da divisão entre <code>ConfigureServices</code> e <code>Configure</code>
+— <strong>mas</strong> antes a divisão era garantida pela estrutura (dentro de <code>Configure</code> não existia
+<code>services</code>); agora tudo está no mesmo arquivo e a disciplina das duas fases é sua.</p>
+<p><strong>Por que usamos · alternativa · custo.</strong> Menos arquivos e menos cerimônia; tudo o que a aplicação
+liga está à vista, de cima para baixo, na ordem real. Alternativa: continuar com <code>Startup.cs</code>
+(ainda funciona). Custo do modelo novo: o <code>Program.cs</code> pode virar um arquivo enorme — por isso cada
+módulo tem seus pontos de entrada (1.8) e o <code>Program.cs</code> só os chama; e a fronteira entre as fases
+deixou de ser garantida pelo compilador.</p>
+<p><strong>Na entrevista.</strong> <em>&quot;No modelo atual, o <code>Program.cs</code> tem duas fases: antes do <code>Build()</code> registro
+serviços, depois configuro pipeline e endpoints. Corresponde ao <code>ConfigureServices</code> e ao
+<code>Configure</code> do <code>Startup</code>. A DI em si não mudou. Registrar depois do <code>Build()</code> compila, mas falha
+na subida, porque o contêiner já foi construído.&quot;</em></p>
+<p>🧠 as duas fases; o <code>Build()</code> como fronteira; o erro só na execução. · 🔎 a lista do que o <code>CreateBuilder</code> configura por padrão.</p>
+<p><strong>Onde foi visto · status:</strong> S1 (duas fases, no aquecimento), S9, S10 · correspondência
+<code>ConfigureServices</code>/<code>Configure</code> ✅; aplicada sozinha no <code>Pedidos</code> ✅ · <strong>frágil → em melhora</strong>.</p>
+<hr />
+<p><a id="g1-5"></a></p>
+<h2 id="15-implicit-usings-e-os-using-que-faltam-numa-biblioteca">1.5 <em>Implicit usings</em> e os <code>using</code> que faltam numa biblioteca<button class="estudada" data-id="15-implicit-usings-e-os-using-que-faltam-numa-biblioteca" type="button">Marcar como estudada</button></h2>
+<p><strong>Em uma frase:</strong> desde o .NET 6, cada tipo de projeto importa <strong>automaticamente</strong> um conjunto de
+namespaces (<em>implicit usings</em>); o projeto Web importa os do ASP.NET Core, a <code>classlib</code> não.</p>
+<table>
+<thead>
+<tr>
+<th>Projeto</th>
+<th>O que já vem importado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Norte.Api</code> (<code>Sdk=&quot;Microsoft.NET.Sdk.Web&quot;</code>)</td>
+<td><code>System</code>, <code>System.Linq</code>… <strong>e também</strong> <code>Microsoft.AspNetCore.Builder</code>, <code>Microsoft.AspNetCore.Http</code>, <code>Microsoft.AspNetCore.Routing</code>, <code>Microsoft.Extensions.DependencyInjection</code> e outros</td>
+</tr>
+<tr>
+<td><code>Norte.Catalogo</code> (<code>Sdk=&quot;Microsoft.NET.Sdk&quot;</code>, <code>classlib</code>)</td>
+<td>só o básico: <code>System</code>, <code>System.Collections.Generic</code>, <code>System.IO</code>, <code>System.Linq</code>, <code>System.Net.Http</code>, <code>System.Threading</code>, <code>System.Threading.Tasks</code></td>
+</tr>
+</tbody>
+</table>
+<p>Consequência: no <code>CatalogoModulo.cs</code> estes <code>using</code> precisam ser escritos:</p>
+<pre class="highlight"><code><span class="k">using</span><span class="w"> </span><span class="nn">Microsoft.AspNetCore.Builder</span><span class="p">;</span><span class="w">              </span><span class="c1">// MapGroup, MapGet</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">Microsoft.AspNetCore.Http</span><span class="p">;</span><span class="w">                 </span><span class="c1">// TypedResults</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">Microsoft.AspNetCore.Routing</span><span class="p">;</span><span class="w">              </span><span class="c1">// IEndpointRouteBuilder</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">Microsoft.Extensions.DependencyInjection</span><span class="p">;</span><span class="w">  </span><span class="c1">// IServiceCollection</span>
+</code></pre>
+
+<p><strong>Atalho:</strong> <code>Ctrl+.</code> em cima do tipo sublinhado oferece o <code>using</code> — <strong>mas só se o tipo existir
+nas referências do projeto</strong> (ver 1.6 e 1.10).</p>
+<p>🧠 por que no host &quot;funciona sozinho&quot; e no módulo não. · 🔎 o nome de cada namespace.</p>
+<p><strong>Onde foi visto · status:</strong> S9 · visto; S10 · repetido no <code>Pedidos</code> sem dificuldade.</p>
+<hr />
+<p><a id="g1-6"></a></p>
+<h2 id="16-frameworkreference-do-aspnet-core">1.6 <code>FrameworkReference</code> do ASP.NET Core<button class="estudada" data-id="16-frameworkreference-do-aspnet-core" type="button">Marcar como estudada</button></h2>
+<p><strong>Em uma frase:</strong> a linha que dá a uma <code>classlib</code> acesso aos tipos do ASP.NET Core
+(<code>IEndpointRouteBuilder</code>, <code>TypedResults</code>, <code>MapGet</code>) <strong>sem pacote do NuGet</strong>, porque o ASP.NET Core
+já vem instalado com o runtime.</p>
+<table>
+<thead>
+<tr>
+<th>Como era</th>
+<th>Como é agora</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Biblioteca que precisava de tipos web instalava pacotes NuGet soltos (<code>Microsoft.AspNetCore.Http.Abstractions</code>…)</td>
+<td><code>&lt;FrameworkReference Include=&quot;Microsoft.AspNetCore.App&quot; /&gt;</code></td>
+<td>Uma linha dá acesso ao framework inteiro, na versão que vem com o SDK</td>
+</tr>
+<tr>
+<td>Versões dos pacotes atualizadas à mão</td>
+<td>Nenhuma versão a gerenciar</td>
+<td>O framework vem com o .NET 10 instalado</td>
+</tr>
+<tr>
+<td>—</td>
+<td>O projeto continua <code>Microsoft.NET.Sdk</code> (biblioteca), não <code>.Web</code></td>
+<td>Só o host é executável</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight"><code><span class="nt">&lt;Project</span><span class="w"> </span><span class="na">Sdk=</span><span class="s">"Microsoft.NET.Sdk"</span><span class="nt">&gt;</span>
+
+<span class="w">  </span><span class="nt">&lt;PropertyGroup&gt;</span>
+<span class="w">    </span><span class="nt">&lt;TargetFramework&gt;</span>net10.0<span class="nt">&lt;/TargetFramework&gt;</span>
+<span class="w">    </span><span class="nt">&lt;ImplicitUsings&gt;</span>enable<span class="nt">&lt;/ImplicitUsings&gt;</span>
+<span class="w">    </span><span class="nt">&lt;Nullable&gt;</span>enable<span class="nt">&lt;/Nullable&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/PropertyGroup&gt;</span>
+
+<span class="w">  </span><span class="nt">&lt;ItemGroup&gt;</span>
+<span class="w">    </span><span class="nt">&lt;FrameworkReference</span><span class="w"> </span><span class="na">Include=</span><span class="s">"Microsoft.AspNetCore.App"</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/ItemGroup&gt;</span>
+
+<span class="nt">&lt;/Project&gt;</span>
+</code></pre>
+
+<p><strong>Problema que resolve:</strong> o módulo declara os próprios endpoints. Sem essa referência, a
+biblioteca não conhece nada de HTTP e o build falha com &quot;tipo ou namespace não encontrado&quot;.</p>
+<p><strong>Alternativa · custo.</strong> Alternativa: declarar todos os endpoints no host — o host passaria a
+conhecer os detalhes de todos os módulos. Custo da <code>FrameworkReference</code>: o módulo passa a depender
+do ASP.NET Core, o que é coerente, porque ele expõe endpoints HTTP.</p>
+<p><strong>Antes × agora.</strong> Existe desde o .NET Core 3.0. Nos seus projetos por camada, só o projeto <code>Api</code>
+falava HTTP; as outras camadas não precisavam disso. No monolito modular, <strong>cada módulo</strong> expõe
+seus endpoints — por isso a referência aparece em cada módulo.</p>
+<p>🧠 por que o módulo precisa dela. · 🔎 a sintaxe do XML.</p>
+<p><strong>Onde foi visto · status:</strong> S9 · visto; S10 · aplicada sozinha no <code>Pedidos</code> ✅.</p>
+<hr />
+<p><a id="g1-7"></a></p>
+<h2 id="17-métodos-de-extensão">1.7 Métodos de extensão<button class="estudada" data-id="17-métodos-de-extensão" type="button">Marcar como estudada</button></h2>
+<blockquote>
+<p><strong>De → para</strong></p>
+<ul>
+<li><strong>No mercado:</strong> <em>extension methods</em> (C# 3, 2007).</li>
+<li><strong>No laboratório:</strong> <code>AddCatalogo()</code>, <code>MapCatalogo()</code>, <code>AddPedidos()</code>, <code>MapPedidos()</code>.</li>
+<li><strong>No seu mundo:</strong> você <strong>usa</strong> métodos de extensão todo dia sem perceber: todo <code>.Where()</code>,
+<code>.Select()</code> do LINQ, e todo <code>services.AddScoped(...)</code>, <code>services.AddDbContext(...)</code>.</li>
+</ul>
+</blockquote>
+<p><strong>Em uma frase:</strong> um método estático que, por causa da palavra <code>this</code> no primeiro parâmetro,
+<strong>aparece como se fosse um método do próprio tipo</strong>.</p>
+<p><strong>O de-para (formato padrão):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Como era (método estático comum)</th>
+<th>Como é agora (método de extensão)</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>public static class PedidosSetup</code></td>
+<td><code>public static class PedidosModulo</code></td>
+<td>Igual: classe <code>static</code> (e <code>public</code>, para o host ver)</td>
+</tr>
+<tr>
+<td><code>public static IServiceCollection Registrar(IServiceCollection services)</code></td>
+<td><code>public static IServiceCollection AddPedidos(this IServiceCollection services)</code></td>
+<td>Só o <strong><code>this</code></strong> antes do primeiro parâmetro</td>
+</tr>
+<tr>
+<td>Chamada: <code>PedidosSetup.Registrar(builder.Services);</code></td>
+<td>Chamada: <code>builder.Services.AddPedidos();</code></td>
+<td>Parece um método da própria coleção</td>
+</tr>
+<tr>
+<td>—</td>
+<td><code>using Norte.Pedidos;</code> no arquivo que chama</td>
+<td>Sem o <code>using</code>, o método não aparece (CS1061)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Como se escreve — três exigências:</strong></p>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">CatalogoModulo</span><span class="w">                    </span><span class="c1">// 1. classe static (e public, para outro projeto ver)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">IServiceCollection</span><span class="w"> </span><span class="nf">AddCatalogo</span><span class="p">(</span><span class="w">     </span><span class="c1">// 2. método static (e public)</span>
+<span class="w">        </span><span class="k">this</span><span class="w"> </span><span class="n">IServiceCollection</span><span class="w"> </span><span class="n">services</span><span class="p">)</span><span class="w">             </span><span class="c1">// 3. "this" no primeiro parâmetro</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">services</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+<p><strong>Como se chama:</strong> o compilador transforma uma chamada na outra.</p>
+<pre class="highlight"><code><span class="n">builder</span><span class="p">.</span><span class="n">Services</span><span class="p">.</span><span class="n">AddCatalogo</span><span class="p">();</span><span class="w">                 </span><span class="c1">// o que você escreve</span>
+<span class="n">CatalogoModulo</span><span class="p">.</span><span class="n">AddCatalogo</span><span class="p">(</span><span class="n">builder</span><span class="p">.</span><span class="n">Services</span><span class="p">);</span><span class="w">   </span><span class="c1">// o que o compilador gera</span>
+</code></pre>
+
+<p><strong>Para o compilador achar a extensão,</strong> o <code>namespace</code> da classe estática precisa estar importado
+com <code>using</code> no arquivo que chama. (Foi exatamente o erro da S9 — ver 1.10.)</p>
+<p><strong>Por que o .NET inteiro registra coisas assim.</strong> Cada biblioteca (EF Core, autenticação, o seu
+módulo) entrega um <code>AddAlgumaCoisa()</code> que agrupa os registros dela. Quem usa chama uma linha, sem
+conhecer os detalhes internos, e o IntelliSense em <code>builder.Services.</code> mostra tudo o que pode ser
+registrado. É o mesmo motivo do Norte: o host não conhece o interior do módulo.</p>
+<p><strong>Por que retorna <code>services</code>:</strong> para permitir encadear: <code>builder.Services.AddCatalogo().AddPedidos();</code>.</p>
+<p><strong>Erros comuns.</strong> Esquecer o <code>this</code> (vira método comum, que não aparece &quot;dentro&quot; do tipo).
+Classe não <code>static</code>. Classe sem <code>public</code> quando chamada de outro projeto. Faltar o <code>using</code> do
+namespace da extensão.</p>
+<p><strong>Na entrevista.</strong> <em>&quot;Método de extensão é um método estático com <code>this</code> no primeiro parâmetro; o
+compilador permite chamá-lo como se fosse do tipo. O .NET usa esse padrão para registrar
+bibliotecas na DI: <code>AddDbContext</code>, <code>AddAuthentication</code>. Uso o mesmo padrão para registrar cada
+módulo.&quot;</em></p>
+<p>🧠 as três exigências e por que o .NET usa esse padrão. · 🔎 nada — isto é para saber de cabeça.</p>
+<p><strong>Onde foi visto · status:</strong> S9 · escrito copiando o exemplo; S10 · escrito no <code>Pedidos</code> com o
+próprio Norte como modelo ✅ · <strong>frágil → em melhora</strong>.</p>
+<p><em>Nota pendente (revisão desta entrada, desde 02/10/2026): o C# 14 trouxe os <strong>extension members</strong>
+(bloco <code>extension</code>), uma sintaxe nova para declarar extensões. Candidato da revisão de mercado do
+fim de M1 (<code>COBERTURA.md</code>); entra aqui na próxima revisão da entrada, depois de conferido na
+documentação oficial.</em></p>
+<hr />
+<p><a id="g1-8"></a></p>
+<h2 id="18-pontos-de-entrada-do-módulo-addcatalogo-e-mapcatalogo">1.8 Pontos de entrada do módulo: <code>AddCatalogo()</code> e <code>MapCatalogo()</code><button class="estudada" data-id="18-pontos-de-entrada-do-módulo-addcatalogo-e-mapcatalogo" type="button">Marcar como estudada</button></h2>
+<p><strong>Em uma frase:</strong> cada módulo expõe <strong>dois</strong> métodos de extensão públicos — um para registrar seus
+serviços, outro para declarar suas rotas — e o host <strong>só</strong> chama esses dois.</p>
+<p><strong>Problema que resolve:</strong> se cada endpoint de cada módulo fosse declarado no <code>Program.cs</code>, o host
+conheceria os detalhes de todos os módulos, e o arquivo cresceria a cada funcionalidade. A
+fronteira criada pelos projetos separados vazaria pelo <code>Program.cs</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Ponto de entrada</th>
+<th>Fase do <code>Program.cs</code></th>
+<th>O que faz</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Add&lt;Modulo&gt;(this IServiceCollection)</code></td>
+<td>antes do <code>Build()</code>, em <code>builder.Services</code></td>
+<td>registra os serviços do módulo</td>
+</tr>
+<tr>
+<td><code>Map&lt;Modulo&gt;(this IEndpointRouteBuilder)</code></td>
+<td>depois do <code>Build()</code>, no <code>app</code></td>
+<td>declara os endpoints do módulo</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Convenção do ADR-002 (nomes):</strong> classe <code>public static &lt;Modulo&gt;Modulo</code>, no namespace
+<code>Norte.&lt;Modulo&gt;</code>, igual ao nome do projeto; grupo de rotas <code>&quot;/&lt;modulo&gt;&quot;</code> em minúsculo. No
+<code>Pedidos</code> (S10): <code>PedidosModulo</code>, <code>Norte.Pedidos</code>, <code>&quot;/pedidos&quot;</code>.</p>
+<p><strong>O código do Norte, linha a linha (<code>src/Modulos/Catalogo/Norte.Catalogo/CatalogoModulo.cs</code>):</strong></p>
+<pre class="highlight"><code><span class="k">using</span><span class="w"> </span><span class="nn">Microsoft.AspNetCore.Builder</span><span class="p">;</span><span class="w">              </span><span class="c1">// MapGroup, MapGet</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">Microsoft.AspNetCore.Http</span><span class="p">;</span><span class="w">                 </span><span class="c1">// TypedResults</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">Microsoft.AspNetCore.Routing</span><span class="p">;</span><span class="w">              </span><span class="c1">// IEndpointRouteBuilder</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">Microsoft.Extensions.DependencyInjection</span><span class="p">;</span><span class="w">  </span><span class="c1">// IServiceCollection</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">Norte.Catalogo</span><span class="p">;</span><span class="w">                        </span><span class="c1">// tem de ser igual ao "using" do Program.cs</span>
+
+<span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">CatalogoModulo</span><span class="w">               </span><span class="c1">// public: é o contrato do módulo com o host</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">IServiceCollection</span><span class="w"> </span><span class="nf">AddCatalogo</span><span class="p">(</span><span class="k">this</span><span class="w"> </span><span class="n">IServiceCollection</span><span class="w"> </span><span class="n">services</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// registros do módulo entram aqui quando existirem</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">services</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">IEndpointRouteBuilder</span><span class="w"> </span><span class="nf">MapCatalogo</span><span class="p">(</span><span class="k">this</span><span class="w"> </span><span class="n">IEndpointRouteBuilder</span><span class="w"> </span><span class="n">app</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">grupo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="n">MapGroup</span><span class="p">(</span><span class="s">"/catalogo"</span><span class="p">);</span><span class="w">   </span><span class="c1">// tudo declarado em "grupo" começa com /catalogo</span>
+
+<span class="w">        </span><span class="n">grupo</span><span class="p">.</span><span class="n">MapGet</span><span class="p">(</span><span class="s">"/status"</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">Ok</span><span class="p">(</span><span class="s">"Catalogo ativo"</span><span class="p">));</span><span class="w">   </span><span class="c1">// GET /catalogo/status (provisório)</span>
+
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">app</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+<p><strong>Por que <code>IEndpointRouteBuilder</code> e não <code>WebApplication</code>:</strong> <code>WebApplication</code> (o <code>app</code>) implementa
+essa interface. Pedir a interface deixa o módulo depender só do necessário: &quot;algo onde se
+declaram rotas&quot;.</p>
+<p><strong>Antes × agora:</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Como você fazia</th>
+<th>Agora</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Quem descobre os endpoints</td>
+<td><code>AddControllers()</code> + <code>MapControllers()</code> <strong>varrem</strong> os assemblies e acham todo controller sozinhos</td>
+<td>o host chama <strong>explicitamente</strong> o ponto de entrada de cada módulo</td>
+</tr>
+<tr>
+<td>Controle</td>
+<td>o host não escolhe o que entra</td>
+<td>cada módulo decide o que expõe; o host decide que módulos liga</td>
+</tr>
+<tr>
+<td>Organizar registros</td>
+<td>extensões <code>AddXyz()</code> para limpar o <code>Startup.cs</code></td>
+<td>o mesmo padrão, <strong>mas</strong> agora é a fronteira pública do módulo</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ponte com limite.</strong> Lembra os <code>AddXyz()</code> que se escreviam para organizar o <code>Startup.cs</code> —
+<strong>mas</strong> aqui o método não é só organização: é a <strong>única coisa do módulo que o host enxerga</strong>.</p>
+<p><strong>Checklist anti-sobra (S10).</strong> Ao criar um módulo copiando outro, procure com <code>Ctrl+F</code> o nome do
+modelo no arquivo novo: nenhum <code>Catalogo</code> pode sobrar no <code>Pedidos</code> (namespace, classe, métodos,
+rota, texto). Na S9 sobrou <code>/consignacoes</code>; na S10, <code>PedidosCatalogo</code> e <code>/pedido</code>.</p>
+<p><strong>Na entrevista.</strong> <em>&quot;Cada módulo expõe um <code>AddModulo()</code> e um <code>MapModulo()</code>. O host só chama esses
+dois; o resto do módulo é interno. Assim, adicionar uma funcionalidade não mexe no host.&quot;</em></p>
+<p>🧠 por que existem, em que fase cada um entra, por que o host não declara rotas. · 🔎 os <code>using</code>.</p>
+<p><strong>Onde foi visto · status:</strong> S9 · escrito a partir de exemplo completo; S10 · <code>Pedidos</code> feito
+com o <code>Catalogo</code> como modelo (ajuda baixa; 3 apontamentos de nome, 1 deles nível 1) · <strong>frágil →
+em melhora</strong>.</p>
+<hr />
+<p><a id="g1-9"></a></p>
+<h2 id="19-minimal-apis-as-formas-de-declarar-um-endpoint-e-o-mapgroup">1.9 Minimal APIs: as formas de declarar um endpoint, e o <code>MapGroup</code><button class="estudada" data-id="19-minimal-apis-as-formas-de-declarar-um-endpoint-e-o-mapgroup" type="button">Marcar como estudada</button></h2>
+<blockquote>
+<p><strong>De → para</strong></p>
+<ul>
+<li><strong>No mercado:</strong> <em>Minimal APIs</em>, <em>route groups</em>, <em>endpoint handlers</em>.</li>
+<li><strong>No laboratório:</strong> endpoints declarados no <code>MapCatalogo()</code> e no <code>MapPedidos()</code>.</li>
+<li><strong>No seu mundo:</strong> controllers (<code>[ApiController]</code>, <code>[Route]</code>, <code>[HttpGet]</code>, <code>IActionResult</code>).</li>
+</ul>
+</blockquote>
+<p><strong>Em uma frase:</strong> um endpoint é declarado com <code>MapGet</code>/<code>MapPost</code>/<code>MapPut</code>/<code>MapDelete</code>, passando a
+<strong>rota</strong> e o <strong>código</strong> que responde; não precisa de classe controller.</p>
+<p><strong>O de-para (formato padrão — a tabela que você aprovou na S10):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Controller</th>
+<th>Minimal API</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>[Route(&quot;catalogo&quot;)]</code> na classe</td>
+<td><code>app.MapGroup(&quot;/catalogo&quot;)</code></td>
+<td>O prefixo vira um <strong>objeto</strong> (o grupo), não um atributo</td>
+</tr>
+<tr>
+<td><code>[HttpGet(&quot;status&quot;)]</code> no método</td>
+<td><code>grupo.MapGet(&quot;/status&quot;, ...)</code></td>
+<td>Verbo e rota numa chamada só</td>
+</tr>
+<tr>
+<td>Método de ação (<code>Status()</code>) dentro de uma classe</td>
+<td>Um <strong>delegate</strong>: lambda ou método</td>
+<td>Não precisa de classe nem de herdar <code>ControllerBase</code></td>
+</tr>
+<tr>
+<td><code>AddControllers()</code> + <code>MapControllers()</code> <strong>descobrem</strong> as classes por reflexão</td>
+<td>Cada <code>Map...</code> <strong>registra explicitamente</strong> o endpoint</td>
+<td>Nada é descoberto. Se ninguém chamar <code>MapCatalogo()</code>, a rota não existe (404)</td>
+</tr>
+<tr>
+<td><code>IActionResult</code> / <code>Ok(...)</code></td>
+<td><code>TypedResults.Ok(...)</code> (tipo concreto <code>Ok&lt;string&gt;</code>)</td>
+<td>O tipo do retorno carrega a informação para o OpenAPI e o teste</td>
+</tr>
+<tr>
+<td>parâmetros com <code>[FromRoute]</code>, <code>[FromBody]</code>, <code>[FromServices]</code></td>
+<td>inferidos pelo nome e pelo tipo (abaixo)</td>
+<td>Menos atributos</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O mesmo endpoint, nos dois estilos:</strong></p>
+<pre class="highlight"><code><span class="c1">// Como você fazia: controller</span>
+<span class="na">[ApiController]</span>
+<span class="na">[Route("catalogo")]</span>
+<span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">CatalogoController</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">ControllerBase</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="na">[HttpGet("status")]</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">IActionResult</span><span class="w"> </span><span class="nf">Status</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Ok</span><span class="p">(</span><span class="s">"Catalogo ativo"</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+
+<pre class="highlight"><code><span class="c1">// Agora: Minimal API</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">grupo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="n">MapGroup</span><span class="p">(</span><span class="s">"/catalogo"</span><span class="p">);</span>
+<span class="n">grupo</span><span class="p">.</span><span class="n">MapGet</span><span class="p">(</span><span class="s">"/status"</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">Ok</span><span class="p">(</span><span class="s">"Catalogo ativo"</span><span class="p">));</span>
+</code></pre>
+
+<p><strong>Quem liga a rota ao código (S10):</strong> antes, o <strong>MVC</strong>, sozinho, procurando por reflexão as classes
+que terminam em <code>Controller</code>. Agora, <strong>você</strong>, explicitamente: o <code>MapGet</code> dentro do
+<code>MapCatalogo()</code> cria a rota, e a chamada <code>app.MapCatalogo()</code> no <code>Program.cs</code> a ativa.</p>
+<p><strong>As formas de escrever o código do endpoint:</strong></p>
+<pre class="highlight"><code><span class="c1">// 1. Lambda sem parâmetros (S9)</span>
+<span class="n">grupo</span><span class="p">.</span><span class="n">MapGet</span><span class="p">(</span><span class="s">"/status"</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">Ok</span><span class="p">(</span><span class="s">"Catalogo ativo"</span><span class="p">));</span>
+
+<span class="c1">// 2. Lambda com parâmetros: cada parâmetro vem de um lugar, inferido pelo framework</span>
+<span class="n">grupo</span><span class="p">.</span><span class="n">MapGet</span><span class="p">(</span><span class="s">"/fichas/{id:int}"</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">AlgumServico</span><span class="w"> </span><span class="n">servico</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">...);</span>
+<span class="c1">//          {id:int} na rota → "int id" vem da ROTA, pelo nome</span>
+<span class="c1">//          AlgumServico registrado na DI → vem do CONTÊINER, pelo tipo</span>
+<span class="c1">//          (num POST, um tipo complexo vem do CORPO da requisição, em JSON)</span>
+
+<span class="c1">// 3. Método nomeado (forma usada nas funcionalidades reais: legível e testável)</span>
+<span class="n">grupo</span><span class="p">.</span><span class="n">MapGet</span><span class="p">(</span><span class="s">"/fichas/{id:int}"</span><span class="p">,</span><span class="w"> </span><span class="n">ObterFicha</span><span class="p">);</span>
+
+<span class="k">static</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="o">&lt;</span><span class="n">Results</span><span class="o">&lt;</span><span class="n">Ok</span><span class="o">&lt;</span><span class="n">FichaResponse</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">NotFound</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">ObterFicha</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="p">...)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="p">}</span>
+</code></pre>
+
+<p><strong><code>MapGroup</code> (desde o .NET 7):</strong> agrupa endpoints sob um prefixo comum e permite aplicar
+configurações ao grupo todo (tag do OpenAPI, autorização, filtros). A rota dentro do grupo é
+<strong>relativa</strong>: <code>MapGroup(&quot;/catalogo&quot;)</code> + <code>MapGet(&quot;/status&quot;)</code> = <code>/catalogo/status</code>. Escrever
+<code>MapGet(&quot;/catalogo/status&quot;)</code> dentro do grupo gera <code>/catalogo/catalogo/status</code>.</p>
+<p><strong>Ponte com limite.</strong> O <code>MapGroup</code> faz o papel do <code>[Route]</code> no controller, <strong>mas</strong> não é uma
+classe: é um prefixo <strong>mais uma configuração compartilhada</strong>, e os endpoints de um grupo <strong>não
+precisam estar no mesmo arquivo</strong>. É isso que, em M2, permite uma pasta por funcionalidade em vez
+de um controller por entidade com 20 ações.</p>
+<p><strong><code>TypedResults</code> × <code>Results</code> (retenção S1):</strong> <code>TypedResults.Ok(x)</code> devolve o tipo concreto
+<code>Ok&lt;T&gt;</code>; com vários retornos, a assinatura fica <code>Results&lt;Ok&lt;T&gt;, NotFound&gt;</code>. O gerador do OpenAPI
+lê o tipo e documenta as respostas sozinho; o teste de unidade chama o método e confere status e
+corpo como objetos C#. Com <code>Results.Ok(x)</code> (devolve <code>IResult</code>), nenhum dos dois enxerga o que
+volta sem configuração ou conversão manual.</p>
+<p><strong>Por que usamos · alternativa · custo.</strong> Menos cerimônia, sem o pipeline do MVC, e o endpoint fica
+perto da funcionalidade (encaixa na pasta por funcionalidade de M2). Alternativa: controllers —
+<strong>muito comuns em projetos existentes</strong>, e o laboratório tem um spike de controllers na Trilha B
+de M1. Custo das Minimal APIs: menos convenção pronta; a organização (grupos, pontos de entrada,
+métodos nomeados) é responsabilidade sua.</p>
+<p><strong>Literatura × mercado.</strong> Projetos existentes usam muito controllers; projetos novos, cada vez
+mais Minimal APIs (julgamento pedagógico; frequência nas vagas a conferir no <code>Vagas.md</code> na virada
+de M1). Em entrevista, saber as duas e o custo de cada uma é o que se espera.</p>
+<p><strong>Na entrevista.</strong> <em>&quot;Minimal APIs declaram o endpoint com <code>MapGet</code> e um handler; uso <code>MapGroup</code>
+para o prefixo do módulo e <code>TypedResults</code> para o OpenAPI e o teste enxergarem os retornos.
+Controllers continuam válidos, principalmente em base existente; o custo das Minimal APIs é
+organizar por conta própria.&quot;</em></p>
+<p>🧠 o de-para com controllers; quem liga a rota; de onde vem cada parâmetro; por que <code>TypedResults</code>. · 🔎 a assinatura exata de <code>Results&lt;...&gt;</code>.</p>
+<p><strong>Onde foi visto · status:</strong> S1–S3 (aquecimento), S9, S10 (de-para em tabela; <code>Pedidos</code> com
+<code>MapGroup</code> + <code>TypedResults</code> sozinho) · <strong>frágil → em melhora</strong>; as formas 2 e 3 entram na S11.</p>
+<hr />
+<p><a id="g1-10"></a></p>
+<h2 id="110-diagnóstico-os-erros-da-s9–s10-e-como-achar-a-causa">1.10 Diagnóstico: os erros da S9–S10 e como achar a causa<button class="estudada" data-id="110-diagnóstico-os-erros-da-s9–s10-e-como-achar-a-causa" type="button">Marcar como estudada</button></h2>
+<p>Os erros viram roteiro de depuração. <strong>Leia sempre o código do erro</strong>: ele diz o tipo de problema.</p>
+<table>
+<thead>
+<tr>
+<th>Sintoma</th>
+<th>Código</th>
+<th>O que significa</th>
+<th>Causa no Norte</th>
+<th>Como resolver</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>IServiceCollection</code>/<code>IEndpointRouteBuilder</code> não encontrados no módulo</td>
+<td>CS0246</td>
+<td>o tipo ou namespace não existe para este arquivo</td>
+<td>S9: faltavam os <code>using</code> (e/ou a <code>FrameworkReference</code>)</td>
+<td><code>using</code> (1.5) e <code>FrameworkReference</code> (1.6)</td>
+</tr>
+<tr>
+<td><code>Ctrl+.</code> não oferece o <code>using</code></td>
+<td>—</td>
+<td>o tipo não está nas referências do projeto, <strong>ou</strong> o editor está desatualizado</td>
+<td>S9: <code>.csproj</code> editado e VS Code não recarregou</td>
+<td><code>dotnet restore</code> + recarregar o editor. Teste: se o <code>dotnet build</code> passa e o editor sublinha, é o editor</td>
+</tr>
+<tr>
+<td><code>'IServiceCollection' does not contain a definition for 'AddCatalogo'</code></td>
+<td>CS1061</td>
+<td>o compilador não acha um método (nem extensão) com esse nome <strong>visível</strong></td>
+<td>S9: arquivo criado com <code>namespace Norte.Catalogo.obj</code>; o host importava <code>Norte.Catalogo</code></td>
+<td><code>namespace</code> do módulo = <code>using</code> do host. Outras causas: classe sem <code>public</code>, sem <code>static</code>, sem <code>this</code></td>
+</tr>
+<tr>
+<td><code>value = builder.Services.AddCatalogo();</code> não compila</td>
+<td>—</td>
+<td>variável não declarada</td>
+<td>S9: sobra de edição</td>
+<td>não guardar o retorno</td>
+</tr>
+<tr>
+<td>página em branco em <code>/</code></td>
+<td>404</td>
+<td>nenhuma rota corresponde</td>
+<td>S9: o <code>MapGet(&quot;/&quot;)</code> do Hello World foi removido</td>
+<td>esperado; chamar a rota do módulo</td>
+</tr>
+<tr>
+<td>página em branco em <code>/catalogo/status</code></td>
+<td>404</td>
+<td>a rota declarada é outra</td>
+<td>S9: <code>MapGroup(&quot;/consignacoes&quot;)</code>, sobra do exemplo</td>
+<td>conferir a rota <strong>que o código declara</strong></td>
+</tr>
+<tr>
+<td><code>GET /pedidos/status</code> → 404</td>
+<td>404</td>
+<td>a rota declarada é outra</td>
+<td>S10: <code>MapGroup(&quot;/pedido&quot;)</code> no singular</td>
+<td>grupo = nome do módulo (<code>&quot;/pedidos&quot;</code>)</td>
+</tr>
+<tr>
+<td>Registro depois do <code>Build()</code> &quot;não dá erro&quot;</td>
+<td>—</td>
+<td>nada foi <strong>adicionado</strong> à coleção</td>
+<td>S10: <code>AddCatalogo()</code> ainda vazio</td>
+<td>com um registro real (<code>AddProblemDetails()</code>), a subida falha (1.4)</td>
+</tr>
+<tr>
+<td>Projeto aparece em <code>src/Modulos/...</code> no VS, mas está na raiz do disco</td>
+<td>—</td>
+<td>as pastas eram <strong>solution folders</strong> (virtuais)</td>
+<td>S10: <code>Norte.Pedido</code> criado pelo VS</td>
+<td><code>dotnet sln remove</code> → mover a pasta → <code>dotnet sln add</code> (1.1)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Por que o namespace saiu com <code>.obj</code>:</strong> a extensão de C# do VS Code monta o namespace a partir da
+<strong>pasta selecionada</strong> quando o arquivo é criado. A pasta <code>obj</code> é de <strong>trabalho da compilação</strong>:
+ignorada pelo git e apagável pelo <code>dotnet clean</code>. Código nunca mora nela.</p>
+<p><strong>Ferramentas para ver o status de uma resposta:</strong></p>
+<pre class="highlight"><code>curl.exe<span class="w"> </span>-i<span class="w"> </span>http://localhost:5071/catalogo/status<span class="w">    </span><span class="c1"># no PowerShell, "curl.exe"</span>
+</code></pre>
+
+<p>ou <strong>F12</strong> no navegador → aba <strong>Rede/Network</strong> → recarregar.</p>
+<p><strong>O raciocínio que você usou e que vale guardar:</strong> diante de um 404, pergunte <strong>&quot;qual rota o
+código realmente declara?&quot;</strong> — e siga do <code>Program.cs</code> até o <code>MapGet</code>. Diante de um comportamento
+inesperado, <strong>teste no código</strong> (foi o que revelou a nuance do <code>Build()</code> na S10).</p>
+<p>🧠 CS0246 × CS1061 × 404 e o raciocínio. · 🔎 os comandos.</p>
+<p><strong>Onde foi visto · status:</strong> S9 · você diagnosticou sozinho o namespace <code>.obj</code> e a rota da
+joalheria; S10 · experimento do <code>Build()</code>.</p>
+<hr />
+<p><a id="g1-11"></a></p>
+<h2 id="111-git-branch-por-objetivo-de-sessão">1.11 Git: branch por objetivo de sessão<button class="estudada" data-id="111-git-branch-por-objetivo-de-sessão" type="button">Marcar como estudada</button></h2>
+<p><strong>Em uma frase:</strong> a <code>main</code> recebe a base do repositório e o que já foi revisado; cada objetivo de
+sessão vive numa branch, que vira <strong>um</strong> pull request no fim.</p>
+<p><strong>Na S9:</strong></p>
+<pre class="highlight"><code>git<span class="w"> </span>switch<span class="w"> </span>-c<span class="w"> </span>feat/catalogo-ficha-produto<span class="w">      </span><span class="c1"># criar e trocar (substitui "checkout -b")</span>
+git<span class="w"> </span>add<span class="w"> </span>.gitignore
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">"chore: adicionar .gitignore do .NET"</span>
+git<span class="w"> </span>add<span class="w"> </span>Norte.slnx<span class="w"> </span>src
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">"build: criar solution com host Norte.Api e módulo Catalogo"</span>
+git<span class="w"> </span>push<span class="w"> </span>-u<span class="w"> </span>origin<span class="w"> </span>feat/catalogo-ficha-produto<span class="w">  </span><span class="c1"># -u: liga a branch local à remota</span>
+</code></pre>
+
+<p><strong>Na S10 (mesma branch, por decisão do mentor):</strong> <code>chore: remover materiais de estudo do repositorio</code> · <code>docs(catalogo): documentar pontos de entrada do modulo</code> · <code>docs: adicionar CLAUDE.md com contexto do projeto</code> · <code>feat(pedidos): criar módulo e registrar no host</code>.
+Para descartar uma alteração acidental num arquivo: <code>git restore &lt;arquivo&gt;</code>.</p>
+<p><strong>Regras práticas:</strong> branch nova quando começa um objetivo novo; mesma branch enquanto o trabalho
+faz parte do mesmo objetivo; histórico <strong>já enviado</strong> não se reescreve (<code>amend</code>, <code>rebase</code>) — o
+risco supera o ganho. Detalhe completo no <code>git-workflow.md</code>.</p>
+<p>🧠 quando abrir branch e por que não reescrever o que foi enviado. · 🔎 os comandos.</p>
+<p><strong>Onde foi visto · status:</strong> S9, S10 · usado.</p>
+<hr />
+<p><a id="g1-12"></a></p>
+<h2 id="112-módulo-×-funcionalidade-×-departamento-o-critério-para-criar-módulo">1.12 Módulo × funcionalidade × departamento: o critério para criar módulo<button class="estudada" data-id="112-módulo-×-funcionalidade-×-departamento-o-critério-para-criar-módulo" type="button">Marcar como estudada</button></h2>
+<blockquote>
+<p><strong>De → para</strong></p>
+<ul>
+<li><strong>Como você vai ouvir no mercado:</strong> <em>module</em>, <em>bounded context</em>, <em>feature</em>/<em>use case</em>,
+&quot;como você define a fronteira de um módulo/serviço?&quot;.</li>
+<li><strong>No laboratório:</strong> módulos <code>Catalogo</code>, <code>Pedidos</code>, <code>Precificacao</code>, <code>Vendas</code>…; funcionalidades
+como <code>CriarPedido</code>, <code>CadastrarFichaProduto</code>.</li>
+<li><strong>No seu mundo:</strong> &quot;módulo Comercial&quot;, &quot;módulo RH&quot; dos ERPs, organizados por <strong>menu e
+departamento</strong>; no Flutter, a pasta por <em>feature</em>.</li>
+</ul>
+</blockquote>
+<p><strong>Em uma frase:</strong> <strong>módulo</strong> é o conjunto de <strong>regras que valem juntas</strong> sobre um assunto, com
+<strong>dados próprios</strong>; <strong>funcionalidade</strong> é <strong>uma ação</strong> dentro dele; <strong>departamento</strong> é quem
+trabalha — e não decide a divisão.</p>
+<p><strong>Pergunta que responde:</strong> &quot;isto é um módulo novo, uma funcionalidade de um módulo existente, ou
+só o nome de uma área da empresa?&quot;</p>
+<p><strong>As três coisas lado a lado:</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>Departamento</strong></th>
+<th><strong>Módulo</strong> (no Norte)</th>
+<th><strong>Funcionalidade</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>O que é</td>
+<td>pessoas organizadas na empresa</td>
+<td>regras que valem juntas sobre um assunto + dados próprios</td>
+<td>uma ação que alguém faz no sistema</td>
+</tr>
+<tr>
+<td>Gramática</td>
+<td>nome de área</td>
+<td><strong>substantivo</strong>: o assunto</td>
+<td><strong>verbo</strong>: a ação</td>
+</tr>
+<tr>
+<td>Exemplos no Norte</td>
+<td>Comercial, Logística</td>
+<td><code>Catalogo</code>, <code>Precificacao</code>, <code>Pedidos</code>, <code>Vendas</code>, <code>Estoque</code></td>
+<td><code>CriarPedido</code>, <code>AdicionarItem</code>, <code>AprovarDesconto</code></td>
+</tr>
+<tr>
+<td>Quem decide o limite</td>
+<td>o organograma</td>
+<td><strong>as regras</strong> (onde a mesma palavra passa a seguir outra regra)</td>
+<td>o caso de uso</td>
+</tr>
+<tr>
+<td>No código</td>
+<td>não aparece</td>
+<td>um <strong>projeto</strong> (<code>Norte.Pedidos</code>) e, a partir de M3, um <strong>schema</strong></td>
+<td>uma <strong>pasta</strong> dentro do módulo (M2): <code>Pedidos/CriarPedido/</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>O critério.</strong> Pergunta principal: <em><strong>a mesma palavra segue regras diferentes?</strong></em> Se segue, são
+módulos diferentes; se não, é o mesmo módulo — mesmo que o trabalho aconteça em departamentos,
+momentos ou pessoas diferentes. (É o sinal principal do <code>GUIA-ESTRATEGICO.md</code>, 2.2; pessoas
+diferentes e &quot;um lado muda sem afetar o outro&quot; são reforço.)</p>
+<p><strong>Exemplo — por que não um módulo &quot;Comercial&quot;:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Assunto dentro do departamento Comercial</th>
+<th>Regra que vale sempre</th>
+<th>Módulo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Prospect da feira</td>
+<td>pode existir sem CNPJ</td>
+<td><code>Crm</code></td>
+</tr>
+<tr>
+<td>Tabela de preço</td>
+<td><strong>muda</strong> quando o gerente reajusta; tem vigência</td>
+<td><code>Precificacao</code></td>
+</tr>
+<tr>
+<td>Pedido</td>
+<td><strong>muda</strong> até ser convertido; preço <strong>travado</strong> no item</td>
+<td><code>Pedidos</code></td>
+</tr>
+<tr>
+<td>Venda</td>
+<td><strong>nunca muda</strong>; correção vira devolução</td>
+<td><code>Vendas</code></td>
+</tr>
+</tbody>
+</table>
+<p>Num módulo &quot;Comercial&quot;, uma classe <code>Pedido</code> teria de obedecer a &quot;muda&quot; e &quot;não muda&quot; ao mesmo
+tempo — a regra vira <code>if</code> espalhado:</p>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">AlterarQuantidade</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">qtd</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">StatusPedido</span><span class="p">.</span><span class="n">Faturado</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">Status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">StatusPedido</span><span class="p">.</span><span class="n">Vendido</span><span class="p">)</span>
+<span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="nf">InvalidOperationException</span><span class="p">(</span><span class="s">"..."</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// ...</span>
+<span class="p">}</span>
+</code></pre>
+
+<p>Multiplicado por dezenas de métodos, é o <strong>service gigante</strong> dos sistemas antigos. Separar
+<code>Pedidos</code> de <code>Vendas</code> faz a regra &quot;não muda&quot; morar num lugar só.</p>
+<p><strong>Exemplo de fora do Norte (ilustração do raciocínio) — RH:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Assunto no RH</th>
+<th>Regra que vale sempre</th>
+<th>Módulo provável</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Candidato</td>
+<td>pode ser descartado; não tem salário</td>
+<td><code>Recrutamento</code></td>
+</tr>
+<tr>
+<td>Marcações de ponto</td>
+<td>ajustáveis até o fechamento do período</td>
+<td><code>Ponto</code></td>
+</tr>
+<tr>
+<td>Folha da competência</td>
+<td>depois de fechada, não muda (corrige-se com outra folha)</td>
+<td><code>Folha</code></td>
+</tr>
+</tbody>
+</table>
+<p>&quot;Colaborador&quot; segue regras diferentes em cada linha — é isso que separa os módulos. &quot;RH&quot; é quem
+trabalha com eles.</p>
+<p><strong>Ponte com limite.</strong> A pasta por <em>feature</em> do Flutter corresponde à <strong>funcionalidade</strong> daqui
+(<code>CriarPedido/</code>) — <strong>mas</strong> o módulo é um nível acima, e um módulo não lê os dados de outro: pede
+por contrato. E o nome de um módulo <strong>pode</strong> coincidir com um departamento (<code>Financeiro</code>), <strong>mas</strong>
+o motivo da divisão tem de ser a regra (no Norte, a reserva de crédito), não o organograma.</p>
+<p><strong>&quot;Módulo&quot; tem dois sentidos na literatura:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Onde</th>
+<th>&quot;Módulo&quot; significa</th>
+<th>Nível</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Livro do Evans (DDD tático)</td>
+<td>agrupamento de conceitos <strong>dentro</strong> de um modelo (namespace/pacote)</td>
+<td><strong>abaixo</strong> do bounded context</td>
+</tr>
+<tr>
+<td>Monolito modular (mercado, Norte)</td>
+<td><strong>um bounded context no código</strong>: projeto, regras e dados próprios</td>
+<td><strong>igual</strong> ao bounded context</td>
+</tr>
+</tbody>
+</table>
+<p>No Norte, &quot;módulo&quot; é sempre o segundo sentido.</p>
+<p><strong>Cartão de bolso:</strong></p>
+<ol>
+<li><strong>É verbo ou substantivo?</strong> Verbo → funcionalidade. Substantivo → candidato a módulo.</li>
+<li><strong>A mesma palavra segue regra diferente em outro lugar?</strong> Sim → módulos diferentes.</li>
+<li><strong>O nome veio do organograma?</strong> Desconfie e volte à pergunta 2.</li>
+</ol>
+<p><strong>Nome no código.</strong> O módulo é o <strong>assunto</strong>, no plural quando for coleção (<code>Pedidos</code>, projeto
+<code>Norte.Pedidos</code>, rota <code>/pedidos</code>); a classe de domínio que nasce dentro dele fica no singular
+(<code>Pedido</code>). Lista de módulos: ADR-001.</p>
+<p><strong>Onde isso entra no DDD.</strong> Módulo = bounded context no código; o critério é o mesmo do bounded
+context. Detalhe em <code>GUIA-ESTRATEGICO.md</code> (2.1 e 2.2).</p>
+<p><strong>Na entrevista.</strong> <em>&quot;Como você define a fronteira de um módulo?&quot;</em> → <em>&quot;Pelas regras, não pelo
+departamento. Onde a mesma palavra passa a seguir outra regra — pedido muda, venda não muda —
+existe outro módulo. Cada módulo tem dados próprios e expõe um contrato. O custo é algum dado
+duplicado e a necessidade de integrar os módulos.&quot;</em></p>
+<p><strong>Erros comuns.</strong> Decidir o módulo pelo departamento ou pelo menu (você, S8 e S10). Tratar uma
+ação (verbo) como módulo. Nome do módulo no singular, vindo da classe (<code>Norte.Pedido</code>, S10).</p>
+<p>🧠 o critério (regra, não departamento); verbo × substantivo; o exemplo do Comercial. · 🔎 a lista de módulos (ADR-001).</p>
+<p><strong>Onde foi visto · status:</strong> S8 (exposto no bloco de DDD), S10 (pergunta sua; exposto em tabelas)
+· <strong>frágil</strong> (novo no código).</p>
+<hr />
+<p><a id="juntando-p1"></a></p>
+<h1 id="juntando-tudo-parte-1">Juntando tudo (Parte 1)</h1>
+<p>O que existe no repositório <code>norte</code> no fim da S10, e por que cada peça está lá:</p>
+<pre class="highlight"><code>norte/
+├── CLAUDE.md            contexto para o Claude Code (só analisa e reporta)
+├── docs/adr/            ADR-000 (registrar decisões), ADR-001 (idioma), ADR-002 (projeto por módulo)
+├── .gitignore           ignora bin/ e obj/ (saída de compilação)
+├── Norte.slnx           1.1 — só organiza
+└── src/
+    ├── Norte.Api/       1.2 — o host: único executável; Program.cs em duas fases (1.4)
+    └── Modulos/
+        ├── Catalogo/Norte.Catalogo/
+        │   ├── Norte.Catalogo.csproj   1.6 — FrameworkReference
+        │   └── CatalogoModulo.cs       1.7 + 1.8 — pontos de entrada; 1.9 — MapGroup/MapGet
+        └── Pedidos/Norte.Pedidos/
+            ├── Norte.Pedidos.csproj
+            └── PedidosModulo.cs        mesmo padrão; critério do módulo em 1.12
+</code></pre>
+
+<p>E a frase que amarra tudo:</p>
+<blockquote>
+<p><strong>A solution organiza; o host executa e liga cada módulo pelos pontos de entrada públicos; o
+módulo reúne as regras que valem juntas, decide o que expõe, e o compilador impede o resto.</strong></p>
+</blockquote>
+<hr />
+<p><a id="teste-se"></a></p>
+<h1 id="teste-se">Teste-se</h1>
+<p>Responda <strong>sem consultar</strong>, de preferência em voz alta. Respostas no fim.</p>
+<ol>
+<li>O que torna o Norte <strong>um</strong> deploy: a solution ou o host? Por quê?</li>
+<li>Qual a diferença, em número de deploys, entre monolito modular e microsserviços?</li>
+<li>Por que o Norte usa um projeto por módulo, e não pastas num projeto só? Qual o custo?</li>
+<li>Uma classe declarada como <code>class FichaProduto { }</code> (sem modificador) é visível para outro projeto? Por quê?</li>
+<li>Num projeto com <code>Startup.cs</code>, onde ficavam os registros de DI e onde ficavam as rotas? E hoje?</li>
+<li>Por que registrar um serviço depois de <code>builder.Build()</code> dá erro? O projeto compila?</li>
+<li>Quais as três exigências para escrever um método de extensão?</li>
+<li>Por que o host consegue usar <code>MapGet</code> sem <code>using</code>, e o módulo não?</li>
+<li>Para que serve a <code>FrameworkReference</code> no <code>.csproj</code> do módulo?</li>
+<li><code>MapGroup(&quot;/catalogo&quot;)</code> + <code>MapGet(&quot;/catalogo/status&quot;, ...)</code>: qual a rota final? Está certo?</li>
+<li>Erro CS1061 &quot;não contém definição para <code>AddCatalogo</code>&quot;: cite duas causas possíveis.</li>
+<li>Página em branco numa rota que deveria existir: qual a primeira pergunta a fazer?</li>
+<li>Um vazamento de memória no módulo <code>Catalogo</code> esgota a memória do processo. O que acontece com o <code>Pedidos</code>?</li>
+<li>Por que <code>Pedidos</code>, <code>Precificacao</code> e <code>Vendas</code> são módulos diferentes, e não um módulo <code>Comercial</code>?</li>
+<li>No Visual Studio, uma pasta criada com o botão direito <strong>na solution</strong> existe no disco?</li>
+<li>Moveu <code>AddCatalogo()</code> para depois do <code>Build()</code> e nada aconteceu. Por quê?</li>
+</ol>
+<hr />
+<p><a id="respostas"></a></p>
+<h3 id="respostas">Respostas</h3><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>O <strong>host</strong>: <code>Norte.Api</code> é o único executável e referencia os módulos (bibliotecas). Publicar
+o host gera um processo com todas as <code>.dll</code>. A solution só organiza.</li>
+<li>Monolito modular: 1 deploy para o sistema todo. Microsserviços: 1 deploy por capacidade.</li>
+<li>Para o compilador garantir a fronteira (<code>internal</code> só protege entre assemblies), já que
+<code>Pedidos</code> vai precisar de <code>Catalogo</code> ainda em M1. Custo: mais cerimônia (ponto de entrada por
+módulo, <code>FrameworkReference</code>, mais projetos). Não protege o banco.</li>
+<li>Não. Sem modificador, a classe é <code>internal</code>: visível só no próprio projeto.</li>
+<li>Antes: registros em <code>ConfigureServices</code>, rotas em <code>Configure</code>. Hoje: registros em
+<code>builder.Services</code> (antes do <code>Build()</code>), rotas no <code>app</code> (depois do <code>Build()</code>).</li>
+<li>O <code>Build()</code> monta o contêiner de DI e deixa a coleção somente leitura; <strong>adicionar</strong> algo depois
+lança <code>InvalidOperationException</code>. Compila: o erro aparece na execução, na subida.</li>
+<li>Classe <code>static</code>; método <code>static</code>; <code>this</code> no primeiro parâmetro (e <code>public</code>, se chamado de outro projeto).</li>
+<li>O projeto Web importa automaticamente os namespaces do ASP.NET Core (<em>implicit usings</em>); a <code>classlib</code> não.</li>
+<li>Dar ao módulo acesso aos tipos do ASP.NET Core sem pacote NuGet, para ele declarar os próprios endpoints.</li>
+<li><code>/catalogo/catalogo/status</code>. Errado: dentro do grupo, a rota é relativa (<code>&quot;/status&quot;</code>).</li>
+<li><code>using</code> do namespace da extensão ausente ou diferente (o caso <code>Norte.Catalogo.obj</code>); classe
+sem <code>public</code>/<code>static</code>; método sem <code>static</code>; falta o <code>this</code>.</li>
+<li>&quot;Qual rota o código realmente declara?&quot; — e confirmar o status (404?) com <code>curl.exe -i</code> ou F12.</li>
+<li>Cai junto: os módulos são DLLs no <strong>mesmo processo</strong>. Monolito modular isola no código, não em execução.</li>
+<li>Porque seguem regras diferentes: tabela de preço muda com vigência; pedido muda até a conversão;
+venda nunca muda. O critério é a regra, não o departamento.</li>
+<li>Não: é uma <em>solution folder</em>, só um <code>&lt;Folder&gt;</code> no <code>.slnx</code>. Crie o projeto pelo terminal
+(<code>dotnet new ... -o caminho</code> + <code>dotnet sln add</code>).</li>
+<li>Porque o <code>AddCatalogo()</code> ainda não adiciona nenhum serviço; a exceção só acontece quando algo é
+adicionado à coleção depois do <code>Build()</code>.</li>
+</ol>
+</details>
+</article>
+<footer class="rodape">Atualizado em 09/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

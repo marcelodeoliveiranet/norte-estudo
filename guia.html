@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sumário do guia · Norte · Estudo</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/codigo.css">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+</head>
+<body data-chave="guia.html" data-prefixo="">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="index.html">Início</a><a href="guia.html" class=ativo>Guia</a><a href="estudos.html">Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#guia-net-moderno--norte-índice" data-id="guia-net-moderno--norte-índice">GUIA .NET MODERNO — Norte (índice)</a><a class="n2" href="#onde-estamos-atualizado-a-cada-sessão" data-id="onde-estamos-atualizado-a-cada-sessão">Onde estamos (atualizado a cada sessão)</a><a class="n2" href="#partes" data-id="partes">Partes</a><a class="n2" href="#sumário" data-id="sumário">Sumário</a><a class="n2" href="#histórico-do-guia" data-id="histórico-do-guia">Histórico do guia</a></aside>
+<main class="conteudo"><article>
+<h1 id="guia-net-moderno--norte-índice">GUIA .NET MODERNO — Norte (índice)</h1>
+<p><strong>Guia principal do novo ciclo (M1 em diante).</strong> Explica, em detalhe, cada ferramenta, conceito
+e decisão da programação .NET moderna que aparece no Norte. Escrito pelo mentor; cresce a cada
+sessão. Uma entrada entra quando é ensinada e só muda quando algo muda.</p>
+<p><strong>Desde 02/10/2026 o guia é dividido:</strong> este arquivo é o <strong>índice</strong> (curto); o conteúdo fica num
+arquivo por parte. No fechamento de sessão, só a parte que mudou é reescrita (e vai para download);
+o índice só muda quando entra uma entrada nova ou o &quot;onde estamos&quot; avança.</p>
+<p><strong>Para quem é:</strong> para você, que programou até o .NET 6 <strong>no estilo das empresas em que
+trabalhou</strong> — <code>Startup.cs</code>, controllers, Clean Architecture com pastas técnicas — e ficou 4 anos
+parado. Toda entrada responde à pergunta: <strong>&quot;como você fazia → como se faz agora → por quê&quot;</strong>.</p>
+<p><strong>Formato padrão (desde a S10):</strong> todo conceito abre com uma <strong>tabela de-para em três colunas</strong>
+— <em>como era · como é agora · o que mudou</em> —, linha a linha, com o código do Norte. A explicação em
+texto vem depois.</p>
+<p><strong>Como estudar (sábado):</strong> leia as entradas da semana na ordem; para cada uma, feche o arquivo e
+tente explicar em voz alta a linha &quot;Em uma frase&quot; e a seção &quot;Na entrevista&quot;; depois faça o
+<strong>Teste-se</strong> do fim da parte, sem consultar.</p>
+<p><strong>Legenda de memorização</strong> (em cada entrada):</p>
+<ul>
+<li>🧠 <strong>Saber de cabeça</strong> — o porquê, o que se pergunta em entrevista, o que permite fazer sozinho.</li>
+<li>🔎 <strong>Saber onde encontrar</strong> — sintaxe exata, nome de <code>using</code>, comando de CLI. Qualquer sênior
+consulta; o <code>Ctrl+.</code> e a documentação resolvem.</li>
+</ul>
+<p><strong>Última atualização:</strong> 08/10/2026 (S14 parte 2 — Parte 3 v1.2, entradas 3.15 a 3.17) · <strong>Versão:</strong> 1.7</p>
+<hr />
+<h2 id="onde-estamos-atualizado-a-cada-sessão">Onde estamos (atualizado a cada sessão)</h2>
+<p><strong>Fim da S14 (parte 2):</strong> a sessão está no <strong>nível 3</strong> do mapa (<a href="parte-0-1.html#parte-0--o-mapa-dos-n%C3%ADveis">Parte 0</a>),
+na <strong>borda entre a funcionalidade e o host</strong>: o tratamento de erros mora no host
+(<code>Norte.Api/Program.cs</code>: <code>AddProblemDetails</code>, <code>UseExceptionHandler</code>, <code>UseStatusCodePages</code> —
+<a href="parte-3.html#315-erros-da-api-em-formato-padr%C3%A3o-addproblemdetails-useexceptionhandler-e-usestatuscodepages">3.15</a>), e o teste que o protege usa a rota do <code>Catalogo</code> como gatilho
+(<a href="parte-3.html#316-dubl%C3%AA-de-teste-e-ambiente-do-teste-trocar-uma-pe%C3%A7a-s%C3%B3-no-teste">3.16</a>). A funcionalidade <code>CadastrarFichaProduto</code> segue como na S12.
+Também se viu que a <code>main</code> <strong>não compilava</strong> (CS8604) e que o PR #4 a consertou (<a href="parte-3.html#317-diagn%C3%B3stico-os-problemas-da-s14-e-como-achar-a-causa">3.17</a>).
+Próximo passo de M1: <strong>CI básico</strong> (<code>dotnet build</code> + <code>dotnet test</code> no GitHub Actions) — nível 1,
+solution e build (<a href="parte-4.html#parte-4--o-build-cobra-as-conven%C3%A7%C3%B5es">Parte 4</a>).</p>
+<hr />
+<h2 id="partes">Partes</h2>
+<table>
+<thead>
+<tr>
+<th>Arquivo</th>
+<th>Conteúdo</th>
+<th>Sessões</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="parte-0-1.html"><code>GUIA-DOTNET-P0-P1.md</code></a></td>
+<td>Parte 0 (mapa dos níveis) + Parte 1 (estrutura da solution), juntando tudo, teste-se</td>
+<td>S9–S10</td>
+<td>v1.2</td>
+</tr>
+<tr>
+<td><a href="parte-2.html"><code>GUIA-DOTNET-P2.md</code></a></td>
+<td>Parte 2 — delta .NET 6 → 10 do aquecimento</td>
+<td>S1–S3</td>
+<td>a escrever</td>
+</tr>
+<tr>
+<td><a href="parte-3.html"><code>GUIA-DOTNET-P3.md</code></a></td>
+<td>Parte 3 — a primeira funcionalidade e o primeiro teste</td>
+<td>S11–</td>
+<td><strong>v1.2 (novo: 3.15–3.17)</strong></td>
+</tr>
+<tr>
+<td><a href="parte-4.html"><code>GUIA-DOTNET-P4.md</code></a></td>
+<td>Parte 4 — o build cobra as convenções</td>
+<td>S13–</td>
+<td>v1.0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Regra das âncoras:</strong> cada entrada tem a âncora <code>#g&lt;parte&gt;-&lt;nº&gt;</code> (ex.: <code>#g1-2</code>) dentro do arquivo
+da parte. Link de fora: <code>GUIA-DOTNET-P0-P1.md#g1-2</code>. Os materiais de estudo apontam para o arquivo
+da parte com a âncora.</p>
+<hr />
+<h2 id="sumário">Sumário</h2>
+<ul>
+<li><a href="parte-0-1.html#parte-0--o-mapa-dos-n%C3%ADveis">Parte 0 — O mapa dos níveis</a></li>
+<li>Parte 1 — A estrutura da solution (S9–S10)
+<ul>
+<li><a href="parte-0-1.html#11-solution-no-formato-slnx-e-as-pastas-virtuais-do-visual-studio">1.1</a> Solution no formato <code>.slnx</code> (e as pastas virtuais do Visual Studio)</li>
+<li><a href="parte-0-1.html#12-monolito-modular-host--um-projeto-por-m%C3%B3dulo">1.2</a> Monolito modular: host + um projeto por módulo</li>
+<li><a href="parte-0-1.html#13-public-%C3%97-internal-a-fronteira-garantida-pelo-compilador">1.3</a> <code>public</code> × <code>internal</code>: a fronteira garantida pelo compilador</li>
+<li><a href="parte-0-1.html#14-programcs-moderno-de-startupcs-para-builder-e-app">1.4</a> <code>Program.cs</code> moderno: de <code>Startup.cs</code> para <code>builder</code> e <code>app</code></li>
+<li><a href="parte-0-1.html#15-implicit-usings-e-os-using-que-faltam-numa-biblioteca">1.5</a> <em>Implicit usings</em> e os <code>using</code> que faltam numa biblioteca</li>
+<li><a href="parte-0-1.html#16-frameworkreference-do-aspnet-core">1.6</a> <code>FrameworkReference</code> do ASP.NET Core</li>
+<li><a href="parte-0-1.html#17-m%C3%A9todos-de-extens%C3%A3o">1.7</a> Métodos de extensão</li>
+<li><a href="parte-0-1.html#18-pontos-de-entrada-do-m%C3%B3dulo-addcatalogo-e-mapcatalogo">1.8</a> Pontos de entrada do módulo: <code>AddCatalogo()</code> e <code>MapCatalogo()</code></li>
+<li><a href="parte-0-1.html#19-minimal-apis-as-formas-de-declarar-um-endpoint-e-o-mapgroup">1.9</a> Minimal APIs: as formas de declarar um endpoint, e o <code>MapGroup</code></li>
+<li><a href="parte-0-1.html#110-diagn%C3%B3stico-os-erros-da-s9%E2%80%93s10-e-como-achar-a-causa">1.10</a> Diagnóstico: os erros da S9–S10 e como achar a causa</li>
+<li><a href="parte-0-1.html#111-git-branch-por-objetivo-de-sess%C3%A3o">1.11</a> Git: branch por objetivo de sessão</li>
+<li><a href="parte-0-1.html#112-m%C3%B3dulo-%C3%97-funcionalidade-%C3%97-departamento-o-crit%C3%A9rio-para-criar-m%C3%B3dulo">1.12</a> Módulo × funcionalidade × departamento: o critério para criar módulo</li>
+<li><a href="parte-0-1.html#juntando-tudo-parte-1">Juntando tudo</a> · <a href="parte-0-1.html#teste-se">Teste-se</a> · <a href="parte-0-1.html#respostas">Respostas</a></li>
+</ul>
+</li>
+<li><a href="parte-2.html#parte-2--delta-net-6-%E2%86%92-10-do-aquecimento-s1%E2%80%93s3">Parte 2 — Delta .NET 6 → 10 do aquecimento (S1–S3)</a> — a escrever</li>
+<li><a href="parte-3.html#parte-3--a-primeira-funcionalidade-e-o-primeiro-teste">Parte 3 — A primeira funcionalidade e o primeiro teste (S11–)</a>
+<ul>
+<li><a href="parte-3.html#31-a-funcionalidade-no-estilo-repr-request-endpoint-repository">3.1</a> A funcionalidade no estilo REPR: <code>Request</code>, <code>Endpoint</code>, <code>Repository</code></li>
+<li><a href="parte-3.html#32-record-dados-que-entram-e-saem">3.2</a> <code>record</code>: dados que entram e saem</li>
+<li><a href="parte-3.html#33-respostas-tipadas-created-validationproblem-e-o-400-no-formato-problemdetails">3.3</a> Respostas tipadas: <code>Created</code>, <code>ValidationProblem</code> e o 400 no formato <code>ProblemDetails</code></li>
+<li><a href="parte-3.html#34-arquivo-http-as-requisi%C3%A7%C3%B5es-da-api-dentro-do-reposit%C3%B3rio">3.4</a> Arquivo <code>.http</code>: as requisições da API dentro do repositório (um por módulo)</li>
+<li><a href="parte-3.html#35-o-projeto-de-testes-xunit-refer%C3%AAncia-e-internalsvisibleto">3.5</a> O projeto de testes: xUnit, referência e <code>InternalsVisibleTo</code></li>
+<li><a href="parte-3.html#36-anatomia-de-um-teste-arrange-act-assert">3.6</a> Anatomia de um teste: Arrange, Act, Assert</li>
+<li><a href="parte-3.html#37-vermelho-%E2%86%92-verde-como-saber-que-o-teste-protege-a-regra">3.7</a> Vermelho → verde: como saber que o teste protege a regra</li>
+<li><a href="parte-3.html#38-a-sintaxe-mais-curta-do-c-moderno-o-que-j%C3%A1-apareceu-no-norte">3.8</a> A sintaxe mais curta do C# moderno</li>
+<li><a href="parte-3.html#39-diagn%C3%B3stico-os-problemas-da-s11-e-como-achar-a-causa">3.9</a> Diagnóstico: os problemas da S11</li>
+<li><a href="parte-3.html#310-como-pensar-um-teste-da-frase-do-neg%C3%B3cio-ao-assert">3.10</a> Como pensar um teste: da frase do negócio ao Assert</li>
+<li><a href="parte-3.html#311-valida%C3%A7%C3%A3o-nativa-do-net-10-a-regra-de-entrada-declarada-no-request">3.11</a> Validação nativa do .NET 10: a regra de entrada declarada no <code>Request</code> (<strong>com a comparação justa × FluentValidation, S14</strong>)</li>
+<li><a href="parte-3.html#312-teste-de-integra%C3%A7%C3%A3o-com-webapplicationfactory-o-teste-passa-por-onde-a-regra-mora">3.12</a> Teste de integração com <code>WebApplicationFactory</code>: o teste passa por onde a regra mora</li>
+<li><a href="parte-3.html#313-pasta-por-funcionalidade-o-que-%C3%A9-de-um-caso-de-uso-fica-junto">3.13</a> Pasta por funcionalidade: o que é de um caso de uso fica junto</li>
+<li><a href="parte-3.html#314-diagn%C3%B3stico-os-problemas-da-s12-e-como-achar-a-causa">3.14</a> Diagnóstico: os problemas da S12</li>
+<li><a href="parte-3.html#315-erros-da-api-em-formato-padr%C3%A3o-addproblemdetails-useexceptionhandler-e-usestatuscodepages">3.15</a> <strong>Erros da API em formato padrão: <code>AddProblemDetails()</code>, <code>UseExceptionHandler()</code> e <code>UseStatusCodePages()</code></strong> (S14)</li>
+<li><a href="parte-3.html#316-dubl%C3%AA-de-teste-e-ambiente-do-teste-trocar-uma-pe%C3%A7a-s%C3%B3-no-teste">3.16</a> <strong>Dublê de teste e ambiente do teste: trocar uma peça só no teste</strong> (S14)</li>
+<li><a href="parte-3.html#317-diagn%C3%B3stico-os-problemas-da-s14-e-como-achar-a-causa">3.17</a> <strong>Diagnóstico: os problemas da S14</strong></li>
+<li><a href="parte-3.html#juntando-tudo">Juntando tudo</a> · <a href="parte-3.html#teste-se-sem-consultar-uma-pergunta-por-vez">Teste-se</a> · <a href="parte-0-1.html#respostas">Respostas</a></li>
+</ul>
+</li>
+<li><a href="parte-4.html#parte-4--o-build-cobra-as-conven%C3%A7%C3%B5es">Parte 4 — O build cobra as convenções (S13–)</a>
+<ul>
+<li><a href="parte-4.html#41-directorybuildprops-e-treatwarningsaserrors-a-configura%C3%A7%C3%A3o-comum-e-o-aviso-que-vira-erro">4.1</a> <code>Directory.Build.props</code> e <code>TreatWarningsAsErrors</code>: a configuração comum e o aviso que vira erro</li>
+<li><a href="parte-4.html#42-editorconfig-e-analyzers-as-conven%C3%A7%C3%B5es-do-norte-cobradas-pelo-compilador">4.2</a> <code>.editorconfig</code> e analyzers: as convenções do Norte cobradas pelo compilador</li>
+<li><a href="parte-4.html#43-central-package-management-uma-vers%C3%A3o-por-pacote-num-lugar-s%C3%B3">4.3</a> Central Package Management: uma versão por pacote, num lugar só</li>
+<li><a href="parte-4.html#44-diagn%C3%B3stico-os-problemas-da-s13-e-como-achar-a-causa">4.4</a> Diagnóstico: os problemas da S13</li>
+<li><a href="parte-4.html#juntando-tudo">Juntando tudo</a> · <a href="parte-4.html#teste-se-sem-consultar-uma-pergunta-por-vez">Teste-se</a> · <a href="parte-0-1.html#respostas">Respostas</a></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2 id="histórico-do-guia">Histórico do guia</h2>
+<table>
+<thead>
+<tr>
+<th>Versão</th>
+<th>Data</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.0</td>
+<td>30/09/2026 (S9)</td>
+<td>Parte 0 + Parte 1 (11 entradas)</td>
+</tr>
+<tr>
+<td>1.2</td>
+<td>01/10/2026 (S10)</td>
+<td>entrada 1.12; solution folders no VS; falha no monolito modular; nuance do <code>Build()</code>; formato de-para em tabela</td>
+</tr>
+<tr>
+<td>1.3</td>
+<td>02/10/2026 (manutenção)</td>
+<td>guia dividido em índice + partes; nota pendente sobre C# 14 <em>extension members</em> em 1.7</td>
+</tr>
+<tr>
+<td>1.4</td>
+<td>02/10/2026 (S11)</td>
+<td><strong>Parte 3 criada</strong> (<code>GUIA-DOTNET-P3.md</code>, entradas 3.1–3.9); &quot;onde estamos&quot; no nível 3</td>
+</tr>
+<tr>
+<td>1.5</td>
+<td>05/10/2026 (S12)</td>
+<td>Parte 3 v1.1: <strong>entradas 3.10–3.14</strong> (como pensar um teste, validação nativa, teste de integração, pasta por funcionalidade, diagnóstico da S12); atualizações em 3.1, 3.3, 3.4 e 3.6</td>
+</tr>
+<tr>
+<td>1.6</td>
+<td>06/10/2026 (S13)</td>
+<td><strong>Parte 4 criada</strong> (<code>GUIA-DOTNET-P4.md</code>, entradas 4.1–4.4: <code>Directory.Build.props</code> e <code>TreatWarningsAsErrors</code>, <code>.editorconfig</code> e analyzers, Central Package Management, diagnóstico da S13); &quot;onde estamos&quot; no nível 1</td>
+</tr>
+<tr>
+<td>1.7</td>
+<td>08/10/2026 (S14, parte 2)</td>
+<td>Parte 3 v1.2: <strong>entradas 3.15–3.17</strong> (erros em formato padrão, dublê de teste e ambiente do teste, diagnóstico da S14); <strong>correção da 3.11</strong> (comparação justa nativa × FluentValidation, com o critério pela complexidade da regra); atualizações em 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.10, 3.12 e no Teste-se (perguntas 14–20); &quot;onde estamos&quot; na borda funcionalidade/host</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+<footer class="rodape">Atualizado em 09/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Início · Norte · Estudo</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/codigo.css">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+</head>
+<body data-chave="index" data-prefixo="">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="index.html" class=ativo>Início</a><a href="guia.html">Guia</a><a href="estudos.html">Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+
+<main class="conteudo"><article>
+<h1>Norte · Estudo</h1>
+<p class="sub">Guia .NET moderno e materiais de estudo do laboratório Norte (monolito modular em .NET 10).</p>
+<h2 class="secao">Guia</h2>
+<div class="cartoes"><a class="cartao" href="guia.html" data-chave="guia.html" data-total="0"><strong>Sumário do guia</strong><span>Índice de todas as entradas, legenda 🧠/🔎, como estudar e onde estamos.</span><em class="progresso"></em></a><a class="cartao" href="parte-0-1.html" data-chave="parte-0-1.html" data-total="12"><strong>Partes 0 e 1 — O mapa e a solution</strong><span>Níveis do sistema, monolito modular, host, Minimal APIs, git (S9–S10).</span><em class="progresso"></em></a><a class="cartao" href="parte-2.html" data-chave="parte-2.html" data-total="0"><strong>Parte 2 — Delta .NET 6 → 10</strong><span>Aquecimento (S1–S3). Ainda a escrever.</span><em class="progresso"></em></a><a class="cartao" href="parte-3.html" data-chave="parte-3.html" data-total="17"><strong>Parte 3 — A funcionalidade e o primeiro teste</strong><span>REPR, validação nativa, testes, erros em Problem Details, dublê de teste (S11–S14).</span><em class="progresso"></em></a><a class="cartao" href="parte-4.html" data-chave="parte-4.html" data-total="4"><strong>Parte 4 — O build cobra as convenções</strong><span>Directory.Build.props, .editorconfig, Central Package Management (S13).</span><em class="progresso"></em></a></div>
+<h2 class="secao">Materiais de estudo das sessões</h2>
+<div class="cartoes"><a class="cartao" href="estudos.html"><strong>Materiais por sessão</strong><span>Um material por sessão, com Teste-se e respostas.</span></a></div>
+</article>
+<footer class="rodape">Atualizado em 09/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

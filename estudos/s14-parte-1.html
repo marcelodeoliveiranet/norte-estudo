@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norte · S14 — ProblemDetails e tratamento global de exceções (parte 1) · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s14-parte-1.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#norte--s14--problemdetails-e-tratamento-global-de-exceções-parte-1" data-id="norte--s14--problemdetails-e-tratamento-global-de-exceções-parte-1">Norte · S14 — ProblemDetails e tratamento global de exceções (parte 1)</a><a class="n2" href="#1-objetivo-e-resultado" data-id="1-objetivo-e-resultado">1. Objetivo e resultado</a><a class="n2" href="#2-onde-isso-está-no-mapa-dos-níveis" data-id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</a><a class="n2" href="#3-conceitos" data-id="3-conceitos">3. Conceitos</a><a class="n2" href="#4-termos-técnicos-da-sessão" data-id="4-termos-técnicos-da-sessão">4. Termos técnicos da sessão</a><a class="n2" href="#5-dúvidas-e-respostas" data-id="5-dúvidas-e-respostas">5. Dúvidas e respostas</a><a class="n2" href="#6-divergências" data-id="6-divergências">6. Divergências</a><a class="n2" href="#7-avaliação" data-id="7-avaliação">7. Avaliação</a><a class="n2" href="#8-pontos-a-melhorar" data-id="8-pontos-a-melhorar">8. Pontos a melhorar</a><a class="n2" href="#9-perguntas-de-recuperação-tente-responder-antes-da-próxima-sessão-sem-consulta" data-id="9-perguntas-de-recuperação-tente-responder-antes-da-próxima-sessão-sem-consulta">9. Perguntas de recuperação (tente responder antes da próxima sessão…</a><a class="n2" href="#10-preparação-para-o-próximo-chat" data-id="10-preparação-para-o-próximo-chat">10. Preparação para o próximo chat</a></aside>
+<main class="conteudo"><article>
+<h1 id="norte--s14--problemdetails-e-tratamento-global-de-exceções-parte-1">Norte · S14 — ProblemDetails e tratamento global de exceções (parte 1)</h1>
+<p>Material de estudo e consulta. Não é registro do mentor. Fica só com você.</p>
+<h2 id="1-objetivo-e-resultado">1. Objetivo e resultado</h2>
+<p><strong>Objetivo da sessão:</strong> todo erro da API sai no mesmo formato (Problem Details).
+<strong>Tempo líquido:</strong> 1h12 (13:58 → 15:10, sem pausas; encerrada por fadiga, em ponto seguro).
+<strong>Resultado da parte 1:</strong> o <code>Program.cs</code> do Norte tem as 3 linhas de tratamento de erro; você viu o 500, o 404
+e o 400 saírem em <code>application/problem+json</code>; build verde, 4 testes verdes, commit feito na
+<code>feat/api-problem-details</code>. <strong>Falta (parte 2):</strong> o teste de integração do 500, o ajuste do
+<code>Results&lt;Created&lt;FichaProduto&gt;, ValidationProblem&gt;</code>, a entrada do guia e o PR #4.</p>
+<h2 id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</h2>
+<p>Nível 3 (a funcionalidade), no caminho da requisição: um erro pode nascer em qualquer ponto
+(rota, validação, <code>Executar</code>, repositório) e <strong>todos passam pelo mesmo funil no host</strong>.</p>
+<pre class="highlight"><code>Requisição → [UseExceptionHandler] → [UseStatusCodePages] → rota → validação nativa → Executar → resposta
+                 ↑ pega exceção          ↑ preenche 4xx/5xx sem corpo
+                 e pede o corpo ao serviço registrado por AddProblemDetails()
+</code></pre>
+
+<h2 id="3-conceitos">3. Conceitos</h2>
+<h3 id="31-o-que-cada-linha-faz-e-onde-entra-a-sua-dúvida-do-fim-da-sessão">3.1 O que cada linha faz e onde entra (a sua dúvida do fim da sessão)</h3>
+<table>
+<thead>
+<tr>
+<th>Linha no <code>Program.cs</code></th>
+<th>Onde entra</th>
+<th>O que faz</th>
+<th>O que ela <strong>não</strong> faz</th>
+<th>Sem ela</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>builder.Services.AddProblemDetails();</code></td>
+<td><strong>antes</strong> do <code>Build()</code> (é serviço)</td>
+<td>Registra quem <strong>escreve</strong> o corpo <code>application/problem+json</code></td>
+<td>Não captura nada sozinha</td>
+<td>Os middlewares abaixo não têm quem escreva o corpo</td>
+</tr>
+<tr>
+<td><code>app.UseExceptionHandler();</code></td>
+<td><strong>depois</strong> do <code>Build()</code>, antes dos <code>Map...</code></td>
+<td><strong>Captura</strong> a exceção não tratada, registra no log e pede o corpo</td>
+<td>Não age em resposta que já saiu (404 sem exceção)</td>
+<td>Em produção, o 500 sai <strong>sem corpo</strong></td>
+</tr>
+<tr>
+<td><code>app.UseStatusCodePages();</code></td>
+<td><strong>depois</strong> do <code>Build()</code>, antes dos <code>Map...</code></td>
+<td><strong>Preenche</strong> o corpo de qualquer 4xx/5xx que saiu vazio (404 de rota, <code>TypedResults.NotFound()</code>)</td>
+<td>Não captura exceção; não mexe em resposta que já tem corpo</td>
+<td>O 404 de rota continua sem corpo</td>
+</tr>
+</tbody>
+</table>
+<p>Regra para lembrar onde cada uma entra: <strong>serviço</strong> (alguém que faz o trabalho) → <strong>antes</strong> do <code>Build()</code>;
+<strong>middleware</strong> (algo que atravessa a requisição) → <strong>depois</strong> do <code>Build()</code>, e a <strong>ordem</strong> importa: o
+middleware só envolve o que vem <strong>depois</strong> dele.</p>
+<h3 id="32-o-que-você-viu-acontecer-4-experimentos">3.2 O que você viu acontecer (4 experimentos)</h3>
+<table>
+<thead>
+<tr>
+<th>Configuração</th>
+<th>Resposta ao POST com <code>&quot;sku&quot;: &quot;ERRO&quot;</code> (500)</th>
+<th>Quem capturou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Só <code>AddProblemDetails()</code></td>
+<td><code>problem+json</code> <strong>com</strong> <code>detail</code>, <code>exception</code>, <code>headers</code>, <code>path</code> e rastro</td>
+<td>A <strong>página de exceção do desenvolvedor</strong> (ligada sozinha pelo <code>CreateBuilder</code> em <code>Development</code>)</td>
+</tr>
+<tr>
+<td><code>+ UseExceptionHandler()</code></td>
+<td><code>problem+json</code> <strong>enxuto</strong>: <code>title: &quot;An error occurred while processing your request.&quot;</code>, <code>status</code>, <code>traceId</code></td>
+<td>O <code>ExceptionHandlerMiddleware</code></td>
+</tr>
+<tr>
+<td><code>+ UseStatusCodePages()</code></td>
+<td><code>GET /catalogo/inexistente</code> → 404 <code>problem+json</code> (antes: 404 com <code>Content-Length: 0</code>)</td>
+<td>O <code>StatusCodePagesMiddleware</code></td>
+</tr>
+<tr>
+<td>(a validação nativa, sem mudar nada)</td>
+<td><code>POST</code> com <code>&quot;sku&quot;: &quot;&quot;</code> → 400 <code>problem+json</code> com <code>errors: {&quot;Sku&quot;: [...]}</code></td>
+<td>A validação, antes do <code>Executar</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Duas observações que valem:</strong> (1) o 400 usa a chave <code>Sku</code> (nome da propriedade, maiúsculo), enquanto o
+JSON de entrada usa <code>sku</code>; (2) o primeiro 500 parecia &quot;certo&quot;, mas o rastro terminava em
+<code>DeveloperExceptionPageMiddlewareImpl</code> — o formato bonito escondeu que o <code>UseExceptionHandler()</code> ainda não
+estava lá.</p>
+<h3 id="33-ganho-×-preço-o-que-você-pediu-para-eu-separar">3.3 Ganho × preço (o que você pediu para eu separar)</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Ganho (o que eu evito)</th>
+<th>Preço (o que eu pago)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>UseExceptionHandler()</code></td>
+<td>O cliente nunca vê rastro, caminho de pasta nem nome de classe; o 500 tem formato único</td>
+<td><strong>Quem chama deixou de ver a causa na resposta</strong>, inclusive você no desenvolvimento. A causa fica <strong>no log</strong> (viu no console: <code>fail: ...ExceptionHandlerMiddleware</code>)</td>
+</tr>
+<tr>
+<td><code>UseStatusCodePages()</code></td>
+<td>Todo 4xx/5xx sem corpo ganha o mesmo formato</td>
+<td><strong>Mudança de contrato</strong> para quem já consome (clientes que tratavam 404 como &quot;vazio&quot; passam a receber corpo); 404 <strong>genérico</strong>: &quot;rota inexistente&quot; e &quot;ficha não encontrada&quot; saem iguais; bytes a mais. Hoje o custo é zero (ninguém consome o Norte)</td>
+</tr>
+</tbody>
+</table>
+<p>Atenção ao que <strong>não</strong> é preço: &quot;o desenvolvedor precisa criar o corpo&quot; — não precisa, o middleware cria.</p>
+<h3 id="34-o-teste-do-500-parte-2--o-que-já-está-decidido">3.4 O teste do 500 (parte 2) — o que já está decidido</h3>
+<p>O <code>FichaProdutoRepository</code> é <code>internal sealed</code> e sem interface: <strong>não dá para herdar dele</strong> num teste.
+Caminhos, com ganho × preço:</p>
+<table>
+<thead>
+<tr>
+<th>Caminho</th>
+<th>Ganho</th>
+<th>Preço</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. No teste, registrar uma fábrica que lança no lugar do repositório</strong> (<code>WithWebHostBuilder</code> + <code>ConfigureTestServices</code>)</td>
+<td>Nenhuma linha de produção muda</td>
+<td>A exceção nasce quando o framework busca o repositório, não dentro do <code>Executar</code> (<strong>a conferir rodando</strong>)</td>
+</tr>
+<tr>
+<td>2. Interface + dublê</td>
+<td>Dublê de verdade, reaproveitável</td>
+<td>Interface com uma só implementação real; muda assinatura e registro</td>
+</tr>
+<tr>
+<td>3. Tirar o <code>sealed</code> e marcar <code>virtual</code></td>
+<td>Dá para herdar</td>
+<td>Enfraquece a classe só por causa do teste</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recomendado agora: o caminho 1.</strong> O caminho 2 volta quando <code>Pedidos</code> depender do <code>Catalogo</code>.
+<strong>Cuidado já antecipado:</strong> o <code>WebApplicationFactory</code> roda em <code>Development</code> por padrão (<strong>a conferir</strong>); nesse
+ambiente, a página do desenvolvedor também devolve 500 <code>problem+json</code> com <code>traceId</code>. Então o teste precisa
+verificar o que <strong>só</strong> o <code>UseExceptionHandler()</code> faz (o <code>title</code> e a ausência de <code>exception</code>) ou rodar em
+<code>Production</code>; senão ele passa mesmo sem a linha.</p>
+<h2 id="4-termos-técnicos-da-sessão">4. Termos técnicos da sessão</h2>
+<ul>
+<li><strong>Problem Details:</strong> formato padrão de erro HTTP em JSON (<code>type</code>, <code>title</code>, <code>status</code>, <code>traceId</code>...). A Microsoft ainda cita a RFC 7807; pelo que sei, a RFC 9457 a substituiu.</li>
+<li><strong>Middleware:</strong> peça que atravessa toda requisição, na ordem em que foi registrada.</li>
+<li><strong>Exceção não tratada:</strong> exceção que ninguém capturou; vira 500.</li>
+<li><strong>Página de exceção do desenvolvedor:</strong> middleware ligado sozinho em <code>Development</code>; mostra rastro. Nunca em produção.</li>
+<li><strong><code>traceId</code>:</strong> identificador da requisição, devolvido no corpo do erro; serve para o suporte achar o erro nos logs.</li>
+<li><strong>Test double (dublê de teste):</strong> objeto que substitui uma dependência no teste. Aqui, uma fábrica que lança exceção.</li>
+</ul>
+<h2 id="5-dúvidas-e-respostas">5. Dúvidas e respostas</h2>
+<ul>
+<li><strong>&quot;Onde executo o GET?&quot;</strong> No <code>Catalogo.http</code>, com <code>###</code> e o botão <em>Send request</em>.</li>
+<li><strong>&quot;O console é a janela Output do VS?&quot;</strong> Se abriu uma janela preta com o nome do projeto, é essa; se iniciou com o depurador, é a janela Output → <em>Show output from: Debug</em>.</li>
+<li><strong>&quot;Não vi o <code>traceId</code> no log.&quot;</strong> Certo: o formato padrão do console não mostra o escopo onde o <code>traceId</code> mora. Fica para a sessão de logging.</li>
+<li><strong>&quot;Não lembro qual era o objetivo.&quot;</strong> O objetivo estava no começo da sessão e vale repetir no fim: <em>todo erro da API sai no formato padrão</em>. Anotar o objetivo no início do dia ajuda.</li>
+</ul>
+<h2 id="6-divergências">6. Divergências</h2>
+<ul>
+<li><strong>404 entra no objetivo?</strong> Você: sim, para &quot;capturar todos os erros&quot;. Mentor: sim, com ajuste de mecanismo — o <code>UseStatusCodePages()</code> <strong>preenche</strong> corpo, não <strong>captura</strong> (quem captura exceção é o <code>UseExceptionHandler()</code>). Resolvido.</li>
+<li><strong>Preço do <code>UseStatusCodePages()</code>.</strong> Você: &quot;necessário sempre criar o corpo&quot;. Mentor: não é preço; o middleware cria. Preço real na tabela 3.3. Ponto a revisitar (A7).</li>
+</ul>
+<h2 id="7-avaliação">7. Avaliação</h2>
+<p><strong>O que você fez bem:</strong></p>
+<ul>
+<li>Acertou, sem pista, a ordem (middleware <strong>depois</strong> do <code>Build()</code>) e o 500 sem corpo sem o <code>UseExceptionHandler()</code>.</li>
+<li>Viu que o <code>traceId</code> <strong>não</strong> aparecia no log, contrariando a minha suposição. Era a observação certa.</li>
+<li>Respondeu &quot;não vou chutar&quot; quando não sabia: honestidade que o experimento aproveitou.</li>
+<li>Parou ao perceber a fadiga, em ponto seguro (build e testes verdes, commit feito).</li>
+</ul>
+<p><strong>Onde travou e por quê:</strong></p>
+<ul>
+<li>A tarefa pedia <strong>duas</strong> linhas e entrou <strong>uma</strong> (o <code>UseExceptionHandler()</code> faltou). O experimento mostrou na hora. Para a parte 2: tarefa com itens marcados.</li>
+<li>Preço lido como esforço do desenvolvedor (tabela 3.3).</li>
+<li>&quot;Dado&quot; do teste do 500: conteúdo novo (primeiro dublê), sem exemplo antes — falha do enunciado, não sua.</li>
+</ul>
+<p><strong>O que o mentor conduziu mal:</strong> plano do teste sem conferir <code>internal sealed</code>; pergunta de ler rastro sem ter ensinado; pergunta que supunha o <code>traceId</code> no log; &quot;resultado esperado&quot; dito antes de checar o rastro; perguntas compostas.</p>
+<h2 id="8-pontos-a-melhorar">8. Pontos a melhorar</h2>
+<ul>
+<li><strong>Aluno:</strong> conferir cada item da tarefa antes de rodar (&quot;duas linhas: ☐ ☐&quot;); quando perguntarem o preço, responder &quot;o que muda para o cliente / para quem opera&quot;.</li>
+<li><strong>Mentor:</strong> código real antes de propor teste; ensinar a ler rastro e log antes de perguntar sobre eles; uma parte por pergunta, também nas confirmações.</li>
+</ul>
+<h2 id="9-perguntas-de-recuperação-tente-responder-antes-da-próxima-sessão-sem-consulta">9. Perguntas de recuperação (tente responder antes da próxima sessão; sem consulta)</h2>
+<ol>
+<li>Só com <code>builder.Services.AddProblemDetails()</code> registrado (sem <code>UseExceptionHandler()</code>), em <code>Development</code>, o <code>Executar</code> lança uma exceção. Que middleware captura, e quem manda o corpo?</li>
+<li>Das três linhas do <code>Program.cs</code> do Norte (<code>AddProblemDetails()</code>, <code>UseExceptionHandler()</code>, <code>UseStatusCodePages()</code>), qual vai <strong>antes</strong> do <code>Build()</code> e por quê?</li>
+<li>Uma requisição <code>GET</code> para uma rota que não existe devolve 404. O <code>UseExceptionHandler()</code> altera essa resposta? Qual middleware altera, e o que ele escreve?</li>
+<li>Com o <code>UseExceptionHandler()</code>, o corpo do 500 deixou de trazer <code>detail</code> e o rastro. Onde a causa do erro continua disponível?</li>
+<li>Na resposta 400 da validação nativa do Norte, a chave do erro do SKU vem como <code>sku</code> ou <code>Sku</code>? Por quê?</li>
+<li>Cite um <strong>preço</strong> (não um ganho) de ligar o <code>UseStatusCodePages()</code> numa API que já tem clientes.</li>
+<li>O <code>FichaProdutoRepository</code> é <code>internal sealed</code> e não tem interface. Por que um teste não consegue entregar ao <code>Executar</code> uma versão dele que lança exceção apenas herdando da classe?</li>
+</ol>
+<h3 id="respostas-separadas-só-depois-de-tentar">Respostas (separadas, só depois de tentar)</h3><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>A <strong>página de exceção do desenvolvedor</strong>, ligada sozinha pelo <code>CreateBuilder</code> em <code>Development</code>; ela própria escreve o corpo (com rastro). Sem <code>UseExceptionHandler()</code>, em produção o 500 sai sem corpo.</li>
+<li><strong><code>AddProblemDetails()</code></strong>: é um <strong>serviço</strong>, e o contêiner de serviços fecha no <code>Build()</code>. As outras duas são middleware e entram depois do <code>Build()</code>.</li>
+<li><strong>Não.</strong> Não houve exceção. Quem altera é o <code>UseStatusCodePages()</code>, que preenche o corpo de 4xx/5xx vazios com <code>problem+json</code> (<code>title: &quot;Not Found&quot;</code>, <code>status</code>, <code>traceId</code>).</li>
+<li><strong>No log</strong> (<code>ExceptionHandlerMiddleware</code>), com a exceção e o rastro. O <code>traceId</code> do corpo serve para ligar a resposta ao log, mas o console padrão não mostra o <code>traceId</code>.</li>
+<li><strong><code>Sku</code></strong> (maiúsculo): a validação nativa usa o nome da propriedade em C#, e não o nome do JSON de entrada.</li>
+<li>Por exemplo: <strong>mudança de contrato</strong> (quem tratava 404 como &quot;resposta vazia&quot; passa a receber corpo) ou <strong>404 genérico</strong> (rota inexistente e ficha não encontrada saem iguais). <em>Não vale:</em> &quot;o desenvolvedor precisa criar o corpo&quot;.</li>
+<li>Porque a classe é <code>sealed</code> (não pode ser herdada) e não há interface para implementar; o <code>Executar</code> recebe o tipo concreto. Por isso o plano usa uma <strong>fábrica no contêiner</strong> (caminho 1) ou, mais tarde, uma interface (caminho 2).</li>
+</ol>
+</details><h2 id="10-preparação-para-o-próximo-chat">10. Preparação para o próximo chat</h2>
+<ul>
+<li><strong>Título:</strong> <code>Norte · S14 — ProblemDetails e tratamento global de exceções (parte 2)</code>.</li>
+<li><strong>Antes de abrir:</strong> <code>git status</code>, <code>git log -3</code> e <code>git diff main --stat</code> (conferir se a linha <code>throw</code> saiu do <code>Executar</code> e se o <code>GET /catalogo/inexistente</code> ficou no <code>Catalogo.http</code>).</li>
+<li><strong>Pense antes (sem código):</strong> o teste do 500, em português: <em>Dado</em> (a API roda com um repositório trocado por uma fábrica que lança), <em>Quando</em> (eu cadastro uma ficha), <em>Então</em> (500; <code>Content-Type</code> <code>application/problem+json</code>; <code>traceId</code> presente; corpo lido como <code>ProblemDetails</code>). Como você provaria que o teste protege o <code>UseExceptionHandler()</code> e não só a página do desenvolvedor?</li>
+<li><strong>Sábado (10/10):</strong> reconstrução da semana + Parte 4 do guia + 3.10–3.14. A entrada <strong>3.15</strong> (esta aula) chega ao guia no fechamento da parte 2.</li>
+</ul>
+
+</article>
+<footer class="rodape">Atualizado em 09/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

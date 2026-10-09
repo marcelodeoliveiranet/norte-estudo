@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parte 4 — O build cobra as convenções · Norte · Estudo</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/codigo.css">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+</head>
+<body data-chave="parte-4.html" data-prefixo="">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="index.html">Início</a><a href="guia.html" class=ativo>Guia</a><a href="estudos.html">Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#guia-net-moderno--parte-4-o-build-cobra-as-convenções-s13–" data-id="guia-net-moderno--parte-4-o-build-cobra-as-convenções-s13–">GUIA .NET MODERNO — Parte 4: o build cobra as convenções (S13–)</a><a class="n1" href="#parte-4--o-build-cobra-as-convenções" data-id="parte-4--o-build-cobra-as-convenções">PARTE 4 — O build cobra as convenções</a><a class="n2" href="#41-directorybuildprops-e-treatwarningsaserrors-a-configuração-comum-e-o-aviso-que-vira-erro" data-id="41-directorybuildprops-e-treatwarningsaserrors-a-configuração-comum-e-o-aviso-que-vira-erro">4.1 Directory.Build.props e TreatWarningsAsErrors: a configuração co…</a><a class="n2" href="#42-editorconfig-e-analyzers-as-convenções-do-norte-cobradas-pelo-compilador" data-id="42-editorconfig-e-analyzers-as-convenções-do-norte-cobradas-pelo-compilador">4.2 .editorconfig e analyzers: as convenções do Norte cobradas pelo …</a><a class="n2" href="#43-central-package-management-uma-versão-por-pacote-num-lugar-só" data-id="43-central-package-management-uma-versão-por-pacote-num-lugar-só">4.3 Central Package Management: uma versão por pacote, num lugar só</a><a class="n2" href="#44-diagnóstico-os-problemas-da-s13-e-como-achar-a-causa" data-id="44-diagnóstico-os-problemas-da-s13-e-como-achar-a-causa">4.4 Diagnóstico: os problemas da S13 e como achar a causa</a><a class="n1" href="#juntando-tudo" data-id="juntando-tudo">Juntando tudo</a><a class="n1" href="#teste-se-sem-consultar-uma-pergunta-por-vez" data-id="teste-se-sem-consultar-uma-pergunta-por-vez">Teste-se (sem consultar; uma pergunta por vez)</a><a class="n1" href="#respostas" data-id="respostas">Respostas</a></aside>
+<main class="conteudo"><article>
+<h1 id="guia-net-moderno--parte-4-o-build-cobra-as-convenções-s13–">GUIA .NET MODERNO — Parte 4: o build cobra as convenções (S13–)</h1>
+<p>Parte do GUIA-DOTNET-MODERNO.md. O índice, a legenda 🧠/🔎, o roteiro de estudo e o &quot;onde estamos&quot; ficam lá. Este arquivo só muda quando uma entrada da Parte 4 muda ou quando entra uma entrada nova.</p>
+<p><strong>Criado em:</strong> 06/10/2026 (S13) · Versão: 1.0 (entradas 4.1 a 4.4)</p>
+<p><a id="parte-4"></a></p>
+<h1 id="parte-4--o-build-cobra-as-convenções">PARTE 4 — O build cobra as convenções</h1>
+<p><strong>Onde isso fica no mapa (Parte 0):</strong> a Parte 3 desceu ao nível 3 (a funcionalidade). A Parte 4 volta ao nível 1, a solution: nada aqui muda um módulo ou uma funcionalidade; muda as regras com que todos os projetos compilam.</p>
+<pre class="highlight"><code>norte/
+├─ Directory.Build.props      ← configuração comum + "todo aviso é erro"      (4.1)
+├─ .editorconfig              ← as convenções e a gravidade de cada uma       (4.2)
+├─ Directory.Packages.props   ← as versões dos pacotes, num lugar só          (4.3)
+├─ Norte.slnx
+├─ src/   (Norte.Api, Norte.Catalogo, Norte.Pedidos)   ← herdam tudo, por estarem abaixo
+└─ tests/ (Norte.Catalogo.Tests)                        ← idem
+</code></pre>
+
+<p><strong>A ideia em uma linha:</strong> a convenção sai do texto (<code>CLAUDE.md</code>, revisão) e vai para o build; o que a máquina cobra, ninguém precisa lembrar.</p>
+<p><strong>Como estudar esta parte (sábado):</strong> para cada arquivo, leia a tabela &quot;propriedade por propriedade&quot; com o arquivo do repositório aberto ao lado; depois tente responder, sem olhar, o ganho e o preço de cada um.</p>
+<p><a id="g4-1"></a></p>
+<h2 id="41-directorybuildprops-e-treatwarningsaserrors-a-configuração-comum-e-o-aviso-que-vira-erro">4.1 Directory.Build.props e TreatWarningsAsErrors: a configuração comum e o aviso que vira erro<button class="estudada" data-id="41-directorybuildprops-e-treatwarningsaserrors-a-configuração-comum-e-o-aviso-que-vira-erro" type="button">Marcar como estudada</button></h2>
+<p><strong>De → para</strong></p>
+<ul>
+<li><strong>No mercado:</strong> <code>Directory.Build.props</code>, MSBuild property inheritance, <code>TreatWarningsAsErrors</code>, warnings as errors, build guardrails, quality gates.</li>
+<li><strong>No laboratório:</strong> <code>Directory.Build.props</code> na raiz do repositório norte · ADR-004 (S13).</li>
+<li><strong>No seu mundo:</strong> cada <code>.csproj</code> com o seu <code>TargetFramework</code> e o seu <code>Nullable</code>, e a janela de saída do Visual Studio com dezenas de avisos amarelos que ninguém lia.</li>
+</ul>
+<p><strong>Em uma frase:</strong> um arquivo na raiz que o MSBuild aplica sozinho a todos os projetos abaixo dele, e que no Norte também diz: todo aviso do compilador é erro.</p>
+<p><strong>Pergunta que responde:</strong> &quot;como garantir que todos os projetos da solution compilam com as mesmas regras, sem copiar a mesma configuração em cada <code>.csproj</code>?&quot;</p>
+<p><strong>O problema (visto na S13, no código):</strong> os quatro <code>.csproj</code> do Norte repetiam as mesmas três linhas (<code>TargetFramework</code>, <code>Nullable</code>, <code>ImplicitUsings</code>). Com o 5º módulo, seriam cinco cópias, e basta uma esquecida para um projeto compilar diferente dos outros. E os avisos de nulo (<code>CS8604</code>) apareciam em amarelo e o build passava.</p>
+<table>
+<thead>
+<tr>
+<th>Como era</th>
+<th>Como é agora (Norte, S13)</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;TargetFramework&gt;net10.0&lt;/TargetFramework&gt;</code> em cada <code>.csproj</code></td>
+<td>uma vez, no <code>Directory.Build.props</code></td>
+<td>mudar a versão do .NET = mudar uma linha</td>
+</tr>
+<tr>
+<td>aviso de nulo (<code>CS8604</code>) em amarelo; o build passa</td>
+<td><code>TreatWarningsAsErrors</code> → error <code>CS8604</code>; o build para</td>
+<td>o aviso não pode mais ser &quot;deixado para depois&quot;</td>
+</tr>
+<tr>
+<td>regras de qualidade (<code>CAxxxx</code>) só como sugestão no editor</td>
+<td><code>AnalysisMode</code> <code>Recommended</code> + <code>EnforceCodeStyleInBuild</code></td>
+<td>a regra roda no build, igual no seu computador e no CI</td>
+</tr>
+<tr>
+<td>projeto novo: copiar a configuração de outro <code>.csproj</code></td>
+<td>projeto novo herda tudo, só por estar abaixo da pasta</td>
+<td>não há o que esquecer</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O arquivo do Norte, propriedade por propriedade:</strong></p>
+<pre class="highlight"><code><span class="nt">&lt;Project&gt;</span>
+<span class="w">  </span><span class="nt">&lt;PropertyGroup&gt;</span>
+<span class="w">    </span><span class="nt">&lt;TargetFramework&gt;</span>net10.0<span class="nt">&lt;/TargetFramework&gt;</span>
+<span class="w">    </span><span class="nt">&lt;Nullable&gt;</span>enable<span class="nt">&lt;/Nullable&gt;</span>
+<span class="w">    </span><span class="nt">&lt;ImplicitUsings&gt;</span>enable<span class="nt">&lt;/ImplicitUsings&gt;</span>
+
+<span class="w">    </span><span class="nt">&lt;TreatWarningsAsErrors&gt;</span>true<span class="nt">&lt;/TreatWarningsAsErrors&gt;</span>
+<span class="w">    </span><span class="nt">&lt;AnalysisLevel&gt;</span>latest<span class="nt">&lt;/AnalysisLevel&gt;</span>
+<span class="w">    </span><span class="nt">&lt;AnalysisMode&gt;</span>Recommended<span class="nt">&lt;/AnalysisMode&gt;</span>
+<span class="w">    </span><span class="nt">&lt;EnforceCodeStyleInBuild&gt;</span>true<span class="nt">&lt;/EnforceCodeStyleInBuild&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/PropertyGroup&gt;</span>
+<span class="nt">&lt;/Project&gt;</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Propriedade</th>
+<th>O que faz</th>
+<th>Onde tem impacto</th>
+<th>O que acontece sem ela</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TargetFramework = net10.0</code></td>
+<td>diz para qual versão do .NET o projeto compila</td>
+<td>todos os 4 projetos</td>
+<td>cada <code>.csproj</code> precisaria declarar a sua (era assim até a S12)</td>
+</tr>
+<tr>
+<td><code>Nullable = enable</code></td>
+<td>liga a análise de nulos: string não aceita null; <code>string?</code> aceita</td>
+<td>todo código C#</td>
+<td>o compilador não avisa quando um null pode chegar onde não deveria</td>
+</tr>
+<tr>
+<td><code>ImplicitUsings = enable</code></td>
+<td>inclui os using mais comuns sem escrever (1.5)</td>
+<td>todo código C#</td>
+<td>using System;, using System.Linq;… em cada arquivo</td>
+</tr>
+<tr>
+<td><code>TreatWarningsAsErrors = true</code></td>
+<td>todo aviso do compilador e dos analyzers vira erro</td>
+<td>o resultado do build</td>
+<td>os avisos ficam amarelos e o build passa</td>
+</tr>
+<tr>
+<td><code>AnalysisLevel = latest</code></td>
+<td>usa o conjunto de regras de qualidade (<code>CAxxxx</code>) mais recente do SDK</td>
+<td>as regras de qualidade</td>
+<td>o SDK usa o padrão (que hoje também é latest): deixamos explícito</td>
+</tr>
+<tr>
+<td><code>AnalysisMode = Recommended</code></td>
+<td>quantas regras de qualidade viram aviso no build</td>
+<td>as regras de qualidade</td>
+<td>modo Default: poucas regras no build, o resto só como sugestão no editor</td>
+</tr>
+<tr>
+<td><code>EnforceCodeStyleInBuild = true</code></td>
+<td>faz as regras de estilo (<code>IDExxxx</code>, do <code>.editorconfig</code>) rodarem no build</td>
+<td>o <code>.editorconfig</code> (4.2)</td>
+<td>as regras de estilo só aparecem no editor; o <code>dotnet build</code> (e o CI) não as vê</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Os modos do <code>AnalysisMode</code></strong> (documentação oficial, do mais leve ao mais rigoroso): None (tudo desligado) · Default · Minimum · <code>Recommended</code> · All (todas as regras como aviso, menos algumas poucas). Começamos em <code>Recommended</code> porque All gera uma avalanche de erros de uma vez, e o objetivo é aprender com cada um. Subir o modo é decisão para depois (ADR-004).</p>
+<p><strong>Como o MSBuild acha o arquivo.</strong> Ao compilar um projeto, o MSBuild procura um arquivo chamado exatamente <code>Directory.Build.props</code> na pasta do projeto e subindo pelas pastas até a raiz do disco; usa o primeiro que encontrar. Como o do Norte está na raiz do repositório, vale para <code>src/</code> e <code>tests/</code>. É importado antes do conteúdo do <code>.csproj</code>: o <code>.csproj</code> ainda pode sobrescrever uma propriedade, se precisar (ex.: um projeto legado com <code>TreatWarningsAsErrors</code> false).</p>
+<p><strong>Ver acontecer (S13):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Passo</th>
+<th>O que você fez</th>
+<th>Resultado</th>
+<th>Por quê</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>aplicou os arquivos; <code>dotnet build</code> (previsão sua: &quot;vai acusar o namespace&quot;)</td>
+<td>error <code>IDE0161</code> no <code>PedidosModulo.cs</code></td>
+<td>o <code>.editorconfig</code> cobra namespace com escopo de arquivo; o aviso virou erro</td>
+</tr>
+<tr>
+<td>2</td>
+<td>corrigiu o namespace</td>
+<td>build verde; 4 testes verdes</td>
+<td>nenhuma outra regra do <code>Recommended</code> acusou o código atual</td>
+</tr>
+<tr>
+<td>3</td>
+<td>apagou um ! no <code>Executar</code> (previsão sua: &quot;falha&quot;)</td>
+<td>error <code>CS8604</code></td>
+<td>o mesmo aviso de nulo que passava ontem agora para o build</td>
+</tr>
+<tr>
+<td>4</td>
+<td>restaurou o !</td>
+<td>verde</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O preço (o &quot;e daí&quot; que faltou no fim da S13).</strong> Com qualquer aviso, o build quebra; sem build, a API não roda. Então nem um rascunho ou um experimento roda sem corrigir antes. Exemplo do próprio dia: o <code>throw</code> no início do <code>Executar</code> precisou de um if para não gerar <code>CS0162</code> (código inalcançável), que também viraria erro. O preço é aceito porque o aviso ignorado custa mais caro: o null chega em produção como NullReferenceException.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Pergunta que responde</th>
+<th>No Norte</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ganho</td>
+<td>o que eu evito?</td>
+<td>avisos que nunca eram corrigidos; configuração divergente entre projetos</td>
+</tr>
+<tr>
+<td>Preço</td>
+<td>o que eu pago?</td>
+<td>nem rascunho compila com aviso; exceção só no <code>.editorconfig</code>, com justificativa</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Por que usamos · alternativa · custo.</strong> Usamos porque a convenção passa a ser verificada pela máquina, sem depender de quem revisa. A alternativa é a revisão manual (o <code>CLAUDE.md</code> + você + eu): custo zero de configuração, mas cada ocorrência custa uma rodada de revisão e, cedo ou tarde, escapa — o <code>PedidosModulo</code> com chaves é a prova. A outra alternativa é <code>AnalysisMode</code> All e analyzers de terceiros desde o início (o que a newsletter de Anton Martyniuk sugere: Meziantou, SonarAnalyzer, Roslynator): mais regras, mas muitos erros de uma vez, sem tempo de entender cada um.</p>
+<p><strong>Quando não usar <code>TreatWarningsAsErrors</code> em tudo:</strong> projeto legado que já tem centenas de avisos. Ligar de uma vez gera centenas de erros e trava o time. Nesse caso, liga-se por projeto (no <code>.csproj</code> dos novos) ou só no CI, e os antigos são limpos aos poucos (dica da própria newsletter).</p>
+<p><strong>Não confunda:</strong></p>
+<ul>
+<li><code>Directory.Build.props</code> (propriedades, antes do <code>.csproj</code>) × <code>Directory.Build.targets</code> (alvos e etapas de build, depois). No Norte só existe o .props.</li>
+<li><code>Directory.Build.props</code> × <code>Directory.Packages.props</code> (4.3): o primeiro configura o build; o segundo, as versões dos pacotes.</li>
+<li><code>TreatWarningsAsErrors</code> × <code>CodeAnalysisTreatWarningsAsErrors</code>: o segundo controla só os avisos de qualidade (<code>CAxxxx</code>). Com o primeiro ligado, ele já vale para tudo.</li>
+</ul>
+<p><strong>Ponte com limite.</strong> O <code>Directory.Build.props</code> lembra uma &quot;classe base&quot; de <code>.csproj</code>: todos herdam dele. Mas a herança é por pasta, não por declaração: um projeto fora da árvore do repositório não herda nada, e um <code>Directory.Build.props</code> numa subpasta substitui o da raiz (a menos que importe o de cima explicitamente).</p>
+<p><strong>Na entrevista.</strong> &quot;Como você garante qualidade de código num time?&quot; → &quot;Primeiro no build: um <code>Directory.Build.props</code> na raiz com <code>Nullable</code>, <code>TreatWarningsAsErrors</code> e os analyzers do SDK, e as convenções no <code>.editorconfig</code> com <code>EnforceCodeStyleInBuild</code>. O build local e o CI cobram as mesmas regras, e a revisão humana fica para o que a máquina não vê, como nome e design. O custo é que nenhum rascunho compila com aviso; num legado, eu ligaria por projeto, para não travar o time.&quot;</p>
+<p><strong>Erros comuns:</strong></p>
+<ul>
+<li>nome errado do arquivo (<code>Directory.Build.prop</code>, <code>directory.build.props</code> em sistema que diferencia maiúsculas) → o MSBuild simplesmente não acha, sem erro;</li>
+<li>arquivo fora da raiz (ex.: dentro de <code>src/</code>) → <code>tests/</code> não herda;</li>
+<li>calar uma regra com <code>#pragma warning disable</code> espalhado ou <code>NoWarn</code> no <code>.csproj</code>, em vez de uma exceção justificada no <code>.editorconfig</code> (regra do Norte, <code>CLAUDE.md</code>);</li>
+<li>manter <code>TargetFramework</code> no <code>.csproj</code> depois de criar o .props (duas fontes da verdade).</li>
+</ul>
+<p>🧠 o que o arquivo resolve; aviso × erro e o preço; por que <code>Recommended</code> e não All; quando não ligar tudo de uma vez. · 🔎 os nomes exatos das propriedades e os valores do <code>AnalysisMode</code>.</p>
+<p><strong>Referências:</strong></p>
+<ul>
+<li>Customize your build by folder (Microsoft Learn) — oficial: como o MSBuild procura e importa o <code>Directory.Build.props</code>.</li>
+<li>MSBuild reference for .NET SDK projects — code analysis properties (Microsoft Learn) — oficial: <code>AnalysisLevel</code>, <code>AnalysisMode</code>, <code>EnforceCodeStyleInBuild</code>, <code>CodeAnalysisTreatWarningsAsErrors</code>.</li>
+<li>Overview of .NET source code analysis (Microsoft Learn) — oficial: qualidade (CA) × estilo (IDE).</li>
+<li>Anton Martyniuk, How to make AI write high-quality code in .NET (newsletter de 06/10/2026) e Best practices for increasing code quality in .NET projects — autor de cursos, confiança média; bom panorama; usa analyzers de terceiros que o Norte adiou.</li>
+</ul>
+<p><strong>Onde foi visto · status:</strong> S13 · arquivo do mentor; erros lidos e corrigidos por você; 2 previsões certas · novo. Falha de condução registrada: as propriedades não foram percorridas uma a uma antes de aplicar — esta entrada é o conserto; estude a tabela de propriedades no sábado.</p>
+<p><a id="g4-2"></a></p>
+<h2 id="42-editorconfig-e-analyzers-as-convenções-do-norte-cobradas-pelo-compilador">4.2 .editorconfig e analyzers: as convenções do Norte cobradas pelo compilador<button class="estudada" data-id="42-editorconfig-e-analyzers-as-convenções-do-norte-cobradas-pelo-compilador" type="button">Marcar como estudada</button></h2>
+<p><strong>De → para</strong></p>
+<ul>
+<li><strong>No mercado:</strong> <code>.editorconfig</code>, Roslyn analyzers, code style rules (<code>IDExxxx</code>), code quality rules (<code>CAxxxx</code>), rule severity, naming rules.</li>
+<li><strong>No laboratório:</strong> <code>.editorconfig</code> na raiz do norte · ADR-004 (S13).</li>
+<li><strong>No seu mundo:</strong> padrão combinado de boca, numa wiki ou no comentário do PR (&quot;aqui é sem chaves&quot;), e as &quot;lâmpadas&quot; do Visual Studio que cada um seguia ou não.</li>
+</ul>
+<p><strong>Em uma frase:</strong> o <code>.editorconfig</code> é um arquivo texto que diz quais são as convenções e quão grave é violar cada uma; os analyzers são o código que verifica; com <code>EnforceCodeStyleInBuild</code> e <code>TreatWarningsAsErrors</code>, a violação quebra o build.</p>
+<p><strong>Pergunta que responde:</strong> &quot;onde a convenção do Norte fica escrita de um jeito que a máquina cobra?&quot;</p>
+<p><strong>Duas famílias de regra</strong> (as duas existem no SDK do .NET, sem pacote extra):</p>
+<table>
+<thead>
+<tr>
+<th>Família</th>
+<th>Prefixo</th>
+<th>O que verifica</th>
+<th>Exemplo no Norte</th>
+<th>Ligada por</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Estilo (code style)</td>
+<td>IDE</td>
+<td>a forma do código: namespace, nomes, var…</td>
+<td><code>IDE0161</code> (namespace com escopo de arquivo) · <code>IDE1006</code> (regra de nomes)</td>
+<td><code>.editorconfig</code> + <code>EnforceCodeStyleInBuild</code></td>
+</tr>
+<tr>
+<td>Qualidade (code quality)</td>
+<td>CA</td>
+<td>problemas de correção, desempenho, segurança</td>
+<td><code>CA1707</code> (sem _ em nomes) — desligada nos testes</td>
+<td><code>AnalysisMode</code> + <code>.editorconfig</code></td>
+</tr>
+<tr>
+<td>(do compilador)</td>
+<td>CS</td>
+<td>o que a própria linguagem avisa</td>
+<td><code>CS8604</code> (nulo), <code>CS0162</code> (código inalcançável)</td>
+<td><code>Nullable</code> + <code>TreatWarningsAsErrors</code></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Como era</th>
+<th>Como é agora (Norte, S13)</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&quot;aqui é file-scoped&quot; dito na revisão (S11, S12)</td>
+<td><code>csharp_style_namespace_declarations = file_scoped</code> + severidade warning</td>
+<td>o build acusa <code>IDE0161</code></td>
+</tr>
+<tr>
+<td>cada IDE com a sua formatação</td>
+<td><code>.editorconfig</code> na raiz: VS, VS Code, Rider e o <code>dotnet build</code> leem o mesmo arquivo</td>
+<td>uma regra para todos, inclusive o Claude local</td>
+</tr>
+<tr>
+<td>sugestão do editor (pontinhos cinza) que se podia ignorar</td>
+<td>severidade warning + <code>TreatWarningsAsErrors</code></td>
+<td>não dá para ignorar</td>
+</tr>
+<tr>
+<td>exceção: &quot;nos testes pode&quot; (combinado verbal)</td>
+<td>seção <code>[tests/**.cs]</code> com a exceção e o motivo escrito</td>
+<td>a exceção fica documentada e restrita</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O arquivo do Norte, bloco por bloco:</strong></p>
+<pre class="highlight"><code><span class="na">root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">true</span>
+</code></pre>
+
+<p>Diz &quot;pare de procurar <code>.editorconfig</code> nas pastas de cima&quot;. Sem isso, um <code>.editorconfig</code> perdido em D:\Projetos\ poderia misturar regras.</p>
+<pre class="highlight"><code><span class="k">[*]</span>
+<span class="na">charset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">utf-8</span>
+<span class="na">indent_style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">space</span>
+<span class="na">insert_final_newline</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">true</span>
+<span class="na">trim_trailing_whitespace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">true</span>
+</code></pre>
+
+<p>Vale para todo arquivo. Codificação, espaço (não tab), quebra de linha no fim do arquivo e sem espaço sobrando no fim da linha. Atenção: essas quatro são aplicadas pelo editor ao salvar; o <code>dotnet build</code> não as cobra. Cobrança automática fica para o CI (a conferir: <code>dotnet format --verify-no-changes</code>).</p>
+<pre class="highlight"><code><span class="k">[*.{csproj,props,targets,slnx,xml,json}]</span>
+<span class="na">indent_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2</span>
+
+<span class="k">[*.md]</span>
+<span class="na">trim_trailing_whitespace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">false</span>
+</code></pre>
+
+<p>Arquivos XML e JSON com 2 espaços (o costume do mercado). Em Markdown, dois espaços no fim da linha são quebra de linha, então não podem ser apagados.</p>
+<pre class="highlight"><code><span class="k">[*.cs]</span>
+<span class="na">indent_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">4</span>
+
+<span class="na">csharp_style_namespace_declarations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">file_scoped</span>
+<span class="na">dotnet_diagnostic.IDE0161.severity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">warning</span>
+</code></pre>
+
+<p>Duas linhas por regra de estilo: a opção (o que se prefere: <code>file_scoped</code>) e a severidade (quão grave: warning, que o <code>TreatWarningsAsErrors</code> transforma em erro).</p>
+<pre class="highlight"><code><span class="na">dotnet_naming_rule.metodos_async_terminam_em_async.symbols</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s">metodos_async</span>
+<span class="na">dotnet_naming_rule.metodos_async_terminam_em_async.style</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="s">sufixo_async</span>
+<span class="na">dotnet_naming_rule.metodos_async_terminam_em_async.severity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">warning</span>
+<span class="na">dotnet_naming_symbols.metodos_async.applicable_kinds</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s">method</span>
+<span class="na">dotnet_naming_symbols.metodos_async.required_modifiers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">async</span>
+<span class="na">dotnet_naming_style.sufixo_async.required_suffix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">Async</span>
+<span class="na">dotnet_naming_style.sufixo_async.capitalization</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s">pascal_case</span>
+<span class="na">dotnet_diagnostic.IDE1006.severity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">warning</span>
+</code></pre>
+
+<p>Uma regra de nomes tem três peças, sempre: a quem se aplica (symbols: métodos com async) · como deve ser (style: termina em <code>Async</code>, PascalCase) · quão grave (severity). Os nomes <code>metodos_async</code> e <code>sufixo_async</code> são nossos (rótulos livres). A regra <code>IDE1006</code> é a que reporta violações de nomes.</p>
+<pre class="highlight"><code><span class="k">[tests/**.cs]</span>
+<span class="na">dotnet_diagnostic.CA1707.severity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">none</span>
+<span class="na">dotnet_naming_rule.metodos_async_terminam_em_async.severity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">none</span>
+</code></pre>
+
+<p>Exceções dos testes, com motivo: o nome do teste é a regra em português com _ (<code>Recusa_ficha_sem_sku_e_devolve_400</code>, ADR-001); a documentação oficial da <code>CA1707</code> diz que suprimi-la em código de teste é seguro. E o método de teste async não leva <code>Async</code> porque o nome é a regra, não o método. A seção mais específica (<code>[tests/**.cs]</code>) sobrescreve a geral (<code>[*.cs]</code>) só onde repete a chave.</p>
+<p><strong>Nulos &quot;como erro&quot;:</strong> não há linha no <code>.editorconfig</code> para isso. Com <code>Nullable</code> ligado, os avisos <code>CS86xx</code> já existem, e o <code>TreatWarningsAsErrors</code> os transforma em erro. (A newsletter de Anton Martyniuk faz isso regra a regra, <code>dotnet_diagnostic.CS8604.severity = error</code>; no Norte o <code>TreatWarningsAsErrors</code> cobre todas de uma vez.)</p>
+<p><strong>Severidades possíveis:</strong> none (desligada) · silent (só o editor oferece a correção) · suggestion (pontinhos cinza) · warning · error. No build, só warning e error aparecem.</p>
+<p><strong>Ponte com limite.</strong> O <code>.editorconfig</code> lembra o &quot;guia de estilo&quot; da wiki do time. Mas é lido pelas ferramentas: o que não está nele não é cobrado. E ele não sabe julgar design ou nome ruim (ShipmentHelper passa em qualquer regra) — isso continua na revisão humana (e na revisão do Claude local).</p>
+<p><strong>Por que usamos · alternativa · custo.</strong> Usamos porque é nativo do SDK (zero pacote) e todas as ferramentas leem. Alternativas: analyzers de terceiros (Meziantou, SonarAnalyzer, Roslynator, citados na newsletter) — mais regras, mais erros de uma vez, e cada pacote é uma dependência a acompanhar; no Norte entram um de cada vez, com necessidade (ADR-004). O custo da nossa escolha: o <code>.editorconfig</code> precisa de manutenção (cada regra nova, uma decisão), e as exceções precisam de disciplina para não virar &quot;desliga tudo&quot;.</p>
+<p><strong>Na entrevista.</strong> &quot;Para que serve o <code>.editorconfig</code>?&quot; → &quot;Para escrever as convenções do time num lugar que todas as ferramentas leem: IDE, <code>dotnet build</code> e CI. Com <code>EnforceCodeStyleInBuild</code> e a severidade warning (que vira erro com <code>TreatWarningsAsErrors</code>), a convenção quebra o build. As exceções ficam no próprio arquivo, por pasta e com motivo — no meu projeto, os testes podem ter _ no nome.&quot;</p>
+<p><strong>Erros comuns:</strong></p>
+<ul>
+<li>escrever a severidade no formato antigo <code>opcao = valor:warning</code> (como em <code>dotnet_style_qualification_for_field = false:warning</code>) e esperar que o build cobre: esse formato é respeitado pelo editor, mas o build lê a severidade de <code>dotnet_diagnostic.IDExxxx.severity</code> (a conferir caso a caso na documentação de cada regra);</li>
+<li>esquecer o <code>EnforceCodeStyleInBuild</code>: as regras IDE só aparecem no editor;</li>
+<li>desligar a regra no <code>[*.cs]</code> inteiro quando o problema é só em <code>tests/</code>;</li>
+<li>achar que o build cobra <code>insert_final_newline</code> e <code>trim_trailing_whitespace</code> (não cobra).</li>
+</ul>
+<p>🧠 estilo (IDE) × qualidade (CA) × compilador (CS); opção + severidade; as três peças da regra de nomes; exceção por pasta, com motivo; o que o build não cobra. · 🔎 os nomes exatos das opções, os números das regras, a sintaxe das seções.</p>
+<p><strong>Referências:</strong></p>
+<ul>
+<li>Configuration files for code analysis rules (Microsoft Learn) — oficial: como o <code>.editorconfig</code> é lido, seções e precedência.</li>
+<li><code>IDE0160</code>/<code>IDE0161</code> — namespace declaration preferences (Microsoft Learn) — oficial.</li>
+<li>Code-style naming rules (Microsoft Learn) — oficial: as três peças da regra de nomes.</li>
+<li><code>CA1707</code>: Identifiers should not contain underscores (Microsoft Learn) — oficial: &quot;é seguro suprimir em código de teste&quot;.</li>
+<li>Anton Martyniuk, newsletter de 06/10/2026 (link em 4.1) — exemplo de <code>.editorconfig</code> mais amplo.</li>
+</ul>
+<p><strong>Onde foi visto · status:</strong> S13 · arquivo do mentor; <code>IDE0161</code> previsto e corrigido por você · novo.</p>
+<p><a id="g4-3"></a></p>
+<h2 id="43-central-package-management-uma-versão-por-pacote-num-lugar-só">4.3 Central Package Management: uma versão por pacote, num lugar só<button class="estudada" data-id="43-central-package-management-uma-versão-por-pacote-num-lugar-só" type="button">Marcar como estudada</button></h2>
+<p><strong>De → para</strong></p>
+<ul>
+<li><strong>No mercado:</strong> Central Package Management (CPM), <code>Directory.Packages.props</code>, <code>ManagePackageVersionsCentrally</code>, <code>PackageVersion</code>, version drift.</li>
+<li><strong>No laboratório:</strong> <code>Directory.Packages.props</code> na raiz do norte · ADR-004 (S13).</li>
+<li><strong>No seu mundo:</strong> <code>&lt;PackageReference Include=&quot;...&quot; Version=&quot;...&quot; /&gt;</code> em cada <code>.csproj</code>, e dois projetos da mesma solution com versões diferentes do mesmo pacote (o &quot;funciona aqui, quebra ali&quot;).</li>
+</ul>
+<p><strong>Em uma frase:</strong> as versões de todos os pacotes NuGet ficam num arquivo só; os <code>.csproj</code> dizem qual pacote usam, sem a versão.</p>
+<p><strong>Pergunta que responde:</strong> &quot;como evitar que dois projetos da solution usem versões diferentes do mesmo pacote?&quot;</p>
+<table>
+<thead>
+<tr>
+<th>Como era</th>
+<th>Como é agora (Norte, S13)</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;PackageReference Include=&quot;xunit&quot; Version=&quot;2.9.3&quot; /&gt;</code> no <code>.csproj</code></td>
+<td><code>&lt;PackageVersion Include=&quot;xunit&quot; Version=&quot;2.9.3&quot; /&gt;</code> no <code>Directory.Packages.props</code> + <code>&lt;PackageReference Include=&quot;xunit&quot; /&gt;</code> no <code>.csproj</code></td>
+<td>a versão sai do projeto</td>
+</tr>
+<tr>
+<td>atualizar um pacote = procurar em todos os <code>.csproj</code></td>
+<td>atualizar = uma linha</td>
+<td>uma linha no diff do PR</td>
+</tr>
+<tr>
+<td>projetos com versões diferentes sem ninguém perceber</td>
+<td>uma versão por pacote na solution</td>
+<td>não há como divergir sem querer</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O arquivo do Norte:</strong></p>
+<pre class="highlight"><code><span class="nt">&lt;Project&gt;</span>
+<span class="w">  </span><span class="nt">&lt;PropertyGroup&gt;</span>
+<span class="w">    </span><span class="nt">&lt;ManagePackageVersionsCentrally&gt;</span>true<span class="nt">&lt;/ManagePackageVersionsCentrally&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/PropertyGroup&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ItemGroup</span><span class="w"> </span><span class="na">Label=</span><span class="s">"Testes"</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;PackageVersion</span><span class="w"> </span><span class="na">Include=</span><span class="s">"coverlet.collector"</span><span class="w"> </span><span class="na">Version=</span><span class="s">"6.0.4"</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;PackageVersion</span><span class="w"> </span><span class="na">Include=</span><span class="s">"Microsoft.AspNetCore.Mvc.Testing"</span><span class="w"> </span><span class="na">Version=</span><span class="s">"10.0.12"</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;PackageVersion</span><span class="w"> </span><span class="na">Include=</span><span class="s">"Microsoft.NET.Test.Sdk"</span><span class="w"> </span><span class="na">Version=</span><span class="s">"17.14.1"</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;PackageVersion</span><span class="w"> </span><span class="na">Include=</span><span class="s">"xunit"</span><span class="w"> </span><span class="na">Version=</span><span class="s">"2.9.3"</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;PackageVersion</span><span class="w"> </span><span class="na">Include=</span><span class="s">"xunit.runner.visualstudio"</span><span class="w"> </span><span class="na">Version=</span><span class="s">"3.1.4"</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/ItemGroup&gt;</span>
+<span class="nt">&lt;/Project&gt;</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Peça</th>
+<th>O que faz</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ManagePackageVersionsCentrally = true</code></td>
+<td>liga a CPM para todos os projetos abaixo da pasta</td>
+</tr>
+<tr>
+<td><code>&lt;PackageVersion Include=&quot;X&quot; Version=&quot;...&quot; /&gt;</code></td>
+<td>declara a versão do pacote X para a solution inteira. Não adiciona o pacote a nenhum projeto</td>
+</tr>
+<tr>
+<td><code>&lt;PackageReference Include=&quot;X&quot; /&gt;</code> (no <code>.csproj</code>, sem Version)</td>
+<td>diz que este projeto usa X; a versão vem do arquivo central</td>
+</tr>
+<tr>
+<td>Label=&quot;Testes&quot;</td>
+<td>só um rótulo para organizar (opcional)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Regras que pegam quem começa:</strong></p>
+<ul>
+<li>com a CPM ligada, um <code>PackageReference</code> com Version no <code>.csproj</code> é erro de build (o NuGet acusa; a newsletter de Anton Martyniuk cita exatamente isso como vantagem: ninguém, nem um agente de IA, inventa versão escondido num projeto);</li>
+<li><code>dotnet add package X</code> com a CPM ligada já escreve no lugar certo (a versão vai para o <code>Directory.Packages.props</code>) — conferir o diff;</li>
+<li>exceção pontual: <code>VersionOverride</code>=&quot;...&quot; no <code>PackageReference</code> de um projeto (existe; no Norte, não usamos);</li>
+<li>o MSBuild usa o <code>Directory.Packages.props</code> mais próximo do projeto, igual ao <code>Directory.Build.props</code>.</li>
+</ul>
+<p><strong>Ponte com limite.</strong> Lembra o package.json de um monorepo, ou o pubspec.yaml do Flutter (a confirmar), com as versões num lugar só. Mas aqui cada projeto ainda escolhe quais pacotes usa: declarar a versão não instala o pacote em ninguém.</p>
+<p><strong>Por que usamos · alternativa · custo.</strong> Usamos porque o Norte vai ter um projeto por módulo (ADR-002) e cada um pode usar EF Core, Npgsql, etc.: com 8 módulos, 8 lugares para a mesma versão divergirem. Alternativa: versões em cada <code>.csproj</code> (custo: divergência e atualização trabalhosa). O custo da nossa: um arquivo a mais, e quem não conhece a CPM estranha o <code>PackageReference</code> sem versão.</p>
+<p><strong>Na entrevista.</strong> &quot;Como você gerencia versões de pacotes numa solution grande?&quot; → &quot;Com Central Package Management: as versões ficam no <code>Directory.Packages.props</code> e os projetos referenciam sem versão. Uma versão por pacote na solution, atualização numa linha, e o build recusa versão escondida num <code>.csproj</code>. Existe desde o .NET 7 e funciona em projetos .NET 8 e 9 também.&quot;</p>
+<p><strong>Erros comuns:</strong> esquecer o <code>ManagePackageVersionsCentrally</code> (as versões centrais são ignoradas); deixar o Version no <code>.csproj</code> (erro); achar que <code>PackageVersion</code> adiciona o pacote ao projeto.</p>
+<p>🧠 o problema (versões divergentes) e as duas peças (<code>PackageVersion</code> × <code>PackageReference</code> sem versão). · 🔎 o nome da propriedade, o <code>VersionOverride</code>.</p>
+<p><strong>Referências:</strong></p>
+<p>Central Package Management (Microsoft Learn — NuGet) — oficial.</p>
+<p><strong>Onde foi visto · status:</strong> S13 · arquivo do mentor · novo.</p>
+<p><a id="g4-4"></a></p>
+<h2 id="44-diagnóstico-os-problemas-da-s13-e-como-achar-a-causa">4.4 Diagnóstico: os problemas da S13 e como achar a causa<button class="estudada" data-id="44-diagnóstico-os-problemas-da-s13-e-como-achar-a-causa" type="button">Marcar como estudada</button></h2>
+<table>
+<thead>
+<tr>
+<th>Sintoma</th>
+<th>Causa</th>
+<th>Como achar · como resolver</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>error <code>IDE0161</code>: Convert to file-scoped namespace no <code>PedidosModulo.cs</code></td>
+<td>namespace com chaves; o <code>.editorconfig</code> exige file-scoped e o aviso virou erro</td>
+<td>namespace <code>Norte.Pedidos</code>; no topo, sem chaves; tirar a chave final e um nível de indentação (Ctrl+K, Ctrl+D)</td>
+</tr>
+<tr>
+<td>o build parou no <code>Norte.Pedidos</code> e não compilou o <code>Norte.Api</code> nem os testes</td>
+<td>o <code>Norte.Api</code> depende do Pedidos, e os testes do Api</td>
+<td>normal: corrigir e rodar de novo — podem aparecer erros novos nos projetos que não chegaram a compilar</td>
+</tr>
+<tr>
+<td>error <code>CS8604</code>: Possible null reference argument for parameter 'Sku'</td>
+<td>! removido; <code>string?</code> passado onde se exige string</td>
+<td>ontem era aviso e passava; hoje é erro (4.1). Resolver garantindo o valor (no Norte, o ! + validação nativa — 3.11)</td>
+</tr>
+<tr>
+<td><code>throw</code> sozinho na 1ª linha do <code>Executar</code> não compila</td>
+<td>o resto do método fica inalcançável → <code>CS0162</code> → erro</td>
+<td>para experimento, condicione o <code>throw</code> (if (request.Sku == &quot;ERRO&quot;) <code>throw</code> ...)</td>
+</tr>
+<tr>
+<td><code>git log main..HEAD --pretty=format:...</code> &quot;muito longo&quot;</td>
+<td>os commits têm corpo (vários -m)</td>
+<td><code>git log main..HEAD --oneline</code> para ver só os títulos</td>
+</tr>
+<tr>
+<td>PR criado com título Refactor/catalogo validacao nativa</td>
+<td>o GitHub gera o título a partir do nome da branch</td>
+<td>trocar pelo formato do commit: tipo(escopo): descricao</td>
+</tr>
+<tr>
+<td>500 com o rastro completo da exceção no corpo (experimento para a S14)</td>
+<td>API rodando em Development: a página de exceção do desenvolvedor está ligada</td>
+<td>é proteção automática: em produção o mesmo erro devolve 500 sem corpo. O formato padrão (ProblemDetails) é a S14</td>
+</tr>
+</tbody>
+</table>
+<p><a id="juntando-p4"></a></p>
+<h1 id="juntando-tudo">Juntando tudo</h1>
+<p>Quando você roda <code>dotnet build</code> (ou o CI, quando existir), o MSBuild compila cada projeto. Antes de ler o <code>.csproj</code>, ele importa o <code>Directory.Build.props</code> da raiz: todos os projetos passam a ter .NET 10, nulos ligados, implicit usings, os analyzers do SDK no modo <code>Recommended</code>, as regras de estilo rodando no build e todo aviso tratado como erro. As regras de estilo e as exceções vêm do <code>.editorconfig</code> — namespace com escopo de arquivo, métodos async com sufixo <code>Async</code>, e nos testes o _ permitido no nome. As versões dos pacotes vêm do <code>Directory.Packages.props</code>; o <code>.csproj</code> só diz quais pacotes usa. Resultado: o <code>PedidosModulo</code> com chaves e o ! esquecido param o build no seu computador, antes de chegar a um PR — e o preço é que nenhum rascunho compila com aviso.</p>
+<p><a id="teste-se-p4"></a></p>
+<h1 id="teste-se-sem-consultar-uma-pergunta-por-vez">Teste-se (sem consultar; uma pergunta por vez)</h1>
+<ol>
+<li>O Norte tem 4 projetos. Em quantos arquivos fica hoje o <code>&lt;TargetFramework&gt;net10.0&lt;/TargetFramework&gt;,</code> e qual é?</li>
+<li>Ontem, um <code>string?</code> passado para o construtor da <code>FichaProduto</code> (que exige string) gerava <code>CS8604</code> e o build passava. Hoje o build falha. Que propriedade mudou isso?</li>
+<li>Qual o preço de ligar o <code>TreatWarningsAsErrors</code> no Norte?</li>
+<li>O <code>.editorconfig</code> tem <code>csharp_style_namespace_declarations = file_scoped</code>. Sem a propriedade <code>EnforceCodeStyleInBuild</code> no <code>Directory.Build.props</code>, o <code>dotnet build</code> acusaria o namespace com chaves?</li>
+<li>Uma regra de nomes no <code>.editorconfig</code> tem três peças. Quais?</li>
+<li>Por que a <code>CA1707</code> está desligada só em <code>tests/</code> e não em todo o Norte?</li>
+<li>O <code>.editorconfig</code> tem <code>trim_trailing_whitespace = true.</code> O <code>dotnet build</code> falha se houver espaço no fim de uma linha?</li>
+<li>Com a Central Package Management ligada, o que acontece se alguém escrever <code>&lt;PackageReference Include=&quot;xunit&quot; Version=&quot;2.9.0&quot; /&gt;</code> num <code>.csproj</code>?</li>
+<li>Num projeto legado com 800 avisos, você ligaria o <code>TreatWarningsAsErrors</code> em todos os projetos de uma vez? Por quê?</li>
+<li><code>AnalysisMode</code> <code>Recommended</code> ou All para começar? Qual o custo de cada um?</li>
+</ol>
+<p><a id="respostas-p4"></a></p>
+<h1 id="respostas">Respostas</h1><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>Um só: o <code>Directory.Build.props</code>, na raiz; os <code>.csproj</code> herdam (4.1).</li>
+<li><code>TreatWarningsAsErrors = true</code>: o aviso virou erro (4.1).</li>
+<li>Com qualquer aviso o build quebra, e sem build a API não roda: nem um rascunho ou experimento roda sem corrigir antes (4.1).</li>
+<li>Não. As regras IDE apareceriam só no editor (4.1, 4.2).</li>
+<li>A quem se aplica (symbols) · como deve ser (style) · quão grave (severity) (4.2).</li>
+<li>Porque o _ no nome é convenção dos testes (nome = regra em português, ADR-001); no código de produção a regra continua valendo (4.2).</li>
+<li>Não. O editor aplica ao salvar; o build não cobra. Cobrança automática fica para o CI (4.2).</li>
+<li>Erro de build: com a CPM, a versão só pode ficar no <code>Directory.Packages.props</code> (4.3).</li>
+<li>Não: geraria 800 erros de uma vez e travaria o time. Ligaria nos projetos novos (ou só no CI) e limparia os antigos aos poucos (4.1).</li>
+<li><code>Recommended</code>: menos regras, cada erro dá para entender. All: mais proteção, mas uma avalanche de erros de uma vez. O Norte começou em <code>Recommended</code> (ADR-004) (4.1).</li>
+</ol>
+</details>
+</article>
+<footer class="rodape">Atualizado em 09/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

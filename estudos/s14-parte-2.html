@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norte · S14 — ProblemDetails e tratamento global de exceções (parte 2) · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s14-parte-2.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#norte--s14--problemdetails-e-tratamento-global-de-exceções-parte-2" data-id="norte--s14--problemdetails-e-tratamento-global-de-exceções-parte-2">Norte · S14 — ProblemDetails e tratamento global de exceções (parte 2)</a><a class="n2" href="#1-em-uma-frase" data-id="1-em-uma-frase">1. Em uma frase</a><a class="n2" href="#2-o-que-fizemos-hoje" data-id="2-o-que-fizemos-hoje">2. O que fizemos hoje</a><a class="n2" href="#3-as-três-peças-revise-antes-de-tudo" data-id="3-as-três-peças-revise-antes-de-tudo">3. As três peças (revise antes de tudo)</a><a class="n2" href="#4-o-teste-do-500-passo-a-passo-o-porquê-de-cada-passo" data-id="4-o-teste-do-500-passo-a-passo-o-porquê-de-cada-passo">4. O teste do 500, passo a passo (o porquê de cada passo)</a><a class="n2" href="#5-as-4-combinações-vistas" data-id="5-as-4-combinações-vistas">5. As 4 combinações vistas</a><a class="n2" href="#6-regras-novas-suas" data-id="6-regras-novas-suas">6. Regras novas (suas)</a><a class="n2" href="#7-o-preço-pr-4" data-id="7-o-preço-pr-4">7. O preço (PR #4)</a><a class="n2" href="#8-o-que-ainda-está-aberto" data-id="8-o-que-ainda-está-aberto">8. O que ainda está aberto</a><a class="n2" href="#9-teste-se-responda-sem-consultar-só-depois-leia-as-respostas" data-id="9-teste-se-responda-sem-consultar-só-depois-leia-as-respostas">9. Teste-se (responda sem consultar; só depois leia as respostas)</a><a class="n2" href="#91-respostas" data-id="91-respostas">9.1 Respostas</a><a class="n2" href="#10-na-entrevista" data-id="10-na-entrevista">10. Na entrevista</a></aside>
+<main class="conteudo"><article>
+<h1 id="norte--s14--problemdetails-e-tratamento-global-de-exceções-parte-2">Norte · S14 — ProblemDetails e tratamento global de exceções (parte 2)</h1>
+<p><strong>Data:</strong> 08/10/2026 · <strong>Tempo:</strong> 14:17 → 17:02, pausa 0h22 = <strong>2h23</strong> · <strong>Marco:</strong> M1
+<strong>Guia:</strong> <a href="../parte-3.html#315-erros-da-api-em-formato-padrão-addproblemdetails-useexceptionhandler-e-usestatuscodepages">Parte 3, entradas 3.15–3.17</a> · <strong>Autoavaliação:</strong> 4</p>
+<h2 id="1-em-uma-frase">1. Em uma frase</h2>
+<p>Um teste só protege uma linha se você o viu <strong>falhar sem ela</strong>; para o teste do 500 isso exigiu trocar o ambiente de <code>Development</code> para <code>Production</code>.</p>
+<h2 id="2-o-que-fizemos-hoje">2. O que fizemos hoje</h2>
+<ul>
+<li>Escrevemos o <strong>teste de integração do erro 500</strong> (<code>Erro_inesperado_devolve_500_em_problem_details_sem_vazar_detalhes</code>).</li>
+<li>Abrimos e mergeamos o <strong>PR #4</strong> (merge commit <code>c486b23</code>). A <code>main</code> voltou a compilar; <strong>5 testes verdes</strong>.</li>
+<li>Descobrimos que a <code>main</code> anterior (<code>36a5bbb</code>) <strong>não compilava</strong> (CS8604).</li>
+</ul>
+<h2 id="3-as-três-peças-revise-antes-de-tudo">3. As três peças (revise antes de tudo)</h2>
+<table>
+<thead>
+<tr>
+<th>Peça</th>
+<th>Papel</th>
+<th>Lembrete</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AddProblemDetails()</code></td>
+<td><strong>escreve</strong> o corpo no formato padrão</td>
+<td>antes do <code>Build()</code></td>
+</tr>
+<tr>
+<td><code>UseExceptionHandler()</code></td>
+<td><strong>captura</strong> a exceção não tratada e pede o corpo</td>
+<td>depois do <code>Build()</code></td>
+</tr>
+<tr>
+<td><code>UseStatusCodePages()</code></td>
+<td><strong>preenche</strong> o corpo vazio de 4xx/5xx</td>
+<td>depois do <code>Build()</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Escreve · captura · preenche.</strong> Foi aqui que a retenção falhou (❌, 2ª vez): quem <em>captura</em> não é quem <em>escreve</em>.</p>
+<h2 id="4-o-teste-do-500-passo-a-passo-o-porquê-de-cada-passo">4. O teste do 500, passo a passo (o porquê de cada passo)</h2>
+<ol>
+<li><strong>Dado:</strong> uma API em que o repositório falha. O <code>FichaProdutoRepository</code> é <code>internal sealed</code>, sem interface — não dá para herdar. Então o teste <strong>registra uma fábrica que lança</strong> no lugar dele (<code>WithWebHostBuilder</code> + <code>ConfigureTestServices</code>). A produção não é tocada.</li>
+<li><strong>Ambiente <code>Production</code>:</strong> <code>WebApplicationFactory&lt;Program&gt;</code> roda em <strong>Development</strong> por padrão, e lá a <em>página de exceção do desenvolvedor</em> também devolve 500 <code>problem+json</code>. Sem trocar o ambiente, o teste passa <strong>mesmo sem</strong> <code>UseExceptionHandler()</code> — um falso verde.</li>
+<li><strong>Quando:</strong> <code>POST /catalogo/fichas-produto</code> com um corpo válido (a exceção nasce quando o framework resolve os parâmetros do handler, antes do corpo do <code>Executar</code>).</li>
+<li><strong>Então (4 verificações):</strong> status 500 · <code>Content-Type: application/problem+json</code> · <code>traceId</code> presente · corpo <strong>sem</strong> <code>detail</code> e sem <code>exception</code>.</li>
+</ol>
+<h2 id="5-as-4-combinações-vistas">5. As 4 combinações vistas</h2>
+<table>
+<thead>
+<tr>
+<th>Ambiente</th>
+<th>Com <code>UseExceptionHandler()</code></th>
+<th>Sem <code>UseExceptionHandler()</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Development</td>
+<td>verde</td>
+<td><strong>verde (falso positivo)</strong></td>
+</tr>
+<tr>
+<td>Production</td>
+<td>verde</td>
+<td><strong>vermelho</strong> ← o que o teste protege</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-regras-novas-suas">6. Regras novas (suas)</h2>
+<ul>
+<li>Todo teste novo precisa ser <strong>visto vermelho pelo menos uma vez</strong>.</li>
+<li>Passo a passo, cada passo com o <strong>porquê antes</strong> da pergunta.</li>
+<li><code>&lt;summary&gt;</code> no teste quando o nome não carrega o porquê.</li>
+</ul>
+<h2 id="7-o-preço-pr-4">7. O preço (PR #4)</h2>
+<p>Quem consumia a API e recebia 404 <strong>sem corpo</strong> passa a receber <code>application/problem+json</code>: precisa se adequar. Seu texto no PR acertou isso sem pista.</p>
+<h2 id="8-o-que-ainda-está-aberto">8. O que ainda está aberto</h2>
+<ul>
+<li>Por que a <code>main</code> anterior não compilava (CS8604)? → S15, com CI.</li>
+<li><code>Results&lt;Created&lt;FichaProduto&gt;, ValidationProblem&gt;</code> já não devolve <code>ValidationProblem</code>.</li>
+<li>Os asserts de <code>detail</code>/<code>exception</code> ainda não foram vistos vermelhos.</li>
+<li>Sozinho: o teste do <strong>404</strong> (S15).</li>
+</ul>
+<h2 id="9-teste-se-responda-sem-consultar-só-depois-leia-as-respostas">9. Teste-se (responda sem consultar; só depois leia as respostas)</h2>
+<ol>
+<li>Com só <code>AddProblemDetails()</code> registrado, em <code>Development</code>, o <code>Executar</code> lança uma exceção. Quem captura, e quem escreve o corpo?</li>
+<li>Por que o teste do 500 usa <code>UseEnvironment(&quot;Production&quot;)</code>?</li>
+<li>O <code>FichaProdutoRepository</code> é <code>internal sealed</code> e não tem interface. Como o teste faz o <code>Executar</code> falhar mesmo assim?</li>
+<li>Quais são as 4 verificações do teste do 500 e por que &quot;o corpo não é nulo&quot; seria fraco?</li>
+<li>Qual é o preço do <code>UseStatusCodePages()</code> para quem já consome a API?</li>
+<li>Como provar que a <code>main</code> compila numa cópia limpa, sem mexer na sua pasta de trabalho?</li>
+<li>Por que um teste novo precisa ser visto vermelho ao menos uma vez?</li>
+</ol>
+<hr />
+<h2 id="91-respostas">9.1 Respostas</h2>
+<p><strong>1.</strong> Quem <strong>captura</strong> é a página de exceção do desenvolvedor (<code>DeveloperExceptionPageMiddleware</code>), que o <code>CreateBuilder</code> liga em <code>Development</code>. O corpo <code>problem+json</code> com rastro vem dela mesma. O <code>AddProblemDetails()</code> só escreve corpo quando outra peça pede; sozinho ele não captura nada. Sem o <code>UseExceptionHandler()</code>, em <code>Production</code> o cliente receberia 500 sem corpo ou a exceção vazaria. (Você respondeu <code>UseExceptionHandler</code> e depois <code>ProblemDetails</code>: a confusão é capturar × escrever.)</p>
+<p><strong>2.</strong> Porque o <code>WebApplicationFactory&lt;Program&gt;</code> roda em <code>Development</code> por padrão. Lá a página do desenvolvedor também devolve 500 <code>problem+json</code>, então o teste passaria <strong>mesmo sem</strong> o <code>UseExceptionHandler()</code> (falso verde). Em <code>Production</code> a página não existe: sem a linha, o teste fica vermelho; com ela, verde. Foi o que vimos nas 4 combinações.</p>
+<p><strong>3.</strong> Registrando, no <code>ConfigureTestServices</code> do próprio teste, uma <strong>fábrica que lança</strong> no lugar do repositório (<code>AddSingleton&lt;FichaProdutoRepository&gt;(_ =&gt; throw ...)</code>). Não dá para herdar de uma classe <code>sealed</code>, e não há interface para trocar. A exceção nasce quando o framework resolve os parâmetros do handler, antes do corpo do <code>Executar</code>. O código de produção não é alterado.</p>
+<p><strong>4.</strong> (a) status 500; (b) <code>Content-Type: application/problem+json</code>; (c) <code>traceId</code> presente; (d) corpo <strong>sem</strong> <code>detail</code> e sem <code>exception</code>. &quot;Não nulo&quot; é fraco porque até um objeto vazio <code>{}</code> passa: não prova que o formato padrão foi usado nem que a causa não vazou.</p>
+<p><strong>5.</strong> Quem consumia a API e recebia 404 <strong>sem corpo</strong> passa a receber <code>application/problem+json</code>; os clientes existentes precisam se adequar. Há também o 404 genérico, igual para &quot;rota inexistente&quot; e &quot;ficha não encontrada&quot;, e alguns bytes a mais por resposta. (Não é &quot;trabalho do desenvolvedor&quot;: é o efeito sobre o cliente.)</p>
+<p><strong>6.</strong> Com <code>git worktree add &lt;pasta&gt; main</code> cria-se uma cópia limpa da <code>main</code>; roda-se <code>dotnet build</code> nela e depois <code>git worktree remove</code>. Foi assim que vimos o CS8604 na <code>main</code> antiga (<code>36a5bbb</code>), que o <code>!</code> em <code>Sku</code>/<code>Descricao</code>/<code>Ncm</code> resolve.</p>
+<p><strong>7.</strong> Porque um teste que nunca falhou pode não proteger nada: pode estar verde por outro motivo (como a página do desenvolvedor mascarando a falta do <code>UseExceptionHandler()</code>). Remover a linha protegida e ver o teste ficar vermelho prova que ele detecta o problema.</p>
+<h2 id="10-na-entrevista">10. Na entrevista</h2>
+<p>&quot;Como você testa o tratamento global de erros?&quot; — Provoco uma exceção com um dublê, rodo em <code>Production</code> para a página do desenvolvedor não mascarar, e verifico status, content type, <code>traceId</code> e ausência de detalhes. E só confio no teste depois de vê-lo falhar sem a linha.</p>
+
+</article>
+<footer class="rodape">Atualizado em 09/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

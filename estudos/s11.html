@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norte · S11 — FichaProduto e primeiro teste · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s11.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#norte--s11--fichaproduto-e-primeiro-teste" data-id="norte--s11--fichaproduto-e-primeiro-teste">Norte · S11 — FichaProduto e primeiro teste</a><a class="n2" href="#1-objetivo-e-resultado" data-id="1-objetivo-e-resultado">1. Objetivo e resultado</a><a class="n2" href="#2-onde-isso-está-no-mapa" data-id="2-onde-isso-está-no-mapa">2. Onde isso está no mapa</a><a class="n2" href="#3-conceitos-a-explicação-completa-está-no-guia" data-id="3-conceitos-a-explicação-completa-está-no-guia">3. Conceitos (a explicação completa está no guia)</a><a class="n2" href="#4-termos-técnicos" data-id="4-termos-técnicos">4. Termos técnicos</a><a class="n2" href="#5-dúvidas-do-aluno-e-as-respostas" data-id="5-dúvidas-do-aluno-e-as-respostas">5. Dúvidas do aluno e as respostas</a><a class="n2" href="#6-divergências" data-id="6-divergências">6. Divergências</a><a class="n2" href="#7-avaliação" data-id="7-avaliação">7. Avaliação</a><a class="n2" href="#8-pontos-a-melhorar" data-id="8-pontos-a-melhorar">8. Pontos a melhorar</a><a class="n2" href="#9-perguntas-de-recuperação-respostas-no-fim" data-id="9-perguntas-de-recuperação-respostas-no-fim">9. Perguntas de recuperação (respostas no fim)</a><a class="n2" href="#10-preparação-para-o-próximo-chat" data-id="10-preparação-para-o-próximo-chat">10. Preparação para o próximo chat</a></aside>
+<main class="conteudo"><article>
+<h1 id="norte--s11--fichaproduto-e-primeiro-teste">Norte · S11 — FichaProduto e primeiro teste</h1>
+<p><strong>Data:</strong> 02/10/2026 · <strong>Marco:</strong> M1 · <strong>Tempo líquido:</strong> 2h20 (14:48–16:10 e 20:16–21:14)</p>
+<h2 id="1-objetivo-e-resultado">1. Objetivo e resultado</h2>
+<p><strong>Objetivo (um só):</strong> a primeira funcionalidade do <code>Catalogo</code> e o primeiro teste do Norte, ligado a
+uma regra nomeada.</p>
+<p><strong>Resultado: cumprido.</strong></p>
+<ul>
+<li><code>CadastrarFichaProduto</code>: <code>POST /catalogo/fichas-produto</code> devolve <strong>201</strong> com SKU e <strong>400</strong> sem SKU,
+conferido pelo arquivo <code>.http</code>.</li>
+<li>Projeto <code>Norte.Catalogo.Tests</code> com <strong>2 testes verdes</strong>.</li>
+<li>Ciclo 🔴 → 🟢 feito: com o <code>if</code> do SKU comentado, o teste da recusa falhou; com o <code>if</code> de volta,
+passou.</li>
+<li>Regra nomeada: <strong>&quot;Ficha exige SKU e NCM&quot;</strong>. Hoje testada a parte do SKU.</li>
+<li>Commits na <code>feat/catalogo-ficha-produto</code>, com push.</li>
+</ul>
+<h2 id="2-onde-isso-está-no-mapa">2. Onde isso está no mapa</h2>
+<p>Começou o <strong>nível 3, a funcionalidade</strong> (<a href="../parte-0-1.html#parte-0--o-mapa-dos-níveis">Parte 0</a>). O caminho de
+hoje: <code>MapPost</code> → <code>CadastrarFichaProdutoEndpoint.Executar</code> → <code>FichaProdutoRepository</code> → 201 ou 400.
+O teste chama o <code>Executar</code> direto. Detalhe completo: <a href="../parte-3.html#parte-3--a-primeira-funcionalidade-e-o-primeiro-teste">Parte 3 do guia</a>.</p>
+<h2 id="3-conceitos-a-explicação-completa-está-no-guia">3. Conceitos (a explicação completa está no guia)</h2>
+<table>
+<thead>
+<tr>
+<th>Conceito</th>
+<th>Como era</th>
+<th>Como é agora</th>
+<th>Guia</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Papéis da funcionalidade</td>
+<td>Controller + DTO + Service + Repository, um por pasta</td>
+<td><code>Request</code> + <code>Endpoint</code> + <code>Repository</code>, o papel no sufixo (padrão REPR)</td>
+<td><a href="../parte-3.html#31-a-funcionalidade-no-estilo-repr-request-endpoint-repository">3.1</a></td>
+</tr>
+<tr>
+<td><code>record</code></td>
+<td><code>class</code> com <code>get; set;</code></td>
+<td><code>record</code> em uma linha, imutável, compara por valor</td>
+<td><a href="../parte-3.html#32-record-dados-que-entram-e-saem">3.2</a></td>
+</tr>
+<tr>
+<td>Respostas</td>
+<td><code>IActionResult</code>, <code>BadRequest(ModelState)</code></td>
+<td><code>Results&lt;Created&lt;...&gt;, ValidationProblem&gt;</code>, 400 em <code>ProblemDetails</code></td>
+<td><a href="../parte-3.html#33-respostas-tipadas-created-validationproblem-e-o-400-no-formato-problemdetails">3.3</a></td>
+</tr>
+<tr>
+<td>Testar a API à mão</td>
+<td>Postman</td>
+<td>arquivo <code>.http</code> no repositório</td>
+<td><a href="../parte-3.html#34-arquivo-http-as-requisições-da-api-dentro-do-repositório">3.4</a></td>
+</tr>
+<tr>
+<td>Projeto de testes</td>
+<td>—</td>
+<td><code>Norte.Catalogo.Tests</code> + <code>InternalsVisibleTo</code></td>
+<td><a href="../parte-3.html#35-o-projeto-de-testes-xunit-referência-e-internalsvisibleto">3.5</a></td>
+</tr>
+<tr>
+<td>Teste</td>
+<td>controller com <em>mock</em></td>
+<td>Arrange–Act–Assert chamando <code>Executar</code> direto</td>
+<td><a href="../parte-3.html#36-anatomia-de-um-teste-arrange-act-assert">3.6</a></td>
+</tr>
+<tr>
+<td>Prova do teste</td>
+<td>—</td>
+<td>vermelho com a regra quebrada, verde com ela de volta</td>
+<td><a href="../parte-3.html#37-vermelho-→-verde-como-saber-que-o-teste-protege-a-regra">3.7</a></td>
+</tr>
+<tr>
+<td>Sintaxe curta</td>
+<td>—</td>
+<td><code>[]</code>, <code>=&gt;</code>, <code>namespace X;</code>, <code>new()</code></td>
+<td><a href="../parte-3.html#38-a-sintaxe-mais-curta-do-c-moderno-o-que-já-apareceu-no-norte">3.8</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>A frase do dia:</strong> <em>um teste só protege o que ele exercita, e só prova alguma coisa se você já o
+viu falhar.</em></p>
+<h2 id="4-termos-técnicos">4. Termos técnicos</h2>
+<ul>
+<li><strong>REPR:</strong> Request–Endpoint–Response, organização de uma funcionalidade em três peças.</li>
+<li><strong><code>record</code>:</strong> tipo de dados imutável com igualdade por valor.</li>
+<li><strong><code>ProblemDetails</code>:</strong> formato padrão (RFC) de erro em JSON (<code>application/problem+json</code>).</li>
+<li><strong><code>.http</code>:</strong> arquivo de requisições HTTP que a IDE executa.</li>
+<li><strong>xUnit:</strong> biblioteca de testes; <code>[Fact]</code> marca um teste.</li>
+<li><strong>AAA:</strong> Arrange (prepara), Act (executa), Assert (confere).</li>
+<li><strong><code>InternalsVisibleTo</code>:</strong> deixa um projeto nomeado ver o que é <code>internal</code>.</li>
+<li><strong>Red → green:</strong> ver o teste falhar com a regra quebrada e passar com ela restaurada.</li>
+</ul>
+<h2 id="5-dúvidas-do-aluno-e-as-respostas">5. Dúvidas do aluno e as respostas</h2>
+<ul>
+<li><strong>&quot;O <code>FichasProdutoEmMemoria</code> é o service de antes?&quot;</strong> Não: é o <strong>repositório</strong>. O papel do service
+é do <code>Executar</code>.</li>
+<li><strong>&quot;São essas as nomenclaturas que se usa? Antes ficava mais explícito.&quot;</strong> Crítica procedente. O
+nome <code>FichasProdutoEmMemoria</code> (do mentor) dizia <em>como</em>, não <em>o quê</em>, e virou <code>FichaProdutoRepository</code>.
+O papel agora está no sufixo (<code>Request</code>, <code>Endpoint</code>, <code>Repository</code>). Em M2, a pasta por
+funcionalidade devolve a clareza de &quot;tudo num lugar&quot;.</li>
+<li><strong>&quot;O <code>.http</code> é do .NET 10?&quot;</strong> Não: é da IDE (VS 2022 desde 2023; VS Code e JetBrains antes).</li>
+<li><strong>&quot;Não deveria dar erro?&quot;</strong> (com o <code>if</code> comentado e só o teste do 201): não, porque esse teste
+manda <strong>com</strong> SKU e nunca passa pelo <code>if</code>. Foi a pergunta mais importante da sessão.</li>
+<li><strong>&quot;Não tem que dar o <code>git push</code>?&quot;</strong> Sim; o PR fica para quando a regra do NCM fechar.</li>
+</ul>
+<h2 id="6-divergências">6. Divergências</h2>
+<p>Nenhuma nova.</p>
+<h2 id="7-avaliação">7. Avaliação</h2>
+<p><strong>O que você fez bem:</strong></p>
+<ul>
+<li>As duas retenções <strong>sem pista</strong>, inclusive o processo compartilhado (erro da S10, agora certo).</li>
+<li>Decidiu a regra pelo negócio (&quot;os dois dados são obrigatórios&quot;).</li>
+<li>Questionou os nomes até fazer sentido.</li>
+<li>Escreveu Arrange e Act do teste certos e deu um nome melhor que o do modelo
+(<code>..._e_devolve_400</code>).</li>
+<li>Perguntou &quot;não deveria dar erro?&quot;.</li>
+</ul>
+<p><strong>Onde travou e por quê:</strong></p>
+<ul>
+<li>O endpoint precisou de esqueleto: <code>record</code>, <code>Results&lt;...&gt;</code> e <code>ValidationProblem</code> eram novos.</li>
+<li>O Assert do teste da recusa veio copiado do modelo e conferia o 201. É o <strong>A7: sobra de modelo
+pela 3ª vez</strong>, agora no <em>sentido</em> de uma linha, não num nome.</li>
+<li>Duas linhas de Assert não podiam falhar (<code>NotEmpty</code>, <code>Null</code> de um SKU nunca enviado).</li>
+</ul>
+<p><strong>O que o mentor conduziu mal:</strong></p>
+<ul>
+<li>O nome <code>FichasProdutoEmMemoria</code>.</li>
+<li>O comando <code>curl.exe</code> com escape que depende da versão do PowerShell.</li>
+<li>A pergunta de autoavaliação no fim: <strong>composta e repetida três vezes</strong>, num dia longo. A nota 1
+reflete também isso.</li>
+</ul>
+<h2 id="8-pontos-a-melhorar">8. Pontos a melhorar</h2>
+<ul>
+<li><strong>Você:</strong> ao adaptar um modelo, fazer em cada bloco copiado a pergunta <em>&quot;esta linha ainda é
+verdade para o caso novo?&quot;</em> (proposta do A7, a decidir). Em teste, a pergunta vale sobretudo
+para o Assert.</li>
+<li><strong>Mentor:</strong> pergunta de fechamento numa parte só; comandos de terminal testados para PowerShell 5.1
+e 7; nomes por papel.</li>
+</ul>
+<h2 id="9-perguntas-de-recuperação-respostas-no-fim">9. Perguntas de recuperação (respostas no fim)</h2>
+<ol>
+<li>No Norte, qual classe e qual método fazem o papel que o <code>FichaProdutoService.Cadastrar()</code> fazia na
+arquitetura com pastas técnicas?</li>
+<li>O endpoint <code>CadastrarFichaProdutoEndpoint.Executar</code> retorna
+<code>Results&lt;Created&lt;FichaProduto&gt;, ValidationProblem&gt;</code>. Num teste, qual chamada descobre qual dos dois
+resultados aconteceu?</li>
+<li>O teste <code>Cadastra_ficha_com_sku_e_devolve_201</code> envia uma ficha <strong>com</strong> SKU. Se alguém apagar o <code>if</code>
+que recusa ficha sem SKU, esse teste fica verde ou vermelho?</li>
+<li>Por que <code>Assert.Equal(new FichaProduto(&quot;LUV-001&quot;, &quot;Luva nitrilica&quot;, &quot;40151900&quot;), criado.Value)</code>
+passa quando <code>FichaProduto</code> é declarada como <code>record</code>?</li>
+<li>Os tipos do módulo <code>Catalogo</code> são <code>internal</code> (ADR-002). O que permite que o projeto
+<code>Norte.Catalogo.Tests</code> use o <code>CadastrarFichaProdutoEndpoint</code>?</li>
+</ol>
+<h2 id="10-preparação-para-o-próximo-chat">10. Preparação para o próximo chat</h2>
+<ul>
+<li><strong>Próxima sessão:</strong> segunda, 05/10. Começa com a <strong>análise semanal</strong> e 3 perguntas de revisão
+espaçada.</li>
+<li><strong>Objetivo:</strong> o teste da regra do NCM, escrito <strong>por você</strong> com os dois testes abertos como modelo,
+incluindo o ciclo 🔴 → 🟢. Depois, o glossário nasce com o termo <code>FichaProduto</code>, e o PR da
+<code>feat/catalogo-ficha-produto</code> vai para a <code>main</code>.</li>
+<li><strong>Sábado:</strong> guia, <a href="../parte-3.html#parte-3--a-primeira-funcionalidade-e-o-primeiro-teste">Parte 3</a>, com foco em 3.6 e 3.7, e o
+<a href="../parte-3.html#teste-se-sem-consultar-uma-pergunta-por-vez">Teste-se</a>.</li>
+<li><strong>Título sugerido:</strong> <code>Norte · S12 — Regra do NCM e PR do Catalogo</code>.</li>
+</ul>
+<hr />
+<h3 id="respostas">Respostas</h3><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li><code>CadastrarFichaProdutoEndpoint.Executar</code>.</li>
+<li><code>Assert.IsType&lt;ValidationProblem&gt;(resultado.Result)</code> (ou <code>Created&lt;FichaProduto&gt;</code>). Ela confere o
+tipo e devolve o objeto tipado.</li>
+<li><strong>Verde.</strong> Ele não passa pelo <code>if</code>, então não protege a regra.</li>
+<li>Porque <code>record</code> compara por valor: com os três campos iguais, os objetos são iguais.</li>
+<li>O <code>&lt;InternalsVisibleTo Include=&quot;Norte.Catalogo.Tests&quot; /&gt;</code> no <code>Norte.Catalogo.csproj</code>.</li>
+</ol>
+</details>
+</article>
+<footer class="rodape">Atualizado em 09/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

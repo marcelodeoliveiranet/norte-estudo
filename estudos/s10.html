@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norte · S10 — Nivelamento do .NET moderno e FichaProduto · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s10.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#norte--s10--nivelamento-do-net-moderno-e-fichaproduto" data-id="norte--s10--nivelamento-do-net-moderno-e-fichaproduto">Norte · S10 — Nivelamento do .NET moderno e FichaProduto</a><a class="n2" href="#1-objetivo-e-resultado" data-id="1-objetivo-e-resultado">1. Objetivo e resultado</a><a class="n2" href="#2-onde-isso-está-no-mapa-dos-níveis" data-id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</a><a class="n2" href="#3-conceitos-resumo-o-detalhe-está-no-guia" data-id="3-conceitos-resumo-o-detalhe-está-no-guia">3. Conceitos (resumo; o detalhe está no guia)</a><a class="n2" href="#4-termos-da-sessão" data-id="4-termos-da-sessão">4. Termos da sessão</a><a class="n2" href="#5-dúvidas-e-respostas" data-id="5-dúvidas-e-respostas">5. Dúvidas e respostas</a><a class="n2" href="#6-divergências" data-id="6-divergências">6. Divergências</a><a class="n2" href="#7-avaliação" data-id="7-avaliação">7. Avaliação</a><a class="n2" href="#8-pontos-a-melhorar" data-id="8-pontos-a-melhorar">8. Pontos a melhorar</a><a class="n2" href="#9-perguntas-de-recuperação" data-id="9-perguntas-de-recuperação">9. Perguntas de recuperação</a><a class="n2" href="#10-preparação-para-a-s11--norte--s11--fichaproduto-e-primeiro-teste" data-id="10-preparação-para-a-s11--norte--s11--fichaproduto-e-primeiro-teste">10. Preparação para a S11 — Norte · S11 — FichaProduto e primeiro te…</a></aside>
+<main class="conteudo"><article>
+<h1 id="norte--s10--nivelamento-do-net-moderno-e-fichaproduto">Norte · S10 — Nivelamento do .NET moderno e FichaProduto</h1>
+<p><strong>Data:</strong> 01/10/2026 · <strong>Marco:</strong> M1 · <strong>Tempo líquido:</strong> ≈ 3h30 (estimado: 15:08–16:21 + ~16:40–17:20 + 18:01–19:38)
+<strong>Guia de referência:</strong> <code>GUIA-DOTNET-MODERNO.md</code> (v1.2, na mesma pasta). Os links abaixo abrem a entrada do guia.</p>
+<hr />
+<h2 id="1-objetivo-e-resultado">1. Objetivo e resultado</h2>
+<p><strong>Objetivo:</strong> sair sabendo explicar o caminho host → módulo → endpoint e entregar a <code>FichaProduto</code> com um teste.</p>
+<p><strong>Resultado:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Entregue</th>
+<th>Não entregue (vai para a S11)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Módulo <code>Pedidos</code> criado por você, ligado ao host, revisado pelo Claude local, corrigido e commitado (<code>GET /pedidos/status</code> → 200)</td>
+<td><code>FichaProduto</code></td>
+</tr>
+<tr>
+<td><code>CLAUDE.md</code> na raiz do repositório</td>
+<td>Primeiro teste</td>
+</tr>
+<tr>
+<td>Materiais de estudo fora do repositório (<code>estudos\M1\</code>)</td>
+<td></td>
+</tr>
+<tr>
+<td>Critério de módulo × funcionalidade × departamento</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</h2>
+<pre class="highlight"><code>NÍVEL 1  SOLUTION         Norte.slnx                                   ✅
+NÍVEL 2  MÓDULOS          Norte.Api (host) + Catalogo + Pedidos        ✅ hoje: Pedidos
+NÍVEL 3  FUNCIONALIDADES  FichaProduto no Catalogo                     ⏭️ S11
+NÍVEL 4  CAMADAS          endpoint → validação → handler → ...         depois
+</code></pre>
+
+<hr />
+<h2 id="3-conceitos-resumo-o-detalhe-está-no-guia">3. Conceitos (resumo; o detalhe está no guia)</h2>
+<h3 id="31-programcs-em-duas-fases-→-14">3.1 <code>Program.cs</code> em duas fases → <a href="../parte-0-1.html#14-programcs-moderno-de-startupcs-para-builder-e-app">1.4</a></h3>
+<table>
+<thead>
+<tr>
+<th>Como era</th>
+<th>Como é agora</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Startup.ConfigureServices(services)</code></td>
+<td><code>builder.Services.Add...</code> <strong>antes</strong> do <code>Build()</code></td>
+<td>Mesma coleção de DI, outro lugar</td>
+</tr>
+<tr>
+<td><code>Startup.Configure(app, env)</code></td>
+<td><code>app.Map...</code> / <code>app.Use...</code> <strong>depois</strong> do <code>Build()</code></td>
+<td>Mesmo pipeline; <code>env</code> virou <code>app.Environment</code></td>
+</tr>
+<tr>
+<td>A divisão era garantida pelos dois métodos</td>
+<td>A divisão é a linha <code>builder.Build()</code></td>
+<td>O compilador <strong>não</strong> impede registrar depois; o erro só aparece na execução</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O seu experimento:</strong> mover <code>AddCatalogo()</code> para depois do <code>Build()</code> <strong>não deu erro</strong> porque o <code>AddCatalogo</code> ainda está vazio: a exceção só acontece quando algo é <strong>adicionado</strong> à coleção. Com <code>AddProblemDetails()</code> depois do <code>Build()</code>, a aplicação não sobe: <code>InvalidOperationException: The service collection cannot be modified because it is read-only</code>.</p>
+<h3 id="32-controller-→-minimal-api-→-19">3.2 Controller → Minimal API → <a href="../parte-0-1.html#19-minimal-apis-as-formas-de-declarar-um-endpoint-e-o-mapgroup">1.9</a></h3>
+<table>
+<thead>
+<tr>
+<th>Controller</th>
+<th>Minimal API</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>[Route(&quot;catalogo&quot;)]</code> na classe</td>
+<td><code>app.MapGroup(&quot;/catalogo&quot;)</code></td>
+<td>O prefixo vira um objeto (o grupo), não um atributo</td>
+</tr>
+<tr>
+<td><code>[HttpGet(&quot;status&quot;)]</code> no método</td>
+<td><code>grupo.MapGet(&quot;/status&quot;, ...)</code></td>
+<td>Verbo e rota numa chamada só</td>
+</tr>
+<tr>
+<td>Método de ação dentro de uma classe</td>
+<td>Um delegate: lambda ou método</td>
+<td>Não precisa de classe nem de <code>ControllerBase</code></td>
+</tr>
+<tr>
+<td><code>AddControllers()</code> + <code>MapControllers()</code> descobrem as classes por reflexão</td>
+<td>Cada <code>Map...</code> registra explicitamente</td>
+<td>Nada é descoberto: sem <code>app.MapPedidos()</code>, a rota não existe (404)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-métodos-de-extensão-→-17">3.3 Métodos de extensão → <a href="../parte-0-1.html#17-métodos-de-extensão">1.7</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método estático comum</th>
+<th>Método de extensão</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Registrar(IServiceCollection services)</code></td>
+<td><code>AddPedidos(this IServiceCollection services)</code></td>
+<td>Só o <code>this</code> no primeiro parâmetro</td>
+</tr>
+<tr>
+<td><code>PedidosSetup.Registrar(builder.Services);</code></td>
+<td><code>builder.Services.AddPedidos();</code></td>
+<td>Parece método da própria coleção</td>
+</tr>
+<tr>
+<td>—</td>
+<td><code>using Norte.Pedidos;</code> no arquivo que chama</td>
+<td>Sem ele: CS1061</td>
+</tr>
+</tbody>
+</table>
+<h3 id="34-monolito-modular-um-processo-só-→-12">3.4 Monolito modular: um processo só → <a href="../parte-0-1.html#12-monolito-modular-host--um-projeto-por-módulo">1.2</a></h3>
+<table>
+<thead>
+<tr>
+<th>Tipo de bug num módulo</th>
+<th>O que acontece</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Exceção dentro de uma requisição</td>
+<td>Só aquela requisição recebe 500; os outros módulos seguem</td>
+</tr>
+<tr>
+<td>Bug que derruba o <strong>processo</strong> (memória, <code>StackOverflowException</code>, thread de fundo)</td>
+<td><strong>Todos os módulos caem</strong>: são DLLs no mesmo processo</td>
+</tr>
+</tbody>
+</table>
+<p>Módulos são isolados <strong>no código</strong>, não <strong>em execução</strong>. Isolar falha e deploy é o que microsserviços resolvem (M7), ao custo de rede e operação distribuída.</p>
+<h3 id="35-módulo-×-funcionalidade-×-departamento-→-112">3.5 Módulo × funcionalidade × departamento → <a href="../parte-0-1.html#112-módulo-×-funcionalidade-×-departamento-o-critério-para-criar-módulo">1.12</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Departamento</th>
+<th>Módulo</th>
+<th>Funcionalidade</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>É</td>
+<td>pessoas no organograma</td>
+<td>regras que valem juntas + dados próprios</td>
+<td>uma ação</td>
+</tr>
+<tr>
+<td>Gramática</td>
+<td>área</td>
+<td>substantivo (assunto)</td>
+<td>verbo</td>
+</tr>
+<tr>
+<td>Exemplo</td>
+<td>Comercial</td>
+<td><code>Pedidos</code>, <code>Precificacao</code>, <code>Vendas</code></td>
+<td><code>CriarPedido</code></td>
+</tr>
+<tr>
+<td>Critério</td>
+<td>organograma</td>
+<td><strong>a mesma palavra segue regra diferente?</strong></td>
+<td>caso de uso</td>
+</tr>
+</tbody>
+</table>
+<p>&quot;Comercial&quot; não é módulo: dentro dele, pedido <strong>muda</strong>, venda <strong>não muda</strong>, tabela de preço tem <strong>vigência</strong>. Nome igual a departamento é permitido (<code>Financeiro</code>), mas o motivo tem que ser a regra.</p>
+<h3 id="36-pastas-no-visual-studio-→-11">3.6 Pastas no Visual Studio → <a href="../parte-0-1.html#11-solution-no-formato-slnx-e-as-pastas-virtuais-do-visual-studio">1.1</a></h3>
+<table>
+<thead>
+<tr>
+<th>Onde se cria a pasta</th>
+<th>É</th>
+<th>Existe no disco?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Na solution (acima dos projetos; &quot;Solution Items&quot;)</td>
+<td>solution folder, só no <code>.slnx</code></td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Dentro de um projeto</td>
+<td>pasta real</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<p>Para criar projeto: <code>dotnet new</code> + <code>dotnet sln add</code> (espelha o disco). Para tirar um item da solution: <strong>Remove</strong>, nunca <strong>Delete</strong>.</p>
+<h3 id="37-claudemd">3.7 <code>CLAUDE.md</code></h3>
+<p>Arquivo na raiz que o Claude Code lê ao abrir a conversa. Regra principal no topo: <strong>só analisa e reporta</strong>. Reduziu o prompt de análise a um terço.</p>
+<hr />
+<h2 id="4-termos-da-sessão">4. Termos da sessão</h2>
+<ul>
+<li><strong>Duas fases do <code>Program.cs</code>:</strong> registrar serviços (antes do <code>Build()</code>) → ligar pipeline e rotas (depois).</li>
+<li><strong><code>MapGroup</code>:</strong> prefixo + configuração comum para um conjunto de endpoints.</li>
+<li><strong>Delegate do endpoint:</strong> a lambda ou o método que responde à rota.</li>
+<li><strong>Solution folder:</strong> pasta virtual da solution; não existe no disco.</li>
+<li><strong><code>CLAUDE.md</code>:</strong> contexto do repositório para o Claude Code.</li>
+<li><strong>Sobra de modelo:</strong> nome do código copiado que não foi trocado (<code>PedidosCatalogo</code>).</li>
+</ul>
+<h2 id="5-dúvidas-e-respostas">5. Dúvidas e respostas</h2>
+<table>
+<thead>
+<tr>
+<th>Dúvida</th>
+<th>Resposta curta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Por que o <code>AddCatalogo()</code> depois do <code>Build()</code> não deu erro?</td>
+<td>Porque ele não adiciona nada; a exceção só vem ao adicionar</td>
+</tr>
+<tr>
+<td>Por que <code>Pedidos</code> e não <code>Comercial</code>?</td>
+<td>Módulo se separa pela regra, não pelo departamento (3.5)</td>
+</tr>
+<tr>
+<td>Hora de criar o <code>CLAUDE.md</code>?</td>
+<td>Sim, por decisão sua; M3 passa a revisá-lo</td>
+</tr>
+<tr>
+<td>Por que o VS criou pastas que não existem?</td>
+<td>Solution folders são virtuais (3.6)</td>
+</tr>
+<tr>
+<td><code>CLAUDE.md</code> em &quot;Solution Items&quot;?</td>
+<td>É só vitrine; o arquivo está na raiz</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-divergências">6. Divergências</h2>
+<ul>
+<li><strong><code>CLAUDE.md</code> antes de M3:</strong> a regra dizia M3; você decidiu agora. <strong>Fechada:</strong> criado, instruções mudam na v2.3.</li>
+<li><strong>Divergências antigas (sem mudança):</strong> design antecipado × emergente (M4); &quot;momento&quot; como critério (projeto de DDD).</li>
+</ul>
+<h2 id="7-avaliação">7. Avaliação</h2>
+<p><strong>O que você fez bem:</strong></p>
+<ul>
+<li>Testou no código em vez de aceitar a explicação.</li>
+<li>Criou o <code>Pedidos</code> sozinho, usando o próprio Norte como modelo.</li>
+<li>Na retenção 2, trouxe a consequência (o deploy passa) e nomeou o <em>fail fast</em>.</li>
+<li>Deu a pergunta certa sobre módulo × departamento.</li>
+<li>Pediu a retrospectiva.</li>
+</ul>
+<p><strong>Onde travou e por quê:</strong></p>
+<ul>
+<li>Retenção 1: achou que os outros módulos seguiriam vivos num bug que derruba o processo.</li>
+<li>Sobra de nome do modelo (<code>PedidosCatalogo</code>, <code>/pedido</code>), segunda vez (S9: <code>/consignacoes</code>).</li>
+<li>Projeto criado fora do lugar: solution folders do VS.</li>
+</ul>
+<p><strong>O que o mentor conduziu mal:</strong></p>
+<ul>
+<li>~2h de exposição antes do código.</li>
+<li>Perguntas pedindo que você lembrasse do jeito antigo.</li>
+<li>Perguntas compostas.</li>
+<li>Incoerência entre &quot;sem consulta&quot; e testar.</li>
+<li>Exemplo do <code>Program.cs</code> sem olhar o seu arquivo.</li>
+<li>Instruções longas e para VS Code.</li>
+<li>Não registrou a hora da primeira volta.</li>
+</ul>
+<h2 id="8-pontos-a-melhorar">8. Pontos a melhorar</h2>
+<table>
+<thead>
+<tr>
+<th>Você</th>
+<th>Mentor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Depois de copiar um modelo: <code>Ctrl+F</code> pelo nome do modelo antes de rodar</td>
+<td>Código em até 20 min; um objetivo por sessão</td>
+</tr>
+<tr>
+<td>Criar projeto pelo terminal (<code>dotnet new</code> + <code>dotnet sln add</code>)</td>
+<td>De-para em tabela na hora em que o conceito aparece; sem perguntas sobre o passado</td>
+</tr>
+<tr>
+<td>—</td>
+<td>Tarefa curta (objetivo, arquivos, critério, checklist); instruções para o VS 2026; hora em toda pausa/volta</td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-perguntas-de-recuperação">9. Perguntas de recuperação</h2>
+<p>Responda <strong>sem consultar</strong>, antes da S11.</p>
+<ol>
+<li>No <code>Program.cs</code> do Norte há <code>var builder = WebApplication.CreateBuilder(args);</code>, depois <code>var app = builder.Build();</code>. Em qual lado do <code>Build()</code> fica <code>builder.Services.AddPedidos()</code> e em qual fica <code>app.MapPedidos()</code>? Se alguém registrar <code>builder.Services.AddProblemDetails()</code> depois do <code>Build()</code>, <strong>o projeto compila?</strong> Quando o erro aparece?</li>
+<li>No Norte, <code>GET /pedidos/status</code> existe por causa de duas linhas: uma no <code>PedidosModulo.cs</code> e uma no <code>Program.cs</code>. Quais são, e o que acontece com a rota se <code>app.MapPedidos();</code> for apagada?</li>
+<li>O Norte é um monolito modular: o host <code>Norte.Api</code> carrega as DLLs de <code>Catalogo</code> e <code>Pedidos</code> no mesmo processo. Um vazamento de memória no <code>Catalogo</code> esgota a memória do processo. O que acontece com o <code>Pedidos</code>? Por quê?</li>
+<li>Um colega propõe um módulo <code>Comercial</code> contendo pedidos, tabela de preços e vendas, &quot;porque é tudo do departamento comercial&quot;. Qual pergunta decide se isso deve ser um módulo só, e qual é a resposta para pedido × venda?</li>
+<li>No Visual Studio, você cria a pasta <code>src\Modulos\Estoque</code> clicando com o botão direito <strong>na solution</strong>. Ela existe no disco? Qual o jeito seguro de criar o projeto <code>Norte.Estoque</code> nesse caminho?</li>
+</ol>
+<h2 id="10-preparação-para-a-s11--norte--s11--fichaproduto-e-primeiro-teste">10. Preparação para a S11 — <code>Norte · S11 — FichaProduto e primeiro teste</code></h2>
+<ul>
+<li>Responder as 5 perguntas acima sem consultar.</li>
+<li>Ler no guia as entradas <a href="../parte-0-1.html#14-programcs-moderno-de-startupcs-para-builder-e-app">1.4</a>, <a href="../parte-0-1.html#19-minimal-apis-as-formas-de-declarar-um-endpoint-e-o-mapgroup">1.9</a> e <a href="../parte-0-1.html#112-módulo-×-funcionalidade-×-departamento-o-critério-para-criar-módulo">1.12</a>.</li>
+<li>Na abertura, informar o tempo de estudo fora da sessão.</li>
+<li>Abrir o VS 2026 e o Claude Code (conversa nova) na pasta <code>norte</code>.</li>
+</ul>
+<hr />
+<h3 id="respostas">Respostas</h3><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li><code>AddPedidos()</code> <strong>antes</strong> do <code>Build()</code>; <code>MapPedidos()</code> <strong>depois</strong>. Compila, porque para o compilador é uma chamada válida. O erro aparece <strong>na execução, na subida</strong>: <code>InvalidOperationException</code> (coleção somente leitura). A aplicação não sobe.</li>
+<li><code>grupo.MapGet(&quot;/status&quot;, ...)</code> dentro de <code>MapPedidos()</code>, com o grupo <code>&quot;/pedidos&quot;</code>; e <code>app.MapPedidos();</code> no <code>Program.cs</code>. Sem a chamada no <code>Program.cs</code>, o <code>MapGet</code> nunca roda e a rota não existe: <strong>404</strong>.</li>
+<li>O <code>Pedidos</code> cai junto. Os módulos são DLLs no <strong>mesmo processo</strong>: se o processo morre, todos morrem. Monolito modular isola no código, não em execução.</li>
+<li>&quot;A mesma palavra segue regras diferentes?&quot; Pedido <strong>muda</strong> até ser convertido; venda <strong>nunca muda</strong> (correção vira devolução). Regras diferentes → módulos diferentes (<code>Pedidos</code> × <code>Vendas</code>). O departamento não decide.</li>
+<li>Não existe: é uma solution folder (virtual). Jeito seguro: <code>dotnet new classlib -n Norte.Estoque -o src/Modulos/Estoque/Norte.Estoque</code> e <code>dotnet sln Norte.slnx add src/Modulos/Estoque/Norte.Estoque/Norte.Estoque.csproj</code>.</li>
+</ol>
+</details>
+</article>
+<footer class="rodape">Atualizado em 09/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

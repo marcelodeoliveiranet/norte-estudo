@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norte · S12 — Regra do NCM e PR do Catalogo · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s12.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#norte--s12--regra-do-ncm-e-pr-do-catalogo" data-id="norte--s12--regra-do-ncm-e-pr-do-catalogo">Norte · S12 — Regra do NCM e PR do Catalogo</a><a class="n2" href="#1-objetivo-e-resultado" data-id="1-objetivo-e-resultado">1. Objetivo e resultado</a><a class="n2" href="#2-onde-isso-está-no-mapa" data-id="2-onde-isso-está-no-mapa">2. Onde isso está no mapa</a><a class="n2" href="#3-conceitos" data-id="3-conceitos">3. Conceitos</a><a class="n2" href="#4-termos-técnicos-da-sessão" data-id="4-termos-técnicos-da-sessão">4. Termos técnicos da sessão</a><a class="n2" href="#5-suas-dúvidas-e-as-respostas" data-id="5-suas-dúvidas-e-as-respostas">5. Suas dúvidas e as respostas</a><a class="n2" href="#6-divergências" data-id="6-divergências">6. Divergências</a><a class="n2" href="#7-avaliação" data-id="7-avaliação">7. Avaliação</a><a class="n2" href="#8-pontos-a-melhorar" data-id="8-pontos-a-melhorar">8. Pontos a melhorar</a><a class="n2" href="#9-perguntas-de-recuperação-tente-antes-da-s13-sem-consultar" data-id="9-perguntas-de-recuperação-tente-antes-da-s13-sem-consultar">9. Perguntas de recuperação (tente antes da S13, sem consultar)</a><a class="n2" href="#10-preparação-para-a-s13" data-id="10-preparação-para-a-s13">10. Preparação para a S13</a></aside>
+<main class="conteudo"><article>
+<h1 id="norte--s12--regra-do-ncm-e-pr-do-catalogo">Norte · S12 — Regra do NCM e PR do Catalogo</h1>
+<p><strong>Data:</strong> segunda, 05/10/2026 · <strong>Marco:</strong> M1 · <strong>Tempo líquido:</strong> <strong>3h34</strong>
+(14:05–14:57 + 16:06–18:48; pausa de 1h09 por ligação)</p>
+<hr />
+<h2 id="1-objetivo-e-resultado">1. Objetivo e resultado</h2>
+<p><strong>Objetivo:</strong> fechar a regra &quot;Ficha exige SKU e NCM&quot; e abrir o PR do <code>Catalogo</code>.</p>
+<p><strong>Resultado (foi além do plano):</strong></p>
+<ul>
+<li>Regra ampliada por você para <strong>&quot;Ficha exige SKU, descrição e NCM&quot;</strong> (a descrição vai na NF-e).</li>
+<li><strong>PR #1 mesclado</strong> na <code>main</code> (<code>feat/catalogo-ficha-produto</code>, 11 commits, merge sem squash).</li>
+<li>Glossário <code>docs/domain/ubiquitous-language.md</code> criado.</li>
+<li>Branch nova <code>refactor/catalogo-validacao-nativa</code> (enviada, <strong>sem PR ainda</strong>):
+<ul>
+<li><strong>validação nativa do .NET 10</strong> no lugar dos três <code>if</code> → 400 com <strong>todos os erros de uma vez</strong>;</li>
+<li><strong>primeiros testes de integração</strong> do Norte (<code>WebApplicationFactory</code>), 3 testes de recusa;</li>
+<li><code>.http</code> por módulo (<code>Catalogo.http</code>) e <strong>pasta por funcionalidade</strong> (<code>CadastrarFichaProduto/</code>).</li>
+</ul>
+</li>
+<li><strong>ADR-003</strong> escrito (Request <code>public</code> para a validação nativa) — a commitar.</li>
+<li>Testes: <strong>4 verdes</strong> (1 de unidade + 3 de integração).</li>
+</ul>
+<h2 id="2-onde-isso-está-no-mapa">2. Onde isso está no mapa</h2>
+<p>Nível 3 (funcionalidade) do <a href="../parte-0-1.html#parte-0--o-mapa-dos-níveis">mapa dos níveis</a>. Hoje o caminho da
+requisição ganhou uma etapa <strong>antes</strong> do endpoint:</p>
+<pre class="highlight"><code>HTTP POST /catalogo/fichas-produto
+  → validação nativa ([Required] no Request)   ← NOVO: a regra de entrada mora aqui
+  → CadastrarFichaProdutoEndpoint.Executar      cria e guarda
+  ← 201 Created  ou  400 (todos os erros)
+</code></pre>
+
+<h2 id="3-conceitos">3. Conceitos</h2>
+<table>
+<thead>
+<tr>
+<th>Conceito</th>
+<th>Em uma linha</th>
+<th>Guia</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Como pensar um teste</td>
+<td>regra numa frase → um exemplo que respeita e um que quebra → o &quot;Então&quot; vira o Assert</td>
+<td><a href="../parte-3.html#310-como-pensar-um-teste-da-frase-do-negócio-ao-assert">3.10</a></td>
+</tr>
+<tr>
+<td>Validação nativa do .NET 10</td>
+<td><code>[Required]</code> no <code>Request</code> + <code>AddValidation()</code> no <code>AddCatalogo</code>; roda antes do <code>Executar</code></td>
+<td><a href="../parte-3.html#311-validação-nativa-do-net-10-a-regra-de-entrada-declarada-no-request">3.11</a></td>
+</tr>
+<tr>
+<td>Teste de integração</td>
+<td><code>WebApplicationFactory&lt;Program&gt;</code> sobe a API em memória; o teste faz HTTP de verdade</td>
+<td><a href="../parte-3.html#312-teste-de-integração-com-webapplicationfactory-o-teste-passa-por-onde-a-regra-mora">3.12</a></td>
+</tr>
+<tr>
+<td>Pasta por funcionalidade</td>
+<td>o que é de um caso de uso fica na pasta dele; o que é do módulo fica na raiz</td>
+<td><a href="../parte-3.html#313-pasta-por-funcionalidade-o-que-é-de-um-caso-de-uso-fica-junto">3.13</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>De-para do dia:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Como era</th>
+<th>Como é agora</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3 <code>if</code> no <code>Executar</code>, um erro por vez</td>
+<td><code>[Required]</code> no <code>Request</code>; 400 com os 3 erros</td>
+<td>a regra de entrada saiu do endpoint</td>
+</tr>
+<tr>
+<td>teste de unidade protegia a regra</td>
+<td>teste de integração protege a regra</td>
+<td><strong>o teste precisa passar por onde a regra mora</strong></td>
+</tr>
+<tr>
+<td><code>Norte.Api.http</code> no host</td>
+<td><code>Catalogo.http</code> na pasta do módulo</td>
+<td>um <code>.http</code> por módulo</td>
+</tr>
+<tr>
+<td>arquivos soltos na raiz do módulo</td>
+<td><code>CadastrarFichaProduto/</code> com <code>Request</code> e <code>Endpoint</code></td>
+<td>pasta por caso de uso</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-termos-técnicos-da-sessão">4. Termos técnicos da sessão</h2>
+<ul>
+<li><strong>Validação nativa:</strong> validação de entrada que o ASP.NET Core 10 faz sozinho a partir dos atributos.</li>
+<li><strong>Gerador de código (source generator):</strong> código que o compilador gera no build; aqui, o que
+monta a validação. <strong>Só enxerga tipos <code>public</code></strong> no .NET 10.</li>
+<li><strong><code>WebApplicationFactory&lt;Program&gt;</code>:</strong> sobe o host inteiro em memória para o teste.</li>
+<li><strong><code>IClassFixture&lt;T&gt;</code>:</strong> o xUnit cria um <code>T</code> só e o reaproveita em todos os testes da classe.</li>
+<li><strong><code>HttpValidationProblemDetails</code>:</strong> o corpo do 400 de validação (<code>title</code>, <code>errors</code>).</li>
+<li><strong>Merge commit (<code>--no-ff</code>):</strong> junta a branch preservando cada commit dela.</li>
+<li><strong>SKU:</strong> código que identifica a ficha (sinônimo seu: código interno).</li>
+<li><strong>NCM:</strong> código fiscal que classifica o produto; vários produtos podem ter o mesmo.</li>
+</ul>
+<h2 id="5-suas-dúvidas-e-as-respostas">5. Suas dúvidas e as respostas</h2>
+<ul>
+<li><strong>Breakpoint não parava no teste:</strong> era Run em vez de Debug — você achou sozinho.</li>
+<li><strong><code>.http</code> num arquivo por módulo, numa pasta?</strong> Sim: na pasta do módulo (<code>Catalogo.http</code>); cada
+funcionalidade acrescenta as suas requisições.</li>
+<li><strong>Pasta por funcionalidade agora?</strong> Sim, num commit separado, depois da validação.</li>
+<li><strong><code>FichaProduto</code> e o repositório dentro da pasta da funcionalidade?</strong> Não: o critério é
+<strong>outras funcionalidades do mesmo módulo</strong> (o futuro <code>AlterarFichaProduto</code> vai usar os dois).</li>
+<li><strong>Deixar os avisos de nulo depois de tirar os <code>if</code>?</strong> Não: <code>!</code>, porque agora quem garante é a
+validação, que o compilador não enxerga.</li>
+<li><strong>Não precisamos do ADR-003?</strong> Sim — escrito no fechamento.</li>
+</ul>
+<h2 id="6-divergências">6. Divergências</h2>
+<ul>
+<li><strong>Nomes <code>CadastroProduto</code> / <code>Codigo</code> (seus) × <code>FichaProduto</code> / <code>Sku</code> (Norte):</strong> você aceitou
+manter os do Norte; os seus entram como sinônimos no glossário. Fechada.</li>
+<li><strong>&quot;Se a descrição muda, os outros módulos mudam&quot;:</strong> vale para documentos futuros; o que já
+aconteceu (NF-e emitida) não muda — cópia congelada. <strong>Aberta</strong>: como os módulos ficam sabendo
+(contrato ou evento) → ADR quando <code>Pedidos</code> precisar do <code>Catalogo</code>.</li>
+</ul>
+<h2 id="7-avaliação">7. Avaliação</h2>
+<p><strong>O que você fez bem:</strong></p>
+<ul>
+<li>Checagem do NCM <strong>sem esqueleto</strong> (na S11 precisou); testes da descrição e da integração com
+<strong>zero sobras no Assert</strong>.</li>
+<li>Previsão certa antes de rodar: &quot;3 vermelhos, os de 400&quot;.</li>
+<li>Decisões de arquiteto: descrição obrigatória (NF-e), <code>.http</code> por módulo, pasta por funcionalidade.</li>
+<li>Diagnóstico honesto do próprio aprendizado no fim (nota 1, calibrada).</li>
+</ul>
+<p><strong>Onde travou e por quê:</strong></p>
+<ul>
+<li>Retenção 3 (<code>internal</code>): mecanismo certo, faltou a consequência (&quot;não compila&quot;).</li>
+<li>Nome e comentário do teste do NCM vieram do modelo (&quot;Cadastra…&quot;, &quot;201&quot;); teste do 201 duplicado
+e <code>ObterPorNcm</code> criado só para ele.</li>
+<li><strong>Por que os testes de recusa foram para a integração:</strong> não fixou.</li>
+</ul>
+<p><strong>O que o mentor conduziu mal:</strong></p>
+<ul>
+<li>Passou a validação nativa sem cruzar a limitação do gerador (<code>public</code>) com o ADR-002 → 2
+hipóteses erradas e ~30 min de diagnóstico.</li>
+<li>No teste de integração, foi do exemplo pronto direto para &quot;copie e adapte&quot;, <strong>sem uma pergunta
+que fizesse você formular o problema</strong>. Por isso não grudou.</li>
+<li>Dois pedidos numa frase (&quot;diga se deu 201 e cole o <code>git status</code>&quot;).</li>
+</ul>
+<h2 id="8-pontos-a-melhorar">8. Pontos a melhorar</h2>
+<ul>
+<li><strong>Você:</strong> código que sai é apagado, não comentado (o Git guarda o histórico); na retenção,
+terminar com &quot;e daí?&quot; (a consequência).</li>
+<li><strong>Mentor:</strong> antes de recurso novo do .NET, ler limitações/troubleshooting e cruzar com os ADRs;
+conteúdo novo sempre com uma pergunta de formulação do problema antes do código pronto; um pedido
+por mensagem.</li>
+</ul>
+<h2 id="9-perguntas-de-recuperação-tente-antes-da-s13-sem-consultar">9. Perguntas de recuperação (tente antes da S13, sem consultar)</h2>
+<ol>
+<li>Por que, no .NET 10, o <code>CadastrarFichaProdutoRequest</code> precisou deixar de ser <code>internal</code>?</li>
+<li>Com a validação nativa ligada, um teste que chama <code>CadastrarFichaProdutoEndpoint.Executar</code>
+direto, com SKU vazio, recebe 201 ou 400?</li>
+<li>Em que método do módulo <code>Catalogo</code> fica o <code>services.AddValidation()</code>, e por que lá e não só no
+<code>Program.cs</code> do host?</li>
+<li><code>FichaProduto</code> está na raiz do módulo e <code>CadastrarFichaProdutoEndpoint</code> na pasta
+<code>CadastrarFichaProduto/</code>. Qual o critério?</li>
+<li>Você tirou o <code>[Required]</code> da descrição e só um teste ficou vermelho. O que isso prova sobre os
+três testes de integração?</li>
+</ol>
+<hr />
+<h3 id="respostas">Respostas</h3><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>O gerador de código da validação do .NET 10 ignora tipos que não são <code>public</code>; com o <code>Request</code>
+<code>internal</code>, a validação não rodava e o endpoint aceitava ficha vazia (201), sem erro nem log.
+Decisão no ADR-003. (<a href="../parte-3.html#311-validação-nativa-do-net-10-a-regra-de-entrada-declarada-no-request">3.11</a>)</li>
+<li><strong>201.</strong> A validação roda no caminho HTTP, <strong>antes</strong> do <code>Executar</code>; chamado direto, o <code>Executar</code>
+não passa por ela. Por isso a regra é testada por integração. (<a href="../parte-3.html#312-teste-de-integração-com-webapplicationfactory-o-teste-passa-por-onde-a-regra-mora">3.12</a>)</li>
+<li>No <code>AddCatalogo</code> (<code>CatalogoModulo</code>): o gerador só cria a validação para os tipos do projeto onde
+o <code>AddValidation()</code> é chamado, e o <code>Request</code> mora no <code>Norte.Catalogo</code>. (<a href="../parte-3.html#311-validação-nativa-do-net-10-a-regra-de-entrada-declarada-no-request">3.11</a>)</li>
+<li>Usado por <strong>uma</strong> funcionalidade → pasta dela; usado por <strong>várias</strong> funcionalidades do módulo →
+raiz do módulo. (<a href="../parte-3.html#313-pasta-por-funcionalidade-o-que-é-de-um-caso-de-uso-fica-junto">3.13</a>)</li>
+<li>Que cada teste protege <strong>um</strong> lado da regra: só o da descrição depende do <code>[Required]</code> da
+descrição. (<a href="../parte-3.html#37-vermelho-→-verde-como-saber-que-o-teste-protege-a-regra">3.7</a>)</li>
+</ol>
+</details><h2 id="10-preparação-para-a-s13">10. Preparação para a S13</h2>
+<ul>
+<li><strong>Título sugerido:</strong> <code>Norte · S13 — ProblemDetails e PR da validação nativa</code></li>
+<li><strong>Antes:</strong> commitar o ADR-003 (<code>docs/adr/</code>); copiar o glossário, se ainda não foi; ler o guia
+3.10–3.13 no sábado.</li>
+<li><strong>Trazer na abertura:</strong> tempo de estudo fora da sessão; o conteúdo atual do <code>CLAUDE.md</code> (o
+mentor devolve atualizado).</li>
+<li><strong>A S13 abre</strong> reconstruindo com você, em perguntas de uma parte, <strong>por que os testes de recusa
+foram para a integração</strong>.</li>
+</ul>
+
+</article>
+<footer class="rodape">Atualizado em 09/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

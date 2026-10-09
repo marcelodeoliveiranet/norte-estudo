@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parte 2 — Delta .NET 6 → 10 · Norte · Estudo</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/codigo.css">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+</head>
+<body data-chave="parte-2.html" data-prefixo="">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="index.html">Início</a><a href="guia.html" class=ativo>Guia</a><a href="estudos.html">Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#guia-net-moderno--parte-2-delta-net-6-→-10-do-aquecimento-s1–s3" data-id="guia-net-moderno--parte-2-delta-net-6-→-10-do-aquecimento-s1–s3">GUIA .NET MODERNO — Parte 2: delta .NET 6 → 10 do aquecimento (S1–S3)</a><a class="n1" href="#parte-2--delta-net-6-→-10-do-aquecimento-s1–s3" data-id="parte-2--delta-net-6-→-10-do-aquecimento-s1–s3">PARTE 2 — Delta .NET 6 → 10 do aquecimento (S1–S3)</a></aside>
+<main class="conteudo"><article>
+<h1 id="guia-net-moderno--parte-2-delta-net-6-→-10-do-aquecimento-s1–s3">GUIA .NET MODERNO — Parte 2: delta .NET 6 → 10 do aquecimento (S1–S3)</h1>
+<p>Parte do <strong><code>GUIA-DOTNET-MODERNO.md</code></strong> (índice, legenda 🧠/🔎, como estudar e &quot;onde estamos&quot;
+ficam lá). Este arquivo só muda quando uma entrada da Parte 2 muda.</p>
+<p><strong>Última atualização:</strong> 02/10/2026 (divisão do guia; conteúdo = v1.2 da S10) · <strong>Status:</strong> a escrever</p>
+<hr />
+<p><a id="parte-2"></a></p>
+<h1 id="parte-2--delta-net-6-→-10-do-aquecimento-s1–s3">PARTE 2 — Delta .NET 6 → 10 do aquecimento (S1–S3)</h1>
+<p><strong>A escrever</strong> (pendência registrada no <code>LAB-STATE.md</code>). Entradas previstas, todas já vistas no
+aquecimento e ainda sem checkpoint: <code>TypedResults</code> × <code>Results</code> (resumo em
+<a href="parte-0-1.html#19-minimal-apis-as-formas-de-declarar-um-endpoint-e-o-mapgroup">1.9</a>) · <code>ProblemDetails</code> × objeto anônimo · Options pattern e
+<code>ValidateOnStart</code> (fail-fast) · <code>DbContext</code> e convenções · migrations · seed idempotente
+(<code>UseAsyncSeeding</code>) · <code>AsNoTracking</code> · paginação · route constraint (<code>{id:int}</code>) · OpenAPI nativo.
+Cada uma entra em detalhe quando voltar ao código em M1, no formato padrão (tabela de-para em três
+colunas: <em>como era · como é agora · o que mudou</em>). Âncoras previstas: <code>#g2-1</code>, <code>#g2-2</code>…</p>
+<p><strong>Já trabalhado em retenção (S10) — <code>ValidateOnStart</code>:</strong> sem ele, o deploy de uma configuração
+inválida fica verde e o <strong>primeiro usuário</strong> recebe 500 depois; com ele, a aplicação <strong>não sobe</strong> e
+quem faz o deploy vê o erro na hora (<em>fail fast</em>). Frase de entrevista: &quot;prefiro que o erro apareça
+para quem fez o deploy, não para o cliente&quot;.</p>
+
+</article>
+<footer class="rodape">Atualizado em 09/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

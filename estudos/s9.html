@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norte · S9 — M1: solution e primeiro endpoint do Catálogo · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s9.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#norte--s9--m1-solution-e-primeiro-endpoint-do-catálogo" data-id="norte--s9--m1-solution-e-primeiro-endpoint-do-catálogo">Norte · S9 — M1: solution e primeiro endpoint do Catálogo</a><a class="n2" href="#1-objetivo-e-resultado" data-id="1-objetivo-e-resultado">1. Objetivo e resultado</a><a class="n2" href="#2-onde-isso-está-no-mapa-dos-níveis" data-id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</a><a class="n2" href="#3-conceitos-resumo--detalhe-no-guia" data-id="3-conceitos-resumo--detalhe-no-guia">3. Conceitos (resumo — detalhe no guia)</a><a class="n2" href="#4-termos-técnicos-da-sessão" data-id="4-termos-técnicos-da-sessão">4. Termos técnicos da sessão</a><a class="n2" href="#5-dúvidas-suas-e-as-respostas" data-id="5-dúvidas-suas-e-as-respostas">5. Dúvidas suas e as respostas</a><a class="n2" href="#6-divergências" data-id="6-divergências">6. Divergências</a><a class="n2" href="#7-avaliação" data-id="7-avaliação">7. Avaliação</a><a class="n2" href="#8-pontos-a-melhorar" data-id="8-pontos-a-melhorar">8. Pontos a melhorar</a><a class="n2" href="#9-perguntas-de-recuperação" data-id="9-perguntas-de-recuperação">9. Perguntas de recuperação</a><a class="n2" href="#10-preparação-para-o-próximo-chat" data-id="10-preparação-para-o-próximo-chat">10. Preparação para o próximo chat</a></aside>
+<main class="conteudo"><article>
+<h1 id="norte--s9--m1-solution-e-primeiro-endpoint-do-catálogo">Norte · S9 — M1: solution e primeiro endpoint do Catálogo</h1>
+<p><strong>Data:</strong> 30/09/2026 · <strong>Marco:</strong> M1 · <strong>Tempo líquido:</strong> <strong>4h00</strong> (15:33–18:09 e 20:37–22:01)
+<strong>Fechamento parcial:</strong> a primeira funcionalidade (<code>FichaProduto</code>) e o primeiro teste ficaram para a S10.</p>
+<blockquote>
+<p>Este material é o <strong>roteiro</strong> da sessão. A explicação completa de cada assunto, com o de-para
+&quot;como você fazia → como se faz agora → por quê&quot;, está no <strong><a href="../guia.html"><code>GUIA-DOTNET-MODERNO.md</code></a></strong>,
+Parte 1 (clique nos números da tabela da Seção 3 para ir direto à entrada). Leia o guia no sábado; use este arquivo para lembrar a ordem do que foi feito.</p>
+</blockquote>
+<hr />
+<h2 id="1-objetivo-e-resultado">1. Objetivo e resultado</h2>
+<p><strong>Objetivo:</strong> criar a solution do Norte, o primeiro módulo (<code>Catalogo</code>) e um endpoint funcionando.</p>
+<p><strong>Resultado:</strong></p>
+<ul>
+<li>Repositório <code>norte</code> reiniciado do zero por você; ADR-000 e ADR-001 recriados e commitados.</li>
+<li>Branch <code>feat/catalogo-ficha-produto</code> com: <code>.gitignore</code>, <code>Norte.slnx</code>, host <code>Norte.Api</code>,
+módulo <code>Norte.Catalogo</code>.</li>
+<li>Módulo ligado ao host por <code>AddCatalogo()</code> e <code>MapCatalogo()</code>; <code>GET /catalogo/status</code> responde
+<code>200 OK</code> com <code>&quot;Catalogo ativo&quot;</code>.</li>
+<li>Decisão de arquitetura: <strong>um projeto por módulo</strong> (ADR-002, escrito pelo mentor).</li>
+<li><strong>Não feito:</strong> funcionalidade <code>FichaProduto</code> e o primeiro teste (S10).</li>
+</ul>
+<h2 id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</h2>
+<pre class="highlight"><code>NÍVEL 1  SOLUTION         Norte.slnx                         ← feito hoje
+NÍVEL 2  MÓDULOS          Norte.Api (host) + Norte.Catalogo  ← feito hoje
+NÍVEL 3  FUNCIONALIDADES  FichaProduto                       ← S10
+NÍVEL 4  CAMADAS          endpoint → ... → banco             ← S10 em diante
+</code></pre>
+
+<h2 id="3-conceitos-resumo--detalhe-no-guia">3. Conceitos (resumo — detalhe no guia)</h2>
+<table>
+<thead>
+<tr>
+<th>Conceito</th>
+<th>Em uma frase</th>
+<th>Guia</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.slnx</code></td>
+<td>a solution em XML curto; só organiza, não executa</td>
+<td><a href="../parte-0-1.html#11-solution-no-formato-slnx-e-as-pastas-virtuais-do-visual-studio">1.1</a></td>
+</tr>
+<tr>
+<td>Monolito modular</td>
+<td>uma solution, um deploy, vários módulos; cada um é uma capacidade de negócio e só conversa pelo contrato público</td>
+<td><a href="../parte-0-1.html#12-monolito-modular-host--um-projeto-por-módulo">1.2</a></td>
+</tr>
+<tr>
+<td>Host</td>
+<td>o único projeto executável; é ele que torna o deploy único</td>
+<td><a href="../parte-0-1.html#12-monolito-modular-host--um-projeto-por-módulo">1.2</a></td>
+</tr>
+<tr>
+<td>Projeto por módulo</td>
+<td>o compilador garante a fronteira, porque <code>internal</code> só esconde entre projetos</td>
+<td><a href="../parte-0-1.html#12-monolito-modular-host--um-projeto-por-módulo">1.2</a>, <a href="../parte-0-1.html#13-public-×-internal-a-fronteira-garantida-pelo-compilador">1.3</a></td>
+</tr>
+<tr>
+<td><code>Program.cs</code> moderno</td>
+<td>antes do <code>Build()</code> = antigo <code>ConfigureServices</code>; depois = antigo <code>Configure</code>. A DI em si não mudou</td>
+<td><a href="../parte-0-1.html#14-programcs-moderno-de-startupcs-para-builder-e-app">1.4</a></td>
+</tr>
+<tr>
+<td><em>Implicit usings</em></td>
+<td>o projeto Web importa os namespaces do ASP.NET Core sozinho; a biblioteca não</td>
+<td><a href="../parte-0-1.html#15-implicit-usings-e-os-using-que-faltam-numa-biblioteca">1.5</a></td>
+</tr>
+<tr>
+<td><code>FrameworkReference</code></td>
+<td>dá ao módulo os tipos do ASP.NET Core sem NuGet</td>
+<td><a href="../parte-0-1.html#16-frameworkreference-do-aspnet-core">1.6</a></td>
+</tr>
+<tr>
+<td>Método de extensão</td>
+<td>método <code>static</code> com <code>this</code> no 1º parâmetro, chamado como se fosse do tipo</td>
+<td><a href="../parte-0-1.html#17-métodos-de-extensão">1.7</a></td>
+</tr>
+<tr>
+<td>Pontos de entrada</td>
+<td><code>AddCatalogo()</code> (serviços) e <code>MapCatalogo()</code> (rotas): a única coisa do módulo que o host vê</td>
+<td><a href="../parte-0-1.html#18-pontos-de-entrada-do-módulo-addcatalogo-e-mapcatalogo">1.8</a></td>
+</tr>
+<tr>
+<td>Minimal APIs e <code>MapGroup</code></td>
+<td><code>MapGet(&quot;/rota&quot;, handler)</code> no lugar do controller; <code>MapGroup</code> dá o prefixo</td>
+<td><a href="../parte-0-1.html#19-minimal-apis-as-formas-de-declarar-um-endpoint-e-o-mapgroup">1.9</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Exemplo do seu mundo:</strong> o <code>Startup.cs</code> com <code>ConfigureServices</code>/<code>Configure</code> e os controllers com
+<code>[Route]</code>/<code>[HttpGet]</code> — o guia mostra cada um lado a lado com o código do Norte.</p>
+<h2 id="4-termos-técnicos-da-sessão">4. Termos técnicos da sessão</h2>
+<ul>
+<li><strong>Host:</strong> projeto executável que sobe a aplicação e liga os módulos.</li>
+<li><strong>Módulo (Norte):</strong> biblioteca com uma capacidade de negócio; ≠ <em>Module</em> do DDD (namespace).</li>
+<li><strong><code>internal</code>:</strong> visível só no próprio projeto; padrão de classe sem modificador.</li>
+<li><strong>Ponto de entrada:</strong> método público pelo qual o host liga o módulo.</li>
+<li><strong><code>MapGroup</code>:</strong> grupo de rotas com prefixo comum (.NET 7+).</li>
+<li><strong><code>FrameworkReference</code>:</strong> referência ao ASP.NET Core já instalado com o runtime.</li>
+<li><strong>CS0246 / CS1061:</strong> tipo não encontrado / método (ou extensão) não encontrado.</li>
+<li><strong><code>obj/</code>:</strong> pasta de trabalho da compilação; ignorada pelo git; nunca guarda código.</li>
+</ul>
+<h2 id="5-dúvidas-suas-e-as-respostas">5. Dúvidas suas e as respostas</h2>
+<ul>
+<li><strong>&quot;O projeto OpenAPI foi excluído; não íamos usar?&quot;</strong> — A pergunta era sobre a especificação
+OpenAPI (o JSON que descreve a API), que o Norte vai usar em M1. Apagar o código do aquecimento
+não tem problema.</li>
+<li><strong>&quot;Opção B (projeto por módulo) está mais alinhada ao monolito modular?&quot;</strong> — Sim, porque garante
+a regra &quot;nenhum acesso por fora do contrato&quot; pelo compilador. Guia <a href="../parte-0-1.html#12-monolito-modular-host--um-projeto-por-módulo">1.2</a>.</li>
+<li><strong>&quot;Módulo do DDD é a mesma coisa?&quot;</strong> — Não: o <em>Module</em> de Evans é um namespace dentro de um
+modelo; o módulo do Norte é um contexto inteiro.</li>
+<li><strong>&quot;Monolito = um deploy de uma capacidade de negócio?&quot;</strong> — Não, isso é microsserviço. Monolito
+modular = um deploy com várias capacidades.</li>
+<li><strong>&quot;É a solution que torna o deploy único?&quot;</strong> — Não, é o host. Solution organiza; host executa.</li>
+<li><strong>&quot;Fiz tudo na main; reverter?&quot;</strong> — Não havia nada a reverter: os arquivos estavam sem commit.
+Branch criada e commits feitos nela.</li>
+<li><strong>&quot;Precisa abrir branch para o próximo passo?&quot;</strong> — Não: uma branch por objetivo de sessão.</li>
+<li><strong>&quot;Por que o <code>Ctrl+.</code> não oferece o <code>using</code>?&quot;</strong> — Ele só oferece tipos que o projeto conhece;
+ou falta a <code>FrameworkReference</code>, ou o VS Code precisa recarregar.</li>
+</ul>
+<h2 id="6-divergências">6. Divergências</h2>
+<ul>
+<li><strong>Recomendação inicial do mentor (opção C, pastas) × sua preferência (opção B).</strong> Resolvida a
+favor de B, por um argumento diferente dos que você deu: <code>Pedidos</code> nasce em M1 e vai precisar
+de <code>Catalogo</code>. Os seus argumentos (&quot;gera mais ADR e explicação&quot;, &quot;alinhado ao DDD&quot;) não
+sustentam uma decisão de arquitetura.</li>
+</ul>
+<h2 id="7-avaliação">7. Avaliação</h2>
+<p><strong>O que você fez bem:</strong></p>
+<ul>
+<li>Diagnosticou sozinho dois erros: o namespace <code>Norte.Catalogo.obj</code> e a rota <code>/consignacoes</code>
+copiada do exemplo. O raciocínio &quot;qual rota o código realmente declara?&quot; é o certo.</li>
+<li>Questionou a explicação até ela fazer sentido (monolito × microsserviço, deploy único), em vez
+de aceitar a frase pronta.</li>
+<li>Disse com clareza o que não estava funcionando no método. Isso mudou a condução.</li>
+<li>Primeira pergunta de retenção (<code>TypedResults</code>) respondida sem pista.</li>
+</ul>
+<p><strong>Onde travou e por quê:</strong></p>
+<ul>
+<li>Ligar o módulo ao host: três conceitos novos (métodos de extensão, <code>FrameworkReference</code>,
+Minimal APIs com <code>MapGroup</code>) chegaram juntos, sem o de-para com o que você conhecia.</li>
+<li>Nota de confiança 1 de 5 no fim: sobrecarga, não falta de capacidade.</li>
+</ul>
+<p><strong>O que o mentor conduziu mal (registrado no histórico):</strong></p>
+<ul>
+<li>Pergunta de retenção usou &quot;OpenAPI&quot; sem definir.</li>
+<li>Recomendou a opção C dizendo que o problema só apareceria em M3 — errado: <code>Pedidos</code> é de M1.</li>
+<li>Não disse em que branch trabalhar.</li>
+<li>Passou como tarefa conteúdo que você nunca tinha visto, sem exemplo nem de-para.</li>
+<li>Usou exemplo de outro sistema (joalheria) com a mesma forma do código do Norte: virou cópia, e
+as sobras viraram erro.</li>
+<li>Lista de 6 passos com 3 conceitos novos de uma vez.</li>
+</ul>
+<h2 id="8-pontos-a-melhorar">8. Pontos a melhorar</h2>
+<p><strong>Você:</strong> ao adaptar um exemplo, revisar <strong>todos</strong> os nomes antes de compilar (rota, texto,
+namespace); conferir a pasta selecionada antes de criar um arquivo no VS Code.</p>
+<p><strong>Mentor (ajustes aprovados):</strong></p>
+<ul>
+<li>Todo conceito novo abre com <strong>&quot;como você fazia → como se faz agora → por quê&quot;</strong>, antes da tarefa.</li>
+<li>Pergunta de partida: <strong>&quot;como eu explico isso para quem parou no .NET 6 há 4 anos?&quot;</strong></li>
+<li>Código de infraestrutura: o exemplo é o <strong>próprio código do Norte</strong>, explicado linha a linha;
+exemplo de fora só para raciocínio de negócio, sempre rotulado.</li>
+<li>Conteúdo novo: <strong>um passo por mensagem</strong>.</li>
+<li>No guia, separar <strong>🧠 saber de cabeça</strong> de <strong>🔎 saber onde encontrar</strong>.</li>
+</ul>
+<h2 id="9-perguntas-de-recuperação">9. Perguntas de recuperação</h2>
+<p>Tente responder antes da S10, sem consultar.</p>
+<ol>
+<li>O que torna o Norte <strong>um único deploy</strong>: a solution ou o host? Por quê?</li>
+<li>Num projeto com <code>Startup.cs</code>, onde ficavam os registros de DI e onde ficavam as rotas? Onde
+cada um fica no <code>Program.cs</code> de hoje?</li>
+<li>Por que <code>CatalogoModulo</code> precisa ser <code>public</code>? O que acontece com uma classe sem modificador
+quando outro projeto tenta usá-la?</li>
+<li>Quais as três exigências para escrever um método de extensão como <code>AddCatalogo()</code>?</li>
+<li><code>GET /catalogo/status</code> devolve 404. O que você verifica, e em que ordem?</li>
+</ol>
+<h2 id="10-preparação-para-o-próximo-chat">10. Preparação para o próximo chat</h2>
+<ul>
+<li><strong>Título:</strong> <code>Norte · S10 — Nivelamento do .NET moderno e FichaProduto</code></li>
+<li><strong>Antes:</strong> ler as entradas <a href="../parte-0-1.html#12-monolito-modular-host--um-projeto-por-módulo">1.2</a>, <a href="../parte-0-1.html#14-programcs-moderno-de-startupcs-para-builder-e-app">1.4</a>, <a href="../parte-0-1.html#17-métodos-de-extensão">1.7</a> e <a href="../parte-0-1.html#18-pontos-de-entrada-do-módulo-addcatalogo-e-mapcatalogo">1.8</a> do guia; responder as perguntas acima.</li>
+<li><strong>Confirmar</strong> que o commit <code>feat(catalogo): registrar módulo no host</code> foi feito e enviado.</li>
+<li><strong>Commitar</strong> o <code>ADR-002-um-projeto-por-modulo.md</code> em <code>docs/adr/</code>
+(<code>docs: adicionar ADR-002 sobre um projeto por módulo</code>).</li>
+<li><strong>Plano da S10:</strong> nivelamento (~45 min: <code>Startup.cs</code> → <code>Program.cs</code>; controllers → Minimal APIs;
+métodos de extensão) → você explica com as suas palavras → <strong>exercício sem consulta:</strong> criar o
+módulo <code>Pedidos</code> e ligá-lo ao host → primeira funcionalidade <code>FichaProduto</code> com o primeiro teste.</li>
+</ul>
+<hr />
+<h3 id="respostas-das-perguntas-de-recuperação">Respostas das perguntas de recuperação</h3><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>O host. <code>Norte.Api</code> é o único executável e referencia os módulos (bibliotecas); publicado,
+vira um processo só. A solution só organiza projetos para o IDE e para o build.</li>
+<li>Antes: <code>ConfigureServices</code> (registros) e <code>Configure</code> (pipeline e rotas). Hoje:
+<code>builder.Services</code> antes do <code>builder.Build()</code>, e o <code>app</code> depois dele.</li>
+<li>Porque o host é outro projeto e só enxerga tipos <code>public</code>. Sem modificador, a classe é
+<code>internal</code>, visível só dentro do próprio projeto — o compilador a esconde.</li>
+<li>Classe <code>static</code>, método <code>static</code> e <code>this</code> no primeiro parâmetro (e <code>public</code>, se usado de
+outro projeto).</li>
+<li>Confirmar o status (<code>curl.exe -i</code> ou F12); depois seguir o código: <code>Program.cs</code> chama
+<code>MapCatalogo()</code>? O <code>MapGroup</code> tem o prefixo certo? O <code>MapGet</code> está no grupo e com a rota
+relativa? A aplicação foi reiniciada depois da última alteração?</li>
+</ol>
+</details>
+</article>
+<footer class="rodape">Atualizado em 09/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>
