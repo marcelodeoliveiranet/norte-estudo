@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parte 5 — O GitHub confere o código · Norte · Estudo</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/codigo.css">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+</head>
+<body data-chave="parte-5.html" data-prefixo="">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="index.html">Início</a><a href="guia.html" class=ativo>Guia</a><a href="estudos.html">Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#guia-dotnet--parte-5-o-github-confere-o-código" data-id="guia-dotnet--parte-5-o-github-confere-o-código">GUIA-DOTNET — Parte 5: o GitHub confere o código</a><a class="n2" href="#51-ci-básico-com-github-actions" data-id="51-ci-básico-com-github-actions">5.1 CI básico com GitHub Actions</a><a class="n2" href="#52-mover-um-commit-para-outra-branch-e-as-três-cópias-de-uma-branch" data-id="52-mover-um-commit-para-outra-branch-e-as-três-cópias-de-uma-branch">5.2 Mover um commit para outra branch e as três cópias de uma branch</a><a class="n2" href="#53-diagnóstico-da-s15" data-id="53-diagnóstico-da-s15">5.3 Diagnóstico da S15</a><a class="n2" href="#teste-se-parte-5" data-id="teste-se-parte-5">Teste-se (Parte 5)</a></aside>
+<main class="conteudo"><article>
+<h1 id="guia-dotnet--parte-5-o-github-confere-o-código">GUIA-DOTNET — Parte 5: o GitHub confere o código</h1>
+<p><strong>v1.0 · 09/10/2026 (S15)</strong> · Entradas 5.1–5.3. Complementa a Parte 4 (o build cobra as convenções):
+agora quem roda o build <strong>é uma máquina do GitHub</strong>, a cada push e PR.</p>
+<p><a id="g5-1"></a></p>
+<h2 id="51-ci-básico-com-github-actions">5.1 CI básico com GitHub Actions<button class="estudada" data-id="51-ci-básico-com-github-actions" type="button">Marcar como estudada</button></h2>
+<p><strong>Problema:</strong> a <code>main</code> ficou quebrada (CS8604) sem ninguém perceber. Confiar na memória não escala.</p>
+<p><strong>Solução:</strong> um workflow em <code>.github/workflows/ci.yml</code> que, a cada push e PR para a <code>main</code>, instala o
+.NET 10, compila e roda os testes numa máquina limpa.</p>
+<table>
+<thead>
+<tr>
+<th>Termo</th>
+<th>O que é</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Workflow</td>
+<td>arquivo <code>.yml</code> com o &quot;quando&quot; e o &quot;o quê&quot;</td>
+</tr>
+<tr>
+<td>Job / Runner</td>
+<td>bloco de trabalho / a máquina que o executa</td>
+</tr>
+<tr>
+<td>Step</td>
+<td>passo: <code>uses</code> (ação pronta) ou <code>run</code> (comando)</td>
+</tr>
+<tr>
+<td>Check / Annotation</td>
+<td>semáforo no PR / mensagem de erro anexada</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight"><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CI</span>
+
+<span class="nt">on</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">push</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">branches</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">main</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">pull_request</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">branches</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">main</span><span class="p p-Indicator">]</span>
+
+<span class="nt">permissions</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">contents</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">read</span>
+
+<span class="nt">jobs</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">build-test</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span>
+<span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v7</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/setup-dotnet@v6</span>
+<span class="w">        </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">dotnet-version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.x</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dotnet build Norte.slnx</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dotnet test Norte.slnx --no-build</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Linha</th>
+<th>Sem ela</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>on: pull_request</code></td>
+<td>o PR não é conferido antes do merge</td>
+</tr>
+<tr>
+<td><code>permissions: contents: read</code></td>
+<td>o workflow fica com permissões mais largas que o necessário</td>
+</tr>
+<tr>
+<td><code>actions/checkout</code></td>
+<td>o runner está vazio; o build não acha a solution</td>
+</tr>
+<tr>
+<td><code>actions/setup-dotnet</code></td>
+<td>SDK errado ou ausente; o build quebra por motivo alheio ao código</td>
+</tr>
+<tr>
+<td><code>dotnet test --no-build</code></td>
+<td>sem teste, o check só diz que compila</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Pontos obrigatórios:</strong> pasta <code>.github/workflows/</code> na <strong>raiz</strong>; nome do arquivo livre. Versões das ações
+fixadas (<code>@v7</code>, <code>@v6</code>).</p>
+<p><strong>Preço:</strong> ~30 s a mais por PR; arquivo para manter; <code>ubuntu-latest</code> muda sozinho (aviso: migra para o
+Ubuntu 26 a partir de 19/10/2026 — decidir entre <code>ubuntu-latest</code> e <code>ubuntu-24.04</code>).</p>
+<p><strong>Limite importante:</strong> sem proteção de branch, o botão de merge continua clicável com o check vermelho. O
+CI <strong>avisa</strong>; não <strong>impede</strong>. (Proteção de branch em repositório privado: <strong>a conferir</strong> no plano.)</p>
+<p><strong>Prova de que o CI funciona = vê-lo falhar:</strong> PR descartável que remove o <code>!</code> de <code>Sku</code> no <code>Executar</code>
+→ vermelho com a annotation <code>CS8604</code>.</p>
+<p><a id="g5-2"></a></p>
+<h2 id="52-mover-um-commit-para-outra-branch-e-as-três-cópias-de-uma-branch">5.2 Mover um commit para outra branch e as três cópias de uma branch<button class="estudada" data-id="52-mover-um-commit-para-outra-branch-e-as-três-cópias-de-uma-branch" type="button">Marcar como estudada</button></h2>
+<p>Cenário: o commit caiu na <code>main</code> local, à frente do servidor.</p>
+<pre class="highlight"><code>git switch -c feat/ci-basico       # a nova branch nasce com o commit
+git branch -f main origin/main     # a main local volta ao que o servidor tem
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Cópia</th>
+<th>Onde</th>
+<th>Como apagar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Servidor</td>
+<td>GitHub</td>
+<td>&quot;Delete branch&quot; no PR</td>
+</tr>
+<tr>
+<td>Local</td>
+<td>seu computador</td>
+<td><code>git branch -d</code> (só se mesclada) · <code>-D</code> (força)</td>
+</tr>
+<tr>
+<td><code>origin/&lt;nome&gt;</code></td>
+<td>cache local do servidor</td>
+<td><code>git fetch --prune</code></td>
+</tr>
+</tbody>
+</table>
+<p>Apagar no GitHub <strong>não</strong> apaga a local. Opcional: <code>git config --global fetch.prune true</code>.</p>
+<p><a id="g5-3"></a></p>
+<h2 id="53-diagnóstico-da-s15">5.3 Diagnóstico da S15<button class="estudada" data-id="53-diagnóstico-da-s15" type="button">Marcar como estudada</button></h2>
+<table>
+<thead>
+<tr>
+<th>Mensagem</th>
+<th>Causa</th>
+<th>Correção</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fatal: pathspec '.github' did not match any files</code></td>
+<td>o arquivo ainda não existe</td>
+<td>criar pasta e arquivo na raiz, depois <code>git add</code></td>
+</tr>
+<tr>
+<td><code>MSB1009: Project file does not exist. Switch: Norte,slnx</code></td>
+<td>vírgula no lugar do ponto</td>
+<td><code>Norte.slnx</code></td>
+</tr>
+<tr>
+<td>dois comandos na mesma linha (<code>pwd Get-ChildItem …</code>)</td>
+<td>o segundo vira argumento do primeiro</td>
+<td>um comando por linha</td>
+</tr>
+<tr>
+<td>annotation repetida no check</td>
+<td>job e resumo mostram a mesma mensagem</td>
+<td>normal</td>
+</tr>
+<tr>
+<td>aviso &quot;ubuntu-latest will migrate to Ubuntu 26…&quot;</td>
+<td>mudança de imagem do runner</td>
+<td>decidir entre <code>ubuntu-latest</code> e <code>ubuntu-24.04</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="teste-se-parte-5">Teste-se (Parte 5)</h2>
+<ol>
+<li>O que o runner tem quando o job começa, e qual passo traz o código para ele?</li>
+<li>Onde o GitHub procura workflows? O nome do arquivo importa?</li>
+<li>O check do PR está vermelho. O que impede o merge hoje?</li>
+<li>Por que um PR descartável com erro de propósito prova mais que um PR verde?</li>
+<li>Cite um preço do CI com o efeito.</li>
+<li>Apaguei a branch no GitHub: onde ela ainda existe?</li>
+<li>Diferença entre <code>git branch -d</code> e <code>-D</code>.</li>
+<li>Como mover para outra branch um commit feito na <code>main</code> local por engano?</li>
+</ol>
+<h3 id="respostas">Respostas</h3><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>Está vazio; o <code>actions/checkout</code>.</li>
+<li><code>.github/workflows/</code> na raiz; o nome do arquivo é livre.</li>
+<li>Nada: sem proteção de branch, o botão continua clicável.</li>
+<li>Mostra o CI <strong>reprovando</strong> um erro real; verde sozinho não prova que ele sabe falhar.</li>
+<li>Ex.: ~30 s a mais por PR; <code>ubuntu-latest</code> muda sozinho e pode quebrar o CI sem o código mudar.</li>
+<li>Na branch local e em <code>origin/&lt;nome&gt;</code> até o <code>fetch --prune</code>.</li>
+<li><code>-d</code> só apaga se já mesclada; <code>-D</code> força.</li>
+<li><code>git switch -c &lt;nova&gt;</code> e depois <code>git branch -f main origin/main</code>.</li>
+</ol>
+</details>
+</article>
+<footer class="rodape">Atualizado em 09/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

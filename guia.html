@@ -43,17 +43,16 @@ tente explicar em voz alta a linha &quot;Em uma frase&quot; e a seção &quot;Na
 <li>🔎 <strong>Saber onde encontrar</strong> — sintaxe exata, nome de <code>using</code>, comando de CLI. Qualquer sênior
 consulta; o <code>Ctrl+.</code> e a documentação resolvem.</li>
 </ul>
-<p><strong>Última atualização:</strong> 08/10/2026 (S14 parte 2 — Parte 3 v1.2, entradas 3.15 a 3.17) · <strong>Versão:</strong> 1.7</p>
+<p><strong>Última atualização:</strong> 09/10/2026 (S15 — Parte 5 criada, entradas 5.1 a 5.3) · <strong>Versão:</strong> 1.8</p>
 <hr />
 <h2 id="onde-estamos-atualizado-a-cada-sessão">Onde estamos (atualizado a cada sessão)</h2>
-<p><strong>Fim da S14 (parte 2):</strong> a sessão está no <strong>nível 3</strong> do mapa (<a href="parte-0-1.html#parte-0--o-mapa-dos-n%C3%ADveis">Parte 0</a>),
-na <strong>borda entre a funcionalidade e o host</strong>: o tratamento de erros mora no host
-(<code>Norte.Api/Program.cs</code>: <code>AddProblemDetails</code>, <code>UseExceptionHandler</code>, <code>UseStatusCodePages</code> —
-<a href="parte-3.html#315-erros-da-api-em-formato-padr%C3%A3o-addproblemdetails-useexceptionhandler-e-usestatuscodepages">3.15</a>), e o teste que o protege usa a rota do <code>Catalogo</code> como gatilho
-(<a href="parte-3.html#316-dubl%C3%AA-de-teste-e-ambiente-do-teste-trocar-uma-pe%C3%A7a-s%C3%B3-no-teste">3.16</a>). A funcionalidade <code>CadastrarFichaProduto</code> segue como na S12.
-Também se viu que a <code>main</code> <strong>não compilava</strong> (CS8604) e que o PR #4 a consertou (<a href="parte-3.html#317-diagn%C3%B3stico-os-problemas-da-s14-e-como-achar-a-causa">3.17</a>).
-Próximo passo de M1: <strong>CI básico</strong> (<code>dotnet build</code> + <code>dotnet test</code> no GitHub Actions) — nível 1,
-solution e build (<a href="parte-4.html#parte-4--o-build-cobra-as-conven%C3%A7%C3%B5es">Parte 4</a>).</p>
+<p><strong>Fim da S15:</strong> a sessão saiu do código e foi para a <strong>borda do repositório</strong>: o GitHub passou a
+compilar e testar a <code>main</code> e cada PR sozinho (<a href="parte-5.html#51-ci-básico-com-github-actions">5.1</a>), com a prova do verde e do
+vermelho. Também se fixou o Git das <strong>três cópias de uma branch</strong> (<a href="parte-5.html#52-mover-um-commit-para-outra-branch-e-as-três-cópias-de-uma-branch">5.2</a>).
+Os níveis do código seguem como na S14: a <strong>borda entre a funcionalidade e o host</strong> (tratamento de erros,
+<a href="parte-3.html#315-erros-da-api-em-formato-padr%C3%A3o-addproblemdetails-useexceptionhandler-e-usestatuscodepages">3.15</a>).
+Próximo passo de M1: <strong>EF Core 10 — o <code>Catalogo</code> grava no Postgres</strong> (nível 3, a funcionalidade passa a
+ter persistência real; o repositório em memória sai).</p>
 <hr />
 <h2 id="partes">Partes</h2>
 <table>
@@ -82,13 +81,19 @@ solution e build (<a href="parte-4.html#parte-4--o-build-cobra-as-conven%C3%A7%C
 <td><a href="parte-3.html"><code>GUIA-DOTNET-P3.md</code></a></td>
 <td>Parte 3 — a primeira funcionalidade e o primeiro teste</td>
 <td>S11–</td>
-<td><strong>v1.2 (novo: 3.15–3.17)</strong></td>
+<td>v1.2</td>
 </tr>
 <tr>
 <td><a href="parte-4.html"><code>GUIA-DOTNET-P4.md</code></a></td>
 <td>Parte 4 — o build cobra as convenções</td>
 <td>S13–</td>
 <td>v1.0</td>
+</tr>
+<tr>
+<td><a href="parte-5.html"><code>GUIA-DOTNET-P5.md</code></a></td>
+<td>Parte 5 — o GitHub confere o código</td>
+<td>S15–</td>
+<td><strong>v1.0 (novo)</strong></td>
 </tr>
 </tbody>
 </table>
@@ -148,6 +153,14 @@ da parte com a âncora.</p>
 <li><a href="parte-4.html#juntando-tudo">Juntando tudo</a> · <a href="parte-4.html#teste-se-sem-consultar-uma-pergunta-por-vez">Teste-se</a> · <a href="parte-0-1.html#respostas">Respostas</a></li>
 </ul>
 </li>
+<li><a href="parte-5.html#guia-dotnet--parte-5-o-github-confere-o-c%C3%B3digo">Parte 5 — O GitHub confere o código (S15–)</a>
+<ul>
+<li><a href="parte-5.html#51-ci-básico-com-github-actions">5.1</a> <strong>CI básico com GitHub Actions</strong></li>
+<li><a href="parte-5.html#52-mover-um-commit-para-outra-branch-e-as-três-cópias-de-uma-branch">5.2</a> <strong>Mover um commit para outra branch e as três cópias de uma branch</strong></li>
+<li><a href="parte-5.html#53-diagnóstico-da-s15">5.3</a> <strong>Diagnóstico da S15</strong></li>
+<li>Teste-se e respostas (no fim da Parte 5)</li>
+</ul>
+</li>
 </ul>
 <hr />
 <h2 id="histórico-do-guia">Histórico do guia</h2>
@@ -194,6 +207,11 @@ da parte com a âncora.</p>
 <td>1.7</td>
 <td>08/10/2026 (S14, parte 2)</td>
 <td>Parte 3 v1.2: <strong>entradas 3.15–3.17</strong> (erros em formato padrão, dublê de teste e ambiente do teste, diagnóstico da S14); <strong>correção da 3.11</strong> (comparação justa nativa × FluentValidation, com o critério pela complexidade da regra); atualizações em 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.10, 3.12 e no Teste-se (perguntas 14–20); &quot;onde estamos&quot; na borda funcionalidade/host</td>
+</tr>
+<tr>
+<td>1.8</td>
+<td>09/10/2026 (S15)</td>
+<td><strong>Parte 5 criada</strong> (<code>GUIA-DOTNET-P5.md</code>, entradas 5.1–5.3: CI básico com GitHub Actions, três cópias de uma branch, diagnóstico da S15); &quot;onde estamos&quot; na borda do repositório</td>
 </tr>
 </tbody>
 </table>

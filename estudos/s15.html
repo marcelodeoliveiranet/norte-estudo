@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ESTUDO — S15 · CI básico (GitHub Actions) · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s15.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#estudo--s15--ci-básico-github-actions" data-id="estudo--s15--ci-básico-github-actions">ESTUDO — S15 · CI básico (GitHub Actions)</a><a class="n2" href="#1-o-problema-que-o-ci-resolve" data-id="1-o-problema-que-o-ci-resolve">1. O problema que o CI resolve</a><a class="n2" href="#2-o-vocabulário-de-para" data-id="2-o-vocabulário-de-para">2. O vocabulário (de-para)</a><a class="n2" href="#3-o-ciyml-linha-a-linha" data-id="3-o-ciyml-linha-a-linha">3. O ci.yml linha a linha</a><a class="n2" href="#4-as-provas-verde-e-vermelho" data-id="4-as-provas-verde-e-vermelho">4. As provas (verde e vermelho)</a><a class="n2" href="#5-o-preço-do-ci-ganho-×-preço" data-id="5-o-preço-do-ci-ganho-×-preço">5. O preço do CI (ganho × preço)</a><a class="n2" href="#6-git-as-três-cópias-de-uma-branch" data-id="6-git-as-três-cópias-de-uma-branch">6. Git: as três cópias de uma branch</a><a class="n2" href="#7-diagnósticos-da-sessão-cada-erro-vira-linha" data-id="7-diagnósticos-da-sessão-cada-erro-vira-linha">7. Diagnósticos da sessão (cada erro vira linha)</a><a class="n2" href="#8-suas-dúvidas-e-avaliação-registradas" data-id="8-suas-dúvidas-e-avaliação-registradas">8. Suas dúvidas e avaliação (registradas)</a><a class="n2" href="#9-perguntas-de-recuperação-responda-sem-consultar" data-id="9-perguntas-de-recuperação-responda-sem-consultar">9. Perguntas de recuperação (responda sem consultar)</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a><a class="n2" href="#10-preparação-da-s16-segunda-1210" data-id="10-preparação-da-s16-segunda-1210">10. Preparação da S16 (segunda, 12/10)</a></aside>
+<main class="conteudo"><article>
+<h1 id="estudo--s15--ci-básico-github-actions">ESTUDO — S15 · CI básico (GitHub Actions)</h1>
+<p><strong>Sexta, 09/10/2026 · 14:19 → 15:50 · 1h31 líquidas, sem pausas · Marco M1</strong></p>
+<p>Objetivo da sessão: <strong>fazer o GitHub compilar e testar o código a cada push e a cada PR</strong>, e ver o
+aviso funcionar nos dois sentidos (verde e vermelho). Entregue: <code>.github/workflows/ci.yml</code> na <code>main</code>
+(PR #5) e a prova do vermelho (PR #6, descartado).</p>
+<hr />
+<h2 id="1-o-problema-que-o-ci-resolve">1. O problema que o CI resolve</h2>
+<p>Na S14 descobrimos que a <code>main</code> (<code>36a5bbb</code>) <strong>não compilava</strong> (CS8604) e ninguém percebeu na hora.
+Quem garantia &quot;a <code>main</code> está verde&quot; era a <strong>memória do desenvolvedor</strong>. O CI troca a memória por uma
+máquina que roda sempre, igual, no servidor.</p>
+<table>
+<thead>
+<tr>
+<th>Antes (sem CI)</th>
+<th>Depois (com CI)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&quot;Rodei na minha máquina&quot;</td>
+<td>Roda numa máquina limpa, sem nada instalado de antemão</td>
+</tr>
+<tr>
+<td>O build quebrado aparece quando alguém abre o projeto</td>
+<td>O build quebrado aparece no PR, antes do merge</td>
+</tr>
+<tr>
+<td>Depende de lembrar de rodar <code>dotnet test</code></td>
+<td>Roda sozinho em todo push e PR para <code>main</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-o-vocabulário-de-para">2. O vocabulário (de-para)</h2>
+<table>
+<thead>
+<tr>
+<th>Termo do GitHub Actions</th>
+<th>O que é</th>
+<th>Analogia no que você já conhece</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Workflow</strong></td>
+<td>Um arquivo <code>.yml</code> que descreve o que rodar e quando</td>
+<td>Um script de build/pipeline</td>
+</tr>
+<tr>
+<td><strong>Gatilho (<code>on</code>)</strong></td>
+<td>O evento que dispara o workflow (push, PR)</td>
+<td>O &quot;quando&quot;</td>
+</tr>
+<tr>
+<td><strong>Job</strong></td>
+<td>Um bloco de trabalho que roda numa máquina</td>
+<td>Um estágio do pipeline</td>
+</tr>
+<tr>
+<td><strong>Runner</strong></td>
+<td>A máquina (virtual) que executa o job</td>
+<td>O agente de build</td>
+</tr>
+<tr>
+<td><strong>Step</strong></td>
+<td>Um passo dentro do job: <code>uses</code> (ação pronta) ou <code>run</code> (comando)</td>
+<td>Uma linha do script</td>
+</tr>
+<tr>
+<td><strong>Check</strong></td>
+<td>O resultado (verde/vermelho) que aparece no PR</td>
+<td>O &quot;semáforo&quot; do PR</td>
+</tr>
+<tr>
+<td><strong>Annotation</strong></td>
+<td>Mensagem anexada ao check (erro de compilação, aviso)</td>
+<td>A saída resumida do build</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-o-ciyml-linha-a-linha">3. O <code>ci.yml</code> linha a linha</h2>
+<p>Arquivo <strong>obrigatoriamente</strong> em <code>.github/workflows/</code> na <strong>raiz do repositório</strong> (é onde o GitHub procura).
+O nome do arquivo é livre; a pasta não.</p>
+<pre class="highlight"><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CI</span>
+
+<span class="nt">on</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">push</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">branches</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">main</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">pull_request</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">branches</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">main</span><span class="p p-Indicator">]</span>
+
+<span class="nt">permissions</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">contents</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">read</span>
+
+<span class="nt">jobs</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">build-test</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span>
+<span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v7</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/setup-dotnet@v6</span>
+<span class="w">        </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">dotnet-version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.x</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dotnet build Norte.slnx</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dotnet test Norte.slnx --no-build</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Linha</th>
+<th>O que faz</th>
+<th>Onde age</th>
+<th>O que acontece sem ela</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name: CI</code></td>
+<td>Nome que aparece na aba Actions e no check</td>
+<td>Interface do GitHub</td>
+<td>Usa o nome do arquivo; funciona, só fica menos legível</td>
+</tr>
+<tr>
+<td><code>on: push … [main]</code></td>
+<td>Roda quando entra commit na <code>main</code></td>
+<td>GitHub</td>
+<td>Não confere a <code>main</code> depois do merge</td>
+</tr>
+<tr>
+<td><code>on: pull_request … [main]</code></td>
+<td>Roda quando um PR aponta para a <code>main</code></td>
+<td>GitHub</td>
+<td><strong>Não confere o PR antes do merge</strong> — perde o ponto principal</td>
+</tr>
+<tr>
+<td><code>permissions: contents: read</code></td>
+<td>O workflow só pode <strong>ler</strong> o repositório</td>
+<td>Token do workflow</td>
+<td>Fica com permissões padrão, mais largas que o necessário</td>
+</tr>
+<tr>
+<td><code>jobs: build-test:</code></td>
+<td>Nome do job (livre)</td>
+<td>Workflow</td>
+<td>Obrigatório haver ao menos um job</td>
+</tr>
+<tr>
+<td><code>runs-on: ubuntu-latest</code></td>
+<td>Tipo de máquina</td>
+<td>Runner</td>
+<td>Obrigatório: sem ele não há onde rodar</td>
+</tr>
+<tr>
+<td><code>actions/checkout@v7</code></td>
+<td>Baixa o código do repositório para o runner</td>
+<td>Runner</td>
+<td><strong>A máquina começa vazia</strong>: o build não acha <code>Norte.slnx</code></td>
+</tr>
+<tr>
+<td><code>actions/setup-dotnet@v6</code> + <code>dotnet-version: 10.0.x</code></td>
+<td>Instala o SDK do .NET 10</td>
+<td>Runner</td>
+<td>Pode vir outro SDK (ou nenhum) e o build quebrar por motivo que não é do código</td>
+</tr>
+<tr>
+<td><code>dotnet build Norte.slnx</code></td>
+<td>Compila a solution (com as regras da ADR-004: aviso é erro)</td>
+<td>Runner</td>
+<td>Sem build, o teste não tem o que rodar</td>
+</tr>
+<tr>
+<td><code>dotnet test Norte.slnx --no-build</code></td>
+<td>Roda os testes sem recompilar</td>
+<td>Runner</td>
+<td>Sem teste, o check só diz &quot;compila&quot;, não &quot;funciona&quot;</td>
+</tr>
+</tbody>
+</table>
+<p><strong>De onde vem o conteúdo:</strong> os comandos <code>dotnet build</code>/<code>dotnet test</code> são os mesmos que você roda no
+terminal; as ações <code>checkout</code> e <code>setup-dotnet</code> são ações oficiais publicadas pelo GitHub (<code>actions/</code>),
+com versão fixada (<code>@v7</code>, <code>@v6</code>) para o resultado não mudar sozinho.</p>
+<blockquote>
+<p><strong>Aviso visto nas annotations:</strong> &quot;ubuntu-latest will migrate to Ubuntu 26 beginning October 19, 2026&quot;.
+Decisão pendente: manter <code>ubuntu-latest</code> (acompanha a migração) ou fixar <code>ubuntu-24.04</code> (estável, mas
+envelhece). É um <strong>preço</strong> de cada lado, a decidir antes de 19/10.</p>
+</blockquote>
+<h2 id="4-as-provas-verde-e-vermelho">4. As provas (verde e vermelho)</h2>
+<table>
+<thead>
+<tr>
+<th>PR</th>
+<th>O que tinha</th>
+<th>Resultado</th>
+<th>Tempo</th>
+<th>Prova de quê</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>#5</strong></td>
+<td><code>ci.yml</code> correto</td>
+<td>✅ verde</td>
+<td>28 s</td>
+<td>O CI roda e aprova código bom</td>
+</tr>
+<tr>
+<td><strong>#6</strong> (&quot;NÃO MESCLAR&quot;)</td>
+<td><code>!</code> removido de <code>Sku</code> no <code>Executar</code></td>
+<td>❌ vermelho, annotation <strong>CS8604</strong></td>
+<td>20 s</td>
+<td>O CI <strong>teria pego</strong> o erro que quebrou a <code>main</code> antiga (36a5bbb)</td>
+</tr>
+</tbody>
+</table>
+<p>O que aprendemos vendo:</p>
+<ul>
+<li>O botão de merge do GitHub <strong>continua clicável com o check vermelho</strong>. Não há proteção de branch
+configurada: o CI <strong>avisa</strong>, não <strong>impede</strong>. (Se o plano do repositório privado permite proteção de
+branch: <strong>a conferir</strong>.)</li>
+<li>O GitHub <strong>manda e-mail</strong> ao autor quando o workflow de um PR falha.</li>
+<li>A annotation aponta o arquivo, a linha e o código do erro — a mesma mensagem que o build local mostra.</li>
+</ul>
+<h2 id="5-o-preço-do-ci-ganho-×-preço">5. O preço do CI (ganho × preço)</h2>
+<table>
+<thead>
+<tr>
+<th>Ganho</th>
+<th>Preço</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A <code>main</code> não quebra em silêncio</td>
+<td>O PR leva ~30 s a mais até estar &quot;liberado&quot;</td>
+</tr>
+<tr>
+<td>Ambiente limpo revela dependência escondida na sua máquina</td>
+<td>Mais um arquivo para manter (versões das ações, SDK, imagem do runner)</td>
+</tr>
+<tr>
+<td>Registro público de quando passou/falhou</td>
+<td>O <code>ubuntu-latest</code> muda sozinho: um dia o CI pode quebrar sem o código mudar</td>
+</tr>
+<tr>
+<td>Base para o que vem (formato, banco real)</td>
+<td>Sem proteção de branch, o aviso pode ser ignorado: depende de disciplina</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-git-as-três-cópias-de-uma-branch">6. Git: as três cópias de uma branch</h2>
+<p>Dúvida da sessão: &quot;quando apago uma branch no GitHub, ela some localmente?&quot; <strong>Não.</strong> Existem <strong>três
+coisas</strong> diferentes:</p>
+<table>
+<thead>
+<tr>
+<th>Cópia</th>
+<th>Onde mora</th>
+<th>Quem apaga</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Branch <strong>no servidor</strong></td>
+<td>GitHub</td>
+<td>Botão &quot;Delete branch&quot; do PR</td>
+</tr>
+<tr>
+<td>Branch <strong>local</strong></td>
+<td>Seu computador (<code>git branch</code>)</td>
+<td><code>git branch -d &lt;nome&gt;</code> (só se já foi mesclada) ou <code>-D</code> (força)</td>
+</tr>
+<tr>
+<td>Referência <strong>remota local</strong> <code>origin/&lt;nome&gt;</code></td>
+<td>Seu computador (cache do que o servidor tinha)</td>
+<td><code>git fetch --prune</code></td>
+</tr>
+</tbody>
+</table>
+<p>Receita usada na sessão, para mover um commit que caiu na <code>main</code> local para uma branch:</p>
+<pre class="highlight"><code>git switch -c feat/ci-basico          # a branch nova nasce com o commit
+git branch -f main origin/main        # a main local volta ao que o servidor tem
+</code></pre>
+
+<p>Opcional (decisão sua): <code>git config --global fetch.prune true</code> faz o <code>git fetch</code> limpar sozinho as
+referências de branches já apagadas no servidor.</p>
+<h2 id="7-diagnósticos-da-sessão-cada-erro-vira-linha">7. Diagnósticos da sessão (cada erro vira linha)</h2>
+<table>
+<thead>
+<tr>
+<th>O que apareceu</th>
+<th>Causa</th>
+<th>Correção</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fatal: pathspec '.github' did not match any files</code></td>
+<td>O arquivo ainda não existia; <code>git add</code> não acha o que não foi criado</td>
+<td>Criar a pasta e o arquivo na raiz, depois <code>git add</code></td>
+</tr>
+<tr>
+<td><code>MSBUILD : error MSB1009: Project file does not exist. Switch: Norte,slnx</code></td>
+<td>Vírgula no lugar do ponto</td>
+<td><code>dotnet build Norte.slnx</code></td>
+</tr>
+<tr>
+<td><code>pwd Get-ChildItem …</code> na mesma linha</td>
+<td>Dois comandos na mesma linha viram argumentos do primeiro</td>
+<td>Um comando por linha</td>
+</tr>
+<tr>
+<td>Duas annotations iguais no check</td>
+<td>O GitHub mostra a mesma mensagem no job e no resumo</td>
+<td>Normal; leia uma</td>
+</tr>
+<tr>
+<td>Commit na <code>main</code> local, à frente do servidor</td>
+<td>Commit feito antes de criar a branch</td>
+<td><code>switch -c</code> + <code>branch -f</code> (seção 6)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="8-suas-dúvidas-e-avaliação-registradas">8. Suas dúvidas e avaliação (registradas)</h2>
+<ul>
+<li><strong>Teste do 404:</strong> você decidiu <strong>não</strong> criar teste só para praticar. Regra nova: <strong>teste nasce de regra
+de negócio</strong> (o 404 de rota inexistente é comportamento da plataforma, já provado à mão na S14).</li>
+<li><strong>Perguntas de previsão sobre conteúdo não ensinado:</strong> você apontou que eram técnicas demais para o
+ponto do estudo. Procede: eram falha de condução, não sua.</li>
+<li><strong>&quot;Senti novamente um copiar e colar&quot;</strong> (CI): procede. O arquivo foi entregue pronto, antes de você
+descrever a sequência. Regra nova: <strong>você descreve a sequência em português antes de ver a sintaxe</strong>; o
+mentor mostra de onde vem o conteúdo e por que o nome e o lugar são obrigatórios.</li>
+<li><strong>Autoavaliação S4: nota 4</strong> → levemente acima: você executou o fluxo todo (branch, PR, verde, vermelho,
+limpeza), mas o <strong>preço</strong> do PR faltou e a escrita do CI foi guiada.</li>
+</ul>
+<h2 id="9-perguntas-de-recuperação-responda-sem-consultar">9. Perguntas de recuperação (responda sem consultar)</h2>
+<ol>
+<li>Por que o workflow precisa do passo <code>actions/checkout</code>?</li>
+<li>Em que pasta e em que nível do repositório o GitHub procura workflows?</li>
+<li>O check do PR ficou vermelho. O que o GitHub <strong>impede</strong> e o que ele <strong>não impede</strong> hoje no Norte?</li>
+<li>Por que o PR #6 provou mais do que o #5?</li>
+<li>Cite um <strong>preço</strong> (não um ganho) de ter o CI ligado.</li>
+<li>Apaguei a branch no GitHub. Em que lugares ela ainda pode existir no meu computador?</li>
+<li>Qual a diferença entre <code>git branch -d</code> e <code>-D</code>?</li>
+<li>(Das sessões anteriores) Qual middleware <strong>captura</strong> a exceção, qual <strong>escreve</strong> o corpo, qual
+<strong>preenche</strong> um 4xx vazio?</li>
+</ol>
+<h2 id="respostas">Respostas</h2><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>Porque o runner começa <strong>vazio</strong>; sem o checkout, o código do repositório não está na máquina e o
+<code>dotnet build</code> não encontra <code>Norte.slnx</code>.</li>
+<li>Em <code>.github/workflows/</code>, na <strong>raiz</strong> do repositório. O nome do arquivo é livre; a pasta, não.</li>
+<li><strong>Não impede</strong> o merge (botão continua clicável, não há proteção de branch). <strong>Faz</strong>: mostra o check
+vermelho, as annotations e manda e-mail ao autor.</li>
+<li>Porque mostrou o CI <strong>reprovando</strong> um erro real (CS8604, o mesmo que quebrou a <code>main</code> antiga). Um CI que
+só viu verde não provou que sabe falhar.</li>
+<li>Por exemplo: ~30 s a mais por PR; arquivo para manter; <code>ubuntu-latest</code> muda sozinho; sem proteção de
+branch o aviso depende de disciplina. (Qualquer um, com o <strong>efeito</strong>.)</li>
+<li>Na <strong>branch local</strong> (<code>git branch</code>) e na referência <code>origin/&lt;nome&gt;</code> (<code>git branch -r</code>). Limpa-se com
+<code>git branch -d</code> e <code>git fetch --prune</code>.</li>
+<li><code>-d</code> só apaga branch já mesclada (protege contra perda); <code>-D</code> força, mesmo sem merge (descarte
+consciente — foi o caso da <code>teste/ci-vermelho</code>).</li>
+<li><strong><code>AddProblemDetails()</code> escreve</strong> o corpo; <strong><code>UseExceptionHandler()</code> captura</strong> a exceção não tratada;
+<strong><code>UseStatusCodePages()</code> preenche</strong> o corpo de um 4xx/5xx vazio.</li>
+</ol>
+</details><h2 id="10-preparação-da-s16-segunda-1210">10. Preparação da S16 (segunda, 12/10)</h2>
+<ul>
+<li><strong>Abertura:</strong> análise semanal (12/10) + 3 perguntas de revisão espaçada (<strong>escreve · captura ·
+preenche</strong>; <code>public</code> × <code>internal</code>; critério unidade × integração em frase própria).</li>
+<li><strong>Objetivo:</strong> <strong>EF Core 10 — o <code>Catalogo</code> passa a gravar no Postgres.</strong> O problema primeiro: hoje o
+<code>FichaProdutoRepository</code> guarda em memória, e <strong>os fatos somem quando a API reinicia</strong>.</li>
+<li><strong>Antes de segunda:</strong> conferir se o PR #6 foi fechado e a branch <code>teste/ci-vermelho</code> apagada no GitHub;
+decidir <code>ubuntu-latest</code> × <code>ubuntu-24.04</code> antes de 19/10.</li>
+<li><strong>Sábado (10/10):</strong> reconstrução da semana (documento <code>RECONSTRUCAO-2026-10-10.md</code>), sem o Claude local
+e fora do repositório; depois, Parte 4 e Parte 5 do guia.</li>
+</ul>
+
+</article>
+<footer class="rodape">Atualizado em 09/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>
