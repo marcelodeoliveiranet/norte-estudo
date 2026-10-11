@@ -19,18 +19,43 @@
   <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
 </header>
 <div class="layout">
-<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#r2--os-3-arquivos-que-fazem-o-build-cobrar-as-convenções" data-id="r2--os-3-arquivos-que-fazem-o-build-cobrar-as-convenções">R2 — Os 3 arquivos que fazem o build cobrar as convenções</a><a class="n2" href="#1-o-que-é-em-uma-frase" data-id="1-o-que-é-em-uma-frase">1. O que é, em uma frase</a><a class="n2" href="#2-o-que-o-desenvolvedor-escreve-em-cada-arquivo" data-id="2-o-que-o-desenvolvedor-escreve-em-cada-arquivo">2. O que o desenvolvedor escreve em cada arquivo</a><a class="n2" href="#3-a-regra-de-decisão-onde-eu-escrevo-isto" data-id="3-a-regra-de-decisão-onde-eu-escrevo-isto">3. A regra de decisão: onde eu escrevo isto?</a><a class="n2" href="#4-como-o-msbuild-escolhe-qual-arquivo-usar" data-id="4-como-o-msbuild-escolhe-qual-arquivo-usar">4. Como o MSBuild escolhe qual arquivo usar</a><a class="n2" href="#5-o-preço" data-id="5-o-preço">5. O preço</a><a class="n2" href="#6-erros-que-você-vai-ver" data-id="6-erros-que-você-vai-ver">6. Erros que você vai ver</a><a class="n2" href="#7-duas-verdades-sobre-as-regras-de-estilo-ide" data-id="7-duas-verdades-sobre-as-regras-de-estilo-ide">7. Duas verdades sobre as regras de estilo (IDE)</a><a class="n2" href="#8-exercício-para-você-fazer-sozinho-≈-15-min-em-dtemp-norte" data-id="8-exercício-para-você-fazer-sozinho-≈-15-min-em-dtemp-norte">8. Exercício para você fazer sozinho (≈ 15 min, em D:\temp-norte)</a><a class="n2" href="#9-o-que-a-revisão-provou-e-o-que-não-provou" data-id="9-o-que-a-revisão-provou-e-o-que-não-provou">9. O que a revisão provou e o que NÃO provou</a><a class="n2" href="#teste-se" data-id="teste-se">Teste-se</a></aside>
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#r2--os-3-arquivos-que-fazem-o-build-cobrar-as-convenções" data-id="r2--os-3-arquivos-que-fazem-o-build-cobrar-as-convenções">R2 — Os 3 arquivos que fazem o build cobrar as convenções</a><a class="n2" href="#1-o-que-são-em-uma-frase-cada" data-id="1-o-que-são-em-uma-frase-cada">1. O que são, em uma frase cada</a><a class="n2" href="#2-o-que-o-desenvolvedor-escreve-em-cada-arquivo" data-id="2-o-que-o-desenvolvedor-escreve-em-cada-arquivo">2. O que o desenvolvedor escreve em cada arquivo</a><a class="n2" href="#3-como-ler-uma-linha-de-configuração" data-id="3-como-ler-uma-linha-de-configuração">3. Como ler uma linha de configuração</a><a class="n2" href="#4-o-que-decide-se-uma-regra-de-estilo-ide-roda-no-build" data-id="4-o-que-decide-se-uma-regra-de-estilo-ide-roda-no-build">4. O que decide se uma regra de estilo (IDE) roda no build</a><a class="n2" href="#5-como-o-msbuild-escolhe-qual-arquivo-usar" data-id="5-como-o-msbuild-escolhe-qual-arquivo-usar">5. Como o MSBuild escolhe qual arquivo usar</a><a class="n2" href="#6-o-preço" data-id="6-o-preço">6. O preço</a><a class="n2" href="#7-erros-que-você-vai-ver" data-id="7-erros-que-você-vai-ver">7. Erros que você vai ver</a><a class="n2" href="#8-onde-estudar-nesta-ordem" data-id="8-onde-estudar-nesta-ordem">8. Onde estudar (nesta ordem)</a><a class="n2" href="#9-como-experimentar-em-dtemp-norte-sem-tocar-no-norte" data-id="9-como-experimentar-em-dtemp-norte-sem-tocar-no-norte">9. Como experimentar (em D:\temp-norte, sem tocar no norte)</a><a class="n2" href="#10-em-que-ordem-estudar-o-editorconfig" data-id="10-em-que-ordem-estudar-o-editorconfig">10. Em que ordem estudar o .editorconfig</a><a class="n2" href="#11-o-que-a-revisão-provou-e-o-que-não-provou" data-id="11-o-que-a-revisão-provou-e-o-que-não-provou">11. O que a revisão provou e o que NÃO provou</a><a class="n2" href="#teste-se" data-id="teste-se">Teste-se</a></aside>
 <main class="conteudo"><article>
 <h1 id="r2--os-3-arquivos-que-fazem-o-build-cobrar-as-convenções">R2 — Os 3 arquivos que fazem o build cobrar as convenções</h1>
-<p><strong>Revisão de sábado, 10/10/2026 · tema T1 (qualidade no build) · Marco M1 · leitura: ~20 min</strong></p>
-<p>Esta folha existe para você estudar <strong>sozinho</strong>. Ela responde, nesta ordem: o que é, <strong>o que o
-desenvolvedor escreve em cada arquivo</strong>, como decidir onde escrever, o que isso custa, quais erros
-aparecem e um exercício para você fazer. A investigação longa da revisão (os 9 experimentos) fica fora
-daqui; no fim há só o que ela provou e o que <strong>não</strong> provou.</p>
+<p><strong>Revisão de sábado, 10/10/2026 · tema T1 (qualidade no build) · Marco M1 · leitura: ~25 min</strong></p>
+<p>O melhor caminho para aprender estes arquivos não é copiar um modelo enorme da internet. É entender
+<strong>que problema cada um resolve</strong>, <strong>o que você escreve nele</strong> e <strong>quanto isso custa</strong> para o time. Esta
+folha vai nessa ordem, e no fim diz onde estudar mais e como experimentar sem arriscar o <code>norte</code>.</p>
 <hr />
-<h2 id="1-o-que-é-em-uma-frase">1. O que é, em uma frase</h2>
+<h2 id="1-o-que-são-em-uma-frase-cada">1. O que são, em uma frase cada</h2>
 <p>Três arquivos na raiz da solution fazem <strong>todos os projetos</strong> seguirem as mesmas regras, sem repetir
-configuração em cada <code>.csproj</code>: <code>Directory.Build.props</code>, <code>Directory.Packages.props</code> e <code>.editorconfig</code>.</p>
+configuração em cada <code>.csproj</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Arquivo</th>
+<th>Problema que resolve</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Directory.Build.props</code></td>
+<td>Cada projeto repetia as mesmas propriedades de build (<code>net10.0</code>, <code>Nullable</code>, avisos como erro…). Agora ficam num lugar só.</td>
+</tr>
+<tr>
+<td><code>Directory.Packages.props</code></td>
+<td>Cada projeto escolhia a sua versão do mesmo pacote. Agora a versão mora num lugar só (Central Package Management, CPM).</td>
+</tr>
+<tr>
+<td><code>.editorconfig</code></td>
+<td>Cada pessoa escrevia de um jeito. Agora estilo, nomes e o nível de cada aviso de código são <strong>regras compartilhadas</strong> pelo editor, pelo compilador e pelo CI.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Uma distinção que evita confusão:</strong> o <code>.editorconfig</code> não substitui o compilador, os testes nem as regras
+de negócio. Ele configura editor, formatador e analisadores. E ele mistura <strong>duas decisões diferentes</strong>:
+uma é a <strong>convenção de escrita</strong> (ex.: arquivo com <code>namespace X;</code>); a outra é a <strong>severidade</strong> do
+diagnóstico que acusa o desvio (ex.: isso é só sugestão ou quebra o build?).</p>
 <hr />
 <h2 id="2-o-que-o-desenvolvedor-escreve-em-cada-arquivo">2. O que o desenvolvedor escreve em cada arquivo</h2>
 <table>
@@ -45,7 +70,7 @@ configuração em cada <code>.csproj</code>: <code>Directory.Build.props</code>,
 <tr>
 <td><code>Directory.Build.props</code></td>
 <td>Propriedades que valem para <strong>todos</strong> os projetos: <code>TargetFramework</code> (<code>net10.0</code>), <code>Nullable</code>, <code>ImplicitUsings</code>, <code>TreatWarningsAsErrors</code>, <code>AnalysisLevel</code>, <code>AnalysisMode</code>, <code>EnforceCodeStyleInBuild</code>.</td>
-<td>Quase nunca: na criação da solution e quando o time decide mudar a regra para todos (isso vira ADR).</td>
+<td>Quase nunca: na criação da solution e quando o time decide mudar a regra para todos (vira ADR).</td>
 </tr>
 <tr>
 <td><code>Directory.Packages.props</code></td>
@@ -54,7 +79,7 @@ configuração em cada <code>.csproj</code>: <code>Directory.Build.props</code>,
 </tr>
 <tr>
 <td><code>.editorconfig</code></td>
-<td>Regras de estilo e de nome, e o <strong>nível</strong> (suggestion, warning, error) de cada uma; e as <strong>exceções</strong>, cada uma com o motivo.</td>
+<td>Regras de estilo e de nome, o <strong>nível</strong> de cada uma e as <strong>exceções</strong>, cada exceção com o motivo.</td>
 <td>Raramente: quando uma regra atrapalha de verdade, ou quando você quer cobrar uma regra a mais.</td>
 </tr>
 <tr>
@@ -66,8 +91,7 @@ configuração em cada <code>.csproj</code>: <code>Directory.Build.props</code>,
 </table>
 <p><strong>O que nunca se escreve:</strong> versão de pacote dentro do <code>.csproj</code>; <code>NoWarn</code>; <code>#pragma warning disable</code>.
 Exceção é sempre uma linha no <code>.editorconfig</code>, com o motivo (ADR-004).</p>
-<hr />
-<h2 id="3-a-regra-de-decisão-onde-eu-escrevo-isto">3. A regra de decisão: onde eu escrevo isto?</h2>
+<h3 id="onde-eu-escrevo-isto">Onde eu escrevo isto?</h3>
 <p>Faça as perguntas <strong>nesta ordem</strong> e pare na primeira resposta &quot;sim&quot;:</p>
 <ol>
 <li>É um <strong>número de versão de pacote</strong>? → <code>Directory.Packages.props</code>.</li>
@@ -76,17 +100,139 @@ Exceção é sempre uma linha no <code>.editorconfig</code>, com o motivo (ADR-0
 <li>É <strong>só deste projeto</strong>? → o <code>.csproj</code> dele.</li>
 </ol>
 <hr />
-<h2 id="4-como-o-msbuild-escolhe-qual-arquivo-usar">4. Como o MSBuild escolhe qual arquivo usar</h2>
+<h2 id="3-como-ler-uma-linha-de-configuração">3. Como ler uma linha de configuração</h2>
+<p>Cada linha diz três coisas: <strong>onde</strong> vale, <strong>o que</strong> configura e <strong>com que valor</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Linha</th>
+<th>Onde vale</th>
+<th>O que configura</th>
+<th>Valor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>[*.cs]</code></td>
+<td>seção: só arquivos <code>.cs</code> abaixo daquele <code>.editorconfig</code></td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>csharp_style_namespace_declarations = file_scoped:warning</code></td>
+<td>na seção acima</td>
+<td><strong>preferência de estilo</strong>: <code>namespace X;</code></td>
+<td><code>file_scoped</code> (o estilo) + <code>warning</code> (a severidade)</td>
+</tr>
+<tr>
+<td><code>dotnet_diagnostic.IDE0161.severity = warning</code></td>
+<td>na seção acima</td>
+<td><strong>só a severidade</strong> do diagnóstico IDE0161</td>
+<td><code>warning</code></td>
+</tr>
+<tr>
+<td><code>&lt;PackageVersion Include=&quot;xunit&quot; Version=&quot;2.9.3&quot; /&gt;</code></td>
+<td>solution inteira (<code>Directory.Packages.props</code>)</td>
+<td>a versão central do <code>xunit</code></td>
+<td><code>2.9.3</code></td>
+</tr>
+<tr>
+<td><code>&lt;TreatWarningsAsErrors&gt;true&lt;/TreatWarningsAsErrors&gt;</code></td>
+<td>todos os projetos (<code>Directory.Build.props</code>)</td>
+<td>aviso vira erro</td>
+<td><code>true</code></td>
+</tr>
+</tbody>
+</table>
+<p>As duas linhas do meio mostram a distinção da Seção 1: a primeira escolhe o <strong>estilo</strong> e já traz a
+severidade junto (<code>:warning</code>); a segunda mexe <strong>só na severidade</strong>. Não basta conhecer o nome da
+propriedade: leia a definição e os exemplos da regra na documentação (Seção 8).</p>
+<h3 id="os-níveis-de-severidade">Os níveis de severidade</h3>
+<table>
+<thead>
+<tr>
+<th>Valor</th>
+<th>Efeito no editor</th>
+<th>No build</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>none</code></td>
+<td>desliga a regra</td>
+<td>nada</td>
+</tr>
+<tr>
+<td><code>silent</code></td>
+<td>sem aviso visível; pode oferecer a correção</td>
+<td>nada</td>
+</tr>
+<tr>
+<td><code>suggestion</code></td>
+<td>sugere a mudança</td>
+<td>normalmente não aparece na saída do build</td>
+</tr>
+<tr>
+<td><code>warning</code></td>
+<td>aviso</td>
+<td><strong>vira erro</strong> com <code>TreatWarningsAsErrors=true</code> (o caso do Norte)</td>
+</tr>
+<tr>
+<td><code>error</code></td>
+<td>erro</td>
+<td>quebra o build</td>
+</tr>
+</tbody>
+</table>
+<p>(<code>suggestion</code> e <code>silent</code> ficarem fora da saída do build é o comportamento descrito na documentação; <strong>não</strong>
+foi testado na R2.)</p>
+<hr />
+<h2 id="4-o-que-decide-se-uma-regra-de-estilo-ide-roda-no-build">4. O que decide se uma regra de estilo (IDE) roda no build</h2>
+<p>O que aparece <strong>no editor</strong> e o que é verificado <strong>no build</strong> não são a mesma coisa. Provado na R2:</p>
+<ol>
+<li>A regra só roda no build com <code>EnforceCodeStyleInBuild=true</code> (com <code>false</code>, as IDE somem do build).</li>
+<li>E a própria regra precisa permitir rodar no build.</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Regra</th>
+<th>Roda no build?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IDE0003 (<code>this.</code>), IDE0001, IDE0002, IDE0009</td>
+<td><strong>Nunca</strong>, mesmo em <code>warning</code></td>
+</tr>
+<tr>
+<td>IDE0161 (namespace de arquivo), IDE1006 (nomes), IDE0044 (<code>readonly</code>)</td>
+<td>Sim</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Armadilha que custou tempo na R2:</strong> a IDE0003 em <code>warning</code> &quot;não acusou nada&quot;. A configuração estava
+certa; a regra <strong>nunca roda no build</strong>. Antes de culpar a configuração, faça um <strong>controle</strong>: teste uma
+regra que roda (IDE0161) com a mesma configuração.</p>
+<p><strong>Duas formas de dar nível, e as duas valem no build</strong> (para regras que rodam): <code>opcao = valor:warning</code>
+e <code>dotnet_diagnostic.ID.severity = warning</code>. Isso corrige a nota antiga do guia 4.2.</p>
+<p><strong>Regras de nome (IDE1006):</strong> cada regra de nome tem a sua severidade, mas é a linha
+<code>dotnet_diagnostic.IDE1006.severity</code> que decide o que acontece <strong>no build</strong>. A página oficial de
+<a href="https://learn.microsoft.com/pt-br/dotnet/fundamentals/code-analysis/style-rules/naming-rules">regras de nomenclatura</a>
+diz o mesmo: a severidade dentro da regra de nome só vale no editor.</p>
+<hr />
+<h2 id="5-como-o-msbuild-escolhe-qual-arquivo-usar">5. Como o MSBuild escolhe qual arquivo usar</h2>
 <p>Cada projeto <strong>sobe as pastas</strong> a partir da sua e usa <strong>o primeiro</strong> <code>Directory.Build.props</code> (e
 <code>Directory.Packages.props</code>) que encontrar. O de cima <strong>não</strong> é herdado sozinho: o mais próximo &quot;esconde&quot;
 o outro. Para herdar é preciso pedir (<code>Import</code> com <code>GetPathOfFileAbove</code>, ou
 <code>dotnet new buildprops --inherit</code>).</p>
-<p>O <code>.editorconfig</code> é diferente: <strong>todos</strong> os arquivos do caminho valem, até um com <code>root = true</code>.
+<p>O <code>.editorconfig</code> é diferente: <strong>todos</strong> os arquivos do caminho valem, até um com <code>root = true</code>
+(que impede a herança de arquivos de pastas superiores, mas continua valendo para as subpastas).
 Dentro do mesmo arquivo a linha <strong>mais abaixo</strong> vence; entre arquivos, o <strong>mais perto do <code>.cs</code></strong> vence.
 Uma linha global colada <strong>depois</strong> de <code>[tests/**.cs]</code> passa a valer <strong>só</strong> nos testes, e o build de
 produção deixa de cobrar sem avisar. Regra global fica <strong>antes</strong> de qualquer <code>[seção]</code>.</p>
 <hr />
-<h2 id="5-o-preço">5. O preço</h2>
+<h2 id="6-o-preço">6. O preço</h2>
 <table>
 <thead>
 <tr>
@@ -111,10 +257,14 @@ produção deixa de cobrar sem avisar. Regra global fica <strong>antes</strong> 
 <td>Exceção no <code>.editorconfig</code></td>
 <td>cada exceção é dívida: precisa de motivo escrito, senão vira buraco</td>
 </tr>
+<tr>
+<td><code>.editorconfig</code> copiado inteiro de outro lugar</td>
+<td>regras que você não entende viram erro no seu build (o gerado pelo template, com 389 linhas, quebrou o Norte com a IDE0044)</td>
+</tr>
 </tbody>
 </table>
 <hr />
-<h2 id="6-erros-que-você-vai-ver">6. Erros que você vai ver</h2>
+<h2 id="7-erros-que-você-vai-ver">7. Erros que você vai ver</h2>
 <table>
 <thead>
 <tr>
@@ -146,32 +296,34 @@ produção deixa de cobrar sem avisar. Regra global fica <strong>antes</strong> 
 </tr>
 <tr>
 <td><strong>IDE0044</strong></td>
-<td>campo que poderia ser <code>readonly</code> (veio no <code>.editorconfig</code> gerado pelo template)</td>
-<td>ajustar a opção no arquivo</td>
+<td>campo que poderia ser <code>readonly</code></td>
+<td>ajustar a opção ou o código</td>
 </tr>
 </tbody>
 </table>
 <p><strong>Perigo silencioso:</strong> um <code>Directory.Packages.props</code> <strong>sem <code>&lt;Project&gt;</code> na raiz</strong> é ignorado sem erro.
 O CPM parece ligado e não está.</p>
 <hr />
-<h2 id="7-duas-verdades-sobre-as-regras-de-estilo-ide">7. Duas verdades sobre as regras de estilo (IDE)</h2>
+<h2 id="8-onde-estudar-nesta-ordem">8. Onde estudar (nesta ordem)</h2>
 <ol>
-<li>Elas só rodam no build com <code>EnforceCodeStyleInBuild=true</code> <strong>e</strong> se a própria regra permite rodar no
-build. IDE0003, IDE0001, IDE0002 e IDE0009 <strong>nunca</strong> rodam no build; IDE0161 e IDE1006 rodam.
-Se uma regra &quot;não acusou nada&quot;, antes de culpar a configuração confirme que a regra <strong>roda</strong> no build.</li>
-<li>Dois jeitos de dar nível a uma regra, e <strong>os dois valem no build</strong>:</li>
+<li><strong>Catálogo das regras de estilo</strong> — cada regra, seu código, as opções e exemplos de antes e depois:
+<a href="https://learn.microsoft.com/pt-br/dotnet/fundamentals/code-analysis/style-rules/">Regras de estilo de código do .NET</a>.</li>
+<li><strong>Como configurar e dar severidade</strong> — a sintaxe <code>dotnet_diagnostic.ID.severity</code> e a precedência:
+<a href="https://learn.microsoft.com/pt-br/dotnet/fundamentals/code-analysis/configuration-files">Arquivos de configuração das regras de análise</a>
+e <a href="https://learn.microsoft.com/pt-br/dotnet/fundamentals/code-analysis/configuration-options">Opções de configuração</a>
+(inclui <code>AnalysisMode</code> e a configuração por categoria).</li>
+<li><strong>Nomes</strong> — grupos de símbolos, estilos de nome e severidade:
+<a href="https://learn.microsoft.com/pt-br/dotnet/fundamentals/code-analysis/style-rules/naming-rules">Regras de nomenclatura</a>.</li>
+<li><strong>Um arquivo real de projeto grande</strong> — como a equipe do .NET organiza convenções e exceções:
+<a href="https://github.com/dotnet/runtime/blob/main/.editorconfig"><code>.editorconfig</code> do .NET Runtime</a>.</li>
 </ol>
-<pre class="highlight"><code><span class="na">csharp_style_namespace_declarations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">file_scoped:warning</span>
-<span class="na">dotnet_diagnostic.IDE0161.severity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">warning</span>
-</code></pre>
-
-<p>(Isso corrige a nota antiga do guia 4.2.)</p>
-<p><strong>Cuidado com arquivo gerado:</strong> o <code>dotnet new editorconfig</code> cria 389 linhas, algumas com <code>:warning</code>.
-No Norte (aviso = erro) isso quebra o build. Arquivo gerado se <strong>lê inteiro</strong> antes de entrar no
-repositório.</p>
+<p><strong>Ressalva:</strong> o arquivo do Runtime é uma referência de como um projeto grande trabalha, não um modelo para
+copiar. Ele tem decisões e exceções que são do repositório deles.</p>
+<p>(Links conferidos em 11/10/2026. A página de configuração não trata do <code>EnforceCodeStyleInBuild</code>; o que
+esta folha diz sobre ele vem dos experimentos da R2.)</p>
 <hr />
-<h2 id="8-exercício-para-você-fazer-sozinho-≈-15-min-em-dtemp-norte">8. Exercício para você fazer sozinho (≈ 15 min, em <code>D:\temp-norte</code>)</h2>
-<p>Em uma pasta descartável, <strong>sem tocar no <code>norte</code></strong>:</p>
+<h2 id="9-como-experimentar-em-dtemp-norte-sem-tocar-no-norte">9. Como experimentar (em <code>D:\temp-norte</code>, sem tocar no <code>norte</code>)</h2>
+<p>Faça com o Git disponível, para ver o diff e desfazer.</p>
 <ol>
 <li>Crie uma solution com um projeto de biblioteca.</li>
 <li>Crie um <code>Directory.Packages.props</code> com <code>ManagePackageVersionsCentrally=true</code> e adicione um pacote
@@ -179,12 +331,53 @@ qualquer com <code>dotnet add package</code>. Abra os dois arquivos e veja <stro
 <li>Escreva <code>Version=&quot;...&quot;</code> à mão dentro do <code>PackageReference</code> do <code>.csproj</code> e rode <code>dotnet build</code>.
 Anote o código do erro e a frase da mensagem.</li>
 <li>Desfaça o passo 3 e, no <code>Directory.Packages.props</code>, apague a linha do pacote. Rode o build e anote
-o novo código.</li>
+o novo código. (Conferência: os códigos do 3 e do 4 são <strong>NU1008</strong> e <strong>NU1010</strong>.)</li>
+<li>Crie um <code>.editorconfig</code> pequeno com <code>root = true</code> e a regra de namespace em <code>warning</code>. Escreva um
+<code>namespace X { }</code> em bloco e rode o build. Depois troque para <code>none</code> e rode de novo.</li>
+<li>Registre o que decidiu: o que a regra faz, por que você a quer, qual o impacto no código e qual
+severidade escolheu.</li>
 </ol>
-<p>Conferência: os códigos do 3 e do 4 são <strong>NU1008</strong> e <strong>NU1010</strong>. Se tiver dúvida de qual é qual,
-releia a Seção 6.</p>
 <hr />
-<h2 id="9-o-que-a-revisão-provou-e-o-que-não-provou">9. O que a revisão provou e o que NÃO provou</h2>
+<h2 id="10-em-que-ordem-estudar-o-editorconfig">10. Em que ordem estudar o <code>.editorconfig</code></h2>
+<p>Não comece pelos nomes nem tente estudar todas as regras de uma vez.</p>
+<table>
+<thead>
+<tr>
+<th>Etapa</th>
+<th>O que estudar</th>
+<th>Pergunta que você deve responder</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Formatação (indentação, fim de arquivo, quebras de linha)</td>
+<td>Como deixar o código visualmente consistente?</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Convenções de C# (<code>var</code>, chaves, namespace de arquivo)</td>
+<td>Qual estilo o time adota e por quê?</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Nomenclatura</td>
+<td>Como padronizar nomes de classes, interfaces, campos e métodos?</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Diagnósticos <code>IDE</code> e <code>CA</code></td>
+<td>Quais problemas são sugestão, aviso ou erro?</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Build e CI</td>
+<td>Como garantir que as regras escolhidas sejam verificadas sozinhas?</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="11-o-que-a-revisão-provou-e-o-que-não-provou">11. O que a revisão provou e o que NÃO provou</h2>
 <p><strong>Provado, com saída vista:</strong> a subida de pastas dos arquivos; NU1008 e NU1010; a CA1716 no <code>Zero.Lib</code>;
 as duas formas de severidade valendo no build; IDE0003 nunca rodando no build; o <code>.editorconfig</code> gerado
 quebrando o Norte; o <code>.csproj</code> igual no VS e no CLI, com <code>.cs</code> diferentes.</p>
@@ -206,12 +399,12 @@ quebrando o Norte; o <code>.csproj</code> igual no VS e no CLI, com <code>.cs</c
 <td>não testado</td>
 </tr>
 <tr>
-<td>Para que servem os <code>..._warnaserror.globalconfig</code> do SDK</td>
-<td>só o cabeçalho foi lido</td>
+<td><code>suggestion</code> e <code>silent</code> ausentes da saída do build</td>
+<td>comportamento documentado, não testado</td>
 </tr>
 <tr>
-<td>Lista do Roslyn principal × lista do SDK 10.0.401</td>
-<td>podem divergir</td>
+<td>Para que servem os <code>..._warnaserror.globalconfig</code> do SDK</td>
+<td>só o cabeçalho foi lido</td>
 </tr>
 <tr>
 <td>&quot;O VS chama o CLI&quot;</td>
@@ -224,26 +417,28 @@ quebrando o Norte; o <code>.csproj</code> igual no VS e no CLI, com <code>.cs</c
 <ol>
 <li>Em qual arquivo vai a versão de um pacote novo? E o que fica no <code>.csproj</code>?</li>
 <li>Você quer mudar <code>Nullable</code> para todos os projetos. Em qual arquivo?</li>
-<li>Dois <code>Directory.Build.props</code> (um na raiz, outro na pasta do projeto): o que o projeto usa?</li>
+<li>Na linha <code>csharp_style_namespace_declarations = file_scoped:warning</code>, o que é <code>file_scoped</code> e o que é
+<code>warning</code>?</li>
 <li><code>NU1008</code> e <code>NU1010</code>: qual a diferença de causa?</li>
 <li>Uma linha global foi colada depois de <code>[tests/**.cs]</code>. Onde ela vale?</li>
 <li>A IDE0003 em <code>warning</code> não acusou nada no build. A configuração está errada?</li>
 <li>Por que um <code>Directory.Packages.props</code> sem <code>&lt;Project&gt;</code> na raiz é perigoso?</li>
-<li>Por que o <code>.editorconfig</code> gerado pelo template quebra o build do Norte?</li>
+<li>Por que não vale copiar um <code>.editorconfig</code> grande de outro projeto?</li>
 </ol>
 <h3 id="respostas">Respostas</h3><details class="respostas"><summary>Mostrar respostas</summary>
 <ol>
 <li>No <code>Directory.Packages.props</code> (<code>PackageVersion</code>). No <code>.csproj</code> fica só o <code>PackageReference</code>, <strong>sem
 <code>Version</code></strong>.</li>
 <li>No <code>Directory.Build.props</code>: é configuração de build para todos os projetos.</li>
-<li>O <strong>mais próximo</strong> (o da pasta do projeto). O de cima só vale se o mais próximo o importar.</li>
+<li><code>file_scoped</code> é o <strong>estilo</strong> (namespace com <code>;</code>); <code>warning</code> é a <strong>severidade</strong> do desvio.</li>
 <li>NU1008: <code>Version</code> dentro do <code>PackageReference</code> com CPM. NU1010: falta a <code>PackageVersion</code> (ou ela está
 no arquivo errado).</li>
 <li><strong>Só</strong> nos arquivos que casam <code>[tests/**.cs]</code>; o código de produção deixa de ser cobrado.</li>
 <li>Não necessariamente: a IDE0003 nunca roda no build. Confirma-se com uma regra que roda (IDE0161)
 com a mesma configuração.</li>
 <li>O CPM <strong>não é aplicado e não dá erro</strong>: as versões deixam de ser centralizadas em silêncio.</li>
-<li>Ele traz opções com <code>:warning</code> (ex.: <code>readonly</code>); com <code>TreatWarningsAsErrors</code> viram erro (IDE0044).</li>
+<li>Porque traz regras que você não decidiu: com aviso = erro, uma delas (como a IDE0044) quebra o seu
+build e você não sabe por quê. Use a documentação como catálogo e construa o seu arquivo regra a regra.</li>
 </ol>
 </details>
 </article>
