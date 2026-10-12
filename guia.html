@@ -43,16 +43,18 @@ tente explicar em voz alta a linha &quot;Em uma frase&quot; e a seção &quot;Na
 <li>🔎 <strong>Saber onde encontrar</strong> — sintaxe exata, nome de <code>using</code>, comando de CLI. Qualquer sênior
 consulta; o <code>Ctrl+.</code> e a documentação resolvem.</li>
 </ul>
-<p><strong>Última atualização:</strong> 09/10/2026 (S15 — Parte 5 criada, entradas 5.1 a 5.3) · <strong>Versão:</strong> 1.8</p>
+<p><strong>Última atualização:</strong> 12/10/2026 (S16 — Parte 6 criada, entradas 6.1 a 6.8) · <strong>Versão:</strong> 1.9</p>
 <hr />
 <h2 id="onde-estamos-atualizado-a-cada-sessão">Onde estamos (atualizado a cada sessão)</h2>
-<p><strong>Fim da S15:</strong> a sessão saiu do código e foi para a <strong>borda do repositório</strong>: o GitHub passou a
-compilar e testar a <code>main</code> e cada PR sozinho (<a href="parte-5.html#51-ci-básico-com-github-actions">5.1</a>), com a prova do verde e do
-vermelho. Também se fixou o Git das <strong>três cópias de uma branch</strong> (<a href="parte-5.html#52-mover-um-commit-para-outra-branch-e-as-três-cópias-de-uma-branch">5.2</a>).
-Os níveis do código seguem como na S14: a <strong>borda entre a funcionalidade e o host</strong> (tratamento de erros,
-<a href="parte-3.html#315-erros-da-api-em-formato-padr%C3%A3o-addproblemdetails-useexceptionhandler-e-usestatuscodepages">3.15</a>).
-Próximo passo de M1: <strong>EF Core 10 — o <code>Catalogo</code> grava no Postgres</strong> (nível 3, a funcionalidade passa a
-ter persistência real; o repositório em memória sai).</p>
+<p><strong>Fim da S16:</strong> o <code>Catalogo</code> <strong>grava no Postgres de verdade</strong>. A funcionalidade passou a ter
+persistência real: a entidade virou classe (<a href="parte-6.html#62-a-entidade-vira-classe-adr-005">6.2</a>), ganhou <code>DbContext</code> e
+mapeamento (<a href="parte-6.html#63-o-dbcontext-e-o-mapeamento-da-tabela">6.3</a>), a tabela nasceu de uma migration
+(<a href="parte-6.html#64-migrations-a-tabela-criada-pela-ferramenta">6.4</a>), cada módulo tem o seu schema (<a href="parte-6.html#65-um-schema-do-postgres-por-módulo-adr-006">6.5</a>) e o
+repositório e os endpoints ficaram assíncronos (<a href="parte-6.html#66-repositório-e-endpoints-assíncronos">6.6</a>). O repositório em
+memória saiu. Ficou aberto: o SKU duplicado ainda devolve 500 (o certo é 409) e nenhum teste
+automatizado toca o banco.
+Próximo passo de M1: <strong>S17</strong> — opção A (409 no SKU duplicado + teste com Postgres real) ou
+opção B (Pedidos com persistência), conforme a escolha do aluno.</p>
 <hr />
 <h2 id="partes">Partes</h2>
 <table>
@@ -93,6 +95,12 @@ ter persistência real; o repositório em memória sai).</p>
 <td><a href="parte-5.html"><code>GUIA-DOTNET-P5.md</code></a></td>
 <td>Parte 5 — o GitHub confere o código</td>
 <td>S15–</td>
+<td>v1.0</td>
+</tr>
+<tr>
+<td><a href="parte-6.html"><code>GUIA-DOTNET-P6.md</code></a></td>
+<td>Parte 6 — o código grava no banco</td>
+<td>S16–</td>
 <td><strong>v1.0 (novo)</strong></td>
 </tr>
 </tbody>
@@ -161,6 +169,19 @@ da parte com a âncora.</p>
 <li>Teste-se e respostas (no fim da Parte 5)</li>
 </ul>
 </li>
+<li><a href="parte-6.html#guia-dotnet--parte-6-o-c%C3%B3digo-grava-no-banco">Parte 6 — O código grava no banco (S16–)</a>
+<ul>
+<li><a href="parte-6.html#61-o-postgres-local-a-connection-string-e-o-provider">6.1</a> <strong>O Postgres local, a connection string e o provider</strong></li>
+<li><a href="parte-6.html#62-a-entidade-vira-classe-adr-005">6.2</a> <strong>A entidade vira classe (ADR-005)</strong></li>
+<li><a href="parte-6.html#63-o-dbcontext-e-o-mapeamento-da-tabela">6.3</a> <strong>O <code>DbContext</code> e o mapeamento da tabela</strong></li>
+<li><a href="parte-6.html#64-migrations-a-tabela-criada-pela-ferramenta">6.4</a> <strong>Migrations: a tabela criada pela ferramenta</strong></li>
+<li><a href="parte-6.html#65-um-schema-do-postgres-por-módulo-adr-006">6.5</a> <strong>Um schema do Postgres por módulo (ADR-006)</strong></li>
+<li><a href="parte-6.html#66-repositório-e-endpoints-assíncronos">6.6</a> <strong>Repositório e endpoints assíncronos</strong></li>
+<li><a href="parte-6.html#67-pastas-do-módulo-e-rota-por-recurso">6.7</a> <strong>Pastas do módulo e rota por recurso</strong></li>
+<li><a href="parte-6.html#68-diagnóstico-os-problemas-da-s16-e-como-achar-a-causa">6.8</a> <strong>Diagnóstico: os problemas da S16 e como achar a causa</strong></li>
+<li>Juntando tudo, Teste-se e respostas (no fim da Parte 6)</li>
+</ul>
+</li>
 </ul>
 <hr />
 <h2 id="histórico-do-guia">Histórico do guia</h2>
@@ -213,11 +234,16 @@ da parte com a âncora.</p>
 <td>09/10/2026 (S15)</td>
 <td><strong>Parte 5 criada</strong> (<code>GUIA-DOTNET-P5.md</code>, entradas 5.1–5.3: CI básico com GitHub Actions, três cópias de uma branch, diagnóstico da S15); &quot;onde estamos&quot; na borda do repositório</td>
 </tr>
+<tr>
+<td>1.9</td>
+<td>12/10/2026 (S16)</td>
+<td><strong>Parte 6 criada</strong> (<code>GUIA-DOTNET-P6.md</code>, entradas 6.1–6.8: Postgres local e provider, entidade como classe, <code>DbContext</code> e mapeamento, migrations, schema por módulo, repositório assíncrono, pastas e rota por recurso, diagnóstico da S16); &quot;onde estamos&quot; na persistência real do <code>Catalogo</code></td>
+</tr>
 </tbody>
 </table>
 
 </article>
-<footer class="rodape">Atualizado em 11/10/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 12/10/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="assets/search-index.js"></script>

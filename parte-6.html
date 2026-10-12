@@ -1,0 +1,1182 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parte 6 — O código grava no banco · Norte · Estudo</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/codigo.css">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+</head>
+<body data-chave="parte-6.html" data-prefixo="">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="index.html">Início</a><a href="guia.html" class=ativo>Guia</a><a href="estudos.html">Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#guia-dotnet--parte-6-o-código-grava-no-banco" data-id="guia-dotnet--parte-6-o-código-grava-no-banco">GUIA-DOTNET — Parte 6: O código grava no banco</a><a class="n2" href="#61-o-postgres-local-a-connection-string-e-o-provider" data-id="61-o-postgres-local-a-connection-string-e-o-provider">6.1 O Postgres local, a connection string e o provider</a><a class="n2" href="#62-a-entidade-vira-classe-adr-005" data-id="62-a-entidade-vira-classe-adr-005">6.2 A entidade vira classe (ADR-005)</a><a class="n2" href="#63-o-dbcontext-e-o-mapeamento-da-tabela" data-id="63-o-dbcontext-e-o-mapeamento-da-tabela">6.3 O DbContext e o mapeamento da tabela</a><a class="n2" href="#64-migrations-a-tabela-criada-pela-ferramenta" data-id="64-migrations-a-tabela-criada-pela-ferramenta">6.4 Migrations: a tabela criada pela ferramenta</a><a class="n2" href="#65-um-schema-do-postgres-por-módulo-adr-006" data-id="65-um-schema-do-postgres-por-módulo-adr-006">6.5 Um schema do Postgres por módulo (ADR-006)</a><a class="n2" href="#66-repositório-e-endpoints-assíncronos" data-id="66-repositório-e-endpoints-assíncronos">6.6 Repositório e endpoints assíncronos</a><a class="n2" href="#67-pastas-do-módulo-e-rota-por-recurso" data-id="67-pastas-do-módulo-e-rota-por-recurso">6.7 Pastas do módulo e rota por recurso</a><a class="n2" href="#juntando-tudo-parte-6" data-id="juntando-tudo-parte-6">Juntando tudo (Parte 6)</a><a class="n2" href="#68-diagnóstico-os-problemas-da-s16-e-como-achar-a-causa" data-id="68-diagnóstico-os-problemas-da-s16-e-como-achar-a-causa">6.8 Diagnóstico: os problemas da S16 e como achar a causa</a><a class="n2" href="#teste-se-sem-consultar-uma-pergunta-por-vez" data-id="teste-se-sem-consultar-uma-pergunta-por-vez">Teste-se (sem consultar, uma pergunta por vez)</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a></aside>
+<main class="conteudo"><article>
+<h1 id="guia-dotnet--parte-6-o-código-grava-no-banco">GUIA-DOTNET — Parte 6: O código grava no banco</h1>
+<p><strong>Sessão:</strong> S16 (12/10/2026) · <strong>Versão:</strong> 1.0 · <strong>Entradas:</strong> 6.1 a 6.8 (6.8 = diagnóstico) + juntando tudo + teste-se</p>
+<p>Até a S15 o <code>Catalogo</code> guardava as fichas numa lista em memória: a API reiniciava e o cadastro sumia. Esta parte
+explica o que entrou para a ficha <strong>sobreviver</strong>: o EF Core 10 falando com o PostgreSQL, a tabela criada por
+<em>migration</em>, um schema por módulo e a reorganização das pastas do módulo. Todo exemplo vem do código do Norte.</p>
+<p><strong>Onde estamos no mapa dos níveis</strong> (<a href="parte-0-1.html#parte-0--o-mapa-dos-n%C3%ADveis">Parte 0</a>): a
+funcionalidade passou a ter <strong>persistência real</strong>. O caminho da requisição ficou completo:
+endpoint → validação → repositório → <code>DbContext</code> → banco.</p>
+<p><strong>Ordem em que as peças foram montadas na S16</strong> (cada uma é uma entrada abaixo):</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Peça</th>
+<th>Entrada</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>um Postgres rodando, a connection string na configuração, o provider no projeto</td>
+<td><a href="#61-o-postgres-local-a-connection-string-e-o-provider">6.1</a></td>
+</tr>
+<tr>
+<td>2</td>
+<td>a entidade vira classe</td>
+<td><a href="#62-a-entidade-vira-classe-adr-005">6.2</a></td>
+</tr>
+<tr>
+<td>3</td>
+<td>o <code>DbContext</code> e o mapeamento da tabela</td>
+<td><a href="#63-o-dbcontext-e-o-mapeamento-da-tabela">6.3</a></td>
+</tr>
+<tr>
+<td>4</td>
+<td>a migration que cria a tabela</td>
+<td><a href="#64-migrations-a-tabela-criada-pela-ferramenta">6.4</a></td>
+</tr>
+<tr>
+<td>5</td>
+<td>o schema do módulo</td>
+<td><a href="#65-um-schema-do-postgres-por-módulo-adr-006">6.5</a></td>
+</tr>
+<tr>
+<td>6</td>
+<td>repositório e endpoints assíncronos</td>
+<td><a href="#66-repositório-e-endpoints-assíncronos">6.6</a></td>
+</tr>
+<tr>
+<td>7</td>
+<td>pastas do módulo e rota por recurso</td>
+<td><a href="#67-pastas-do-módulo-e-rota-por-recurso">6.7</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><a id="g6-1"></a></p>
+<h2 id="61-o-postgres-local-a-connection-string-e-o-provider">6.1 O Postgres local, a connection string e o provider<button class="estudada" data-id="61-o-postgres-local-a-connection-string-e-o-provider" type="button">Marcar como estudada</button></h2>
+<p><strong>De → para</strong></p>
+<table>
+<thead>
+<tr>
+<th>Como aparece nas vagas</th>
+<th>Nome no laboratório</th>
+<th>O mundo do aluno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>connection string</em>, <em>configuration providers</em>, <em>EF Core provider</em></td>
+<td><code>ConnectionStrings:Norte</code>, <code>Npgsql.EntityFrameworkCore.PostgreSQL</code></td>
+<td><code>appsettings.json</code> + <code>Startup.ConfigureServices</code> com <code>UseSqlServer</code>; no Norte o banco é Postgres e o provider é Npgsql</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Em uma frase:</strong> para gravar, o programa precisa de três coisas fora do código C#: um banco rodando, o texto que
+diz como entrar nele (a <em>connection string</em>) e o pacote que ensina o EF Core a falar com esse banco (o <em>provider</em>).</p>
+<p><strong>Pergunta que responde:</strong> de onde a API tira onde o banco está e como entrar nele?</p>
+<table>
+<thead>
+<tr>
+<th>Como era (.NET 6)</th>
+<th>Como é agora (.NET 10)</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>appsettings.json</code> lido no <code>Startup</code>, <code>services.AddDbContext(o =&gt; o.UseSqlServer(Configuration.GetConnectionString(&quot;X&quot;)))</code></td>
+<td><code>appsettings.Development.json</code> lido pelo <code>Program.cs</code>; o <code>AddCatalogo(builder.Configuration)</code> recebe a configuração e chama <code>UseNpgsql(...)</code></td>
+<td>a configuração já vem carregada pelo host; o módulo <strong>recebe</strong> o <code>IConfiguration</code> na assinatura</td>
+</tr>
+<tr>
+<td>banco instalado na máquina ou compartilhado</td>
+<td>Postgres 18 num container (<code>compose.yaml</code> na raiz)</td>
+<td>o banco do laboratório sobe e some com um comando</td>
+</tr>
+<tr>
+<td>versão do pacote no <code>.csproj</code></td>
+<td>versão no <code>Directory.Packages.props</code> (ADR-004)</td>
+<td>uma versão por pacote, num lugar só</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O que é cada peça no Norte</strong></p>
+<table>
+<thead>
+<tr>
+<th>Peça</th>
+<th>Onde fica</th>
+<th>Observação</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Postgres 18</td>
+<td><code>compose.yaml</code> (raiz): container <code>norte-postgres</code>, porta 5432, volume <code>norte-postgres-dados</code></td>
+<td>no Postgres 18 o volume aponta para <code>/var/lib/postgresql</code>; nas versões até a 17 era <code>/var/lib/postgresql/data</code></td>
+</tr>
+<tr>
+<td>connection string</td>
+<td><code>src/Norte.Api/appsettings.Development.json</code>, seção <code>ConnectionStrings</code>, chave <code>Norte</code></td>
+<td>formato: <code>Host=localhost;Port=5432;Database=norte;Username=norte;Password=&lt;senha do container local&gt;</code></td>
+</tr>
+<tr>
+<td>provider</td>
+<td><code>Npgsql.EntityFrameworkCore.PostgreSQL</code> 10.0.3 no <code>Norte.Catalogo</code></td>
+<td>traz o <code>Microsoft.EntityFrameworkCore</code> 10.0.4 como <strong>dependência transitiva</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Dependência transitiva.</strong> Você não adicionou o <code>Microsoft.EntityFrameworkCore</code>: ele veio dentro do provider.
+Para ver: <code>dotnet list src/Modulos/Catalogo/Norte.Catalogo package --include-transitive</code>. Na S16 a saída mostrou
+o <code>Microsoft.EntityFrameworkCore</code> 10.0.4, junto com <code>Abstractions</code>, <code>Analyzers</code>, <code>Relational</code> e o <code>Npgsql</code>.</p>
+<p><strong>Onde a connection string fica, por ambiente.</strong> O .NET lê a configuração em camadas; a de baixo vence se repetir
+a chave:</p>
+<table>
+<thead>
+<tr>
+<th>Camada</th>
+<th>Vale em</th>
+<th>Pode ter senha?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>appsettings.json</code></td>
+<td>todo ambiente</td>
+<td>não (vai para o git)</td>
+</tr>
+<tr>
+<td><code>appsettings.{Ambiente}.json</code></td>
+<td>só naquele ambiente</td>
+<td>só se for descartável (container local)</td>
+</tr>
+<tr>
+<td><code>user-secrets</code></td>
+<td><strong>só <code>Development</code>, na máquina do desenvolvedor</strong></td>
+<td>sim, mas não existe em stage</td>
+</tr>
+<tr>
+<td>variáveis de ambiente</td>
+<td>qualquer ambiente</td>
+<td>sim</td>
+</tr>
+<tr>
+<td>argumentos de linha de comando</td>
+<td>qualquer ambiente</td>
+<td>sim</td>
+</tr>
+</tbody>
+</table>
+<p><code>user-secrets</code> e <code>appsettings</code> não competem: cada ambiente usa as camadas que existem nele. Em stage e produção
+a senha vem por <strong>variável de ambiente</strong> (ou cofre, M6). No Norte de hoje (só <code>Development</code>, banco de container),
+a connection string fica no <code>appsettings.Development.json</code>.</p>
+<p><strong>Por que usamos, qual a alternativa e quanto ela custa</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Connection string no <code>appsettings.Development.json</code> (usado)</th>
+<th>Senha em <code>appsettings.json</code> versionado</th>
+<th>Variável de ambiente já agora</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ganho</td>
+<td>simples; o clone do repositório já roda</td>
+<td>nenhum além de ser o mais curto</td>
+<td>senha fora do git em qualquer ambiente</td>
+</tr>
+<tr>
+<td><strong>Preço</strong></td>
+<td>só vale porque a senha é de um container local descartável</td>
+<td>a senha fica no histórico do git para sempre; apagar depois é difícil</td>
+<td>cada ambiente precisa ser configurado por quem faz o deploy</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Não confunda:</strong> <em>Options Pattern</em> (<code>IOptions&lt;T&gt;</code>) liga uma <strong>seção</strong> da configuração a uma classe sua; a
+connection string do <code>DbContext</code> segue outro caminho: <code>GetConnectionString(&quot;Norte&quot;)</code> → <code>UseNpgsql(...)</code> → o
+contexto recebe o resultado por um objeto do próprio EF, o <code>DbContextOptions</code>. Os dois usam a configuração por DI,
+mas são mecanismos separados.</p>
+<p><strong>Na entrevista:</strong> &quot;Onde fica a connection string e como muda por ambiente?&quot; — camadas de configuração; <code>user-secrets</code>
+só em desenvolvimento; senha de stage e produção por variável de ambiente ou cofre; nunca senha real no git.</p>
+<p><strong>Erros comuns:</strong> achar que o <code>user-secrets</code> serve para stage; confundir <em>transitivo</em> com &quot;faltou instalar&quot;;
+esquecer que a chave <code>&quot;Norte&quot;</code> do <code>GetConnectionString</code> tem de ser <strong>igual</strong> à do <code>appsettings</code>.</p>
+<p><strong>🧠 saber de cabeça:</strong> as camadas de configuração e qual vale onde; por que senha real não vai para o git; o que é
+dependência transitiva. <strong>🔎 saber onde encontrar:</strong> o formato exato da connection string do Npgsql; o <code>compose.yaml</code>.</p>
+<p><strong>Onde foi visto:</strong> S16. <strong>Status:</strong> visto; a decisão de como ficam os outros ambientes é de M6.</p>
+<hr />
+<p><a id="g6-2"></a></p>
+<h2 id="62-a-entidade-vira-classe-adr-005">6.2 A entidade vira classe (ADR-005)<button class="estudada" data-id="62-a-entidade-vira-classe-adr-005" type="button">Marcar como estudada</button></h2>
+<p><strong>De → para</strong></p>
+<table>
+<thead>
+<tr>
+<th>Como aparece nas vagas</th>
+<th>Nome no laboratório</th>
+<th>O mundo do aluno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>entity</em>, <em>reference equality</em>, <em>change tracking</em></td>
+<td><code>FichaProduto</code> como <code>internal sealed class</code></td>
+<td>classes de modelo com <code>{ get; set; }</code> e construtor vazio</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Em uma frase:</strong> o EF Core precisa tratar <strong>uma ficha do banco como um objeto único</strong> (igualdade por referência);
+o <code>record</code> compara por valor, então a entidade persistida é uma <code>class</code>.</p>
+<p><strong>Pergunta que responde:</strong> posso manter o <code>FichaProduto</code> como <code>record</code> agora que ele vai para o banco?</p>
+<p><strong>O que a documentação diz.</strong> O EF Core usa igualdade por referência para manter uma instância por entidade
+(rastreamento de mudanças, <code>Find</code>). A documentação do C# trata <code>record</code> como inadequado para tipo de entidade e
+avisa que o EF Core não atualiza entidades imutáveis. Hoje (só cadastrar e consultar) o <code>record</code> funcionaria; a
+<strong>primeira alteração</strong> de uma ficha é o ponto de quebra. Um blog de terceiros diz que dá para usar com cuidado:
+é opinião de autor, não regra da Microsoft.</p>
+<table>
+<thead>
+<tr>
+<th>Como era (S11)</th>
+<th>Como é agora (S16)</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>internal sealed record FichaProduto(string Sku, string Descricao, string Ncm)</code></td>
+<td><code>internal sealed class FichaProduto</code> com construtor de três parâmetros e três propriedades com <code>private set</code></td>
+<td>perde-se a igualdade por valor; ganha-se uma entidade que o EF rastreia</td>
+</tr>
+</tbody>
+</table>
+<p><strong>A forma final da classe</strong></p>
+<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">FichaProduto</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="nf">FichaProduto</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">sku</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">descricao</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">ncm</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Sku</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sku</span><span class="p">;</span>
+<span class="w">        </span><span class="n">Descricao</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">descricao</span><span class="p">;</span>
+<span class="w">        </span><span class="n">Ncm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ncm</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Sku</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Descricao</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Ncm</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+<p><strong>Por que assim, ponto a ponto</strong></p>
+<table>
+<thead>
+<tr>
+<th>Escolha</th>
+<th>Motivo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>construtor com parâmetros</td>
+<td>o EF liga cada parâmetro à propriedade de mesmo nome (parâmetro em camelCase, propriedade em PascalCase) e chama esse construtor; o construtor também garante que a ficha nasce completa (substitui o <code>= &quot;&quot;</code>)</td>
+</tr>
+<tr>
+<td><code>private set</code></td>
+<td>propriedade <strong>sem</strong> setter não é mapeada por convenção; com <code>private set</code> o EF mapeia e o código de fora não altera a ficha</td>
+</tr>
+<tr>
+<td><strong>sem</strong> construtor vazio</td>
+<td>no EF Core moderno ele <strong>não é exigido</strong>: a documentação diz que, achando um construtor cujos parâmetros casam com propriedades mapeadas, o EF chama esse; o construtor vazio era exigência do EF antigo (idioma antigo)</td>
+</tr>
+<tr>
+<td><code>internal sealed</code></td>
+<td>ADR-002 (fronteira do módulo); <code>sealed</code> porque nada herda da ficha</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Três caminhos e o preço de cada um (ADR-005)</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>O que muda</th>
+<th>Preço</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A) <code>sealed class</code> (escolhido)</strong></td>
+<td>mesmo construtor; propriedades sem alteração por fora</td>
+<td>perde a igualdade por valor; teste que compara fichas com <code>Assert.Equal</code> ou usa <code>with</code> precisa de ajuste</td>
+</tr>
+<tr>
+<td>B) <code>record</code> + classe de persistência separada</td>
+<td>dois tipos e um código que converte entre eles</td>
+<td>dobra o modelo de um módulo que é CRUD (cerimônia)</td>
+</tr>
+<tr>
+<td>C) manter o <code>record</code> e seguir</td>
+<td>nada hoje</td>
+<td>o problema aparece na primeira alteração, com erro mais difícil de entender</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Consequência nos testes.</strong> O teste de unidade do cadastro que comparava a ficha devolvida passou a conferir
+<strong>propriedade por propriedade</strong> (<code>Assert.NotNull</code> + três <code>Assert.Equal</code>). Depois, quando o repositório passou a
+exigir o contexto, esse teste foi apagado (ver 6.6).</p>
+<p><strong>Quando usar e quando não:</strong> entidade persistida pelo EF → classe. <code>record</code> continua certo para <strong>objetos de
+valor</strong> sem identidade e para <strong>contratos de entrada e saída</strong> (<code>*Request</code>).</p>
+<p><strong>Na entrevista:</strong> &quot;Por que não <code>record</code> como entidade do EF?&quot; — igualdade por referência × por valor; rastreamento
+de mudanças; entidade imutável não é atualizada. E o preço: perde-se a igualdade automática.</p>
+<p><strong>Erros comuns:</strong> achar que o EF exige construtor vazio; deixar <code>public set</code> e perder o encapsulamento; esquecer que
+a chave <code>Sku</code> precisa ser declarada (6.3).</p>
+<p><strong>🧠 de cabeça:</strong> por que <code>record</code> não serve de entidade; para que serve o <code>private set</code>. <strong>🔎 onde encontrar:</strong> a regra
+de ligação construtor ↔ propriedade (página de <em>Entity types with constructors</em>, nas fontes abaixo).</p>
+<p><strong>Fontes:</strong> <a href="https://learn.microsoft.com/en-us/ef/core/modeling/constructors">Entity types with constructors</a> ·
+<a href="https://learn.microsoft.com/en-us/ef/core/modeling/entity-types">Entity Types</a></p>
+<p><strong>Onde foi visto:</strong> S16. <strong>Status:</strong> visto; a classe foi escrita pelo aluno com ajuda 3 (esqueleto), na 3ª tentativa.</p>
+<hr />
+<p><a id="g6-3"></a></p>
+<h2 id="63-o-dbcontext-e-o-mapeamento-da-tabela">6.3 O <code>DbContext</code> e o mapeamento da tabela<button class="estudada" data-id="63-o-dbcontext-e-o-mapeamento-da-tabela" type="button">Marcar como estudada</button></h2>
+<p><strong>De → para</strong></p>
+<table>
+<thead>
+<tr>
+<th>Como aparece nas vagas</th>
+<th>Nome no laboratório</th>
+<th>O mundo do aluno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DbContext</code>, <code>DbSet&lt;T&gt;</code>, <em>Fluent API</em>, <code>IEntityTypeConfiguration&lt;T&gt;</code></td>
+<td><code>CatalogoDbContext</code>, <code>FichasProduto</code>, <code>FichaProdutoConfiguration</code></td>
+<td><code>DbContext</code> com <code>OnModelCreating</code> e uma pasta <code>Configuration</code> com uma classe por entidade</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Em uma frase:</strong> o <code>DbContext</code> é a classe que representa a <strong>conversa do programa com o banco</strong>: sabe quais tabelas
+existem (os <code>DbSet</code>) e é quem grava e lê os objetos nelas; o mapeamento diz como cada classe vira tabela.</p>
+<p><strong>Pergunta que responde:</strong> como o código diz ao EF qual tabela guarda a <code>FichaProduto</code> e qual coluna é a chave?</p>
+<table>
+<thead>
+<tr>
+<th>Como era (.NET 6)</th>
+<th>Como é agora</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DbContext</code> com <code>OnModelCreating</code> cheio; ou pasta <code>Configuration</code> com uma classe por entidade</td>
+<td>o mesmo, com a pasta <code>Configuracoes/</code> (português, ADR-001) e classe <code>internal sealed</code></td>
+<td>só o nome da pasta, o <code>internal sealed</code> e o <em>file-scoped namespace</em></td>
+</tr>
+<tr>
+<td><code>entity.HasMaxLength(150).IsUnicode(false)</code> e <code>entity.Seed()</code></td>
+<td>sem os dois</td>
+<td>o limite de tamanho entra quando houver regra validada na API; <code>IsUnicode(false)</code> é conceito do SQL Server; não há dados iniciais</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O <code>CatalogoDbContext</code></strong></p>
+<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">CatalogoDbContext</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">DbContext</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">internal</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Schema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"catalogo"</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="nf">CatalogoDbContext</span><span class="p">(</span><span class="n">DbContextOptions</span><span class="o">&lt;</span><span class="n">CatalogoDbContext</span><span class="o">&gt;</span><span class="w"> </span><span class="n">options</span><span class="p">)</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="k">base</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">DbSet</span><span class="o">&lt;</span><span class="n">FichaProduto</span><span class="o">&gt;</span><span class="w"> </span><span class="n">FichasProduto</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Set</span><span class="o">&lt;</span><span class="n">FichaProduto</span><span class="o">&gt;</span><span class="p">();</span>
+
+<span class="w">    </span><span class="k">protected</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">OnModelCreating</span><span class="p">(</span><span class="n">ModelBuilder</span><span class="w"> </span><span class="n">modelBuilder</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">modelBuilder</span><span class="p">.</span><span class="n">HasDefaultSchema</span><span class="p">(</span><span class="n">Schema</span><span class="p">);</span>
+<span class="w">        </span><span class="n">modelBuilder</span><span class="p">.</span><span class="n">ApplyConfigurationsFromAssembly</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">FichaProdutoConfiguration</span><span class="p">).</span><span class="n">Assembly</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Trecho</th>
+<th>O que faz</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>: DbContext</code></td>
+<td>a classe base do EF Core</td>
+</tr>
+<tr>
+<td>construtor com <code>DbContextOptions&lt;CatalogoDbContext&gt;</code></td>
+<td>recebe as opções (provider e connection string) montadas no registro da DI (6.1)</td>
+</tr>
+<tr>
+<td><code>DbSet&lt;FichaProduto&gt; FichasProduto</code></td>
+<td>diz que <code>FichaProduto</code> é uma entidade; por convenção o nome da propriedade é o nome da tabela, mas o mapeamento o sobrescreve</td>
+</tr>
+<tr>
+<td><code>HasDefaultSchema(Schema)</code></td>
+<td>tabelas do módulo nascem no schema <code>catalogo</code> (6.5)</td>
+</tr>
+<tr>
+<td><code>ApplyConfigurationsFromAssembly(...)</code></td>
+<td>acha todas as classes <code>IEntityTypeConfiguration&lt;T&gt;</code> do assembly e as aplica; uma linha por módulo, não por entidade</td>
+</tr>
+</tbody>
+</table>
+<p><strong>A configuração da entidade</strong> (<code>Configuracoes/FichaProdutoConfiguration.cs</code>, <code>internal sealed</code>) usa Fluent API para:
+nomear a tabela <code>fichas_produto</code>; declarar a chave em <code>Sku</code> (a convenção do EF só reconhece <code>Id</code> ou
+<code>FichaProdutoId</code>, então a chave <strong>precisa</strong> ser declarada); nomear as colunas <code>sku</code>, <code>descricao</code>, <code>ncm</code>; marcar as
+três como obrigatórias (<code>IsRequired()</code>). Nomes de tabela e coluna em minúsculas com sublinhado, em português (ADR-001).</p>
+<p><strong>Por que um arquivo por entidade e não tudo no <code>OnModelCreating</code></strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Tudo no <code>OnModelCreating</code></th>
+<th><code>IEntityTypeConfiguration&lt;T&gt;</code> por entidade (escolhido)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ganho</td>
+<td>tudo num arquivo só</td>
+<td>o <code>OnModelCreating</code> não cresce a cada entidade; cada tabela tem o seu arquivo</td>
+</tr>
+<tr>
+<td><strong>Preço</strong></td>
+<td>o arquivo vira longo quando o módulo cresce</td>
+<td>um arquivo a mais por entidade e um nível de indireção; é preciso abrir o outro arquivo para ler o mapeamento</td>
+</tr>
+</tbody>
+</table>
+<p>Decisão barata de desfazer (mover o código de volta leva minutos): sem ADR. A ideia veio do próprio aluno, que já
+usava a pasta <code>Configuration</code> no .NET 6.</p>
+<p><strong><code>ApplyConfigurationsFromAssembly</code> enxerga classes <code>internal</code>?</strong> Foi a dúvida da sessão (as configurações do Norte
+são <code>internal</code>, ADR-002). <strong>Provado:</strong> sim — a migration gerou a tabela <code>fichas_produto</code> com a chave em <code>sku</code>.</p>
+<p><strong>Fluent API × DataAnnotations:</strong> o Norte usa Fluent API; a <code>FichaProduto</code> fica <strong>sem atributos de persistência</strong>, e
+a regra de como a tabela é montada fica fora da classe de domínio. Preço: o mapeamento está longe da classe.</p>
+<p><strong>Na entrevista:</strong> &quot;O que é o <code>DbContext</code>?&quot; (a conversa com o banco: tabelas + gravar/ler); &quot;Fluent API ou
+atributos?&quot; (onde mora o mapeamento; domínio sem atributo de persistência); &quot;Como o EF sabe a chave?&quot; (convenção
+<code>Id</code>/<code>TipoId</code> ou declarada).</p>
+<p><strong>Erros comuns:</strong> esquecer a chave quando a propriedade não se chama <code>Id</code>; achar que <code>DbSet</code> define o nome da
+tabela depois de um <code>ToTable</code>; esquecer de registrar o contexto na DI (6.6).</p>
+<p><strong>🧠 de cabeça:</strong> o que o <code>DbContext</code> faz; que a chave <code>Sku</code> precisa de declaração. <strong>🔎 onde encontrar:</strong> a sintaxe do
+Fluent API (<code>HasKey</code>, <code>Property</code>, <code>ToTable</code>).</p>
+<p><strong>Onde foi visto:</strong> S16. <strong>Status:</strong> o aluno descreveu o <code>DbContext</code> sem consulta (herda de <code>DbContext</code>, <code>DbSet</code> por
+tabela, Fluent API no <code>OnModelCreating</code>); a escrita foi guiada.</p>
+<hr />
+<p><a id="g6-4"></a></p>
+<h2 id="64-migrations-a-tabela-criada-pela-ferramenta">6.4 Migrations: a tabela criada pela ferramenta<button class="estudada" data-id="64-migrations-a-tabela-criada-pela-ferramenta" type="button">Marcar como estudada</button></h2>
+<p><strong>De → para</strong></p>
+<table>
+<thead>
+<tr>
+<th>Como aparece nas vagas</th>
+<th>Nome no laboratório</th>
+<th>O mundo do aluno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>migration</em>, <em>model snapshot</em>, <code>dotnet ef</code></td>
+<td><code>CriaTabelaFichasProduto</code>, pasta <code>Migrations/</code></td>
+<td><code>Add-Migration</code> e <code>Update-Database</code> no Package Manager Console</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Em uma frase:</strong> a <em>migration</em> é um arquivo de código gerado que descreve <strong>como levar o banco do estado atual ao
+estado do modelo</strong>; o EF guarda o último estado conhecido (o <em>snapshot</em>) e registra o que já foi aplicado numa
+tabela de histórico.</p>
+<p><strong>Pergunta que responde:</strong> como a tabela <code>fichas_produto</code> passa a existir no Postgres sem eu escrever SQL?</p>
+<p><strong>As quatro peças</strong></p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Peça</th>
+<th>O que é</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>a ferramenta <code>dotnet ef</code></td>
+<td>programa de linha de comando que cria e aplica migrations (global, versão 10.0.11 na máquina do aluno)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>o pacote <code>Microsoft.EntityFrameworkCore.Design</code> no <code>Norte.Api</code></td>
+<td>o que a ferramenta usa para ler o modelo do host; <code>PrivateAssets all</code> para não vazar para quem referencia o host</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>migrations add</code></td>
+<td>gera os arquivos (a migration, o <code>.Designer.cs</code> e o snapshot)</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>database update</code></td>
+<td>executa a migration no Postgres e registra na tabela de histórico</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Dois projetos no comando.</strong> A documentação distingue o <em>projeto de destino</em> (onde os arquivos são criados) e o
+<em>projeto de inicialização</em> (o que a ferramenta <strong>compila e executa</strong> para descobrir a configuração e a connection
+string). No Norte o contexto está num projeto e o host em outro:</p>
+<pre class="highlight"><code><span class="n">dotnet</span> <span class="n">ef</span> <span class="n">migrations</span> <span class="n">add</span> <span class="p">&lt;</span><span class="n">Nome</span><span class="p">&gt;</span> <span class="p">-</span><span class="n">-project</span> <span class="n">src</span><span class="p">/</span><span class="n">Modulos</span><span class="p">/</span><span class="n">Catalogo</span><span class="p">/</span><span class="n">Norte</span><span class="p">.</span><span class="n">Catalogo</span> <span class="p">-</span><span class="n">-startup-project</span> <span class="n">src</span><span class="p">/</span><span class="n">Norte</span><span class="p">.</span><span class="n">Api</span> <span class="p">--</span> <span class="p">-</span><span class="n">-environment</span> <span class="n">Development</span>
+<span class="n">dotnet</span> <span class="n">ef</span> <span class="n">database</span> <span class="n">update</span> <span class="p">-</span><span class="n">-project</span> <span class="n">src</span><span class="p">/</span><span class="n">Modulos</span><span class="p">/</span><span class="n">Catalogo</span><span class="p">/</span><span class="n">Norte</span><span class="p">.</span><span class="n">Catalogo</span> <span class="p">-</span><span class="n">-startup-project</span> <span class="n">src</span><span class="p">/</span><span class="n">Norte</span><span class="p">.</span><span class="n">Api</span> <span class="p">--</span> <span class="p">-</span><span class="n">-environment</span> <span class="n">Development</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Parte</th>
+<th>Para que serve</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--project</code></td>
+<td>onde a pasta <code>Migrations/</code> é criada (o módulo)</td>
+</tr>
+<tr>
+<td><code>--startup-project</code></td>
+<td>o host, que a ferramenta executa para ler a configuração</td>
+</tr>
+<tr>
+<td><code>-- --environment Development</code></td>
+<td>tudo depois do <code>--</code> é repassado ao aplicativo; passa o ambiente, porque a connection string só existe no <code>appsettings.Development.json</code></td>
+</tr>
+</tbody>
+</table>
+<p>A página da CLI não diz qual é o ambiente padrão da ferramenta; por isso o ambiente é passado <strong>explicitamente</strong>.</p>
+<p><strong>O que sai na pasta <code>Migrations/</code></strong></p>
+<table>
+<thead>
+<tr>
+<th>Arquivo</th>
+<th>O que é</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;carimbo&gt;_CriaTabelaFichasProduto.cs</code></td>
+<td>a migration: <code>Up</code> (cria) e <code>Down</code> (desfaz)</td>
+</tr>
+<tr>
+<td><code>&lt;carimbo&gt;_CriaTabelaFichasProduto.Designer.cs</code></td>
+<td>o modelo naquele instante</td>
+</tr>
+<tr>
+<td><code>CatalogoDbContextModelSnapshot.cs</code></td>
+<td>o modelo atual; a próxima migration é a diferença entre o modelo e este arquivo</td>
+</tr>
+</tbody>
+</table>
+<p>A pasta mantém o nome em inglês (<code>Migrations</code>), ao contrário de <code>Configuracoes</code>: ela pertence à ferramenta; trocar
+exigiria <code>--output-dir</code> em todo comando. O código gerado usa <code>namespace</code> em bloco; por isso a pasta tem um
+<code>.editorconfig</code> próprio que desliga <strong>só</strong> a regra IDE0161 (ADR-004: exceção no <code>.editorconfig</code>, com motivo).</p>
+<p><strong>Desfazer e recomeçar (só em banco local)</strong></p>
+<table>
+<thead>
+<tr>
+<th>Comando</th>
+<th>Efeito</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dotnet ef database drop --dry-run</code></td>
+<td><strong>mostra</strong> qual banco seria apagado, sem apagar (conferir antes)</td>
+</tr>
+<tr>
+<td><code>dotnet ef database drop --force</code></td>
+<td>apaga o banco, sem pedir confirmação</td>
+</tr>
+<tr>
+<td><code>dotnet ef migrations remove</code></td>
+<td>apaga a última migration (código) e atualiza o snapshot; se for a única, o snapshot some</td>
+</tr>
+</tbody>
+</table>
+<p>A página da CLI traz a opção <code>--offline</code> (remover sem conectar) como <strong>adicionada no EF Core 11</strong>: no Norte (EF 10)
+não existe. Migration já aplicada em banco compartilhado <strong>não</strong> se remove: entra uma migration nova.</p>
+<p><strong><code>database update</code> e produção.</strong> A página de migrations diz que <code>database update</code> é ideal para desenvolvimento local
+e <strong>menos adequado para produção</strong>; para produção há <em>bundle</em> e script SQL revisado (M6).</p>
+<p><strong>Por que migration e não <code>EnsureCreated</code>:</strong> o <code>EnsureCreated</code> cria o banco uma vez e não evolui; a migration
+registra a história e muda o banco sem apagar os dados. Preço da migration: arquivos gerados no repositório e uma
+tabela de histórico no banco.</p>
+<p><strong>Na entrevista:</strong> &quot;Como você aplica migrations em produção?&quot; — não pelo <code>database update</code> da máquina do
+desenvolvedor: script SQL revisado ou <em>bundle</em>, no pipeline. &quot;O que é o snapshot?&quot; (o último modelo conhecido; base
+da próxima migration).</p>
+<p><strong>Erros comuns:</strong> esquecer o <code>--startup-project</code> e a ferramenta não achar a connection string; rodar sem
+<code>--environment</code> e usar o ambiente errado; editar a migration à mão depois de aplicada; versionar o snapshot
+desatualizado.</p>
+<p><strong>🧠 de cabeça:</strong> o que é migration, snapshot e histórico; a diferença entre projeto de destino e de inicialização.
+<strong>🔎 onde encontrar:</strong> as opções de cada comando (página da CLI).</p>
+<p><strong>Fontes:</strong> <a href="https://learn.microsoft.com/en-us/ef/core/cli/dotnet">Referência da CLI do EF Core</a> ·
+<a href="https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/">Migrations</a></p>
+<p><strong>Onde foi visto:</strong> S16 (migration criada, aplicada, removida e recriada). <strong>Status:</strong> executado em passos guiados.</p>
+<hr />
+<p><a id="g6-5"></a></p>
+<h2 id="65-um-schema-do-postgres-por-módulo-adr-006">6.5 Um schema do Postgres por módulo (ADR-006)<button class="estudada" data-id="65-um-schema-do-postgres-por-módulo-adr-006" type="button">Marcar como estudada</button></h2>
+<p><strong>De → para</strong></p>
+<table>
+<thead>
+<tr>
+<th>Como aparece nas vagas</th>
+<th>Nome no laboratório</th>
+<th>O mundo do aluno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>schema per module</em>, <em>modular monolith database</em></td>
+<td>schema <code>catalogo</code></td>
+<td>tabelas todas em <code>dbo</code>/<code>public</code>, sem separação por módulo</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Em uma frase:</strong> o schema é a <strong>fronteira do módulo no banco</strong>, como o projeto é a fronteira no código.</p>
+<p><strong>Pergunta que responde:</strong> quando existir um segundo módulo com banco, como saber de qual módulo é cada tabela?</p>
+<p><strong>O problema.</strong> Sem configuração o EF cria as tabelas no schema padrão do banco (no Postgres, <code>public</code>). Na primeira
+migration do <code>Catalogo</code>, a tabela <code>fichas_produto</code> <strong>e</strong> a tabela de histórico <code>__EFMigrationsHistory</code> foram parar em
+<code>public</code>. Com um segundo módulo, as tabelas conviveriam sem marca de módulo e os dois contextos usariam a mesma
+tabela de histórico. <strong>Não foi conferido</strong> como o EF se comporta com dois contextos na mesma tabela de histórico; a
+decisão <strong>evita</strong> a situação.</p>
+<p><strong>Duas configurações, que não se substituem</strong></p>
+<table>
+<thead>
+<tr>
+<th>O que</th>
+<th>Para que serve</th>
+<th>Onde fica</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>HasDefaultSchema(Schema)</code></td>
+<td>as tabelas do contexto nascem em <code>catalogo</code></td>
+<td><code>OnModelCreating</code> do contexto</td>
+</tr>
+<tr>
+<td><code>MigrationsHistoryTable(&quot;__EFMigrationsHistory&quot;, Schema)</code></td>
+<td>a tabela de histórico do módulo nasce em <code>catalogo</code></td>
+<td>nas opções do provider, no <code>AddCatalogo</code></td>
+</tr>
+</tbody>
+</table>
+<p>Se faltar a primeira, a tabela vai para <code>public</code>. Se faltar a segunda, <strong>só o histórico</strong> vai para <code>public</code> — a
+divisão que não se quer com dois módulos. A documentação do EF avisa que <code>HasDefaultSchema</code> vale também para outros
+objetos, como sequências.</p>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">IServiceCollection</span><span class="w"> </span><span class="nf">AddCatalogo</span><span class="p">(</span><span class="k">this</span><span class="w"> </span><span class="n">IServiceCollection</span><span class="w"> </span><span class="n">services</span><span class="p">,</span><span class="w"> </span><span class="n">IConfiguration</span><span class="w"> </span><span class="n">configuration</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">services</span><span class="p">.</span><span class="n">AddValidation</span><span class="p">();</span>
+<span class="w">    </span><span class="n">services</span><span class="p">.</span><span class="n">AddScoped</span><span class="o">&lt;</span><span class="n">FichaProdutoRepository</span><span class="o">&gt;</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">services</span><span class="p">.</span><span class="n">AddDbContext</span><span class="o">&lt;</span><span class="n">CatalogoDbContext</span><span class="o">&gt;</span><span class="p">(</span><span class="n">opcoes</span><span class="w"> </span><span class="o">=&gt;</span>
+<span class="w">        </span><span class="n">opcoes</span><span class="p">.</span><span class="n">UseNpgsql</span><span class="p">(</span>
+<span class="w">            </span><span class="n">configuration</span><span class="p">.</span><span class="n">GetConnectionString</span><span class="p">(</span><span class="s">"Norte"</span><span class="p">)</span>
+<span class="w">            </span><span class="o">??</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">InvalidOperationException</span><span class="p">(</span><span class="s">"Connection string 'Norte' não encontrada."</span><span class="p">),</span>
+<span class="w">            </span><span class="n">npgsql</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">npgsql</span><span class="p">.</span><span class="n">MigrationsHistoryTable</span><span class="p">(</span><span class="s">"__EFMigrationsHistory"</span><span class="p">,</span><span class="w"> </span><span class="n">CatalogoDbContext</span><span class="p">.</span><span class="n">Schema</span><span class="p">)));</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">services</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Detalhe</th>
+<th>Por quê</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Schema</code> numa constante do contexto</td>
+<td>o nome <code>&quot;catalogo&quot;</code> aparece em dois lugares (modelo e histórico) e fica escrito uma vez</td>
+</tr>
+<tr>
+<td><code>?? throw</code> <strong>dentro</strong> da função do <code>AddDbContext</code></td>
+<td><code>GetConnectionString</code> devolve <code>string?</code> e o <code>UseNpgsql</code> pede <code>string</code> (CS8604, erro pelo ADR-004); dentro da função, a leitura só acontece quando o contexto é usado, não na subida da API</td>
+</tr>
+<tr>
+<td><code>AddCatalogo(services, configuration)</code></td>
+<td>o módulo <strong>declara</strong> que precisa de configuração, na assinatura; o host passa <code>builder.Configuration</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>A migration agora</strong> traz <code>EnsureSchema(&quot;catalogo&quot;)</code> e cria a tabela dentro do schema. A migration antiga (que já
+estava na <code>main</code>, com a tabela em <code>public</code>) foi <strong>removida e recriada</strong>, em vez de ganhar uma segunda que movesse a
+tabela, porque nada existia fora do banco local e uma segunda migration deixaria o histórico em <code>public</code>.</p>
+<p><strong>Provado (12/10/2026):</strong> <code>\dt catalogo.*</code> listou <code>fichas_produto</code> e <code>__EFMigrationsHistory</code>; <code>\dt public.*</code> não
+listou tabela nenhuma; o cadastro e a consulta de <code>LUV-001</code> pela API gravaram e leram em <code>catalogo.fichas_produto</code>.</p>
+<p><strong>Três opções e o preço (ADR-006)</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Descrição</th>
+<th>Preço</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A) um schema por módulo (escolhido)</strong></td>
+<td><code>catalogo</code>, depois <code>pedidos</code>; histórico dentro do schema</td>
+<td>duas configurações por módulo; o nome do schema aparece em SQL escrito à mão</td>
+</tr>
+<tr>
+<td>B) tudo em <code>public</code> com prefixo no nome da tabela</td>
+<td><code>catalogo_fichas_produto</code></td>
+<td>a fronteira é só hábito de nome; o histórico segue compartilhado</td>
+</tr>
+<tr>
+<td>C) um banco por módulo</td>
+<td>mais um container/banco por módulo</td>
+<td>transações entre módulos ficam muito mais caras; exagero hoje</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O que o schema não faz.</strong> Ele separa por <strong>organização</strong>, não por <strong>impedimento</strong>: o banco e o usuário são os
+mesmos, uma consulta que atravessa schemas continua possível. &quot;Módulo não lê a tabela de outro&quot; é regra de convenção
+e de revisão, como o <code>internal</code> no código. Permissões por schema no Postgres seriam um reforço (não adotadas).</p>
+<p><strong>Na entrevista:</strong> &quot;Como você isola os dados de cada módulo num monolito modular?&quot; — schema por módulo + <code>DbContext</code>
+por módulo; o preço (organização, não impedimento); a alternativa de um banco por módulo e por que é cara.</p>
+<p><strong>Erros comuns:</strong> configurar só o <code>HasDefaultSchema</code> e deixar o histórico em <code>public</code>; esquecer o schema em SQL
+escrito à mão (<code>catalogo.fichas_produto</code>); achar que o schema impede o acesso.</p>
+<p><strong>🧠 de cabeça:</strong> as duas configurações e o que cada uma move; o que o schema não garante. <strong>🔎 onde encontrar:</strong> o
+nome exato do método do histórico para o provider.</p>
+<p><strong>Fonte:</strong> <a href="https://learn.microsoft.com/en-us/ef/core/modeling/entity-types">Entity Types — Table schema</a></p>
+<p><strong>Onde foi visto:</strong> S16. <strong>Status:</strong> provado no banco; a decisão foi do mentor, com ADR.</p>
+<hr />
+<p><a id="g6-6"></a></p>
+<h2 id="66-repositório-e-endpoints-assíncronos">6.6 Repositório e endpoints assíncronos<button class="estudada" data-id="66-repositório-e-endpoints-assíncronos" type="button">Marcar como estudada</button></h2>
+<p><strong>De → para</strong></p>
+<table>
+<thead>
+<tr>
+<th>Como aparece nas vagas</th>
+<th>Nome no laboratório</th>
+<th>O mundo do aluno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>async/await</code>, <em>scoped lifetime</em>, <em>no-tracking query</em></td>
+<td><code>AdicionarAsync</code>, <code>ObterPorSkuAsync</code>, <code>AddScoped</code>, <code>AsNoTracking()</code></td>
+<td>repositório com <code>_context.Add(x)</code> + <code>_context.SaveChanges()</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Em uma frase:</strong> o repositório deixa de guardar uma lista e passa a conversar com o <code>CatalogoDbContext</code>; como o banco
+é externo, a conversa é <strong>assíncrona</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Como era no Norte (S11–S15)</th>
+<th>Como é agora</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>List&lt;FichaProduto&gt;</code> dentro da classe</td>
+<td><code>CatalogoDbContext</code> recebido no construtor</td>
+<td>os dados saem da memória do processo</td>
+</tr>
+<tr>
+<td><code>Adicionar</code> = <code>list.Add</code></td>
+<td><code>AdicionarAsync</code> = <code>Add</code> + <code>await SaveChangesAsync()</code></td>
+<td>o <code>Add</code> só <strong>marca</strong> a ficha como nova; quem faz o <code>INSERT</code> é o <code>SaveChangesAsync</code></td>
+</tr>
+<tr>
+<td><code>ObterPorSku</code> = <code>FirstOrDefault</code> na lista</td>
+<td><code>ObterPorSkuAsync</code> = <code>AsNoTracking().FirstOrDefaultAsync(...)</code></td>
+<td><code>AsNoTracking</code> diz ao EF que a leitura é só leitura: não rastreia a entidade</td>
+</tr>
+<tr>
+<td><code>AddSingleton&lt;FichaProdutoRepository&gt;()</code></td>
+<td><code>AddScoped&lt;FichaProdutoRepository&gt;()</code></td>
+<td>o contexto vive <strong>uma requisição</strong>; um singleton não pode depender dele</td>
+</tr>
+<tr>
+<td><code>Executar</code> devolve <code>Results&lt;...&gt;</code></td>
+<td><code>ExecutarAsync</code> devolve <code>Task&lt;Results&lt;...&gt;&gt;</code></td>
+<td>o endpoint espera o banco sem prender a thread da requisição</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">AdicionarAsync</span><span class="p">(</span><span class="n">FichaProduto</span><span class="w"> </span><span class="n">ficha</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">contexto</span><span class="p">.</span><span class="n">FichasProduto</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="n">ficha</span><span class="p">);</span>
+<span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="n">contexto</span><span class="p">.</span><span class="n">SaveChangesAsync</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="k">public</span><span class="w"> </span><span class="n">Task</span><span class="o">&lt;</span><span class="n">FichaProduto</span><span class="o">?&gt;</span><span class="w"> </span><span class="n">ObterPorSkuAsync</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">sku</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span>
+<span class="w">    </span><span class="n">contexto</span><span class="p">.</span><span class="n">FichasProduto</span><span class="p">.</span><span class="n">AsNoTracking</span><span class="p">().</span><span class="n">FirstOrDefaultAsync</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">sku</span><span class="p">);</span>
+</code></pre>
+
+<p><em>(Forma do repositório; os nomes do campo e do parâmetro no arquivo real podem diferir.)</em></p>
+<p><strong>Tempo de vida.</strong> <code>AddDbContext</code> registra o contexto como <strong>scoped</strong> (uma instância por requisição). Um objeto
+<em>singleton</em> que dependa de um scoped prenderia aquela instância para sempre; o contêiner de DI do ASP.NET Core acusa
+isso em desenvolvimento (<strong>não conferido na documentação durante a S16</strong>), e a regra de design vale de qualquer jeito.
+Por isso o repositório passou a <code>AddScoped</code>.</p>
+<p><strong>Sufixo <code>Async</code>.</strong> A regra IDE1006 do <code>.editorconfig</code> (ADR-004) exige o sufixo em método <code>async</code>; foi por isso que
+<code>Executar</code> virou <code>ExecutarAsync</code>. Em <code>tests/</code> a regra está desligada (o nome do teste é a regra).</p>
+<p><strong>O teste que sumiu.</strong> O <code>CadastrarFichaProdutoEndpointTests</code> fazia <code>new FichaProdutoRepository()</code>; esse construtor
+deixou de existir e o que o teste protegia (uma lista em memória) sumiu junto. Foi <strong>apagado</strong>. Ficam 4 testes (3×400
+e 1×500) e <strong>nenhum toca o banco</strong>. O teste de integração com Postgres real (Testcontainers) é a próxima lacuna.</p>
+<p><strong>Provado na S16</strong></p>
+<table>
+<thead>
+<tr>
+<th>Experimento</th>
+<th>Resultado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST <code>LUV-001</code> → <code>SELECT * FROM fichas_produto</code></td>
+<td>201; 1 linha</td>
+</tr>
+<tr>
+<td>reiniciar a API → GET <code>LUV-001</code></td>
+<td>200: a ficha <strong>sobreviveu</strong></td>
+</tr>
+<tr>
+<td>POST <code>LUV-001</code> <strong>de novo</strong></td>
+<td><strong>500</strong>: <code>DbUpdateException</code> → <code>23505: duplicate key value violates unique constraint &quot;PK_fichas_produto&quot;</code>, vindo do <code>SaveChangesAsync</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>O 500 do duplicado.</strong> O banco recusou por causa da chave primária que a migration criou; quem tratou a exceção foi
+o <code>UseExceptionHandler()</code> do <code>Program.cs</code> (categoria do log após <code>fail:</code>: <code>ExceptionHandlerMiddleware</code>), que devolve o
+<code>problem+json</code> genérico. O correto seria <strong>409 Conflict</strong>; isso é <strong>regra de negócio</strong> e fica para a próxima sessão.</p>
+<p><strong>Preço desta escolha</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Forma 1 (repositório com o contexto, escolhida)</th>
+<th>Forma 2 (endpoint com o contexto, sem repositório)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ganho</td>
+<td>isola o EF Core num ponto; muda o menor número de arquivos</td>
+<td>o <code>DbSet</code> já faz o papel do repositório; uma camada a menos</td>
+</tr>
+<tr>
+<td><strong>Preço</strong></td>
+<td>uma camada que pode só repassar chamadas</td>
+<td>mexe nos endpoints, na DI e nos testes de uma vez</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Na entrevista:</strong> &quot;Por que o <code>DbContext</code> é scoped?&quot; (uma instância por requisição; não é <em>thread-safe</em>); &quot;O que muda
+com <code>AsNoTracking</code>?&quot; (leitura sem rastrear; mais leve; <strong>não</strong> use se for alterar e salvar); &quot;Repositório sobre o
+<code>DbContext</code> ou não?&quot; (as duas formas existem; o preço de cada).</p>
+<p><strong>Erros comuns:</strong> esquecer o <code>await</code> do <code>SaveChangesAsync</code> (a gravação não é esperada); registrar o repositório como
+singleton; usar <code>AsNoTracking</code> e depois tentar salvar a entidade.</p>
+<p><strong>🧠 de cabeça:</strong> <code>Add</code> marca e <code>SaveChanges</code> grava; scoped × singleton; o que é <code>AsNoTracking</code>. <strong>🔎 onde encontrar:</strong>
+a assinatura de <code>FirstOrDefaultAsync</code>.</p>
+<p><strong>Onde foi visto:</strong> S16. <strong>Status:</strong> executado e provado (persistência e o 500); o 409 e o teste com banco real estão
+pendentes.</p>
+<hr />
+<p><a id="g6-7"></a></p>
+<h2 id="67-pastas-do-módulo-e-rota-por-recurso">6.7 Pastas do módulo e rota por recurso<button class="estudada" data-id="67-pastas-do-módulo-e-rota-por-recurso" type="button">Marcar como estudada</button></h2>
+<p><strong>De → para</strong></p>
+<table>
+<thead>
+<tr>
+<th>Como aparece nas vagas</th>
+<th>Nome no laboratório</th>
+<th>O mundo do aluno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>vertical slice</em>, <em>feature folders</em></td>
+<td><code>Funcionalidades/&lt;Verbo&gt;&lt;Coisa&gt;/</code></td>
+<td>pastas por tipo: <code>Controllers/</code>, <code>Services/</code>, <code>Repositories/</code>, <code>Models/</code></td>
+</tr>
+<tr>
+<td><em>resource-oriented URL</em> (REST)</td>
+<td><code>GET /catalogo/fichas-produto/{sku}</code></td>
+<td><code>/catalogo/obter-ficha-produto/{sku}</code> (verbo no endereço)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Em uma frase:</strong> o que é de <strong>uma funcionalidade</strong> fica junto na pasta dela; o que é do <strong>módulo inteiro</strong> (entidade,
+mapeamento) tem lugar fixo; e na rota o método HTTP diz a ação e o endereço é o substantivo.</p>
+<p><strong>Estrutura do <code>Norte.Catalogo</code> ao fim da S16</strong></p>
+<pre class="highlight"><code>Norte.Catalogo/
+├── Configuracoes/            mapeamento do EF, uma classe por entidade
+├── Dominio/                  entidades (classes)
+├── Funcionalidades/
+│   ├── CadastrarFichaProduto/   Request + Endpoint
+│   └── ObterFichaProduto/       Endpoint
+├── Migrations/               gerada pelo dotnet ef (não editar à mão)
+├── Catalogo.http
+├── CatalogoDbContext.cs
+├── CatalogoModulo.cs         Add/Map do módulo
+└── FichaProdutoRepository.cs usado por várias funcionalidades: raiz do módulo
+</code></pre>
+
+<p><strong>A regra, em duas linhas:</strong> entidade em <code>Dominio/</code>, mapeamento em <code>Configuracoes/</code>; todo o resto que é de uma
+funcionalidade (endpoint, validação, <code>Request</code>) fica <strong>dentro da pasta da funcionalidade</strong>. <strong>Não</strong> criar <code>Servicos/</code>,
+<code>Repositorios/</code>, <code>Dtos/</code> no nível do módulo sem decisão registrada: seria voltar à organização por tipo de arquivo.</p>
+<table>
+<thead>
+<tr>
+<th>Como era (.NET 6)</th>
+<th>Como é agora</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>para mexer em &quot;cadastrar ficha&quot;: abrir quatro pastas e juntar as peças</td>
+<td>abrir <code>CadastrarFichaProduto/</code> e ter tudo ali</td>
+<td>o critério de organização é a <strong>funcionalidade</strong>, não o tipo de arquivo</td>
+</tr>
+<tr>
+<td>camadas (<em>layered</em>)</td>
+<td>fatias (<em>vertical slices</em>)</td>
+<td>a fatia atravessa as camadas</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Por que <code>Funcionalidades/</code> e <code>Dominio/</code> ao mesmo tempo.</strong> A raiz do módulo misturava dois critérios (pastas por
+funcionalidade e pastas por tipo). Com o agrupamento, cada pasta tem <strong>um</strong> critério. O argumento do aluno para
+<code>Dominio/</code>: &quot;ao bater o olho sabemos onde está; não faz sentido ter <code>Configuracoes</code> e não ter <code>Dominio</code>&quot;. Os dois
+agrupamentos <strong>não ferem</strong> nenhuma regra do monolito modular: a fronteira do módulo (projeto, <code>internal</code>, schema)
+fica <strong>fora</strong> dessa pasta e não mudou.</p>
+<p><strong>O preço.</strong> Mover custa <code>using</code> e namespace (e o histórico do Git mostra renomeação, <code>R</code>); a pasta <code>Dominio/</code> convida
+a criar outras pastas por tipo — por isso a regra de duas linhas. O Visual Studio pode reindentar um arquivo inteiro
+ao mover; o <code>git diff --cached --stat</code> mostra: um arquivo movido deve ter <strong>poucas linhas</strong> alteradas.</p>
+<p><strong>Rota por recurso</strong></p>
+<table>
+<thead>
+<tr>
+<th>Ação</th>
+<th>Como você fazia</th>
+<th>Por recurso (Norte)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cadastrar</td>
+<td><code>/catalogo/cadastrar-ficha-produto</code></td>
+<td><code>POST /catalogo/fichas-produto</code></td>
+</tr>
+<tr>
+<td>obter</td>
+<td><code>/catalogo/obter-ficha-produto/{sku}</code></td>
+<td><code>GET /catalogo/fichas-produto/{sku}</code></td>
+</tr>
+<tr>
+<td>excluir</td>
+<td><code>/catalogo/excluir-ficha-produto/{sku}</code></td>
+<td><code>DELETE /catalogo/fichas-produto/{sku}</code></td>
+</tr>
+</tbody>
+</table>
+<p>O motivo concreto no Norte: o cadastro devolve <code>201 Created</code> com <code>Location: /catalogo/fichas-produto/LUV-001</code>; esse
+endereço tem de responder a um GET.</p>
+<p><strong>O preço da convenção.</strong> Ela cabe bem em cadastrar, consultar, alterar e excluir <strong>uma coisa</strong>. Ações que não são
+isso (&quot;aprovar pedido&quot;) ficam sem encaixe natural e viram algo como <code>POST /pedidos/{id}/aprovar</code> — o jeito antigo de
+volta. O estilo com verbo no endereço (RPC) é reconhecido e muita API em produção o usa: <strong>não é &quot;errado&quot;</strong>; é o
+critério do Norte. <em>(Julgamento pedagógico, não contagem de vagas.)</em></p>
+<p><strong>O ramo morto do 400.</strong> O <code>ObterFichaProdutoEndpoint</code> tinha um <code>if</code> que devolvia 400 para SKU vazio. <strong>Provado</strong> que
+nunca executa por HTTP: com <code>GET /catalogo/fichas-produto/</code> (SKU vazio) o roteamento nem chama o endpoint e responde
+<strong>405</strong> com <code>Allow: POST</code> (a barra final casa com a rota do cadastro); com um espaço (<code>%20</code>) chega ao repositório e
+devolve o 404 de &quot;ficha não encontrada&quot;. Código que não executa e valida à mão uma regra de entrada: <strong>apagado</strong>.</p>
+<p><strong>Na entrevista:</strong> &quot;Como você organiza o módulo?&quot; (por funcionalidade; o que é do módulo tem lugar fixo); &quot;Como você
+nomeia rotas REST?&quot; (substantivo no endereço, verbo no método; o preço e quando o verbo no endereço aparece).</p>
+<p><strong>🧠 de cabeça:</strong> a regra das duas pastas fixas; o critério da rota por recurso e seu preço. <strong>🔎 onde encontrar:</strong>
+os nomes de cada verbo HTTP.</p>
+<p><strong>Onde foi visto:</strong> S16. <strong>Status:</strong> executado (refactor de pastas com 4 renomeações e testes verdes).</p>
+<hr />
+<h2 id="juntando-tudo-parte-6">Juntando tudo (Parte 6)</h2>
+<p>O caminho de uma requisição, agora completo:</p>
+<ol>
+<li><code>POST /catalogo/fichas-produto</code> chega ao <code>Program.cs</code> → <code>MapCatalogo</code> → grupo <code>/catalogo</code>.</li>
+<li>A <strong>validação nativa</strong> (ADR-003) olha o <code>CadastrarFichaProdutoRequest</code>; falha → 400 em <code>problem+json</code>.</li>
+<li><code>CadastrarFichaProdutoEndpoint.ExecutarAsync</code> monta a <code>FichaProduto</code> (classe, 6.2) e chama o repositório.</li>
+<li><code>FichaProdutoRepository.AdicionarAsync</code> faz <code>Add</code> + <code>SaveChangesAsync</code> no <code>CatalogoDbContext</code> (scoped, 6.6).</li>
+<li>O contexto, configurado com a connection string <code>Norte</code> e o <code>UseNpgsql</code> (6.1), executa o <code>INSERT</code> na tabela
+<code>catalogo.fichas_produto</code> (6.3, 6.5) criada pela migration (6.4).</li>
+<li>Chave <code>Sku</code> repetida → o banco recusa (<code>23505</code>) → <code>DbUpdateException</code> → <code>UseExceptionHandler()</code> → 500 em
+<code>problem+json</code> (hoje; o 409 é pendência).</li>
+</ol>
+<p><strong>Decisões desta parte:</strong> ADR-005 (entidade como classe) e ADR-006 (schema por módulo). Sem ADR, por serem baratas de
+desfazer: mapeamento em arquivo próprio; <code>Dominio/</code> e <code>Funcionalidades/</code>; rota por recurso; <code>Migrations</code> em inglês.</p>
+<p><strong>Ainda não visto:</strong> <code>CancellationToken</code> no repositório; seed; paginação e projeções; concorrência otimista;
+índices; teste de integração com Postgres real (Testcontainers); como dois módulos convivem no mesmo banco.</p>
+<hr />
+<p><a id="g6-8"></a></p>
+<h2 id="68-diagnóstico-os-problemas-da-s16-e-como-achar-a-causa">6.8 Diagnóstico: os problemas da S16 e como achar a causa<button class="estudada" data-id="68-diagnóstico-os-problemas-da-s16-e-como-achar-a-causa" type="button">Marcar como estudada</button></h2>
+<table>
+<thead>
+<tr>
+<th>Sintoma</th>
+<th>Causa</th>
+<th>Como confirmar / o que fazer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /catalogo/fichas-produto/</code> devolve <strong>405</strong> com <code>Allow: POST</code></td>
+<td>a barra final casa com a rota do cadastro (<code>POST /fichas-produto</code>); o caminho existe, o método não</td>
+<td>ler o cabeçalho <code>Allow</code>; não é bug do endpoint de consulta</td>
+</tr>
+<tr>
+<td><code>GET</code> com um espaço devolve 404 com o título &quot;Ficha não encontrada&quot;</td>
+<td>o endpoint foi alcançado e o repositório não achou</td>
+<td>o corpo traz o <code>detail</code> com o SKU</td>
+</tr>
+<tr>
+<td>depois de reiniciar a API, a ficha some</td>
+<td>repositório em memória (S11–S15)</td>
+<td>era o problema da sessão; resolvido pela persistência</td>
+</tr>
+<tr>
+<td>build &quot;idêntico&quot; ao anterior (mesmos tempos até a casa decimal)</td>
+<td>saída <strong>antiga</strong> colada de novo</td>
+<td>rodar o comando outra vez e colar a nova</td>
+</tr>
+<tr>
+<td><code>CS7036</code> (falta um argumento) no <code>Program.cs</code></td>
+<td>o <code>AddCatalogo</code> ganhou o parâmetro <code>IConfiguration</code> e o host ainda chama sem argumento</td>
+<td>trocar por <code>AddCatalogo(builder.Configuration)</code>; foi esperado e anunciado</td>
+</tr>
+<tr>
+<td><code>CS8604</code> na connection string</td>
+<td><code>GetConnectionString</code> devolve <code>string?</code></td>
+<td><code>?? throw</code> (6.5)</td>
+</tr>
+<tr>
+<td><code>IDE0161</code> na pasta <code>Migrations/</code></td>
+<td>a ferramenta gera <code>namespace</code> em bloco; o ADR-004 cobra file-scoped</td>
+<td><code>.editorconfig</code> <strong>na pasta</strong>, desligando só essa regra</td>
+</tr>
+<tr>
+<td><code>IDE1006</code> em <code>Executar</code></td>
+<td>método <code>async</code> sem sufixo <code>Async</code></td>
+<td>renomear para <code>ExecutarAsync</code></td>
+</tr>
+<tr>
+<td>500 ao cadastrar o mesmo SKU duas vezes</td>
+<td><code>DbUpdateException</code>, <code>23505</code> (<code>PK_fichas_produto</code>)</td>
+<td>ler o log depois de <code>fail:</code>; o 409 é regra de negócio (pendente)</td>
+</tr>
+<tr>
+<td><code>migrations remove</code> imprime <code>fail:</code> de conexão e termina em <code>Done</code></td>
+<td>o EF tenta conectar ao banco para ver se a migration foi aplicada; o banco já tinha sido apagado</td>
+<td><strong>inferência</strong> da ordem das mensagens; terminou em <code>Done</code>, seguiu</td>
+</tr>
+<tr>
+<td><code>\dt public.*</code> ainda lista tabela</td>
+<td>schema só no modelo, ou histórico fora do schema</td>
+<td>conferir <code>HasDefaultSchema</code> <strong>e</strong> <code>MigrationsHistoryTable</code> (6.5)</td>
+</tr>
+<tr>
+<td>teste de unidade do cadastro não compila</td>
+<td>o repositório passou a exigir o <code>CatalogoDbContext</code></td>
+<td>o teste protegia uma lista em memória: apagado; os 4 que sobram não tocam o banco</td>
+</tr>
+<tr>
+<td>janela &quot;Select an account&quot; ao falar com o GitHub</td>
+<td>o Git Credential Manager guarda mais de uma conta e a URL do remoto não diz qual</td>
+<td>colocar o usuário na URL do remoto (<code>https://&lt;usuario&gt;@github.com/...</code>); <strong>confirmar</strong> que o <code>git fetch</code> não abre a janela</td>
+</tr>
+<tr>
+<td>porta 5432 ocupada</td>
+<td>outro container Postgres de outro projeto usa a mesma porta</td>
+<td><strong>pendência</strong>: não mexer sem voltar ao outro projeto</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="teste-se-sem-consultar-uma-pergunta-por-vez">Teste-se (sem consultar, uma pergunta por vez)</h2>
+<ol>
+<li>A <code>FichaProduto</code> nasceu como <code>record</code>. Por que ela virou <code>class</code> quando o banco entrou, e o que se perde com isso?</li>
+<li>O que o <code>private set</code> faz no EF Core, e por que o construtor vazio <strong>não</strong> é necessário?</li>
+<li>Dê duas coisas que a configuração <code>Schema</code> do <code>CatalogoDbContext</code> move para o schema <code>catalogo</code>, e o que acontece
+se faltar a <code>MigrationsHistoryTable</code>.</li>
+<li>Qual a diferença entre <code>--project</code> e <code>--startup-project</code> no <code>dotnet ef</code>, e por que o Norte usa os dois?</li>
+<li>O que o <code>Add</code> faz e o que o <code>SaveChangesAsync</code> faz? E por que o repositório é <code>AddScoped</code> e não <code>AddSingleton</code>?</li>
+<li>Cadastrar o mesmo SKU duas vezes devolve 500. Qual é a causa (em uma frase) e qual deveria ser o status?</li>
+<li>Por que <code>GET /catalogo/fichas-produto/</code> devolve 405 e não 400 nem 404?</li>
+<li>Por que o schema por módulo <strong>não</strong> impede que um módulo leia a tabela de outro, e o que impede?</li>
+</ol>
+<hr />
+<h2 id="respostas">Respostas</h2><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>O EF Core usa igualdade por <strong>referência</strong> para manter uma instância por entidade (rastreamento, <code>Find</code>); o
+<code>record</code> compara por <strong>valor</strong>, e a documentação trata <code>record</code> como inadequado para entidade e diz que o EF não
+atualiza entidades imutáveis. Perde-se a igualdade por valor automática (e o <code>with</code>); testes que comparam fichas
+inteiras precisam conferir propriedade por propriedade.</li>
+<li>Propriedade <strong>sem</strong> setter não é mapeada por convenção; com <code>private set</code> o EF mapeia e o código de fora não
+altera a ficha. O construtor vazio não é necessário porque, achando um construtor cujos parâmetros casam com as
+propriedades mapeadas (nome e tipo, camelCase × PascalCase), o EF chama esse.</li>
+<li><code>HasDefaultSchema</code> move as <strong>tabelas do modelo</strong> (e outros objetos, como sequências); <code>MigrationsHistoryTable</code>
+move a <strong>tabela de histórico</strong>. Sem a segunda, só o <code>__EFMigrationsHistory</code> vai para <code>public</code>, e dois módulos
+dividiriam a mesma tabela de histórico.</li>
+<li><code>--project</code> é o projeto <strong>de destino</strong>, onde os arquivos da migration são criados (o módulo, <code>Norte.Catalogo</code>);
+<code>--startup-project</code> é o que a ferramenta <strong>compila e executa</strong> para descobrir a configuração e a connection string
+(o host, <code>Norte.Api</code>). Usa os dois porque o contexto está numa biblioteca e o host em outro projeto.</li>
+<li><code>Add</code> só <strong>marca</strong> a ficha como nova no contexto; o <code>INSERT</code> acontece no <code>SaveChangesAsync</code>. O repositório é
+<code>AddScoped</code> porque depende do <code>DbContext</code>, que é scoped (uma instância por requisição); um singleton dependendo de
+um scoped prenderia aquela instância para sempre.</li>
+<li>A chave primária em <code>sku</code> (<code>PK_fichas_produto</code>): o banco recusa o segundo <code>INSERT</code> (<code>23505</code>) e o EF lança
+<code>DbUpdateException</code>, que o tratamento de erros do host transforma em 500. Deveria ser <strong>409 Conflict</strong>, uma regra de
+negócio ainda por decidir.</li>
+<li>A barra final casa com a rota do <strong>cadastro</strong> (<code>POST /fichas-produto</code>): o caminho existe, mas só para POST; o
+roteamento responde 405 com <code>Allow: POST</code> e o endpoint de consulta nem é chamado.</li>
+<li>Porque o schema separa por <strong>organização</strong>, não por impedimento: o banco e o usuário são os mesmos, e uma consulta
+atravessa schemas. O que impede é <strong>convenção e revisão</strong> (e, como reforço não adotado, permissões por schema no
+Postgres).</li>
+</ol>
+</details>
+</article>
+<footer class="rodape">Atualizado em 12/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

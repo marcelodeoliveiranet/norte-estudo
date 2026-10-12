@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norte · S16 — EF Core 10: o Catalogo grava no Postgres · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s16.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#norte--s16--ef-core-10-o-catalogo-grava-no-postgres" data-id="norte--s16--ef-core-10-o-catalogo-grava-no-postgres">Norte · S16 — EF Core 10: o Catalogo grava no Postgres</a><a class="n2" href="#1-o-problema-que-a-sessão-resolve" data-id="1-o-problema-que-a-sessão-resolve">1. O problema que a sessão resolve</a><a class="n2" href="#2-as-peças-na-ordem-em-que-foram-montadas" data-id="2-as-peças-na-ordem-em-que-foram-montadas">2. As peças, na ordem em que foram montadas</a><a class="n2" href="#3-como-ler-as-linhas-que-mais-confundem" data-id="3-como-ler-as-linhas-que-mais-confundem">3. Como ler as linhas que mais confundem</a><a class="n2" href="#4-o-preço-de-cada-decisão-ganho-×-preço" data-id="4-o-preço-de-cada-decisão-ganho-×-preço">4. O preço de cada decisão (ganho × preço)</a><a class="n2" href="#5-os-experimentos-da-sessão" data-id="5-os-experimentos-da-sessão">5. Os experimentos da sessão</a><a class="n2" href="#6-erros-que-apareceram-cada-um-vira-linha" data-id="6-erros-que-apareceram-cada-um-vira-linha">6. Erros que apareceram (cada um vira linha)</a><a class="n2" href="#7-onde-estudar-links-conferidos" data-id="7-onde-estudar-links-conferidos">7. Onde estudar (links conferidos)</a><a class="n2" href="#8-provado-×-não-provado" data-id="8-provado-×-não-provado">8. Provado × não provado</a><a class="n2" href="#9-o-que-ficou-de-fora-de-propósito" data-id="9-o-que-ficou-de-fora-de-propósito">9. O que ficou de fora de propósito</a><a class="n2" href="#10-o-que-o-mentor-errou-hoje-e-o-que-muda" data-id="10-o-que-o-mentor-errou-hoje-e-o-que-muda">10. O que o mentor errou hoje (e o que muda)</a><a class="n2" href="#11-suas-decisões-na-sessão-registradas" data-id="11-suas-decisões-na-sessão-registradas">11. Suas decisões na sessão (registradas)</a><a class="n2" href="#12-teste-se-sem-consultar-uma-pergunta-por-vez" data-id="12-teste-se-sem-consultar-uma-pergunta-por-vez">12. Teste-se (sem consultar, uma pergunta por vez)</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a><a class="n2" href="#13-preparação-da-s17" data-id="13-preparação-da-s17">13. Preparação da S17</a></aside>
+<main class="conteudo"><article>
+<h1 id="norte--s16--ef-core-10-o-catalogo-grava-no-postgres">Norte · S16 — EF Core 10: o Catalogo grava no Postgres</h1>
+<p><strong>Segunda, 12/10/2026 · 09:31 → 18:02 · 6h20 líquidas (pausas de 0h41 e 1h30) · Marco M1</strong></p>
+<p>Objetivo da sessão: <strong>fazer a ficha de produto sobreviver ao reinício da API</strong>, gravando e lendo do
+PostgreSQL com o EF Core 10. Entregue (três PRs na <code>main</code>): consulta por SKU, persistência com migration
+(PR #7), um schema do Postgres por módulo (PR #8, ADR-006) e a reorganização das pastas do módulo (PR #9).
+Decisão registrada em ADR: a entidade vira <code>class</code> (ADR-005).</p>
+<blockquote>
+<p><strong>Antes de ler:</strong> a explicação completa de cada peça está na <strong>Parte 6 do guia</strong>. Esta página é o roteiro de
+estudo da sessão: o que aconteceu, o que decidir sozinho em cada ponto e como se testar.</p>
+</blockquote>
+<hr />
+<h2 id="1-o-problema-que-a-sessão-resolve">1. O problema que a sessão resolve</h2>
+<p>Até a S15 o <code>FichaProdutoRepository</code> guardava as fichas numa lista dentro do processo. O experimento do
+início da aula mostrou o efeito:</p>
+<table>
+<thead>
+<tr>
+<th>Passo</th>
+<th>O que aconteceu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST /catalogo/fichas-produto</code> com <code>LUV-001</code></td>
+<td><code>201 Created</code>, com <code>Location: /catalogo/fichas-produto/LUV-001</code></td>
+</tr>
+<tr>
+<td><code>GET /catalogo/fichas-produto/LUV-001</code></td>
+<td><code>200 OK</code> com a ficha</td>
+</tr>
+<tr>
+<td>parar e subir a API, <code>GET</code> de novo</td>
+<td><strong><code>404 Ficha não encontrada</code></strong> — a memória do processo se foi</td>
+</tr>
+</tbody>
+</table>
+<p>O 404 do último passo veio do <strong>código do Norte</strong> (título &quot;Ficha não encontrada&quot;), não do roteamento: a
+rota funciona, a ficha é que sumiu. Resolver isso pede três coisas fora do C#: <strong>um banco rodando</strong>, o
+<strong>texto que diz como entrar nele</strong> e o <strong>pacote que ensina o EF Core a falar com esse banco</strong>.</p>
+<h2 id="2-as-peças-na-ordem-em-que-foram-montadas">2. As peças, na ordem em que foram montadas</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Peça</th>
+<th>O que você faz</th>
+<th>Onde mora</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Postgres 18 num container</td>
+<td>descreve em <code>compose.yaml</code> e sobe com <code>docker compose up -d</code></td>
+<td>raiz do <code>norte</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Connection string</td>
+<td>uma chave <code>Norte</code> na seção <code>ConnectionStrings</code></td>
+<td><code>appsettings.Development.json</code> do host</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Provider</td>
+<td>instala <code>Npgsql.EntityFrameworkCore.PostgreSQL</code></td>
+<td><code>Norte.Catalogo</code> (a versão no <code>Directory.Packages.props</code>)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Entidade como classe</td>
+<td>troca <code>record</code> por <code>internal sealed class</code> com construtor e <code>private set</code></td>
+<td><code>Dominio/FichaProduto.cs</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>DbContext</code></td>
+<td>herda de <code>DbContext</code>, expõe um <code>DbSet</code>, aplica o mapeamento</td>
+<td><code>CatalogoDbContext.cs</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td>Mapeamento (Fluent API)</td>
+<td>tabela, chave, colunas, obrigatoriedade</td>
+<td><code>Configuracoes/FichaProdutoConfiguration.cs</code></td>
+</tr>
+<tr>
+<td>7</td>
+<td>Migration</td>
+<td><code>dotnet ef migrations add</code> e <code>database update</code></td>
+<td><code>Migrations/</code> (gerada)</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Schema do módulo</td>
+<td><code>HasDefaultSchema</code> + <code>MigrationsHistoryTable</code></td>
+<td>contexto e <code>AddCatalogo</code></td>
+</tr>
+<tr>
+<td>9</td>
+<td>Repositório assíncrono</td>
+<td><code>AdicionarAsync</code>, <code>ObterPorSkuAsync</code>, <code>AddScoped</code></td>
+<td><code>FichaProdutoRepository.cs</code></td>
+</tr>
+<tr>
+<td>10</td>
+<td>Pastas do módulo</td>
+<td><code>Funcionalidades/</code>, <code>Dominio/</code>, <code>Configuracoes/</code></td>
+<td>módulo <code>Catalogo</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Regra de decisão da sequência:</strong> o banco existe → a API sabe onde ele está → o EF sabe falar com ele →
+o EF sabe qual classe vira qual tabela → a tabela existe → o repositório usa o contexto. Cada peça depende
+da anterior; por isso a ordem não é intercambiável.</p>
+<h2 id="3-como-ler-as-linhas-que-mais-confundem">3. Como ler as linhas que mais confundem</h2>
+<h3 id="31-o-composeyaml">3.1 O <code>compose.yaml</code></h3>
+<pre class="highlight"><code><span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">postgres</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres:18</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">norte-postgres</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">POSTGRES_USER</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">norte</span>
+<span class="w">      </span><span class="nt">POSTGRES_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;senha do container local&gt;</span>
+<span class="w">      </span><span class="nt">POSTGRES_DB</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">norte</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"5432:5432"</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">norte-postgres-dados:/var/lib/postgresql</span>
+
+<span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">norte-postgres-dados</span><span class="p">:</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Linha</th>
+<th>O que faz</th>
+<th>O que acontece sem ela</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>image: postgres:18</code></td>
+<td>imagem oficial, versão 18</td>
+<td>sem a versão, a imagem pode mudar de versão principal sozinha</td>
+</tr>
+<tr>
+<td><code>POSTGRES_USER</code> / <code>_PASSWORD</code> / <code>_DB</code></td>
+<td>criam usuário, senha e banco na <strong>primeira</strong> subida</td>
+<td>sem a senha o container nem sobe</td>
+</tr>
+<tr>
+<td><code>ports: &quot;5432:5432&quot;</code></td>
+<td>porta da sua máquina : porta do container</td>
+<td>a API não alcança o banco</td>
+</tr>
+<tr>
+<td><code>volumes: …:/var/lib/postgresql</code></td>
+<td>liga um volume nomeado ao diretório de dados</td>
+<td><strong>os dados morrem junto com o container</strong></td>
+</tr>
+</tbody>
+</table>
+<p>No Postgres <strong>18</strong> o volume aponta para <code>/var/lib/postgresql</code>; até a <strong>17</strong> era <code>/var/lib/postgresql/data</code>.</p>
+<h3 id="32-a-connection-string">3.2 A connection string</h3>
+<pre class="highlight"><code>Host=localhost;Port=5432;Database=norte;Username=norte;Password=&lt;senha do container local&gt;
+</code></pre>
+
+<p>Os valores têm de ser <strong>exatamente</strong> os do <code>compose.yaml</code>. Atenção: o Postgres diferencia maiúscula de
+minúscula no nome do banco (<code>norte</code>, não <code>Norte</code>). Uma connection string de SQL Server (<code>Server=</code>,
+<code>User Id=</code>) não serve: os nomes dos parâmetros mudam.</p>
+<h3 id="33-onde-cada-configuração-mora-camadas">3.3 Onde cada configuração mora (camadas)</h3>
+<p>O .NET lê a configuração em camadas; a de baixo vence se repetir a chave.</p>
+<table>
+<thead>
+<tr>
+<th>Camada</th>
+<th>Vale em</th>
+<th>Pode ter senha?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>appsettings.json</code></td>
+<td>todo ambiente</td>
+<td>não (vai para o git)</td>
+</tr>
+<tr>
+<td><code>appsettings.{Ambiente}.json</code></td>
+<td>só naquele ambiente</td>
+<td>só se for descartável (container local)</td>
+</tr>
+<tr>
+<td><code>user-secrets</code></td>
+<td><strong>só <code>Development</code>, na sua máquina</strong></td>
+<td>sim, mas não existe em stage</td>
+</tr>
+<tr>
+<td>variáveis de ambiente</td>
+<td>qualquer ambiente</td>
+<td>sim</td>
+</tr>
+<tr>
+<td>argumentos de linha de comando</td>
+<td>qualquer ambiente</td>
+<td>sim</td>
+</tr>
+</tbody>
+</table>
+<h3 id="34-a-entidade-e-o-mapeamento">3.4 A entidade e o mapeamento</h3>
+<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">FichaProduto</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="nf">FichaProduto</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">sku</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">descricao</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">ncm</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Sku</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sku</span><span class="p">;</span>
+<span class="w">        </span><span class="n">Descricao</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">descricao</span><span class="p">;</span>
+<span class="w">        </span><span class="n">Ncm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ncm</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Sku</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Descricao</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Ncm</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Escolha</th>
+<th>Motivo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>class</code>, não <code>record</code></td>
+<td>o EF usa igualdade por <strong>referência</strong>; o <code>record</code> compara por <strong>valor</strong> (ADR-005)</td>
+</tr>
+<tr>
+<td>construtor com parâmetros</td>
+<td>o EF liga cada parâmetro à propriedade de mesmo nome e o chama; <strong>não precisa de construtor vazio</strong></td>
+</tr>
+<tr>
+<td><code>private set</code></td>
+<td>sem setter a propriedade não é mapeada; com <code>public set</code> qualquer código muda a ficha</td>
+</tr>
+<tr>
+<td>chave declarada (<code>Sku</code>)</td>
+<td>a convenção só reconhece <code>Id</code> ou <code>FichaProdutoId</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="35-o-dotnet-ef-com-dois-projetos">3.5 O <code>dotnet ef</code>, com dois projetos</h3>
+<pre class="highlight"><code>dotnet ef migrations add &lt;Nome&gt; --project src/Modulos/Catalogo/Norte.Catalogo --startup-project src/Norte.Api -- --environment Development
+dotnet ef database update      --project src/Modulos/Catalogo/Norte.Catalogo --startup-project src/Norte.Api -- --environment Development
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Parte</th>
+<th>Para que serve</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--project</code></td>
+<td>onde a pasta <code>Migrations/</code> é criada (o módulo)</td>
+</tr>
+<tr>
+<td><code>--startup-project</code></td>
+<td>o host, que a ferramenta <strong>compila e executa</strong> para ler a configuração</td>
+</tr>
+<tr>
+<td><code>-- --environment Development</code></td>
+<td>tudo depois do <code>--</code> vai para o aplicativo; a connection string só existe em <code>Development</code></td>
+</tr>
+</tbody>
+</table>
+<p>O pacote <code>Microsoft.EntityFrameworkCore.Design</code> entra no <strong>host</strong> (<code>Norte.Api</code>), com <code>PrivateAssets all</code>.
+No Central Package Management a versão fica no <code>Directory.Packages.props</code>, <strong>mas a <code>PackageReference</code> precisa
+estar no <code>.csproj</code></strong> do projeto que usa o pacote (a instalação ficou pela metade na sessão por esse motivo).</p>
+<h3 id="36-o-schema-por-módulo">3.6 O schema por módulo</h3>
+<table>
+<thead>
+<tr>
+<th>Configuração</th>
+<th>O que move</th>
+<th>Onde</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>HasDefaultSchema(Schema)</code></td>
+<td>as <strong>tabelas</strong> do contexto</td>
+<td><code>OnModelCreating</code></td>
+</tr>
+<tr>
+<td><code>MigrationsHistoryTable(&quot;__EFMigrationsHistory&quot;, Schema)</code></td>
+<td>a <strong>tabela de histórico</strong></td>
+<td>opções do provider, em <code>AddCatalogo</code></td>
+</tr>
+</tbody>
+</table>
+<p>Faltando a primeira, a tabela vai para <code>public</code>. Faltando a segunda, <strong>só o histórico</strong> vai para <code>public</code>.</p>
+<h2 id="4-o-preço-de-cada-decisão-ganho-×-preço">4. O preço de cada decisão (ganho × preço)</h2>
+<table>
+<thead>
+<tr>
+<th>Decisão</th>
+<th>Ganho</th>
+<th>Preço</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Entidade como <code>class</code> (ADR-005)</td>
+<td>o EF rastreia e atualiza a entidade</td>
+<td>perde a igualdade por valor; teste que compara fichas inteiras passa a conferir propriedade por propriedade</td>
+</tr>
+<tr>
+<td>Postgres no Compose</td>
+<td>qualquer máquina recria o banco com um comando</td>
+<td>mais um arquivo; a porta 5432 só serve a um container por vez</td>
+</tr>
+<tr>
+<td>Senha de container local no <code>appsettings.Development.json</code></td>
+<td>o clone do repositório já roda</td>
+<td>só vale porque o banco é descartável; em stage e produção a senha vem por variável de ambiente</td>
+</tr>
+<tr>
+<td>Mapeamento em arquivo próprio por entidade</td>
+<td>o <code>OnModelCreating</code> não cresce</td>
+<td>um arquivo a mais e um nível de indireção</td>
+</tr>
+<tr>
+<td>Schema por módulo (ADR-006)</td>
+<td>a fronteira do módulo existe no banco</td>
+<td>duas configurações por módulo; o nome do schema aparece em SQL escrito à mão; <strong>separa por organização, não por impedimento</strong></td>
+</tr>
+<tr>
+<td>Repositório sobre o contexto</td>
+<td>o EF Core fica isolado num ponto</td>
+<td>uma camada que pode só repassar chamadas</td>
+</tr>
+<tr>
+<td><code>Funcionalidades/</code> + <code>Dominio/</code> + <code>Configuracoes/</code></td>
+<td>cada pasta tem um critério só</td>
+<td>mover custa <code>using</code>; a pasta <code>Dominio/</code> convida a criar outras pastas por tipo</td>
+</tr>
+<tr>
+<td>Rota por recurso</td>
+<td>o <code>Location</code> do cadastro responde a um <code>GET</code></td>
+<td>ações que não são cadastro/consulta/alteração/exclusão ficam sem encaixe natural</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-os-experimentos-da-sessão">5. Os experimentos da sessão</h2>
+<table>
+<thead>
+<tr>
+<th>Experimento</th>
+<th>Resultado</th>
+<th>O que prova</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST</code> <code>LUV-001</code> → <code>SELECT * FROM fichas_produto</code></td>
+<td>201; 1 linha</td>
+<td>o <code>INSERT</code> aconteceu no banco</td>
+</tr>
+<tr>
+<td>reiniciar a API → <code>GET</code> <code>LUV-001</code></td>
+<td>200</td>
+<td>a ficha <strong>sobreviveu</strong></td>
+</tr>
+<tr>
+<td><code>POST</code> <code>LUV-001</code> <strong>de novo</strong></td>
+<td><strong>500</strong> (<code>DbUpdateException</code> → <code>23505 PK_fichas_produto</code>)</td>
+<td>a chave primária recusa o duplicado; o tratamento global devolve <code>problem+json</code> genérico</td>
+</tr>
+<tr>
+<td><code>\dt catalogo.*</code> e <code>\dt public.*</code></td>
+<td>tabela e histórico em <code>catalogo</code>; <code>public</code> vazio</td>
+<td>o schema está certo nas duas configurações</td>
+</tr>
+<tr>
+<td><code>GET /catalogo/fichas-produto/</code> (SKU vazio)</td>
+<td><strong>405</strong> com <code>Allow: POST</code></td>
+<td>a barra final casa com a rota do cadastro; o endpoint de consulta nem é chamado</td>
+</tr>
+<tr>
+<td><code>GET /catalogo/fichas-produto/%20</code></td>
+<td>404 &quot;Ficha não encontrada&quot;</td>
+<td>com um espaço o endpoint é alcançado e o repositório não acha</td>
+</tr>
+</tbody>
+</table>
+<p>O resultado do 405 <strong>contrariou a previsão do mentor</strong> (que previa 404): previsão feita sem rodar. Depois
+dele o <code>if</code> de 400 para SKU vazio, que nunca executava por HTTP, foi apagado.</p>
+<h2 id="6-erros-que-apareceram-cada-um-vira-linha">6. Erros que apareceram (cada um vira linha)</h2>
+<table>
+<thead>
+<tr>
+<th>O que apareceu</th>
+<th>Causa</th>
+<th>Correção</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CS7036</code> no <code>Program.cs</code></td>
+<td>o <code>AddCatalogo</code> ganhou o parâmetro <code>IConfiguration</code> e o host chamava sem argumento</td>
+<td><code>AddCatalogo(builder.Configuration)</code> (esperado e anunciado)</td>
+</tr>
+<tr>
+<td><code>CS8604</code> na connection string</td>
+<td><code>GetConnectionString</code> devolve <code>string?</code></td>
+<td><code>?? throw</code> <strong>dentro</strong> da função do <code>AddDbContext</code></td>
+</tr>
+<tr>
+<td><code>Assert.Equal</code> com <code>Expected</code> e <code>Actual</code> &quot;idênticos&quot;</td>
+<td><code>class</code> compara por referência</td>
+<td>conferir propriedade por propriedade</td>
+</tr>
+<tr>
+<td><code>IDE1006</code> em <code>Executar</code></td>
+<td>método <code>async</code> sem sufixo</td>
+<td>renomear para <code>ExecutarAsync</code></td>
+</tr>
+<tr>
+<td><code>IDE0161</code> na pasta <code>Migrations/</code></td>
+<td>a ferramenta gera <code>namespace</code> em bloco</td>
+<td><code>.editorconfig</code> <strong>na pasta</strong>, desligando só essa regra</td>
+</tr>
+<tr>
+<td>Pacote <code>Design</code> instalado, <code>dotnet ef</code> não o usa</td>
+<td>a <code>PackageReference</code> não foi gravada no <code>Norte.Api.csproj</code></td>
+<td>conferir o <code>.csproj</code>, não só o <code>Directory.Packages.props</code></td>
+</tr>
+<tr>
+<td>build &quot;idêntico&quot; ao anterior (mesmos tempos)</td>
+<td>saída antiga colada de novo</td>
+<td>rodar de novo e colar a nova</td>
+</tr>
+<tr>
+<td><code>migrations remove</code> imprime <code>fail:</code> de conexão e termina em <code>Done</code></td>
+<td>o EF tenta conectar para ver se a migration foi aplicada; o banco já havia sido apagado</td>
+<td>seguir (inferência pela ordem das mensagens)</td>
+</tr>
+<tr>
+<td>janela &quot;Select an account&quot; ao falar com o GitHub</td>
+<td>o gerenciador de credenciais guarda mais de uma conta</td>
+<td>colocar o usuário na URL do remoto (<strong>confirmar</strong> que o <code>fetch</code> não abre mais a janela)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-onde-estudar-links-conferidos">7. Onde estudar (links conferidos)</h2>
+<p>Em ordem de uso:</p>
+<ol>
+<li><a href="https://learn.microsoft.com/en-us/ef/core/modeling/constructors">Entity types with constructors</a> — como o EF liga
+parâmetros do construtor a propriedades (resposta a &quot;preciso de construtor vazio?&quot;).</li>
+<li><a href="https://learn.microsoft.com/en-us/ef/core/modeling/entity-types">Entity Types</a> — tabela, schema e o aviso sobre <code>record</code>.</li>
+<li><a href="https://learn.microsoft.com/en-us/ef/core/cli/dotnet">Referência da CLI do EF Core</a> — <code>--project</code>, <code>--startup-project</code>,
+<code>database drop</code>, <code>migrations remove</code>.</li>
+<li><a href="https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/">Migrations</a> — o que é a migration, o snapshot e
+por que <code>database update</code> é para desenvolvimento.</li>
+</ol>
+<p>Ressalva: a página da CLI traz opções de versões mais novas (por exemplo, <code>--offline</code> em <code>migrations remove</code>
+é do EF Core 11). No Norte (EF Core 10) elas não existem.</p>
+<h2 id="8-provado-×-não-provado">8. Provado × não provado</h2>
+<table>
+<thead>
+<tr>
+<th>Provado na sessão</th>
+<th>Não provado (ficou aberto)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A ficha sobrevive ao reinício (POST, <code>SELECT</code>, reiniciar, GET)</td>
+<td>Como dois contextos de módulos diferentes convivem na <strong>mesma</strong> tabela de histórico (a decisão evita a situação)</td>
+</tr>
+<tr>
+<td><code>ApplyConfigurationsFromAssembly</code> enxerga classes <code>internal</code></td>
+<td>Se o contêiner de DI acusa singleton dependendo de scoped neste projeto (regra de design vale de qualquer jeito)</td>
+</tr>
+<tr>
+<td>O EF Core 10.0.4 veio como dependência transitiva do provider</td>
+<td>Se o <code>git fetch</code> deixou de abrir a janela de conta depois do <code>set-url</code></td>
+</tr>
+<tr>
+<td>O duplicado vira <code>23505</code> → <code>DbUpdateException</code> → 500</td>
+<td>O comportamento do EF com dois construtores (construtor vazio + com parâmetros): não testado, o vazio foi apagado</td>
+</tr>
+<tr>
+<td>O schema <code>catalogo</code> recebeu tabela <strong>e</strong> histórico; <code>public</code> ficou vazio</td>
+<td>O 409 e o teste com banco real: não existem ainda</td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-o-que-ficou-de-fora-de-propósito">9. O que ficou de fora de propósito</h2>
+<ul>
+<li><strong>Nenhum teste toca o banco.</strong> O teste de unidade do cadastro protegia uma lista em memória e foi apagado;
+sobram 4 testes (3 de recusa 400 e 1 do 500). Teste da gravação pede o Postgres real (Testcontainers),
+porque o provider em memória e o SQLite aceitam o que o Postgres recusa.</li>
+<li><strong>409 no SKU duplicado:</strong> regra de negócio, decisão da próxima sessão.</li>
+<li><strong><code>CancellationToken</code></strong> no repositório, seed, paginação e projeções, concorrência otimista, índices.</li>
+</ul>
+<h2 id="10-o-que-o-mentor-errou-hoje-e-o-que-muda">10. O que o mentor errou hoje (e o que muda)</h2>
+<table>
+<thead>
+<tr>
+<th>O que aconteceu</th>
+<th>Efeito</th>
+<th>Regra</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Passou a rota <code>/fichas-produto/{sku}</code> sem dizer <strong>por que</strong> ela tinha essa forma</td>
+<td>o aluno fez <code>/obter-ficha-produto/{sku}</code> e só descobriu no relatório</td>
+<td>dizer o porquê <strong>junto</strong> com a decisão</td>
+</tr>
+<tr>
+<td>Perguntou &quot;onde fica a connection string&quot; de forma abstrata</td>
+<td>o aluno respondeu que já estava implícito</td>
+<td>pergunta concreta, ou nenhuma</td>
+</tr>
+<tr>
+<td>Pediu a connection string &quot;de cabeça&quot;</td>
+<td>&quot;você está passando configurações pensando que eu tenho isso de cabeça&quot;</td>
+<td>configuração é sintaxe: pedir só a sequência em português, <strong>mostrar</strong> o texto</td>
+</tr>
+<tr>
+<td>Tarefa de três partes numa mensagem só</td>
+<td>&quot;seja mais explícito quando passar para fazer algo; estou perdido&quot;</td>
+<td><strong>(w)</strong> um passo por mensagem, com arquivo, o que apagar/colar e o que o build deve mostrar</td>
+</tr>
+<tr>
+<td>Previu 404 (era 405) e previu a página detalhada no 500 (era o <code>problem+json</code> genérico)</td>
+<td>duas previsões erradas, ambas sem rodar</td>
+<td>regra (u): ver antes de afirmar</td>
+</tr>
+<tr>
+<td>Afirmou que a branch local ainda existia</td>
+<td>já havia sido apagada</td>
+<td>conferir pelo <code>branch -a</code> antes de dizer</td>
+</tr>
+<tr>
+<td>Repetiu &quot;o código de hoje acabou?&quot; quatro vezes</td>
+<td>ruído enquanto o aluno resolvia outras coisas</td>
+<td>perguntar uma vez e esperar</td>
+</tr>
+</tbody>
+</table>
+<h2 id="11-suas-decisões-na-sessão-registradas">11. Suas decisões na sessão (registradas)</h2>
+<ul>
+<li><strong>Mapeamento em arquivo próprio</strong> (<code>Configuracoes/</code>), como você já fazia no .NET 6.</li>
+<li><strong>Pasta <code>Dominio/</code>:</strong> &quot;ao bater o olho sabemos onde está; não faz sentido ter <code>Configuracoes</code> e não ter <code>Dominio</code>&quot;.</li>
+<li><strong>Rota por recurso</strong> em vez de verbo no endereço (o método HTTP diz a ação).</li>
+<li><strong>Proteção da <code>main</code>:</strong> não ligar agora; o mentor avisa quando decidir junto com <code>ubuntu-latest</code> × <code>ubuntu-24.04</code>.</li>
+<li><strong>Abertura sem perguntas:</strong> a análise semanal e as decisões (A6, DDD de manhã, v2.5, T2/T3) foram adiadas por você.</li>
+</ul>
+<h2 id="12-teste-se-sem-consultar-uma-pergunta-por-vez">12. Teste-se (sem consultar, uma pergunta por vez)</h2>
+<ol>
+<li>A <code>FichaProduto</code> nasceu como <code>record</code>. Por que virou <code>class</code>, e o que se perde?</li>
+<li>O que o <code>private set</code> faz no EF Core, e por que o construtor vazio <strong>não</strong> é necessário?</li>
+<li>Dê duas coisas que <code>HasDefaultSchema</code> move, e diga o que acontece se faltar a <code>MigrationsHistoryTable</code>.</li>
+<li>Qual a diferença entre <code>--project</code> e <code>--startup-project</code> no <code>dotnet ef</code>?</li>
+<li>O que o <code>Add</code> faz e o que o <code>SaveChangesAsync</code> faz? Por que o repositório é <code>AddScoped</code>?</li>
+<li>Cadastrar o mesmo SKU duas vezes devolve 500. Qual a causa e qual deveria ser o status?</li>
+<li>Por que <code>GET /catalogo/fichas-produto/</code> devolve 405?</li>
+<li>Por que o schema por módulo <strong>não</strong> impede um módulo de ler a tabela de outro?</li>
+<li>Cite um <strong>preço</strong> (não um ganho) do schema por módulo.</li>
+<li>(Revisão das sessões anteriores) Qual middleware <strong>escreve</strong> o corpo do erro, qual <strong>captura</strong> a exceção e qual <strong>preenche</strong> o corpo vazio de um 4xx?</li>
+</ol>
+<h2 id="respostas">Respostas</h2><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>O EF usa igualdade por <strong>referência</strong> (uma instância por entidade, rastreamento); o <code>record</code> compara por
+<strong>valor</strong>, e a documentação o trata como inadequado para entidade. Perde-se a igualdade por valor automática
+e o <code>with</code>; testes que comparam fichas inteiras precisam conferir propriedade por propriedade.</li>
+<li>Propriedade <strong>sem</strong> setter não é mapeada por convenção; com <code>private set</code> o EF mapeia e o código de fora não
+altera a ficha. O construtor vazio não é necessário porque o EF chama o construtor cujos parâmetros casam
+(nome e tipo) com as propriedades mapeadas.</li>
+<li>Move as <strong>tabelas do modelo</strong> (e outros objetos, como sequências). Sem a <code>MigrationsHistoryTable</code>, só o
+<code>__EFMigrationsHistory</code> fica em <code>public</code>, e dois módulos dividiriam a mesma tabela de histórico.</li>
+<li><code>--project</code> é o <strong>destino</strong> (onde a pasta <code>Migrations/</code> nasce: o módulo). <code>--startup-project</code> é o que a
+ferramenta <strong>compila e executa</strong> para descobrir configuração e connection string (o host).</li>
+<li><code>Add</code> só <strong>marca</strong> a ficha como nova; o <code>INSERT</code> acontece no <code>SaveChangesAsync</code>. O contexto é <em>scoped</em> (uma
+instância por requisição) e um <em>singleton</em> que dependesse dele prenderia aquela instância para sempre.</li>
+<li>A chave primária em <code>sku</code> (<code>PK_fichas_produto</code>): o banco recusa (<code>23505</code>), o EF lança <code>DbUpdateException</code> e o
+tratamento global devolve 500. Deveria ser <strong>409 Conflict</strong> (regra de negócio ainda a decidir).</li>
+<li>A barra final casa com a rota do cadastro (<code>POST /fichas-produto</code>): o caminho existe, mas só para POST; o
+roteamento responde 405 com <code>Allow: POST</code> e o endpoint de consulta nem é chamado.</li>
+<li>Porque separa por <strong>organização</strong>, não por <strong>impedimento</strong>: mesmo banco, mesmo usuário; uma consulta atravessa
+schemas. O que impede é convenção e revisão (e, como reforço não adotado, permissões por schema).</li>
+<li>Por exemplo: duas configurações para lembrar a cada módulo novo (se faltar a do histórico, só ela vai para
+<code>public</code>); o nome do schema aparece em SQL escrito à mão (<code>catalogo.fichas_produto</code>). (Qualquer um, com o efeito.)</li>
+<li><strong><code>AddProblemDetails()</code> escreve</strong> o corpo; <strong><code>UseExceptionHandler()</code> captura</strong> a exceção não tratada;
+<strong><code>UseStatusCodePages()</code> preenche</strong> o corpo de um 4xx/5xx vazio.</li>
+</ol>
+</details><h2 id="13-preparação-da-s17">13. Preparação da S17</h2>
+<ul>
+<li><strong>Decisão sua:</strong> S17 <strong>A</strong> (409 no SKU duplicado + teste de integração com Postgres real; o teste nasce
+vermelho, com o duplicado devolvendo 500, e fica verde quando o 409 entra) ou <strong>B</strong> (abrir o <code>Pedidos</code> com
+persistência). Recomendação do mentor: <strong>A</strong>, por fechar a lacuna do <code>Catalogo</code> e por ter regra de negócio.</li>
+<li><strong>Abertura:</strong> a análise semanal e as decisões adiadas (A6, DDD de manhã, v2.5, T2/T3) voltam; revisão
+espaçada de 3 perguntas (<strong>escreve · captura · preenche</strong>, <code>public</code> × <code>internal</code>, unidade × integração em
+frase própria).</li>
+<li><strong>Antes de 19/10:</strong> <code>ubuntu-latest</code> × <code>ubuntu-24.04</code> e proteção da <code>main</code> (decidir juntos).</li>
+</ul>
+
+</article>
+<footer class="rodape">Atualizado em 12/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>
