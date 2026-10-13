@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norte · S17 — 409 no SKU duplicado e teste com Postgres real · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s17.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#norte--s17--409-no-sku-duplicado-e-teste-com-postgres-real" data-id="norte--s17--409-no-sku-duplicado-e-teste-com-postgres-real">Norte · S17 — 409 no SKU duplicado e teste com Postgres real</a><a class="n2" href="#1-o-problema-que-a-sessão-resolve" data-id="1-o-problema-que-a-sessão-resolve">1. O problema que a sessão resolve</a><a class="n2" href="#2-as-peças" data-id="2-as-peças">2. As peças</a><a class="n2" href="#3-como-ler-o-código" data-id="3-como-ler-o-código">3. Como ler o código</a><a class="n2" href="#4-o-preço-de-cada-decisão-ganho-×-preço" data-id="4-o-preço-de-cada-decisão-ganho-×-preço">4. O preço de cada decisão (ganho × preço)</a><a class="n2" href="#5-o-experimento-do-public-→-internal-no-request" data-id="5-o-experimento-do-public-→-internal-no-request">5. O experimento do public → internal no Request</a><a class="n2" href="#6-o-que-a-sessão-deixou-à-vista" data-id="6-o-que-a-sessão-deixou-à-vista">6. O que a sessão deixou à vista</a><a class="n2" href="#7-decisões-e-pendências-da-sessão" data-id="7-decisões-e-pendências-da-sessão">7. Decisões e pendências da sessão</a><a class="n2" href="#8-erros-que-apareceram" data-id="8-erros-que-apareceram">8. Erros que apareceram</a><a class="n2" href="#9-onde-estudar" data-id="9-onde-estudar">9. Onde estudar</a><a class="n2" href="#10-provado-×-não-provado" data-id="10-provado-×-não-provado">10. Provado × não provado</a><a class="n2" href="#11-suas-decisões-na-sessão-registradas" data-id="11-suas-decisões-na-sessão-registradas">11. Suas decisões na sessão (registradas)</a><a class="n2" href="#12-teste-se-sem-consultar-uma-pergunta-por-vez" data-id="12-teste-se-sem-consultar-uma-pergunta-por-vez">12. Teste-se (sem consultar, uma pergunta por vez)</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a><a class="n2" href="#13-preparação-da-s18" data-id="13-preparação-da-s18">13. Preparação da S18</a></aside>
+<main class="conteudo"><article>
+<h1 id="norte--s17--409-no-sku-duplicado-e-teste-com-postgres-real">Norte · S17 — 409 no SKU duplicado e teste com Postgres real</h1>
+<p><strong>Terça, 13/10/2026 · 09:31 → 15:01 · 3h42 líquidas (pausas de 0h17 e 1h31) · Marco M1</strong></p>
+<p>Objetivo da sessão: <strong>transformar o 500 do SKU duplicado numa resposta de negócio (409 Conflict) e protegê-la com um teste que fala com um Postgres de verdade.</strong> Entregue (dois PRs na <code>main</code>): o 409 e o teste de integração com Testcontainers (PR #10, <code>f02deda</code>) e o fechamento da imagem do CI em <code>ubuntu-24.04</code> (PR #11, <code>d59e84f</code>). A <code>main</code> termina com <strong>5 testes verdes</strong>.</p>
+<blockquote>
+<p><strong>Antes de ler:</strong> a sessão fecha a pendência que a S16 deixou aberta (&quot;o duplicado devolve 500; o certo é 409; nenhum teste toca o banco&quot;). A explicação completa de cada peça está nas entradas <strong>6.9 a 6.11 da Parte 6 do guia</strong>. Esta página é o roteiro de estudo da sessão.</p>
+</blockquote>
+<hr />
+<h2 id="1-o-problema-que-a-sessão-resolve">1. O problema que a sessão resolve</h2>
+<p>Ao fim da S16, cadastrar o mesmo SKU duas vezes dava:</p>
+<table>
+<thead>
+<tr>
+<th>Passo</th>
+<th>Resultado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST /catalogo/fichas-produto</code> com <code>LUV-001</code></td>
+<td><code>201 Created</code></td>
+</tr>
+<tr>
+<td>o mesmo <code>POST</code> de novo</td>
+<td><strong><code>500</code></strong> — <code>DbUpdateException</code> → <code>23505 duplicate key value violates unique constraint &quot;PK_fichas_produto&quot;</code></td>
+</tr>
+</tbody>
+</table>
+<p>O banco fez o trabalho certo (recusou), mas o <strong>cliente</strong> recebeu &quot;erro do servidor&quot; para algo que <strong>ele</strong> pode corrigir. Isso é uma regra de negócio (&quot;não existem duas fichas com o mesmo SKU&quot;) e o status certo é <strong>409 Conflict</strong>.</p>
+<h2 id="2-as-peças">2. As peças</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Peça</th>
+<th>O que você faz</th>
+<th>Onde mora</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Pacote do Testcontainers</td>
+<td>acrescenta <code>Testcontainers.PostgreSql</code> (4.16.0) no <code>Directory.Packages.props</code> e a <code>PackageReference</code> no projeto de testes</td>
+<td><code>Directory.Packages.props</code>, <code>Norte.Catalogo.Tests.csproj</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Postgres descartável no teste</td>
+<td>sobe um container <code>postgres:18</code> por execução de testes</td>
+<td><code>ApiComPostgresFabrica.cs</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>API de teste apontada para esse banco</td>
+<td><code>WebApplicationFactory&lt;Program&gt;</code> com a connection string trocada e <code>MigrateAsync</code></td>
+<td>mesmo arquivo</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Regra do 409</td>
+<td>consulta o SKU antes de gravar; se existe, devolve <code>TypedResults.Problem(409)</code></td>
+<td><code>CadastrarFichaProdutoEndpoint.cs</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Tipo de retorno do endpoint</td>
+<td>troca <code>ValidationProblem</code> por <code>ProblemHttpResult</code> no <code>Results&lt;...&gt;</code></td>
+<td>mesmo arquivo</td>
+</tr>
+<tr>
+<td>6</td>
+<td>O teste da regra</td>
+<td><code>POST</code> válido → 201; mesmo <code>POST</code> → 409 com título &quot;Sku já cadastrado&quot;</td>
+<td><code>CadastrarFichaProdutoComBancoApiTests.cs</code></td>
+</tr>
+<tr>
+<td>7</td>
+<td>Imagem do runner do CI</td>
+<td><code>runs-on: ubuntu-24.04</code> em vez de <code>ubuntu-latest</code></td>
+<td><code>.github/workflows/ci.yml</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Regra de decisão da ordem:</strong> a fábrica e o teste vêm <strong>antes</strong> do código do 409. O teste precisa ser visto <strong>vermelho pelo motivo certo</strong> (o duplicado devolve 500); só então o código o deixa verde. Um teste que nunca foi visto vermelho não prova que protege nada.</p>
+<p>Os commits do PR #10, na ordem: <code>build(catalogo): adicionar testcontainers…</code> → <code>test(catalogo): adicionar fábrica da api com postgres em container</code> → <code>fix(catalogo): recusar sku duplicado com 409</code> → <code>test(catalogo): proteger o 409 do sku duplicado com postgres real</code>. O PR #11 tem um commit: <code>ci: fixar runner no ubuntu-24.04</code>.</p>
+<h2 id="3-como-ler-o-código">3. Como ler o código</h2>
+<h3 id="31-o-endpoint-com-o-409">3.1 O endpoint com o 409</h3>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="o">&lt;</span><span class="n">Results</span><span class="o">&lt;</span><span class="n">Created</span><span class="o">&lt;</span><span class="n">FichaProduto</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">ProblemHttpResult</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">ExecutarAsync</span><span class="p">(</span>
+<span class="w">    </span><span class="n">CadastrarFichaProdutoRequest</span><span class="w"> </span><span class="n">request</span><span class="p">,</span>
+<span class="w">    </span><span class="n">FichaProdutoRepository</span><span class="w"> </span><span class="n">fichas</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">fichaExistente</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">fichas</span><span class="p">.</span><span class="n">ObterPorSkuAsync</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Sku</span><span class="o">!</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">fichaExistente</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">null</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">Problem</span><span class="p">(</span>
+<span class="w">            </span><span class="n">statusCode</span><span class="p">:</span><span class="w"> </span><span class="n">StatusCodes</span><span class="p">.</span><span class="n">Status409Conflict</span><span class="p">,</span>
+<span class="w">            </span><span class="n">title</span><span class="p">:</span><span class="w"> </span><span class="s">"Sku já cadastrado"</span><span class="p">,</span>
+<span class="w">            </span><span class="n">detail</span><span class="p">:</span><span class="w"> </span><span class="s">$"O sku {request.Sku} já está cadastrado"</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">ficha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FichaProduto</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Sku</span><span class="o">!</span><span class="p">,</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="n">Descricao</span><span class="o">!</span><span class="p">,</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="n">Ncm</span><span class="o">!</span><span class="p">);</span>
+<span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="n">fichas</span><span class="p">.</span><span class="n">AdicionarAsync</span><span class="p">(</span><span class="n">ficha</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">Created</span><span class="p">(</span><span class="s">$"/catalogo/fichas-produto/{ficha.Sku}"</span><span class="p">,</span><span class="w"> </span><span class="n">ficha</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Trecho</th>
+<th>Significado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ObterPorSkuAsync</code> antes de <code>AdicionarAsync</code></td>
+<td><strong>verifica antes de gravar</strong>: pergunta ao banco se o SKU existe</td>
+</tr>
+<tr>
+<td><code>TypedResults.Problem(statusCode: 409, ...)</code></td>
+<td>resposta em <code>application/problem+json</code>, com o status que <strong>você</strong> escolheu e um título legível</td>
+</tr>
+<tr>
+<td><code>title: &quot;Sku já cadastrado&quot;</code></td>
+<td>o teste confere esse texto; mudar o título quebra o teste (o título é parte do contrato)</td>
+</tr>
+<tr>
+<td><code>ProblemHttpResult</code> no <code>Results&lt;...&gt;</code></td>
+<td>o método agora devolve 201 <strong>ou</strong> um problem; <code>ValidationProblem</code> deixou de ser devolvido aqui (o 400 da validação nativa acontece <strong>antes</strong> do endpoint)</td>
+</tr>
+<tr>
+<td><code>request.Sku!</code></td>
+<td>o <code>!</code> é uma <strong>promessa</strong>: &quot;a validação nativa já garantiu que não é nulo&quot; (ver seção 5)</td>
+</tr>
+</tbody>
+</table>
+<p>Por que <code>TypedResults.Problem(...)</code> e não <code>TypedResults.Conflict()</code>? O <code>Conflict()</code> devolve só o status; o <code>Problem</code> leva título e detalhe que o cliente consegue ler. O preço é que o título passa a ser contrato com o teste.</p>
+<h3 id="32-a-fábrica-da-api-com-banco-real">3.2 A fábrica da API com banco real</h3>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">ApiComPostgresFabrica</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">WebApplicationFactory</span><span class="o">&lt;</span><span class="n">Program</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">IAsyncLifetime</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="n">PostgreSqlContainer</span><span class="w"> </span><span class="n">_postgres</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">PostgreSqlBuilder</span><span class="p">(</span><span class="s">"postgres:18"</span><span class="p">).</span><span class="n">Build</span><span class="p">();</span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">InitializeAsync</span><span class="p">()</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="n">_postgres</span><span class="p">.</span><span class="n">StartAsync</span><span class="p">();</span>
+<span class="w">        </span><span class="k">using</span><span class="w"> </span><span class="nn">var</span><span class="w"> </span><span class="n">escopo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Services</span><span class="p">.</span><span class="n">CreateScope</span><span class="p">();</span>
+<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">contexto</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">escopo</span><span class="p">.</span><span class="n">ServiceProvider</span><span class="p">.</span><span class="n">GetRequiredService</span><span class="o">&lt;</span><span class="n">CatalogoDbContext</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="n">contexto</span><span class="p">.</span><span class="n">Database</span><span class="p">.</span><span class="n">MigrateAsync</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">protected</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">ConfigureWebHost</span><span class="p">(</span><span class="n">IWebHostBuilder</span><span class="w"> </span><span class="n">builder</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">builder</span><span class="p">.</span><span class="n">UseSetting</span><span class="p">(</span><span class="s">"ConnectionStrings:Norte"</span><span class="p">,</span><span class="w"> </span><span class="n">_postgres</span><span class="p">.</span><span class="n">GetConnectionString</span><span class="p">());</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">DisposeAsync</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_postgres</span><span class="p">.</span><span class="n">DisposeAsync</span><span class="p">().</span><span class="n">AsTask</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Passo</th>
+<th>O que faz</th>
+<th>Sem ele</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. <code>StartAsync()</code> sobe o container <code>postgres:18</code></td>
+<td>um Postgres só para a execução dos testes</td>
+<td>não há banco para falar</td>
+</tr>
+<tr>
+<td>2. <code>UseSetting(&quot;ConnectionStrings:Norte&quot;, …)</code></td>
+<td>a API de teste aponta para o container, não para o banco de desenvolvimento</td>
+<td>os testes gravam no banco do <code>Compose</code> e deixam lixo</td>
+</tr>
+<tr>
+<td>3. <code>MigrateAsync()</code></td>
+<td>cria o schema <code>catalogo</code> e a tabela dentro do container</td>
+<td>a tabela não existe; o primeiro <code>INSERT</code> falha</td>
+</tr>
+<tr>
+<td>4. <code>DisposeAsync()</code></td>
+<td>descarta o container</td>
+<td>sobram containers parados na máquina</td>
+</tr>
+</tbody>
+</table>
+<p>O <strong>Docker precisa estar aberto</strong> para os testes rodarem. Com o container, a suíte passou de ~4,5 s para ~11 s.</p>
+<h3 id="33-o-teste-arrange--act--assert">3.3 O teste (Arrange / Act / Assert)</h3>
+<table>
+<thead>
+<tr>
+<th>Parte</th>
+<th>Pergunta que responde</th>
+<th>No teste do 409</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Arrange</strong></td>
+<td>em que situação o sistema está?</td>
+<td>a API ligada a um Postgres real e vazio; um corpo válido com SKU gerado de um <code>Guid</code> (nunca existiu antes)</td>
+</tr>
+<tr>
+<td><strong>Act</strong></td>
+<td>que ação o usuário faz?</td>
+<td>o mesmo cadastro enviado duas vezes (o 1º <code>POST</code> é só preparação)</td>
+</tr>
+<tr>
+<td><strong>Assert</strong></td>
+<td>o que o sistema deve mostrar?</td>
+<td>o 1º <code>POST</code> devolve 201; o 2º devolve 409 com o título &quot;Sku já cadastrado&quot;</td>
+</tr>
+</tbody>
+</table>
+<p>O SKU por <code>Guid</code> faz o teste não depender de execução anterior; o banco novo a cada execução garante que não sobra dado de uma rodada para outra.</p>
+<h2 id="4-o-preço-de-cada-decisão-ganho-×-preço">4. O preço de cada decisão (ganho × preço)</h2>
+<table>
+<thead>
+<tr>
+<th>Decisão</th>
+<th>Ganho</th>
+<th>Preço</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Verificar antes de gravar</strong> (consulta + <code>INSERT</code>)</td>
+<td>o 409 sai do código de negócio, explícito no endpoint, sem tipo do Npgsql e sem conceito novo</td>
+<td>uma consulta a mais em <strong>todo</strong> cadastro; <strong>corrida</strong>: duas requisições simultâneas passam pela consulta e a segunda cai no <code>23505</code> → 500</td>
+</tr>
+<tr>
+<td>Tratar a exceção <code>23505</code> (alternativa não adotada, anotada como evolução)</td>
+<td>uma ida só ao banco; sem corrida</td>
+<td>o endpoint passa a conhecer <code>PostgresException</code> e o código <code>23505</code> (detalhe do Postgres no código de negócio)</td>
+</tr>
+<tr>
+<td>Testcontainers (Postgres real)</td>
+<td>banco novo e vazio a cada execução; o mesmo teste roda local e no CI</td>
+<td>exige Docker na máquina e no CI; a suíte ficou mais lenta (~4,5 s → ~11 s); a 1ª execução baixa a imagem</td>
+</tr>
+<tr>
+<td>Postgres do <code>Compose</code> no teste (rejeitado)</td>
+<td>nenhum pacote novo</td>
+<td>SKU fixo falharia na 2ª execução; com SKU único funciona, mas o CI exigiria um Postgres externo</td>
+</tr>
+<tr>
+<td>Provider em memória / SQLite (rejeitados)</td>
+<td>rápidos, sem Docker</td>
+<td><strong>passam onde o Postgres reprovaria</strong>: o <code>23505</code> só existe no Postgres</td>
+</tr>
+<tr>
+<td>Fixar <code>ubuntu-24.04</code> no CI</td>
+<td>o CI fica na imagem em que o teste passou e não muda sozinho quando o <code>ubuntu-latest</code> migrar para o Ubuntu 26</td>
+<td>alguém precisa testar o 26.04 e trocar a fixação antes de 19/11</td>
+</tr>
+<tr>
+<td>Não proteger a <code>main</code> agora</td>
+<td>nenhuma configuração inútil</td>
+<td>o CI avisa, mas não impede o merge; ver seção 7</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O risco registrado:</strong> com &quot;verificar antes de gravar&quot;, a corrida entre duas requisições continua devolvendo 500. Foi aceito e ficou no ADR; a defesa completa seria <strong>verificar antes e também tratar o <code>23505</code></strong>.</p>
+<h2 id="5-o-experimento-do-public-→-internal-no-request">5. O experimento do <code>public</code> → <code>internal</code> no <code>Request</code></h2>
+<p>O <code>CadastrarFichaProdutoRequest</code> é <code>public</code> por exigência do gerador da validação nativa (ADR-003). Na revisão espaçada da abertura, a previsão foi &quot;se virar <code>internal</code>, dá erro de build&quot;. O experimento foi feito em branch descartável (<code>teste/catalogo-request-internal</code>) para ver o que realmente acontece.</p>
+<table>
+<thead>
+<tr>
+<th>Observação</th>
+<th>Resultado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dotnet build Norte.slnx</code></td>
+<td><strong>passa</strong> — <code>Build succeeded</code>, sem erro e sem aviso</td>
+</tr>
+<tr>
+<td><code>dotnet test</code></td>
+<td><strong>3 de 5 testes falham</strong>: esperavam <code>400 BadRequest</code>, receberam <code>409 Conflict</code></td>
+</tr>
+</tbody>
+</table>
+<p>O que isso prova, na ordem em que acontece:</p>
+<ol>
+<li>Com <code>internal</code>, o gerador da validação <strong>não enxerga</strong> o tipo; a validação deixa de rodar, sem aviso.</li>
+<li>Os corpos dos testes de recusa têm um campo vazio (<code>sku = &quot;&quot;</code>, <code>descricao = &quot;&quot;</code> ou <code>ncm = &quot;&quot;</code>); sem a validação, eles chegam ao endpoint.</li>
+<li>O endpoint consulta o SKU e grava. No banco de desenvolvimento, o primeiro teste gravou uma ficha com SKU vazio e os seguintes encontraram esse SKU → <strong>409</strong> em vez de 400.</li>
+</ol>
+<p>Consequências para guardar:</p>
+<ul>
+<li><strong>O build não avisa.</strong> O erro só aparece em tempo de execução, e só se existir um teste que cubra a validação. A previsão &quot;erro de build&quot; estava errada; a <strong>consequência</strong> (a validação deixa de proteger) é o ponto da regra do ADR-003.</li>
+<li>O <code>!</code> em <code>request.Sku!</code> só é seguro <strong>porque</strong> a validação rodou; sem ela, o endpoint trabalha com valores que ninguém verificou.</li>
+<li>O resultado dependeu de os testes gravarem no banco de desenvolvimento: é sintoma de <strong>teste que toca o banco do desenvolvedor</strong> (seção 6).</li>
+</ul>
+<p>Depois do experimento, <code>git restore</code> desfez a alteração, a linha de SKU vazio foi apagada do banco e a <code>main</code> voltou limpa.</p>
+<h2 id="6-o-que-a-sessão-deixou-à-vista">6. O que a sessão deixou à vista</h2>
+<table>
+<thead>
+<tr>
+<th>Achado</th>
+<th>Por que importa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Os três testes de recusa 400 usam <code>WebApplicationFactory&lt;Program&gt;</code> <strong>simples</strong>, contra o banco de desenvolvimento</td>
+<td>quando a validação falha, eles <strong>gravam lixo</strong></td>
+</tr>
+<tr>
+<td>O construtor de <code>FichaProduto</code> <strong>não valida</strong></td>
+<td>quem não passa pela API (outro módulo, um teste) cria ficha com SKU vazio</td>
+</tr>
+<tr>
+<td>O teste do 409 existiu <strong>antes</strong> do código que o satisfaz</td>
+<td>foi visto vermelho (500) e depois verde (409)</td>
+</tr>
+<tr>
+<td>Insight seu: <strong>&quot;o teste não tem lógica de negócio; ele só testa o comportamento esperado&quot;</strong></td>
+<td>quando a lógica mora no lugar certo, o teste fica simples. Ajuste: o teste reflete <strong>o que a regra exige</strong>, não <strong>como</strong> ela foi implementada</td>
+</tr>
+</tbody>
+</table>
+<p>Sobre o insight: o mesmo teste do 409 continuaria verde se a regra fosse implementada tratando o <code>23505</code> (opção B), <strong>sem mudar uma linha</strong>. É isso que significa testar o comportamento e não a implementação.</p>
+<h2 id="7-decisões-e-pendências-da-sessão">7. Decisões e pendências da sessão</h2>
+<ul>
+<li><strong>Proteção da <code>main</code>:</strong> o GitHub não aplica <em>rulesets</em> nem proteção de branch em repositório <strong>privado</strong> no plano gratuito (o próprio GitHub mostra o aviso). A decisão foi <strong>adiar</strong>: o repositório será aberto ao fim do laboratório; nesse momento recria-se a regra (PR obrigatório com 0 aprovações, check <code>CI</code>, sem <em>force push</em> nem exclusão), faz-se o teste de empurrar direto e roda-se uma varredura de segredos no histórico inteiro. O ruleset <code>proteger-main</code> criado no meio da sessão não tem efeito e pode ser apagado.</li>
+<li><strong>PR #10:</strong> a seção &quot;Decisões&quot; da descrição foi preenchida no GitHub. A descrição do PR <strong>mora no GitHub</strong>, não no Git: não aparece em <code>git log</code>.</li>
+<li><strong>Próxima sessão (S18):</strong> terminar o <code>Catalogo</code> — seed, listagem e paginação — mais duas pendências novas: os três testes de recusa passam a usar a fábrica com Postgres real; o construtor de <code>FichaProduto</code> passa a recusar SKU, descrição ou NCM vazios.</li>
+<li><strong>Até 19/11:</strong> testar o <code>ubuntu-26.04</code> e trocar a imagem fixada.</li>
+<li><strong>Banco de desenvolvimento:</strong> ainda tem fichas de teste (<code>LUV-001</code> e outra); limpe se quiser.</li>
+</ul>
+<h2 id="8-erros-que-apareceram">8. Erros que apareceram</h2>
+<table>
+<thead>
+<tr>
+<th>O que apareceu</th>
+<th>Causa</th>
+<th>O que fazer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3 testes de 400 devolvendo 409</td>
+<td>validação desligada pelo <code>internal</code> (experimento) e SKU já existente no banco de desenvolvimento</td>
+<td>conferir o <code>public</code> no <code>Request</code>; conferir o banco; trocar a fábrica</td>
+</tr>
+<tr>
+<td>Linha com SKU vazio no banco de desenvolvimento</td>
+<td>teste de recusa gravou quando a validação não rodou</td>
+<td>apagar a linha; mover os testes para o banco descartável</td>
+</tr>
+<tr>
+<td>Alterações no <code>git status</code> na <code>main</code></td>
+<td>o experimento foi feito <strong>sem criar branch antes</strong></td>
+<td><code>git restore</code> para desfazer o que não foi commitado; sempre <code>git switch -c</code> antes de experimentar</td>
+</tr>
+<tr>
+<td>Ruleset criado, sem efeito</td>
+<td>repositório privado no plano gratuito</td>
+<td>apagar o ruleset ou aceitar que é só aviso</td>
+</tr>
+<tr>
+<td>Testes lentos na 1ª execução</td>
+<td>o Testcontainers baixa a imagem <code>postgres:18</code></td>
+<td>esperar; as próximas usam o cache do Docker</td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-onde-estudar">9. Onde estudar</h2>
+<ol>
+<li><a href="https://dotnet.testcontainers.org/modules/postgres/">Testcontainers para .NET — PostgreSQL</a> — o módulo usado e o ciclo de vida do container.</li>
+<li><a href="https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests">Testes de integração no ASP.NET Core</a> — <code>WebApplicationFactory</code> e como trocar a configuração da API de teste.</li>
+<li><a href="https://www.postgresql.org/docs/current/errcodes-appendix.html">Códigos de erro do PostgreSQL</a> — onde <code>23505</code> (violação de unicidade) é definido.</li>
+<li><a href="https://docs.github.com/en/actions/using-github-hosted-runners/using-github-hosted-runners/about-github-hosted-runners">Runners hospedados do GitHub</a> — imagens disponíveis e o que <code>ubuntu-latest</code> aponta.</li>
+</ol>
+<h2 id="10-provado-×-não-provado">10. Provado × não provado</h2>
+<table>
+<thead>
+<tr>
+<th>Provado na sessão</th>
+<th>Não provado (ficou aberto)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>O duplicado devolve 409 com o título &quot;Sku já cadastrado&quot; contra um Postgres real; CI verde (49 s) no PR #10 e no <code>ubuntu-24.04</code> no PR #11</td>
+<td>A corrida de duas requisições simultâneas (esperado: um dos lados cai no <code>23505</code> → 500)</td>
+</tr>
+<tr>
+<td>Com <code>internal</code> no <code>Request</code>, o build passa e 3 de 5 testes falham</td>
+<td>Se o .NET 11 aceitará <code>Request</code> <code>internal</code> na validação nativa</td>
+</tr>
+<tr>
+<td>Os testes de 400 gravam no banco de desenvolvimento</td>
+<td>O comportamento do CI no <code>ubuntu-26.04</code> e a data exata de fim do 24.04</td>
+</tr>
+<tr>
+<td>Rulesets não são aplicados em repositório privado no plano gratuito (aviso do próprio GitHub)</td>
+<td>Como o Testcontainers se comporta em máquina sem Docker (não testado)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="11-suas-decisões-na-sessão-registradas">11. Suas decisões na sessão (registradas)</h2>
+<ul>
+<li><strong>Testcontainers</strong> em vez do Postgres do <code>Compose</code>, do provider em memória e do SQLite.</li>
+<li><strong>Verificar antes de gravar</strong> para o 409, com o risco da corrida registrado e o tratamento do <code>23505</code> como evolução.</li>
+<li><strong>Deixar a proteção da <code>main</code> para o fim do laboratório</strong>, quando o repositório for público (&quot;vai mais atrapalhar do que agregar&quot;).</li>
+<li><strong>S18 = A:</strong> terminar o <code>Catalogo</code> (seed, listagem, paginação) e levar as duas pendências novas.</li>
+</ul>
+<h2 id="12-teste-se-sem-consultar-uma-pergunta-por-vez">12. Teste-se (sem consultar, uma pergunta por vez)</h2>
+<ol>
+<li>Por que o SKU duplicado devolvia 500 e por que o status certo é 409?</li>
+<li>Qual a diferença entre <strong>verificar antes de gravar</strong> e <strong>tratar a exceção <code>23505</code></strong>? Dê o preço de cada uma.</li>
+<li>Que problema a corrida entre duas requisições simultâneas causa na primeira opção?</li>
+<li>Por que o teste do 409 usa Postgres real e não o provider em memória do EF?</li>
+<li>O que a fábrica da API com banco real faz, em ordem?</li>
+<li>Com <code>internal</code> no <code>Request</code>, o build falha? O que acontece então e como você descobre?</li>
+<li>O que o <code>!</code> em <code>request.Sku!</code> promete, e quando a promessa deixa de valer?</li>
+<li>Por que os três testes de recusa 400, do jeito que estão, deixam lixo no banco?</li>
+<li>Cite um <strong>preço</strong> (não um ganho) de fixar <code>ubuntu-24.04</code> no CI.</li>
+<li>Descreva o teste do 409 em Arrange / Act / Assert.</li>
+<li>(Revisão) Qual middleware <strong>escreve</strong> o corpo do erro, qual <strong>captura</strong> a exceção e qual <strong>preenche</strong> o corpo vazio de um 4xx?</li>
+</ol>
+<h2 id="respostas">Respostas</h2><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>Há uma chave primária em <code>sku</code>; o banco recusa o 2º <code>INSERT</code> (<code>23505</code>) e o tratamento global devolve 500, que significa &quot;erro do servidor&quot;. O cliente pode corrigir o problema (não reenviar o SKU), então o status é <strong>409 Conflict</strong>, uma regra de negócio.</li>
+<li><strong>Verificar antes</strong> consulta o SKU e só então grava: lê-se fácil e não conhece o Postgres, mas faz uma consulta a mais em todo cadastro e deixa uma janela de corrida. <strong>Tratar o <code>23505</code></strong> grava e reage à exceção: uma ida só e sem corrida, mas o endpoint passa a conhecer <code>PostgresException</code> e o código do Postgres.</li>
+<li>Duas requisições com o mesmo SKU passam pela consulta antes de qualquer uma gravar; a segunda a gravar cai no <code>23505</code> e devolve 500 em vez de 409.</li>
+<li>Porque o <code>23505</code> e o schema por módulo só existem no Postgres; provider em memória e SQLite aceitam o duplicado ou se comportam de outro jeito e o teste passaria sem proteger nada.</li>
+<li>Sobe o container <code>postgres:18</code>; troca a connection string da API de teste para o container; aplica as migrations; ao terminar, descarta o container.</li>
+<li>Não falha: o build passa. A validação nativa deixa de rodar (o gerador não enxerga o tipo) e os valores inválidos chegam ao endpoint. Só se descobre em tempo de execução, e só se houver teste que exija o 400 (aqui, 3 de 5 testes ficaram vermelhos).</li>
+<li>Promete &quot;este valor não é nulo porque a validação já rodou&quot;. Deixa de valer quando a validação não executa (por exemplo, <code>Request</code> <code>internal</code>) ou quando o endpoint é chamado fora da API (um teste de unidade, outro módulo).</li>
+<li>Usam a API com o banco de desenvolvimento; se a validação falhar e o endpoint gravar, a linha fica lá. Solução: usar a fábrica com Postgres descartável.</li>
+<li>Alguém precisa testar o Ubuntu 26 e trocar a imagem (prazo: antes de 19/11); o CI deixa de acompanhar o <code>ubuntu-latest</code> automaticamente.</li>
+<li><strong>Arrange:</strong> API ligada a um Postgres real e vazio, corpo válido com SKU novo. <strong>Act:</strong> enviar o mesmo cadastro duas vezes. <strong>Assert:</strong> 1ª resposta 201; 2ª resposta 409 com o título &quot;Sku já cadastrado&quot;.</li>
+<li><strong><code>AddProblemDetails()</code> escreve</strong> o corpo; <strong><code>UseExceptionHandler()</code> captura</strong> a exceção não tratada; <strong><code>UseStatusCodePages()</code> preenche</strong> o corpo de um 4xx/5xx vazio.</li>
+</ol>
+</details><h2 id="13-preparação-da-s18">13. Preparação da S18</h2>
+<ul>
+<li><strong>Objetivo:</strong> terminar o <code>Catalogo</code> com seed, listagem e paginação, mais as duas pendências novas (testes de recusa com banco descartável; construtor que recusa valores vazios).</li>
+<li><strong>Antes de 19/11:</strong> testar <code>ubuntu-26.04</code> no CI.</li>
+<li><strong>Sexta, 16/10:</strong> o mentor gera o <code>RECONSTRUCAO-2026-10-17.md</code> com o material da semana.</li>
+</ul>
+
+</article>
+<footer class="rodape">Atualizado em 13/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

@@ -19,17 +19,19 @@
   <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
 </header>
 <div class="layout">
-<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#guia-dotnet--parte-6-o-código-grava-no-banco" data-id="guia-dotnet--parte-6-o-código-grava-no-banco">GUIA-DOTNET — Parte 6: O código grava no banco</a><a class="n2" href="#61-o-postgres-local-a-connection-string-e-o-provider" data-id="61-o-postgres-local-a-connection-string-e-o-provider">6.1 O Postgres local, a connection string e o provider</a><a class="n2" href="#62-a-entidade-vira-classe-adr-005" data-id="62-a-entidade-vira-classe-adr-005">6.2 A entidade vira classe (ADR-005)</a><a class="n2" href="#63-o-dbcontext-e-o-mapeamento-da-tabela" data-id="63-o-dbcontext-e-o-mapeamento-da-tabela">6.3 O DbContext e o mapeamento da tabela</a><a class="n2" href="#64-migrations-a-tabela-criada-pela-ferramenta" data-id="64-migrations-a-tabela-criada-pela-ferramenta">6.4 Migrations: a tabela criada pela ferramenta</a><a class="n2" href="#65-um-schema-do-postgres-por-módulo-adr-006" data-id="65-um-schema-do-postgres-por-módulo-adr-006">6.5 Um schema do Postgres por módulo (ADR-006)</a><a class="n2" href="#66-repositório-e-endpoints-assíncronos" data-id="66-repositório-e-endpoints-assíncronos">6.6 Repositório e endpoints assíncronos</a><a class="n2" href="#67-pastas-do-módulo-e-rota-por-recurso" data-id="67-pastas-do-módulo-e-rota-por-recurso">6.7 Pastas do módulo e rota por recurso</a><a class="n2" href="#juntando-tudo-parte-6" data-id="juntando-tudo-parte-6">Juntando tudo (Parte 6)</a><a class="n2" href="#68-diagnóstico-os-problemas-da-s16-e-como-achar-a-causa" data-id="68-diagnóstico-os-problemas-da-s16-e-como-achar-a-causa">6.8 Diagnóstico: os problemas da S16 e como achar a causa</a><a class="n2" href="#teste-se-sem-consultar-uma-pergunta-por-vez" data-id="teste-se-sem-consultar-uma-pergunta-por-vez">Teste-se (sem consultar, uma pergunta por vez)</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a></aside>
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#guia-dotnet--parte-6-o-código-grava-no-banco" data-id="guia-dotnet--parte-6-o-código-grava-no-banco">GUIA-DOTNET — Parte 6: O código grava no banco</a><a class="n2" href="#61-o-postgres-local-a-connection-string-e-o-provider" data-id="61-o-postgres-local-a-connection-string-e-o-provider">6.1 O Postgres local, a connection string e o provider</a><a class="n2" href="#62-a-entidade-vira-classe-adr-005" data-id="62-a-entidade-vira-classe-adr-005">6.2 A entidade vira classe (ADR-005)</a><a class="n2" href="#63-o-dbcontext-e-o-mapeamento-da-tabela" data-id="63-o-dbcontext-e-o-mapeamento-da-tabela">6.3 O DbContext e o mapeamento da tabela</a><a class="n2" href="#64-migrations-a-tabela-criada-pela-ferramenta" data-id="64-migrations-a-tabela-criada-pela-ferramenta">6.4 Migrations: a tabela criada pela ferramenta</a><a class="n2" href="#65-um-schema-do-postgres-por-módulo-adr-006" data-id="65-um-schema-do-postgres-por-módulo-adr-006">6.5 Um schema do Postgres por módulo (ADR-006)</a><a class="n2" href="#66-repositório-e-endpoints-assíncronos" data-id="66-repositório-e-endpoints-assíncronos">6.6 Repositório e endpoints assíncronos</a><a class="n2" href="#67-pastas-do-módulo-e-rota-por-recurso" data-id="67-pastas-do-módulo-e-rota-por-recurso">6.7 Pastas do módulo e rota por recurso</a><a class="n2" href="#68-diagnóstico-os-problemas-da-s16-e-como-achar-a-causa" data-id="68-diagnóstico-os-problemas-da-s16-e-como-achar-a-causa">6.8 Diagnóstico: os problemas da S16 e como achar a causa</a><a class="n2" href="#69-teste-de-integração-com-postgres-real-testcontainers-e-a-fábrica-da-api" data-id="69-teste-de-integração-com-postgres-real-testcontainers-e-a-fábrica-da-api">6.9 Teste de integração com Postgres real: Testcontainers e a fábric…</a><a class="n2" href="#610-o-409-do-sku-duplicado-verificar-antes-de-gravar-×-tratar-o-23505" data-id="610-o-409-do-sku-duplicado-verificar-antes-de-gravar-×-tratar-o-23505">6.10 O 409 do SKU duplicado: verificar antes de gravar × tratar o 23…</a><a class="n2" href="#611-diagnóstico-os-problemas-da-s17-e-como-achar-a-causa" data-id="611-diagnóstico-os-problemas-da-s17-e-como-achar-a-causa">6.11 Diagnóstico: os problemas da S17 e como achar a causa</a><a class="n2" href="#juntando-tudo-parte-6" data-id="juntando-tudo-parte-6">Juntando tudo (Parte 6)</a><a class="n2" href="#teste-se-sem-consultar-uma-pergunta-por-vez" data-id="teste-se-sem-consultar-uma-pergunta-por-vez">Teste-se (sem consultar, uma pergunta por vez)</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a></aside>
 <main class="conteudo"><article>
 <h1 id="guia-dotnet--parte-6-o-código-grava-no-banco">GUIA-DOTNET — Parte 6: O código grava no banco</h1>
-<p><strong>Sessão:</strong> S16 (12/10/2026) · <strong>Versão:</strong> 1.0 · <strong>Entradas:</strong> 6.1 a 6.8 (6.8 = diagnóstico) + juntando tudo + teste-se</p>
+<p><strong>Sessões:</strong> S16 (12/10/2026) e S17 (13/10/2026) · <strong>Versão:</strong> 1.1 · <strong>Entradas:</strong> 6.1 a 6.11 (6.8 e 6.11 = diagnóstico) + juntando tudo + teste-se</p>
 <p>Até a S15 o <code>Catalogo</code> guardava as fichas numa lista em memória: a API reiniciava e o cadastro sumia. Esta parte
 explica o que entrou para a ficha <strong>sobreviver</strong>: o EF Core 10 falando com o PostgreSQL, a tabela criada por
-<em>migration</em>, um schema por módulo e a reorganização das pastas do módulo. Todo exemplo vem do código do Norte.</p>
+<em>migration</em>, um schema por módulo e a reorganização das pastas do módulo. Na S17 entraram a regra do SKU duplicado
+(409) e o teste que fala com um Postgres de verdade. Todo exemplo vem do código do Norte.</p>
 <p><strong>Onde estamos no mapa dos níveis</strong> (<a href="parte-0-1.html#parte-0--o-mapa-dos-n%C3%ADveis">Parte 0</a>): a
 funcionalidade passou a ter <strong>persistência real</strong>. O caminho da requisição ficou completo:
-endpoint → validação → repositório → <code>DbContext</code> → banco.</p>
-<p><strong>Ordem em que as peças foram montadas na S16</strong> (cada uma é uma entrada abaixo):</p>
+endpoint → validação → repositório → <code>DbContext</code> → banco; e passou a ter um teste que percorre esse caminho
+até o banco.</p>
+<p><strong>Ordem em que as peças foram montadas</strong> (cada uma é uma entrada abaixo):</p>
 <table>
 <thead>
 <tr>
@@ -73,6 +75,16 @@ endpoint → validação → repositório → <code>DbContext</code> → banco.<
 <td>7</td>
 <td>pastas do módulo e rota por recurso</td>
 <td><a href="#67-pastas-do-módulo-e-rota-por-recurso">6.7</a></td>
+</tr>
+<tr>
+<td>8</td>
+<td>o teste que usa um Postgres real (Testcontainers)</td>
+<td><a href="#69-teste-de-integração-com-postgres-real-testcontainers-e-a-fábrica-da-api">6.9</a></td>
+</tr>
+<tr>
+<td>9</td>
+<td>o 409 do SKU duplicado</td>
+<td><a href="#610-o-409-do-sku-duplicado-verificar-antes-de-gravar-×-tratar-o-23505">6.10</a></td>
 </tr>
 </tbody>
 </table>
@@ -855,8 +867,8 @@ Por isso o repositório passou a <code>AddScoped</code>.</p>
 <p><strong>Sufixo <code>Async</code>.</strong> A regra IDE1006 do <code>.editorconfig</code> (ADR-004) exige o sufixo em método <code>async</code>; foi por isso que
 <code>Executar</code> virou <code>ExecutarAsync</code>. Em <code>tests/</code> a regra está desligada (o nome do teste é a regra).</p>
 <p><strong>O teste que sumiu.</strong> O <code>CadastrarFichaProdutoEndpointTests</code> fazia <code>new FichaProdutoRepository()</code>; esse construtor
-deixou de existir e o que o teste protegia (uma lista em memória) sumiu junto. Foi <strong>apagado</strong>. Ficam 4 testes (3×400
-e 1×500) e <strong>nenhum toca o banco</strong>. O teste de integração com Postgres real (Testcontainers) é a próxima lacuna.</p>
+deixou de existir e o que o teste protegia (uma lista em memória) sumiu junto. Foi <strong>apagado</strong>. Ficaram 4 testes (3×400
+e 1×500) e <strong>nenhum tocava o banco</strong>. O teste de integração com Postgres real (Testcontainers) entrou na S17 (6.9).</p>
 <p><strong>Provado na S16</strong></p>
 <table>
 <thead>
@@ -882,7 +894,7 @@ e 1×500) e <strong>nenhum toca o banco</strong>. O teste de integração com Po
 </table>
 <p><strong>O 500 do duplicado.</strong> O banco recusou por causa da chave primária que a migration criou; quem tratou a exceção foi
 o <code>UseExceptionHandler()</code> do <code>Program.cs</code> (categoria do log após <code>fail:</code>: <code>ExceptionHandlerMiddleware</code>), que devolve o
-<code>problem+json</code> genérico. O correto seria <strong>409 Conflict</strong>; isso é <strong>regra de negócio</strong> e fica para a próxima sessão.</p>
+<code>problem+json</code> genérico. O correto seria <strong>409 Conflict</strong>; isso é <strong>regra de negócio</strong> e foi resolvido na S17 (6.10).</p>
 <p><strong>Preço desta escolha</strong></p>
 <table>
 <thead>
@@ -912,8 +924,8 @@ com <code>AsNoTracking</code>?&quot; (leitura sem rastrear; mais leve; <strong>n
 singleton; usar <code>AsNoTracking</code> e depois tentar salvar a entidade.</p>
 <p><strong>🧠 de cabeça:</strong> <code>Add</code> marca e <code>SaveChanges</code> grava; scoped × singleton; o que é <code>AsNoTracking</code>. <strong>🔎 onde encontrar:</strong>
 a assinatura de <code>FirstOrDefaultAsync</code>.</p>
-<p><strong>Onde foi visto:</strong> S16. <strong>Status:</strong> executado e provado (persistência e o 500); o 409 e o teste com banco real estão
-pendentes.</p>
+<p><strong>Onde foi visto:</strong> S16. <strong>Status:</strong> executado e provado (persistência e o 500); o 409 e o teste com banco real foram
+feitos na S17 (6.9 e 6.10).</p>
 <hr />
 <p><a id="g6-7"></a></p>
 <h2 id="67-pastas-do-módulo-e-rota-por-recurso">6.7 Pastas do módulo e rota por recurso<button class="estudada" data-id="67-pastas-do-módulo-e-rota-por-recurso" type="button">Marcar como estudada</button></h2>
@@ -1030,23 +1042,6 @@ nomeia rotas REST?&quot; (substantivo no endereço, verbo no método; o preço e
 os nomes de cada verbo HTTP.</p>
 <p><strong>Onde foi visto:</strong> S16. <strong>Status:</strong> executado (refactor de pastas com 4 renomeações e testes verdes).</p>
 <hr />
-<h2 id="juntando-tudo-parte-6">Juntando tudo (Parte 6)</h2>
-<p>O caminho de uma requisição, agora completo:</p>
-<ol>
-<li><code>POST /catalogo/fichas-produto</code> chega ao <code>Program.cs</code> → <code>MapCatalogo</code> → grupo <code>/catalogo</code>.</li>
-<li>A <strong>validação nativa</strong> (ADR-003) olha o <code>CadastrarFichaProdutoRequest</code>; falha → 400 em <code>problem+json</code>.</li>
-<li><code>CadastrarFichaProdutoEndpoint.ExecutarAsync</code> monta a <code>FichaProduto</code> (classe, 6.2) e chama o repositório.</li>
-<li><code>FichaProdutoRepository.AdicionarAsync</code> faz <code>Add</code> + <code>SaveChangesAsync</code> no <code>CatalogoDbContext</code> (scoped, 6.6).</li>
-<li>O contexto, configurado com a connection string <code>Norte</code> e o <code>UseNpgsql</code> (6.1), executa o <code>INSERT</code> na tabela
-<code>catalogo.fichas_produto</code> (6.3, 6.5) criada pela migration (6.4).</li>
-<li>Chave <code>Sku</code> repetida → o banco recusa (<code>23505</code>) → <code>DbUpdateException</code> → <code>UseExceptionHandler()</code> → 500 em
-<code>problem+json</code> (hoje; o 409 é pendência).</li>
-</ol>
-<p><strong>Decisões desta parte:</strong> ADR-005 (entidade como classe) e ADR-006 (schema por módulo). Sem ADR, por serem baratas de
-desfazer: mapeamento em arquivo próprio; <code>Dominio/</code> e <code>Funcionalidades/</code>; rota por recurso; <code>Migrations</code> em inglês.</p>
-<p><strong>Ainda não visto:</strong> <code>CancellationToken</code> no repositório; seed; paginação e projeções; concorrência otimista;
-índices; teste de integração com Postgres real (Testcontainers); como dois módulos convivem no mesmo banco.</p>
-<hr />
 <p><a id="g6-8"></a></p>
 <h2 id="68-diagnóstico-os-problemas-da-s16-e-como-achar-a-causa">6.8 Diagnóstico: os problemas da S16 e como achar a causa<button class="estudada" data-id="68-diagnóstico-os-problemas-da-s16-e-como-achar-a-causa" type="button">Marcar como estudada</button></h2>
 <table>
@@ -1101,7 +1096,7 @@ desfazer: mapeamento em arquivo próprio; <code>Dominio/</code> e <code>Funciona
 <tr>
 <td>500 ao cadastrar o mesmo SKU duas vezes</td>
 <td><code>DbUpdateException</code>, <code>23505</code> (<code>PK_fichas_produto</code>)</td>
-<td>ler o log depois de <code>fail:</code>; o 409 é regra de negócio (pendente)</td>
+<td>ler o log depois de <code>fail:</code>; resolvido na S17 com o 409 (6.10)</td>
 </tr>
 <tr>
 <td><code>migrations remove</code> imprime <code>fail:</code> de conexão e termina em <code>Done</code></td>
@@ -1131,6 +1126,319 @@ desfazer: mapeamento em arquivo próprio; <code>Dominio/</code> e <code>Funciona
 </tbody>
 </table>
 <hr />
+<p><a id="g6-9"></a></p>
+<h2 id="69-teste-de-integração-com-postgres-real-testcontainers-e-a-fábrica-da-api">6.9 Teste de integração com Postgres real: Testcontainers e a fábrica da API<button class="estudada" data-id="69-teste-de-integração-com-postgres-real-testcontainers-e-a-fábrica-da-api" type="button">Marcar como estudada</button></h2>
+<p><strong>De → para</strong></p>
+<table>
+<thead>
+<tr>
+<th>Como aparece nas vagas</th>
+<th>Nome no laboratório</th>
+<th>O mundo do aluno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>integration test</em>, <em>Testcontainers</em>, <em>WebApplicationFactory</em>, <em>test fixture</em></td>
+<td><code>ApiComPostgresFabrica</code>, pacote <code>Testcontainers.PostgreSql</code></td>
+<td>teste contra o banco de desenvolvimento ou contra o provider em memória do EF</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Em uma frase:</strong> o teste sobe <strong>um Postgres novo e vazio</strong> dentro de um container Docker, aponta a API de teste para ele,
+cria as tabelas pelas migrations e joga o container fora no fim — assim o teste vê o banco como ele é na produção.</p>
+<p><strong>Pergunta que responde:</strong> como proteger uma regra que só o banco real faz valer (a chave primária que recusa o SKU duplicado)?</p>
+<table>
+<thead>
+<tr>
+<th>Como era (S12–S16)</th>
+<th>Como é agora (S17)</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>WebApplicationFactory&lt;Program&gt;</code> simples, lendo a connection string do <code>appsettings.Development.json</code></td>
+<td>uma fábrica própria (<code>ApiComPostgresFabrica</code>) que sobe o container e troca a connection string</td>
+<td>o teste deixa de tocar o banco do desenvolvedor</td>
+</tr>
+<tr>
+<td>nenhum teste passava pelo banco</td>
+<td>o teste do 409 cadastra duas vezes contra o Postgres do container</td>
+<td>a regra que depende do <code>23505</code> passa a ter proteção</td>
+</tr>
+<tr>
+<td>(provider em memória / SQLite como atalho)</td>
+<td>descartados</td>
+<td>passam onde o Postgres reprovaria</td>
+</tr>
+</tbody>
+</table>
+<p><strong>As quatro etapas da fábrica</strong></p>
+<table>
+<thead>
+<tr>
+<th>Etapa</th>
+<th>O que faz</th>
+<th>Sem ela</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. sobe o container</td>
+<td><code>new PostgreSqlBuilder(&quot;postgres:18&quot;).Build()</code> e <code>StartAsync()</code></td>
+<td>não há banco</td>
+</tr>
+<tr>
+<td>2. troca a connection string</td>
+<td><code>builder.UseSetting(&quot;ConnectionStrings:Norte&quot;, _postgres.GetConnectionString())</code></td>
+<td>a API de teste usa o banco de desenvolvimento e deixa lixo</td>
+</tr>
+<tr>
+<td>3. aplica as migrations</td>
+<td><code>Database.MigrateAsync()</code> com o <code>CatalogoDbContext</code> do próprio host</td>
+<td>a tabela não existe</td>
+</tr>
+<tr>
+<td>4. descarta o container</td>
+<td><code>DisposeAsync()</code></td>
+<td>sobram containers</td>
+</tr>
+</tbody>
+</table>
+<p>A classe herda de <code>WebApplicationFactory&lt;Program&gt;</code> e implementa <code>IAsyncLifetime</code> (o xUnit chama <code>InitializeAsync</code> antes do primeiro
+teste e <code>DisposeAsync</code> no fim). O teste a recebe por <code>IClassFixture&lt;ApiComPostgresFabrica&gt;</code>: <strong>uma</strong> API e <strong>um</strong> container para todos os testes da classe.</p>
+<p><strong>Como ler o teste (Arrange / Act / Assert)</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parte</th>
+<th>Pergunta que responde</th>
+<th>No teste do 409</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Arrange</strong></td>
+<td>em que situação o sistema está?</td>
+<td>API ligada a um Postgres real e vazio; corpo válido com SKU gerado de um <code>Guid</code></td>
+</tr>
+<tr>
+<td><strong>Act</strong></td>
+<td>que ação o usuário faz?</td>
+<td>o mesmo cadastro enviado duas vezes</td>
+</tr>
+<tr>
+<td><strong>Assert</strong></td>
+<td>o que o sistema deve mostrar?</td>
+<td>201 no primeiro; 409 com o título &quot;Sku já cadastrado&quot; no segundo</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Por que usamos, qual a alternativa e quanto ela custa</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Testcontainers (escolhido)</th>
+<th>Postgres do <code>Compose</code></th>
+<th>Provider em memória / SQLite</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ganho</td>
+<td>banco novo e vazio a cada execução; o mesmo teste roda local e no CI</td>
+<td>nenhum pacote novo</td>
+<td>rápido; sem Docker</td>
+</tr>
+<tr>
+<td><strong>Preço</strong></td>
+<td>exige Docker aberto e no CI; a suíte passou de ~4,5 s para ~11 s; a 1ª execução baixa a imagem</td>
+<td>SKU fixo falharia na 2ª execução; o CI exigiria um Postgres externo</td>
+<td><strong>passa onde o Postgres reprovaria</strong>: o <code>23505</code> só existe no Postgres</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Quando usar e quando não:</strong> use banco real para regra que depende do banco (unicidade, schema, migration, tipos). Para regra
+de entrada (o 400 da validação nativa) o teste não precisa de banco — mas, enquanto ele grava no banco de desenvolvimento quando a
+validação falha, convém trocar a fábrica (pendência da S18).</p>
+<p><strong>Na entrevista:</strong> &quot;Como você testa o acesso a dados?&quot; — banco real descartável (Testcontainers) em vez de provider em memória; o ganho
+(fidelidade) e o preço (Docker, tempo); onde ainda cabe teste de unidade.</p>
+<p><strong>Erros comuns:</strong> Docker fechado (o teste não sobe); esquecer o <code>MigrateAsync</code> (tabela inexistente); apontar a connection string da
+API de teste para o banco de desenvolvimento; reutilizar SKU fixo entre execuções.</p>
+<p><strong>🧠 de cabeça:</strong> por que provider em memória e SQLite não servem para o <code>23505</code>; as quatro etapas da fábrica. <strong>🔎 onde encontrar:</strong> a
+sintaxe do <code>PostgreSqlBuilder</code> e de <code>IAsyncLifetime</code>.</p>
+<p><strong>Fontes:</strong> <a href="https://dotnet.testcontainers.org/modules/postgres/">Testcontainers para .NET — PostgreSQL</a> ·
+<a href="https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests">Testes de integração no ASP.NET Core</a></p>
+<p><strong>Onde foi visto:</strong> S17. <strong>Status:</strong> executado com o mentor; o teste nasceu vermelho (500) e ficou verde (409); ainda não escrito sozinho.</p>
+<hr />
+<p><a id="g6-10"></a></p>
+<h2 id="610-o-409-do-sku-duplicado-verificar-antes-de-gravar-×-tratar-o-23505">6.10 O 409 do SKU duplicado: verificar antes de gravar × tratar o <code>23505</code><button class="estudada" data-id="610-o-409-do-sku-duplicado-verificar-antes-de-gravar-×-tratar-o-23505" type="button">Marcar como estudada</button></h2>
+<p><strong>De → para</strong></p>
+<table>
+<thead>
+<tr>
+<th>Como aparece nas vagas</th>
+<th>Nome no laboratório</th>
+<th>O mundo do aluno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>409 Conflict</em>, <em>business rule</em>, <em>unique constraint</em>, <em>race condition</em></td>
+<td><code>TypedResults.Problem(409)</code>, <code>ObterPorSkuAsync</code> antes de <code>AdicionarAsync</code></td>
+<td><code>try/catch</code> da <code>DbUpdateException</code> no serviço, ou <code>if (existe) return BadRequest(...)</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Em uma frase:</strong> &quot;não existem duas fichas com o mesmo SKU&quot; é regra de negócio, e quando ela é violada o cliente recebe <strong>409 Conflict</strong> com uma
+mensagem legível, não um 500.</p>
+<p><strong>Pergunta que responde:</strong> onde nasce o 409 — no código que pergunta antes, ou na exceção que o banco devolve?</p>
+<table>
+<thead>
+<tr>
+<th>Como era (S16)</th>
+<th>Como é agora (S17)</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>duplicado → <code>DbUpdateException</code> → <code>UseExceptionHandler()</code> → 500</td>
+<td>duplicado → consulta antes de gravar → <code>TypedResults.Problem(409, &quot;Sku já cadastrado&quot;)</code></td>
+<td>o cliente entende o que deu errado</td>
+</tr>
+<tr>
+<td><code>Task&lt;Results&lt;Created&lt;FichaProduto&gt;, ValidationProblem&gt;&gt;</code></td>
+<td><code>Task&lt;Results&lt;Created&lt;FichaProduto&gt;, ProblemHttpResult&gt;&gt;</code></td>
+<td>o endpoint já não devolve <code>ValidationProblem</code> (o 400 sai antes, da validação nativa)</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight"><code><span class="kt">var</span><span class="w"> </span><span class="n">fichaExistente</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">fichas</span><span class="p">.</span><span class="n">ObterPorSkuAsync</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Sku</span><span class="o">!</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">fichaExistente</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">null</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">Problem</span><span class="p">(</span>
+<span class="w">        </span><span class="n">statusCode</span><span class="p">:</span><span class="w"> </span><span class="n">StatusCodes</span><span class="p">.</span><span class="n">Status409Conflict</span><span class="p">,</span>
+<span class="w">        </span><span class="n">title</span><span class="p">:</span><span class="w"> </span><span class="s">"Sku já cadastrado"</span><span class="p">,</span>
+<span class="w">        </span><span class="n">detail</span><span class="p">:</span><span class="w"> </span><span class="s">$"O sku {request.Sku} já está cadastrado"</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+
+<p><strong>Duas opções e o preço de cada</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>A) Verificar antes de gravar (escolhida)</th>
+<th>B) Tratar a <code>PostgresException</code> com <code>SqlState 23505</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ganho</td>
+<td>explícito no endpoint; não conhece o Npgsql; nenhum conceito novo</td>
+<td>uma ida só ao banco; sem corrida</td>
+</tr>
+<tr>
+<td><strong>Preço</strong></td>
+<td>uma consulta a mais em <strong>todo</strong> cadastro; <strong>corrida</strong>: duas requisições simultâneas passam pela consulta e a segunda cai no <code>23505</code> → 500</td>
+<td>o endpoint (ou um <code>IExceptionHandler</code>) passa a conhecer o Postgres e o código <code>23505</code>; mais difícil de ler</td>
+</tr>
+</tbody>
+</table>
+<p>A defesa completa seria <strong>A + B</strong>: verificar antes (mensagem clara no caso comum) e tratar o <code>23505</code> (caso raro da corrida). Hoje só a A existe; a evolução
+está anotada.</p>
+<p><strong>O título é contrato.</strong> <code>TypedResults.Problem(title: &quot;Sku já cadastrado&quot;)</code> dá ao cliente uma mensagem legível, ao contrário do <code>TypedResults.Conflict()</code> (só o status).
+O preço: o teste confere esse texto; mudar o título quebra o teste.</p>
+<p><strong>O teste não depende da opção.</strong> O mesmo teste do 409 continuaria verde se a regra fosse implementada pela opção B, sem mudar uma linha: ele protege <strong>o que a regra
+exige</strong> (SKU repetido → 409), não <strong>como</strong> ela foi implementada. Insight do aluno na S17: &quot;o teste reflete o que a regra exige&quot;.</p>
+<p><strong>Na entrevista:</strong> &quot;Como você trata uma violação de unicidade?&quot; — as duas opções; o preço da corrida; por que 409 e não 400 nem 500; a combinação das duas.</p>
+<p><strong>Erros comuns:</strong> devolver 400 (o corpo estava válido) ou 500 (o cliente não tem o que corrigir); esquecer que a verificação não vale em concorrência; trocar o título sem
+atualizar o teste.</p>
+<p><strong>🧠 de cabeça:</strong> 409 × 400 × 500; o preço de cada opção. <strong>🔎 onde encontrar:</strong> o código <code>23505</code> e a sintaxe do <code>TypedResults.Problem</code>.</p>
+<p><strong>Fontes:</strong> <a href="https://www.postgresql.org/docs/current/errcodes-appendix.html">Códigos de erro do PostgreSQL</a></p>
+<p><strong>Onde foi visto:</strong> S17. <strong>Status:</strong> executado e protegido por teste; a corrida não foi provada.</p>
+<hr />
+<p><a id="g6-11"></a></p>
+<h2 id="611-diagnóstico-os-problemas-da-s17-e-como-achar-a-causa">6.11 Diagnóstico: os problemas da S17 e como achar a causa<button class="estudada" data-id="611-diagnóstico-os-problemas-da-s17-e-como-achar-a-causa" type="button">Marcar como estudada</button></h2>
+<table>
+<thead>
+<tr>
+<th>Sintoma</th>
+<th>Causa</th>
+<th>Como confirmar / o que fazer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Request</code> <code>internal</code>: <strong>o build passa</strong> e 3 de 5 testes ficam vermelhos (esperado 400, veio 409)</td>
+<td>o gerador da validação nativa não enxerga tipo <code>internal</code>: a validação deixa de rodar, sem aviso; os corpos vazios chegam ao endpoint</td>
+<td>rodar <code>dotnet test</code>; olhar o <code>Expected</code>/<code>Actual</code>; reverter para <code>public</code> (ADR-003)</td>
+</tr>
+<tr>
+<td>linha com SKU vazio no banco de desenvolvimento</td>
+<td>os testes de 400 usam a API contra o banco de desenvolvimento e gravaram quando a validação não rodou</td>
+<td>apagar a linha; mover os testes para a fábrica do banco descartável (S18)</td>
+</tr>
+<tr>
+<td>alterações no <code>git status</code> na <code>main</code> depois de um experimento</td>
+<td>o experimento foi feito sem <code>git switch -c</code> antes</td>
+<td><code>git restore &lt;arquivo&gt;</code> (alteração não commitada); depois <code>git status</code> e <code>git branch</code></td>
+</tr>
+<tr>
+<td><code>git status --short</code> mostrando <code> M</code> em arquivo que você não mexeu (<code>Norte.slnx</code>)</td>
+<td>o Visual Studio regravou o arquivo ao abrir a solução</td>
+<td><code>git restore Norte.slnx</code></td>
+</tr>
+<tr>
+<td>ruleset criado e &quot;won't be enforced&quot;</td>
+<td>repositório privado no plano gratuito do GitHub: regras e proteção de branch não são aplicadas</td>
+<td>apagar o ruleset ou aceitar como aviso; recriar quando o repositório for público</td>
+</tr>
+<tr>
+<td>&quot;Decisões&quot; vazia na descrição do PR #10</td>
+<td>a descrição do PR mora no <strong>GitHub</strong>, não no Git (não aparece no <code>git log</code>)</td>
+<td>abrir o PR → Edit → preencher a seção → Update</td>
+</tr>
+<tr>
+<td>testes lentos (~11 s)</td>
+<td>o Testcontainers sobe o container Postgres</td>
+<td>Docker aberto; o cache da imagem acelera as próximas execuções</td>
+</tr>
+<tr>
+<td><code>ubuntu-latest</code> vai mudar de 24.04 para 26.04 entre 19/10 e 19/11</td>
+<td>aviso do GitHub Actions</td>
+<td>fixar <code>runs-on: ubuntu-24.04</code> e testar o 26.04 antes de 19/11</td>
+</tr>
+<tr>
+<td>500 em vez de 409 sob requisições simultâneas do mesmo SKU</td>
+<td>a verificação antes de gravar não cobre a corrida; o <code>23505</code> sobe da gravação</td>
+<td>tratar a <code>PostgresException</code> (opção B, 6.10)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="juntando-tudo-parte-6">Juntando tudo (Parte 6)</h2>
+<p>O caminho de uma requisição, agora completo:</p>
+<ol>
+<li><code>POST /catalogo/fichas-produto</code> chega ao <code>Program.cs</code> → <code>MapCatalogo</code> → grupo <code>/catalogo</code>.</li>
+<li>A <strong>validação nativa</strong> (ADR-003) olha o <code>CadastrarFichaProdutoRequest</code>; falha → 400 em <code>problem+json</code>.</li>
+<li><code>CadastrarFichaProdutoEndpoint.ExecutarAsync</code> consulta o SKU (<code>ObterPorSkuAsync</code>); se existe → <strong>409</strong> <code>problem+json</code> com o título &quot;Sku já cadastrado&quot; (6.10).</li>
+<li>Senão monta a <code>FichaProduto</code> (classe, 6.2) e chama o repositório; <code>AdicionarAsync</code> faz <code>Add</code> + <code>SaveChangesAsync</code> no <code>CatalogoDbContext</code> (scoped, 6.6).</li>
+<li>O contexto, configurado com a connection string <code>Norte</code> e o <code>UseNpgsql</code> (6.1), executa o <code>INSERT</code> na tabela
+<code>catalogo.fichas_produto</code> (6.3, 6.5) criada pela migration (6.4).</li>
+<li>Chave <code>Sku</code> repetida <strong>sem passar pela consulta</strong> (corrida) → o banco recusa (<code>23505</code>) → <code>DbUpdateException</code> → <code>UseExceptionHandler()</code> → 500
+em <code>problem+json</code> (o risco registrado em 6.10).</li>
+<li>O teste do 409 percorre esse caminho inteiro contra um Postgres descartável (6.9).</li>
+</ol>
+<p><strong>Decisões desta parte:</strong> ADR-005 (entidade como classe) e ADR-006 (schema por módulo). Sem ADR, por serem baratas de
+desfazer: mapeamento em arquivo próprio; <code>Dominio/</code> e <code>Funcionalidades/</code>; rota por recurso; <code>Migrations</code> em inglês; Testcontainers em vez de provider em
+memória; verificar antes de gravar para o 409; <code>ubuntu-24.04</code> fixado no CI.</p>
+<p><strong>Ainda não visto:</strong> <code>CancellationToken</code> no repositório; seed; paginação e projeções; concorrência otimista;
+índices; tratamento da <code>PostgresException</code> (<code>23505</code>) para a corrida; como dois módulos convivem no mesmo banco.</p>
+<hr />
 <h2 id="teste-se-sem-consultar-uma-pergunta-por-vez">Teste-se (sem consultar, uma pergunta por vez)</h2>
 <ol>
 <li>A <code>FichaProduto</code> nasceu como <code>record</code>. Por que ela virou <code>class</code> quando o banco entrou, e o que se perde com isso?</li>
@@ -1139,9 +1447,13 @@ desfazer: mapeamento em arquivo próprio; <code>Dominio/</code> e <code>Funciona
 se faltar a <code>MigrationsHistoryTable</code>.</li>
 <li>Qual a diferença entre <code>--project</code> e <code>--startup-project</code> no <code>dotnet ef</code>, e por que o Norte usa os dois?</li>
 <li>O que o <code>Add</code> faz e o que o <code>SaveChangesAsync</code> faz? E por que o repositório é <code>AddScoped</code> e não <code>AddSingleton</code>?</li>
-<li>Cadastrar o mesmo SKU duas vezes devolve 500. Qual é a causa (em uma frase) e qual deveria ser o status?</li>
+<li>Cadastrar o mesmo SKU duas vezes devolvia 500. Qual é a causa (em uma frase) e qual deveria ser o status?</li>
 <li>Por que <code>GET /catalogo/fichas-produto/</code> devolve 405 e não 400 nem 404?</li>
 <li>Por que o schema por módulo <strong>não</strong> impede que um módulo leia a tabela de outro, e o que impede?</li>
+<li>Por que o teste do 409 usa um Postgres real e não o provider em memória do EF?</li>
+<li>Descreva, em ordem, o que a <code>ApiComPostgresFabrica</code> faz.</li>
+<li>Verificar antes de gravar × tratar o <code>23505</code>: dê o preço de cada opção.</li>
+<li>Com o <code>Request</code> <code>internal</code>, o build falha? O que acontece e como você descobre?</li>
 </ol>
 <hr />
 <h2 id="respostas">Respostas</h2><details class="respostas"><summary>Mostrar respostas</summary>
@@ -1153,9 +1465,9 @@ inteiras precisam conferir propriedade por propriedade.</li>
 <li>Propriedade <strong>sem</strong> setter não é mapeada por convenção; com <code>private set</code> o EF mapeia e o código de fora não
 altera a ficha. O construtor vazio não é necessário porque, achando um construtor cujos parâmetros casam com as
 propriedades mapeadas (nome e tipo, camelCase × PascalCase), o EF chama esse.</li>
-<li><code>HasDefaultSchema</code> move as <strong>tabelas do modelo</strong> (e outros objetos, como sequências); <code>MigrationsHistoryTable</code>
-move a <strong>tabela de histórico</strong>. Sem a segunda, só o <code>__EFMigrationsHistory</code> vai para <code>public</code>, e dois módulos
-dividiriam a mesma tabela de histórico.</li>
+<li><code>HasDefaultSchema</code> move as <strong>tabelas do modelo</strong> (e outros objetos, como sequências);
+<code>MigrationsHistoryTable</code> move a <strong>tabela de histórico</strong>. Sem a segunda, só o <code>__EFMigrationsHistory</code> vai para
+<code>public</code>, e dois módulos dividiriam a mesma tabela de histórico.</li>
 <li><code>--project</code> é o projeto <strong>de destino</strong>, onde os arquivos da migration são criados (o módulo, <code>Norte.Catalogo</code>);
 <code>--startup-project</code> é o que a ferramenta <strong>compila e executa</strong> para descobrir a configuração e a connection string
 (o host, <code>Norte.Api</code>). Usa os dois porque o contexto está numa biblioteca e o host em outro projeto.</li>
@@ -1164,16 +1476,24 @@ dividiriam a mesma tabela de histórico.</li>
 um scoped prenderia aquela instância para sempre.</li>
 <li>A chave primária em <code>sku</code> (<code>PK_fichas_produto</code>): o banco recusa o segundo <code>INSERT</code> (<code>23505</code>) e o EF lança
 <code>DbUpdateException</code>, que o tratamento de erros do host transforma em 500. Deveria ser <strong>409 Conflict</strong>, uma regra de
-negócio ainda por decidir.</li>
+negócio (resolvida na S17).</li>
 <li>A barra final casa com a rota do <strong>cadastro</strong> (<code>POST /fichas-produto</code>): o caminho existe, mas só para POST; o
 roteamento responde 405 com <code>Allow: POST</code> e o endpoint de consulta nem é chamado.</li>
 <li>Porque o schema separa por <strong>organização</strong>, não por impedimento: o banco e o usuário são os mesmos, e uma consulta
 atravessa schemas. O que impede é <strong>convenção e revisão</strong> (e, como reforço não adotado, permissões por schema no
 Postgres).</li>
+<li>Porque o <code>23505</code> e o schema por módulo só existem no Postgres; o provider em memória e o SQLite aceitam o duplicado ou se comportam de outro jeito, e o teste passaria sem
+proteger nada.</li>
+<li>Sobe o container <code>postgres:18</code>; troca a connection string da API de teste para o container (<code>UseSetting</code>); aplica as migrations (<code>MigrateAsync</code>); ao terminar, descarta o
+container.</li>
+<li><strong>Verificar antes:</strong> uma consulta a mais em todo cadastro e uma janela de corrida (a segunda de duas requisições simultâneas cai no <code>23505</code> → 500). <strong>Tratar o <code>23505</code>:</strong>
+o endpoint passa a conhecer <code>PostgresException</code> e o código do Postgres, e fica mais difícil de ler.</li>
+<li>Não falha: o build passa. A validação nativa deixa de rodar (o gerador não enxerga o tipo) e os valores inválidos chegam ao endpoint. Só se descobre rodando os testes,
+e só se houver teste que exija o 400 (3 de 5 ficaram vermelhos, com 409 no lugar do 400).</li>
 </ol>
 </details>
 </article>
-<footer class="rodape">Atualizado em 12/10/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 13/10/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="assets/search-index.js"></script>
