@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ESTUDO-S19 — Catálogo: listagem e paginação · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s19.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#estudo-s19--catálogo-listagem-e-paginação" data-id="estudo-s19--catálogo-listagem-e-paginação">ESTUDO-S19 — Catálogo: listagem e paginação</a><a class="n2" href="#mapa-da-sessão" data-id="mapa-da-sessão">Mapa da sessão</a><a class="n2" href="#1-listar-com-filtro" data-id="1-listar-com-filtro">1. Listar com filtro</a><a class="n2" href="#2-projeção-com-select-e-asnotracking" data-id="2-projeção-com-select-e-asnotracking">2. Projeção com Select e AsNoTracking</a><a class="n2" href="#3-response-×-entidade" data-id="3-response-×-entidade">3. Response × entidade</a><a class="n2" href="#4-paginação-por-deslocamento-×-por-chave" data-id="4-paginação-por-deslocamento-×-por-chave">4. Paginação por deslocamento × por chave</a><a class="n2" href="#5-ordenação-determinística" data-id="5-ordenação-determinística">5. Ordenação determinística</a><a class="n2" href="#6-count-separado" data-id="6-count-separado">6. COUNT separado</a><a class="n2" href="#7-padrões-no-endpoint-e-validação-nativa" data-id="7-padrões-no-endpoint-e-validação-nativa">7. Padrões no endpoint e validação nativa</a><a class="n2" href="#8-cancellationtoken" data-id="8-cancellationtoken">8. CancellationToken</a><a class="n2" href="#provado-×-não-provado-resumo" data-id="provado-×-não-provado-resumo">Provado × não provado (resumo)</a><a class="n2" href="#pontos-para-explicar-numa-entrevista" data-id="pontos-para-explicar-numa-entrevista">Pontos para explicar numa entrevista</a><a class="n2" href="#teste-se" data-id="teste-se">Teste-se</a></aside>
+<main class="conteudo"><article>
+<h1 id="estudo-s19--catálogo-listagem-e-paginação">ESTUDO-S19 — Catálogo: listagem e paginação</h1>
+<blockquote>
+<p>Material para estudar sozinho. Cada tema é uma página: o que é, o ganho, o preço, o que foi provado e o que não foi.
+Sessão de 14/10/2026. Tempo líquido: 4h47. Resultado: PR #14 mergeado, 17 testes verdes, CI verde.</p>
+</blockquote>
+<h2 id="mapa-da-sessão">Mapa da sessão</h2>
+<table>
+<thead>
+<tr>
+<th>Tema</th>
+<th>Em uma frase</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Listar com filtro</td>
+<td><code>Where</code> + <code>Contains</code> vira <code>LIKE</code> no SQL</td>
+</tr>
+<tr>
+<td>2. Projeção e <code>AsNoTracking</code></td>
+<td>Ler só o que a tela precisa e não rastrear o que não vai mudar</td>
+</tr>
+<tr>
+<td>3. Response × entidade</td>
+<td>A API nunca devolve a entidade</td>
+</tr>
+<tr>
+<td>4. Paginação por deslocamento × por chave</td>
+<td><code>Skip/Take</code> é simples, mas fica lento em páginas fundas</td>
+</tr>
+<tr>
+<td>5. Ordenação determinística</td>
+<td>Sem <code>ORDER BY</code> único, a paginação repete e perde itens</td>
+</tr>
+<tr>
+<td>6. <code>COUNT</code> separado</td>
+<td>O total vem de outra consulta, sem <code>ORDER BY</code></td>
+</tr>
+<tr>
+<td>7. Padrões no endpoint, validação nativa</td>
+<td><code>pagina ?? 1</code>; <code>[Range]</code> em <code>[AsParameters]</code></td>
+</tr>
+<tr>
+<td>8. <code>CancellationToken</code></td>
+<td>Cancelar a consulta quando o cliente desiste</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="1-listar-com-filtro">1. Listar com filtro</h2>
+<p><strong>O que é.</strong> <code>GET /catalogo/fichas-produto?filtro=NIT</code> devolve as fichas cujo SKU contém <code>NIT</code>.</p>
+<pre class="highlight"><code><span class="kt">var</span><span class="w"> </span><span class="n">query</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_contexto</span><span class="p">.</span><span class="n">FichasProduto</span><span class="p">.</span><span class="n">AsNoTracking</span><span class="p">();</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="kt">string</span><span class="p">.</span><span class="n">IsNullOrWhiteSpace</span><span class="p">(</span><span class="n">filtro</span><span class="p">))</span>
+<span class="w">    </span><span class="n">query</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">query</span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="p">.</span><span class="n">Contains</span><span class="p">(</span><span class="n">filtro</span><span class="p">));</span>
+</code></pre>
+
+<p>A <code>query</code> é só a descrição da consulta. Nada vai ao banco até o <code>CountAsync</code> ou o <code>ToListAsync</code>. O <code>Where</code> entra só quando há filtro.</p>
+<p>No log de SQL, o <code>Contains</code> apareceu como <code>LIKE</code>.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ganho</strong></td>
+<td>O filtro roda no banco, não na memória da aplicação.</td>
+</tr>
+<tr>
+<td><strong>Preço</strong></td>
+<td><code>LIKE '%texto%'</code> não usa índice comum. Com poucas fichas é irrelevante; com muitas, vira varredura da tabela.</td>
+</tr>
+<tr>
+<td><strong>Provado</strong></td>
+<td>O <code>LIKE</code> aparece no log; o teste do filtro <code>NIT</code> devolve só as fichas certas; filtro sem correspondência devolve 200 com lista vazia.</td>
+</tr>
+<tr>
+<td><strong>Não provado</strong></td>
+<td>O comportamento com volume. Um índice <code>pg_trgm</code> é a saída conhecida, mas só vale medir com volume real.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Por que 200 com lista vazia e não 204?</strong> Uma listagem sem resultado é uma resposta válida: &quot;consultei e não há nada&quot;. O cliente trata sempre do mesmo jeito (itera a lista). O 204 obrigaria a tratar um caso à parte.</p>
+<hr />
+<h2 id="2-projeção-com-select-e-asnotracking">2. Projeção com <code>Select</code> e <code>AsNoTracking</code></h2>
+<p><strong>Projeção</strong> é pedir ao banco só as colunas que a resposta usa.</p>
+<pre class="highlight"><code><span class="p">.</span><span class="n">Select</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ListarFichasProdutoItemResponse</span><span class="p">(</span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="p">,</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Descricao</span><span class="p">,</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Ncm</span><span class="p">))</span>
+</code></pre>
+
+<p><strong><code>AsNoTracking</code></strong> diz ao EF que não precisa acompanhar essas entidades para detectar mudanças, porque a consulta só lê.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ganho</strong></td>
+<td>Menos colunas trafegando e menos trabalho do EF.</td>
+</tr>
+<tr>
+<td><strong>Ganho hoje</strong></td>
+<td>Praticamente nulo: a ficha só tem 3 colunas e a resposta usa as 3. O ganho aparece quando a ficha ganhar colunas que a listagem não mostra.</td>
+</tr>
+<tr>
+<td><strong>Preço</strong></td>
+<td>A projeção fixa o formato da resposta dentro da consulta; mudar a resposta exige mexer no repositório.</td>
+</tr>
+<tr>
+<td><strong>Provado</strong></td>
+<td>A consulta gerada seleciona só as colunas do Response.</td>
+</tr>
+<tr>
+<td><strong>Não provado</strong></td>
+<td>Qualquer ganho de desempenho medido. Não houve medição.</td>
+</tr>
+</tbody>
+</table>
+<p>Regra para levar: em consulta de leitura, <code>AsNoTracking</code>. Em consulta que vai alterar a entidade, não.</p>
+<hr />
+<h2 id="3-response-×-entidade">3. Response × entidade</h2>
+<p>A entidade <code>FichaProduto</code> tem regras (construtor que recusa texto vazio, <code>private set</code>). O Response é só o formato da resposta HTTP.</p>
+<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">record</span><span class="w"> </span><span class="nf">ListarFichasProdutoItemResponse</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">Sku</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Descricao</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Ncm</span><span class="p">);</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ganho</strong></td>
+<td>O formato da API muda sem mexer no domínio, e o domínio muda sem quebrar o cliente. Nenhuma coluna interna vaza por acidente.</td>
+</tr>
+<tr>
+<td><strong>Preço</strong></td>
+<td>Um tipo a mais por funcionalidade, e a cópia dos campos.</td>
+</tr>
+<tr>
+<td><strong>Dívida aberta</strong></td>
+<td>O <code>POST</code> e o <code>GET</code> por SKU ainda devolvem a entidade (<code>Created&lt;FichaProduto&gt;</code>, <code>Ok&lt;FichaProduto&gt;</code>). O PR seguinte troca para Response.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-paginação-por-deslocamento-×-por-chave">4. Paginação por deslocamento × por chave</h2>
+<p><strong>Por deslocamento (offset):</strong> <code>Skip((pagina - 1) * tamanho).Take(tamanho)</code>. Vira <code>OFFSET ... LIMIT ...</code>.</p>
+<p><strong>Por chave (keyset/cursor):</strong> em vez de &quot;pule N linhas&quot;, &quot;traga as que vêm depois deste SKU&quot;.</p>
+<pre class="highlight"><code><span class="c1">// por chave (exemplo de conceito, não implementado no Norte)</span>
+<span class="n">query</span><span class="p">.</span><span class="n">OrderBy</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="p">).</span><span class="n">Where</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="p">.</span><span class="n">CompareTo</span><span class="p">(</span><span class="n">ultimoSku</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">).</span><span class="n">Take</span><span class="p">(</span><span class="n">tamanho</span><span class="p">);</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Deslocamento</th>
+<th>Chave</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ir direto para a página 7</td>
+<td>Sim</td>
+<td>Não (só &quot;próxima/anterior&quot;)</td>
+</tr>
+<tr>
+<td>Mostrar &quot;página 3 de 12&quot;</td>
+<td>Sim</td>
+<td>Não</td>
+</tr>
+<tr>
+<td>Custo em página funda</td>
+<td>Cresce: o banco processa e descarta as linhas puladas</td>
+<td>Estável, com índice na chave</td>
+</tr>
+<tr>
+<td>Dados mudando durante a navegação</td>
+<td>Pode repetir ou pular itens</td>
+<td>Não é sensível a mudanças nas linhas anteriores</td>
+</tr>
+<tr>
+<td>Complexidade</td>
+<td>Baixa</td>
+<td>Maior (chave composta exige <code>ThenBy</code> e condição composta)</td>
+</tr>
+</tbody>
+</table>
+<p>A documentação do EF Core diz isso quase com estas palavras: o banco &quot;ainda precisa processar as primeiras N entradas, mesmo que não as devolva&quot;, e, com atualizações concorrentes, a paginação &quot;pode pular entradas ou mostrá-las duas vezes&quot;. A saída híbrida (chave para próxima/anterior, deslocamento para saltos) também está lá.</p>
+<p><strong>Por que o Norte usa deslocamento.</strong> O catálogo é uma tela de consulta com &quot;página X de Y&quot;, poucas fichas e leitura mais frequente que escrita. O deslocamento atende e é simples.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ganho</strong></td>
+<td>Simplicidade e acesso direto a qualquer página.</td>
+</tr>
+<tr>
+<td><strong>Preço</strong></td>
+<td>Custo crescente em páginas fundas e instabilidade se fichas forem inseridas durante a navegação.</td>
+</tr>
+<tr>
+<td><strong>Provado</strong></td>
+<td>A página 2 devolve os itens certos na ordem do SKU; o SQL tem <code>ORDER BY f.sku LIMIT/OFFSET</code>.</td>
+</tr>
+<tr>
+<td><strong>Não provado</strong></td>
+<td>A lentidão em página funda (não houve teste de volume). Os valores reais de <code>LIMIT</code>/<code>OFFSET</code> não foram vistos: o log mostra <code>'?'</code>.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Pergunta de entrevista:</strong> &quot;Por que paginar por deslocamento fica lento nas páginas profundas?&quot; Porque o banco precisa percorrer e descartar todas as linhas puladas antes de devolver as da página.</p>
+<hr />
+<h2 id="5-ordenação-determinística">5. Ordenação determinística</h2>
+<p>Sem <code>ORDER BY</code>, o banco relacional <strong>não garante ordem nenhuma</strong>, nem pela chave primária. Com <code>Skip/Take</code> sem ordem, a página 2 pode repetir itens da página 1.</p>
+<pre class="highlight"><code><span class="p">.</span><span class="n">OrderBy</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="p">)</span>
+</code></pre>
+
+<p>O <code>Sku</code> é único (a API devolve 409 para SKU repetido), então a ordem é total. Se a ordenação fosse por uma coluna que repete (descrição, por exemplo), seria preciso um desempate com uma coluna única (<code>ThenBy(f =&gt; f.Sku)</code>).</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ganho</strong></td>
+<td>A mesma página devolve os mesmos itens, e nenhum item some entre páginas.</td>
+</tr>
+<tr>
+<td><strong>Preço</strong></td>
+<td>O <code>ORDER BY</code> custa; ele só é barato se houver índice na coluna. O <code>Sku</code> já tem índice único.</td>
+</tr>
+<tr>
+<td><strong>Provado</strong></td>
+<td>O teste da página 2 confere a ordem dos SKUs.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-count-separado">6. <code>COUNT</code> separado</h2>
+<p>O total de itens vem de uma consulta à parte, <strong>antes</strong> do <code>Skip/Take</code> e <strong>sem</strong> <code>ORDER BY</code>.</p>
+<pre class="highlight"><code><span class="kt">var</span><span class="w"> </span><span class="n">totalItens</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">query</span><span class="p">.</span><span class="n">CountAsync</span><span class="p">(</span><span class="n">ct</span><span class="p">);</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">totalPaginas</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">Math</span><span class="p">.</span><span class="n">Ceiling</span><span class="p">(</span><span class="n">totalItens</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="kt">double</span><span class="p">)</span><span class="n">tamanhoPagina</span><span class="p">);</span>
+</code></pre>
+
+<p>Dois pontos de atenção:</p>
+<ul>
+<li>A divisão precisa ser em <code>double</code>. <code>totalItens / tamanhoPagina</code> com inteiros descarta o resto: 11 itens com 10 por página daria 1 página, não 2.</li>
+<li>O <code>COUNT</code> respeita o filtro (ele sai da mesma <code>query</code>), senão o total não bate com a lista.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ganho</strong></td>
+<td>O cliente sabe quantas páginas existem.</td>
+</tr>
+<tr>
+<td><strong>Preço</strong></td>
+<td>Uma consulta extra a cada listagem. Em tabelas grandes o <code>COUNT(*)</code> também custa.</td>
+</tr>
+<tr>
+<td><strong>Provado</strong></td>
+<td>O log mostra <code>COUNT(*)::int</code> separado, e a resposta traz <code>TotalItens</code> e <code>TotalPaginas</code> coerentes com o filtro.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="7-padrões-no-endpoint-e-validação-nativa">7. Padrões no endpoint e validação nativa</h2>
+<p><strong>Quem decide o padrão?</strong> O endpoint. Ele traduz &quot;o cliente não mandou&quot; em valor:</p>
+<pre class="highlight"><code><span class="kt">var</span><span class="w"> </span><span class="n">pagina</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="n">Pagina</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="n">PaginaPadrao</span><span class="p">;</span><span class="w">                 </span><span class="c1">// 1</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">tamanho</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="n">TamanhoPagina</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="n">TamanhoPaginaPadrao</span><span class="p">;</span><span class="w">  </span><span class="c1">// 10</span>
+</code></pre>
+
+<p>O repositório recebe <code>int</code> concreto. Assim ele não sabe nada de HTTP nem de &quot;opcional&quot;.</p>
+<p><strong>Validação.</strong> O <code>ListarFichasProdutoRequest</code> é um record posicional ligado à query string com <code>[AsParameters]</code>:</p>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">record</span><span class="w"> </span><span class="nf">ListarFichasProdutoRequest</span><span class="p">(</span>
+<span class="w">    </span><span class="na">[FromQuery(Name = "filtro")]</span><span class="w"> </span><span class="p">[</span><span class="n">StringLength</span><span class="p">(</span><span class="mi">15</span><span class="p">)]</span><span class="w"> </span><span class="kt">string?</span><span class="w"> </span><span class="n">Filtro</span><span class="p">,</span>
+<span class="w">    </span><span class="na">[FromQuery(Name = "pagina")]</span><span class="w"> </span><span class="p">[</span><span class="n">Range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="n">_000_000</span><span class="p">)]</span><span class="w"> </span><span class="kt">int?</span><span class="w"> </span><span class="n">Pagina</span><span class="p">,</span>
+<span class="w">    </span><span class="na">[FromQuery(Name = "tamanhoPagina")]</span><span class="w"> </span><span class="p">[</span><span class="n">Range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">)]</span><span class="w"> </span><span class="kt">int?</span><span class="w"> </span><span class="n">TamanhoPagina</span><span class="p">);</span>
+</code></pre>
+
+<p>Com <code>AddValidation()</code> ativo (já estava no <code>CatalogoModulo</code>), o .NET 10 valida esses atributos e devolve 400 sozinho.</p>
+<p>Dois detalhes que valem estudar:</p>
+<ul>
+<li><code>[Range]</code> com <code>int?</code> <strong>nulo passa</strong>. Por isso o &quot;campo ausente&quot; não dá 400, e o padrão do endpoint entra em ação.</li>
+<li><code>pagina=0</code>, <code>tamanhoPagina=0</code> e <code>tamanhoPagina=101</code> devolvem 400.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ganho</strong></td>
+<td>A regra fica declarada junto do parâmetro, e o 400 vem sem código escrito à mão.</td>
+</tr>
+<tr>
+<td><strong>Preço</strong></td>
+<td>Os limites (100, 1.000.000, 15) são escolhas arbitrárias, sem medição que as sustente. O tamanho máximo do SKU também ainda não foi definido.</td>
+</tr>
+<tr>
+<td><strong>Provado</strong></td>
+<td>O teste <code>Paginacao_fora_da_faixa_devolve_400</code> cobre <code>tamanhoPagina=0</code>, <code>=101</code> e <code>pagina=0</code>; o <code>.http</code> confirma. O teste de &quot;sem parâmetros&quot; confere página 1 e tamanho 10.</td>
+</tr>
+<tr>
+<td><strong>Não provado</strong></td>
+<td>Que <code>[AsParameters]</code> exista desde o .NET 7: a documentação da Microsoft consultada no fechamento indica o .NET 7 só pelos metadados da página, sem dizer isso no texto. A mesma documentação não mostra <code>[FromQuery(Name=...)]</code> dentro de um tipo <code>[AsParameters]</code>; o que sustenta esse uso aqui é o teste, não a documentação.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Descoberta da sessão:</strong> um GET agora liga um tipo composto da query string, com validação nativa. Isso evita uma lista de parâmetros soltos no método.</p>
+<hr />
+<h2 id="8-cancellationtoken">8. <code>CancellationToken</code></h2>
+<p>O endpoint recebe o <code>CancellationToken</code> e o repassa ao repositório, que o passa para <code>CountAsync</code> e <code>ToListAsync</code>. Se o cliente fechar a conexão, a consulta é cancelada.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ganho</strong></td>
+<td>Não gasta banco com resposta que ninguém vai ler.</td>
+</tr>
+<tr>
+<td><strong>Preço</strong></td>
+<td>Um parâmetro a mais em cada método.</td>
+</tr>
+<tr>
+<td><strong>Estado</strong></td>
+<td>Só a listagem usa. Os outros métodos do repositório ainda não recebem o token.</td>
+</tr>
+<tr>
+<td><strong>Não provado</strong></td>
+<td>O cancelamento em si. Nenhum teste derruba a conexão no meio.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="provado-×-não-provado-resumo">Provado × não provado (resumo)</h2>
+<table>
+<thead>
+<tr>
+<th>Provado</th>
+<th>Não provado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Filtro por SKU, página 2 na ordem, padrões 1/10, 400 fora da faixa, 200 vazio</td>
+<td>Lentidão do deslocamento em página funda</td>
+</tr>
+<tr>
+<td><code>COUNT(*)</code> separado e <code>ORDER BY ... LIMIT/OFFSET</code> no log</td>
+<td>Valores reais de <code>LIMIT</code>/<code>OFFSET</code> (o log mostra <code>?</code>)</td>
+</tr>
+<tr>
+<td>Validação nativa funciona em <code>[AsParameters]</code></td>
+<td>Desempenho do <code>LIKE '%x%'</code> com volume</td>
+</tr>
+<tr>
+<td>17 testes verdes localmente e no CI</td>
+<td>Cancelamento por <code>CancellationToken</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="pontos-para-explicar-numa-entrevista">Pontos para explicar numa entrevista</h2>
+<ol>
+<li><strong>Deslocamento × cursor:</strong> o primeiro permite saltar para qualquer página, mas o custo cresce e a navegação pode repetir ou pular itens se os dados mudam; o segundo é estável e rápido, mas só anda para frente e para trás.</li>
+<li><strong>Ordenação estável:</strong> paginar exige <code>ORDER BY</code> por coluna única (ou com desempate), senão as páginas se sobrepõem.</li>
+<li><strong><code>COUNT</code> à parte:</strong> o total vem de outra consulta, sem ordenação, respeitando o mesmo filtro.</li>
+<li><strong>Padrão no endpoint, regra no atributo:</strong> o repositório recebe valores concretos; o limite fica declarado no Request.</li>
+<li><strong>Entidade nunca na resposta:</strong> o Response é o contrato da API.</li>
+</ol>
+<hr />
+<h2 id="teste-se">Teste-se</h2>
+<details>
+<summary>1. Por que <code>Skip/Take</code> sem <code>OrderBy</code> é um defeito?</summary>
+<p>O banco relacional não garante ordem sem <code>ORDER BY</code>. Duas consultas podem devolver as linhas em ordens diferentes, e a página 2 pode repetir ou omitir itens da página 1.</p>
+</details>
+<details>
+<summary>2. Com 23 itens e 10 por página, quantas páginas? E o que acontece se a divisão for feita só com inteiros?</summary>
+<p>3 páginas (<code>Math.Ceiling(23 / 10.0)</code>). Com inteiros, <code>23 / 10</code> dá 2 e a última página some.</p>
+</details>
+<details>
+<summary>3. Por que o <code>COUNT</code> não leva <code>ORDER BY</code>?</summary>
+<p>Contar não depende da ordem; ordenar só acrescenta custo. O <code>COUNT</code> precisa levar o mesmo <code>Where</code> do filtro, senão o total não bate com a lista.</p>
+</details>
+<details>
+<summary>4. <code>pagina</code> não foi enviada. Qual a resposta e por que não é 400?</summary>
+<p>A resposta é 200, com a página 1. O <code>[Range]</code> aceita <code>int?</code> nulo; quem aplica o padrão é o endpoint (<code>pagina ?? 1</code>).</p>
+</details>
+<details>
+<summary>5. Quando você escolheria paginação por chave?</summary>
+<p>Quando há muitos registros, o uso é &quot;rolar para a próxima&quot; (feed, exportação) e os dados mudam durante a navegação. Em troca, abre mão de ir direto à página N e de mostrar &quot;página X de Y&quot;.</p>
+</details>
+<details>
+<summary>6. Qual é o ganho real da projeção hoje, nesta ficha?</summary>
+<p>Praticamente nenhum: a ficha tem 3 colunas e a resposta usa as 3. O ganho aparece quando a ficha ganhar colunas que a listagem não mostra.</p>
+</details>
+<details>
+<summary>7. Por que não devolver a entidade <code>FichaProduto</code> direto na API?</summary>
+<p>Entidade e Response têm responsabilidades diferentes: a primeira protege regras do domínio; a segunda é o contrato com o cliente. Misturar faz qualquer mudança no domínio quebrar a API e pode expor campos internos.</p>
+</details>
+<details>
+<summary>8. O que o teste <code>Paginacao_fora_da_faixa_devolve_400</code> prova? E o que não prova?</summary>
+<p>Prova que <code>pagina=0</code>, <code>tamanhoPagina=0</code> e <code>tamanhoPagina=101</code> são recusados com 400 pela validação nativa em <code>[AsParameters]</code>. Não prova que os limites (100, 1.000.000) sejam os melhores.</p>
+</details>
+
+</article>
+<footer class="rodape">Atualizado em 14/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

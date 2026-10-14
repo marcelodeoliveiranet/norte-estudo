@@ -19,19 +19,20 @@
   <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
 </header>
 <div class="layout">
-<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#guia-dotnet--parte-6-o-código-grava-no-banco" data-id="guia-dotnet--parte-6-o-código-grava-no-banco">GUIA-DOTNET — Parte 6: O código grava no banco</a><a class="n2" href="#61-o-postgres-local-a-connection-string-e-o-provider" data-id="61-o-postgres-local-a-connection-string-e-o-provider">6.1 O Postgres local, a connection string e o provider</a><a class="n2" href="#62-a-entidade-vira-classe-adr-005" data-id="62-a-entidade-vira-classe-adr-005">6.2 A entidade vira classe (ADR-005)</a><a class="n2" href="#63-o-dbcontext-e-o-mapeamento-da-tabela" data-id="63-o-dbcontext-e-o-mapeamento-da-tabela">6.3 O DbContext e o mapeamento da tabela</a><a class="n2" href="#64-migrations-a-tabela-criada-pela-ferramenta" data-id="64-migrations-a-tabela-criada-pela-ferramenta">6.4 Migrations: a tabela criada pela ferramenta</a><a class="n2" href="#65-um-schema-do-postgres-por-módulo-adr-006" data-id="65-um-schema-do-postgres-por-módulo-adr-006">6.5 Um schema do Postgres por módulo (ADR-006)</a><a class="n2" href="#66-repositório-e-endpoints-assíncronos" data-id="66-repositório-e-endpoints-assíncronos">6.6 Repositório e endpoints assíncronos</a><a class="n2" href="#67-pastas-do-módulo-e-rota-por-recurso" data-id="67-pastas-do-módulo-e-rota-por-recurso">6.7 Pastas do módulo e rota por recurso</a><a class="n2" href="#68-diagnóstico-os-problemas-da-s16-e-como-achar-a-causa" data-id="68-diagnóstico-os-problemas-da-s16-e-como-achar-a-causa">6.8 Diagnóstico: os problemas da S16 e como achar a causa</a><a class="n2" href="#69-teste-de-integração-com-postgres-real-testcontainers-e-a-fábrica-da-api" data-id="69-teste-de-integração-com-postgres-real-testcontainers-e-a-fábrica-da-api">6.9 Teste de integração com Postgres real: Testcontainers e a fábric…</a><a class="n2" href="#610-o-409-do-sku-duplicado-verificar-antes-de-gravar-×-tratar-o-23505" data-id="610-o-409-do-sku-duplicado-verificar-antes-de-gravar-×-tratar-o-23505">6.10 O 409 do SKU duplicado: verificar antes de gravar × tratar o 23…</a><a class="n2" href="#611-diagnóstico-os-problemas-da-s17-e-como-achar-a-causa" data-id="611-diagnóstico-os-problemas-da-s17-e-como-achar-a-causa">6.11 Diagnóstico: os problemas da S17 e como achar a causa</a><a class="n2" href="#612-o-construtor-recusa-valor-vazio-argumentexceptionthrowifnullorwhitespace" data-id="612-o-construtor-recusa-valor-vazio-argumentexceptionthrowifnullorwhitespace">6.12 O construtor recusa valor vazio: ArgumentException.ThrowIfNullO…</a><a class="n2" href="#613-teste-de-unidade-que-espera-falha-assertthrows-paramname-e-a-prova-do-vermelho" data-id="613-teste-de-unidade-que-espera-falha-assertthrows-paramname-e-a-prova-do-vermelho">6.13 Teste de unidade que espera falha: Assert.Throws, ParamName e a…</a><a class="n2" href="#614-seed-idempotente-no-desenvolvimento-e-o-ambiente-testing-da-fábrica-de-teste" data-id="614-seed-idempotente-no-desenvolvimento-e-o-ambiente-testing-da-fábrica-de-teste">6.14 Seed idempotente no desenvolvimento e o ambiente Testing da fáb…</a><a class="n2" href="#615-diagnóstico-os-problemas-da-s18-e-como-achar-a-causa" data-id="615-diagnóstico-os-problemas-da-s18-e-como-achar-a-causa">6.15 Diagnóstico: os problemas da S18 e como achar a causa</a><a class="n2" href="#juntando-tudo-parte-6" data-id="juntando-tudo-parte-6">Juntando tudo (Parte 6)</a><a class="n2" href="#teste-se-sem-consultar-uma-pergunta-por-vez" data-id="teste-se-sem-consultar-uma-pergunta-por-vez">Teste-se (sem consultar, uma pergunta por vez)</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a></aside>
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#guia-dotnet--parte-6-o-código-grava-no-banco" data-id="guia-dotnet--parte-6-o-código-grava-no-banco">GUIA-DOTNET — Parte 6: O código grava no banco</a><a class="n2" href="#61-o-postgres-local-a-connection-string-e-o-provider" data-id="61-o-postgres-local-a-connection-string-e-o-provider">6.1 O Postgres local, a connection string e o provider</a><a class="n2" href="#62-a-entidade-vira-classe-adr-005" data-id="62-a-entidade-vira-classe-adr-005">6.2 A entidade vira classe (ADR-005)</a><a class="n2" href="#63-o-dbcontext-e-o-mapeamento-da-tabela" data-id="63-o-dbcontext-e-o-mapeamento-da-tabela">6.3 O DbContext e o mapeamento da tabela</a><a class="n2" href="#64-migrations-a-tabela-criada-pela-ferramenta" data-id="64-migrations-a-tabela-criada-pela-ferramenta">6.4 Migrations: a tabela criada pela ferramenta</a><a class="n2" href="#65-um-schema-do-postgres-por-módulo-adr-006" data-id="65-um-schema-do-postgres-por-módulo-adr-006">6.5 Um schema do Postgres por módulo (ADR-006)</a><a class="n2" href="#66-repositório-e-endpoints-assíncronos" data-id="66-repositório-e-endpoints-assíncronos">6.6 Repositório e endpoints assíncronos</a><a class="n2" href="#67-pastas-do-módulo-e-rota-por-recurso" data-id="67-pastas-do-módulo-e-rota-por-recurso">6.7 Pastas do módulo e rota por recurso</a><a class="n2" href="#68-diagnóstico-os-problemas-da-s16-e-como-achar-a-causa" data-id="68-diagnóstico-os-problemas-da-s16-e-como-achar-a-causa">6.8 Diagnóstico: os problemas da S16 e como achar a causa</a><a class="n2" href="#69-teste-de-integração-com-postgres-real-testcontainers-e-a-fábrica-da-api" data-id="69-teste-de-integração-com-postgres-real-testcontainers-e-a-fábrica-da-api">6.9 Teste de integração com Postgres real: Testcontainers e a fábric…</a><a class="n2" href="#610-o-409-do-sku-duplicado-verificar-antes-de-gravar-×-tratar-o-23505" data-id="610-o-409-do-sku-duplicado-verificar-antes-de-gravar-×-tratar-o-23505">6.10 O 409 do SKU duplicado: verificar antes de gravar × tratar o 23…</a><a class="n2" href="#611-diagnóstico-os-problemas-da-s17-e-como-achar-a-causa" data-id="611-diagnóstico-os-problemas-da-s17-e-como-achar-a-causa">6.11 Diagnóstico: os problemas da S17 e como achar a causa</a><a class="n2" href="#612-o-construtor-recusa-valor-vazio-argumentexceptionthrowifnullorwhitespace" data-id="612-o-construtor-recusa-valor-vazio-argumentexceptionthrowifnullorwhitespace">6.12 O construtor recusa valor vazio: ArgumentException.ThrowIfNullO…</a><a class="n2" href="#613-teste-de-unidade-que-espera-falha-assertthrows-paramname-e-a-prova-do-vermelho" data-id="613-teste-de-unidade-que-espera-falha-assertthrows-paramname-e-a-prova-do-vermelho">6.13 Teste de unidade que espera falha: Assert.Throws, ParamName e a…</a><a class="n2" href="#614-seed-idempotente-no-desenvolvimento-e-o-ambiente-testing-da-fábrica-de-teste" data-id="614-seed-idempotente-no-desenvolvimento-e-o-ambiente-testing-da-fábrica-de-teste">6.14 Seed idempotente no desenvolvimento e o ambiente Testing da fáb…</a><a class="n2" href="#615-diagnóstico-os-problemas-da-s18-e-como-achar-a-causa" data-id="615-diagnóstico-os-problemas-da-s18-e-como-achar-a-causa">6.15 Diagnóstico: os problemas da S18 e como achar a causa</a><a class="n2" href="#616-listar-com-filtro-a-consulta-que-só-roda-no-fim-contains-e-o-cancellationtoken" data-id="616-listar-com-filtro-a-consulta-que-só-roda-no-fim-contains-e-o-cancellationtoken">6.16 Listar com filtro: a consulta que só roda no fim, Contains e o …</a><a class="n2" href="#617-projeção-asnotracking-e-o-response-no-lugar-da-entidade" data-id="617-projeção-asnotracking-e-o-response-no-lugar-da-entidade">6.17 Projeção, AsNoTracking e o Response no lugar da entidade</a><a class="n2" href="#618-paginação-por-deslocamento-×-por-chave-ordenação-estável-e-o-total" data-id="618-paginação-por-deslocamento-×-por-chave-ordenação-estável-e-o-total">6.18 Paginação por deslocamento × por chave, ordenação estável e o t…</a><a class="n2" href="#619-validação-nativa-em-asparameters-e-os-padrões-no-endpoint" data-id="619-validação-nativa-em-asparameters-e-os-padrões-no-endpoint">6.19 Validação nativa em [AsParameters] e os padrões no endpoint</a><a class="n2" href="#620-diagnóstico-os-problemas-da-s19-e-como-achar-a-causa" data-id="620-diagnóstico-os-problemas-da-s19-e-como-achar-a-causa">6.20 Diagnóstico: os problemas da S19 e como achar a causa</a><a class="n2" href="#juntando-tudo-parte-6" data-id="juntando-tudo-parte-6">Juntando tudo (Parte 6)</a><a class="n2" href="#teste-se-sem-consultar-uma-pergunta-por-vez" data-id="teste-se-sem-consultar-uma-pergunta-por-vez">Teste-se (sem consultar, uma pergunta por vez)</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a></aside>
 <main class="conteudo"><article>
 <h1 id="guia-dotnet--parte-6-o-código-grava-no-banco">GUIA-DOTNET — Parte 6: O código grava no banco</h1>
-<p><strong>Sessões:</strong> S16 (12/10/2026), S17 (13/10/2026) e S18 (13/10/2026) · <strong>Versão:</strong> 1.2 · <strong>Entradas:</strong> 6.1 a 6.15 (6.8, 6.11 e 6.15 = diagnóstico) + juntando tudo + teste-se</p>
+<p><strong>Sessões:</strong> S16 (12/10/2026), S17 (13/10/2026), S18 (13/10/2026) e S19 (14/10/2026) · <strong>Versão:</strong> 1.3 · <strong>Entradas:</strong> 6.1 a 6.20 (6.8, 6.11, 6.15 e 6.20 = diagnóstico) + juntando tudo + teste-se</p>
 <p>Até a S15 o <code>Catalogo</code> guardava as fichas numa lista em memória: a API reiniciava e o cadastro sumia. Esta parte
 explica o que entrou para a ficha <strong>sobreviver</strong>: o EF Core 10 falando com o PostgreSQL, a tabela criada por
 <em>migration</em>, um schema por módulo e a reorganização das pastas do módulo. Na S17 entraram a regra do SKU duplicado
 (409) e o teste que fala com um Postgres de verdade. Na S18, a ficha passou a recusar valor vazio (com teste de unidade que espera
-falha) e o <code>Catalogo</code> ganhou um seed de desenvolvimento. Todo exemplo vem do código do Norte.</p>
+falha) e o <code>Catalogo</code> ganhou um seed de desenvolvimento. Na S19 o caminho de <strong>leitura</strong> ficou completo: a listagem de
+fichas, com filtro, paginação e projeção. Todo exemplo vem do código do Norte.</p>
 <p><strong>Onde estamos no mapa dos níveis</strong> (<a href="parte-0-1.html#parte-0--o-mapa-dos-n%C3%ADveis">Parte 0</a>): a
 funcionalidade passou a ter <strong>persistência real</strong>. O caminho da requisição ficou completo:
 endpoint → validação → repositório → <code>DbContext</code> → banco; e passou a ter um teste que percorre esse caminho
-até o banco.</p>
+até o banco. Com a S19, o caminho existe também para <strong>ler muitas fichas de uma vez</strong>.</p>
 <p><strong>Ordem em que as peças foram montadas</strong> (cada uma é uma entrada abaixo):</p>
 <table>
 <thead>
@@ -101,6 +102,26 @@ até o banco.</p>
 <td>12</td>
 <td>o seed idempotente e o ambiente <code>Testing</code></td>
 <td><a href="#614-seed-idempotente-no-desenvolvimento-e-o-ambiente-testing-da-fábrica-de-teste">6.14</a></td>
+</tr>
+<tr>
+<td>13</td>
+<td>a listagem com filtro, consulta de leitura e <code>CancellationToken</code></td>
+<td><a href="#616-listar-com-filtro-a-consulta-que-só-roda-no-fim-contains-e-o-cancellationtoken">6.16</a></td>
+</tr>
+<tr>
+<td>14</td>
+<td>a projeção, o <code>AsNoTracking</code> e o Response no lugar da entidade</td>
+<td><a href="#617-projeção-asnotracking-e-o-response-no-lugar-da-entidade">6.17</a></td>
+</tr>
+<tr>
+<td>15</td>
+<td>a paginação: deslocamento × chave, ordem, total</td>
+<td><a href="#618-paginação-por-deslocamento-×-por-chave-ordenação-estável-e-o-total">6.18</a></td>
+</tr>
+<tr>
+<td>16</td>
+<td>a validação nativa em <code>[AsParameters]</code> e os padrões no endpoint</td>
+<td><a href="#619-validação-nativa-em-asparameters-e-os-padrões-no-endpoint">6.19</a></td>
 </tr>
 </tbody>
 </table>
@@ -347,7 +368,7 @@ avisa que o EF Core não atualiza entidades imutáveis. Hoje (só cadastrar e co
 </tr>
 </tbody>
 </table>
-<p><strong>Três caminhos e o preço de cada um (ADR-005)</strong></p>
+<p><strong>Três caminhos e o preço de cada (ADR-005)</strong></p>
 <table>
 <thead>
 <tr>
@@ -378,7 +399,7 @@ avisa que o EF Core não atualiza entidades imutáveis. Hoje (só cadastrar e co
 <strong>propriedade por propriedade</strong> (<code>Assert.NotNull</code> + três <code>Assert.Equal</code>). Depois, quando o repositório passou a
 exigir o contexto, esse teste foi apagado (ver 6.6).</p>
 <p><strong>Quando usar e quando não:</strong> entidade persistida pelo EF → classe. <code>record</code> continua certo para <strong>objetos de
-valor</strong> sem identidade e para <strong>contratos de entrada e saída</strong> (<code>*Request</code>).</p>
+valor</strong> sem identidade e para <strong>contratos de entrada e saída</strong> (<code>*Request</code>, e os <code>*Response</code> da 6.17).</p>
 <p><strong>Na entrevista:</strong> &quot;Por que não <code>record</code> como entidade do EF?&quot; — igualdade por referência × por valor; rastreamento
 de mudanças; entidade imutável não é atualizada. E o preço: perde-se a igualdade automática.</p>
 <p><strong>Erros comuns:</strong> achar que o EF exige construtor vazio; deixar <code>public set</code> e perder o encapsulamento; esquecer que
@@ -983,6 +1004,7 @@ mapeamento) tem lugar fixo; e na rota o método HTTP diz a ação e o endereço 
 └── FichaProdutoRepository.cs usado por várias funcionalidades: raiz do módulo
 </code></pre>
 
+<p><em>(Na S19 entrou a pasta <code>Funcionalidades/ListarFichasProduto/</code> com <code>Request</code>, <code>Endpoint</code> e os dois <code>Response</code> — ver 6.16 a 6.19.)</em></p>
 <p><strong>A regra, em duas linhas:</strong> entidade em <code>Dominio/</code>, mapeamento em <code>Configuracoes/</code>; todo o resto que é de uma
 funcionalidade (endpoint, validação, <code>Request</code>) fica <strong>dentro da pasta da funcionalidade</strong>. <strong>Não</strong> criar <code>Servicos/</code>,
 <code>Repositorios/</code>, <code>Dtos/</code> no nível do módulo sem decisão registrada: seria voltar à organização por tipo de arquivo.</p>
@@ -1036,6 +1058,11 @@ ao mover; o <code>git diff --cached --stat</code> mostra: um arquivo movido deve
 <td><code>GET /catalogo/fichas-produto/{sku}</code></td>
 </tr>
 <tr>
+<td>listar</td>
+<td><code>/catalogo/listar-fichas-produto</code></td>
+<td><code>GET /catalogo/fichas-produto</code> (S19)</td>
+</tr>
+<tr>
 <td>excluir</td>
 <td><code>/catalogo/excluir-ficha-produto/{sku}</code></td>
 <td><code>DELETE /catalogo/fichas-produto/{sku}</code></td>
@@ -1051,7 +1078,8 @@ critério do Norte. <em>(Julgamento pedagógico, não contagem de vagas.)</em></
 <p><strong>O ramo morto do 400.</strong> O <code>ObterFichaProdutoEndpoint</code> tinha um <code>if</code> que devolvia 400 para SKU vazio. <strong>Provado</strong> que
 nunca executa por HTTP: com <code>GET /catalogo/fichas-produto/</code> (SKU vazio) o roteamento nem chama o endpoint e responde
 <strong>405</strong> com <code>Allow: POST</code> (a barra final casa com a rota do cadastro); com um espaço (<code>%20</code>) chega ao repositório e
-devolve o 404 de &quot;ficha não encontrada&quot;. Código que não executa e valida à mão uma regra de entrada: <strong>apagado</strong>.</p>
+devolve o 404 de &quot;ficha não encontrada&quot;. Código que não executa e valida à mão uma regra de entrada: <strong>apagado</strong>.
+<em>(Desde a S19 existe também <code>GET /catalogo/fichas-produto</code> — a listagem —; o que a barra final faz agora não foi reconferido.)</em></p>
 <p><strong>Na entrevista:</strong> &quot;Como você organiza o módulo?&quot; (por funcionalidade; o que é do módulo tem lugar fixo); &quot;Como você
 nomeia rotas REST?&quot; (substantivo no endereço, verbo no método; o preço e quando o verbo no endereço aparece).</p>
 <p><strong>🧠 de cabeça:</strong> a regra das duas pastas fixas; o critério da rota por recurso e seu preço. <strong>🔎 onde encontrar:</strong>
@@ -1072,7 +1100,7 @@ os nomes de cada verbo HTTP.</p>
 <tr>
 <td><code>GET /catalogo/fichas-produto/</code> devolve <strong>405</strong> com <code>Allow: POST</code></td>
 <td>a barra final casa com a rota do cadastro (<code>POST /fichas-produto</code>); o caminho existe, o método não</td>
-<td>ler o cabeçalho <code>Allow</code>; não é bug do endpoint de consulta</td>
+<td>ler o cabeçalho <code>Allow</code>; não é bug do endpoint de consulta (a S19 acrescentou o <code>GET</code> da listagem: reconferir)</td>
 </tr>
 <tr>
 <td><code>GET</code> com um espaço devolve 404 com o título &quot;Ficha não encontrada&quot;</td>
@@ -1278,7 +1306,8 @@ teste e <code>DisposeAsync</code> no fim). O teste a recebe por <code>IClassFixt
 </table>
 <p><strong>Quando usar e quando não:</strong> use banco real para regra que depende do banco (unicidade, schema, migration, tipos). Para regra
 de entrada (o 400 da validação nativa) o teste não precisa de banco, mas na S18 os três testes do 400 foram para a classe do banco
-descartável: depois do seed (6.14), subir a API em <code>Development</code> passou a abrir conexão com o banco de desenvolvimento, que o CI não tem.</p>
+descartável: depois do seed (6.14), subir a API em <code>Development</code> passou a abrir conexão com o banco de desenvolvimento, que o CI não tem.
+Na S19, os testes da listagem também ficaram na fábrica do banco descartável (6.16).</p>
 <p><strong>Na entrevista:</strong> &quot;Como você testa o acesso a dados?&quot; — banco real descartável (Testcontainers) em vez de provider em memória; o ganho
 (fidelidade) e o preço (Docker, tempo); onde ainda cabe teste de unidade.</p>
 <p><strong>Erros comuns:</strong> Docker fechado (o teste não sobe); esquecer o <code>MigrateAsync</code> (tabela inexistente); apontar a connection string da
@@ -1864,6 +1893,535 @@ contra o ambiente em que ele roda no CI, não só na máquina de quem escreve.</
 </tbody>
 </table>
 <hr />
+<p><a id="g6-16"></a></p>
+<h2 id="616-listar-com-filtro-a-consulta-que-só-roda-no-fim-contains-e-o-cancellationtoken">6.16 Listar com filtro: a consulta que só roda no fim, <code>Contains</code> e o <code>CancellationToken</code><button class="estudada" data-id="616-listar-com-filtro-a-consulta-que-só-roda-no-fim-contains-e-o-cancellationtoken" type="button">Marcar como estudada</button></h2>
+<p><strong>De → para</strong></p>
+<table>
+<thead>
+<tr>
+<th>Como aparece nas vagas</th>
+<th>Nome no laboratório</th>
+<th>O mundo do aluno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>query</em>, <em>deferred execution</em>, <code>IQueryable</code>, <em>filtering</em>, <code>CancellationToken</code></td>
+<td><code>ListarFichasProdutoAsync</code>, <code>Where(f =&gt; f.Sku.Contains(filtro))</code></td>
+<td>repositório com <code>GetAll()</code> devolvendo <code>List&lt;T&gt;</code> e filtro em memória, ou procedure com <code>LIKE</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Em uma frase:</strong> a listagem monta uma <strong>consulta</strong> passo a passo (<code>AsNoTracking</code>, o filtro se houver, o total, a página) e o banco só trabalha quando o
+<code>CountAsync</code> e o <code>ToListAsync</code> pedem; o filtro roda <strong>no banco</strong>, não na memória da API.</p>
+<p><strong>Pergunta que responde:</strong> como devolvo as fichas cujo SKU contém um texto, sem trazer a tabela inteira para a API?</p>
+<table>
+<thead>
+<tr>
+<th>Como era (S16–S18)</th>
+<th>Como é agora (S19)</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>só havia <code>ObterPorSkuAsync</code> (uma ficha)</td>
+<td><code>ListarFichasProdutoAsync(filtro, pagina, tamanhoPagina, ct)</code> (várias)</td>
+<td>o repositório ganha uma consulta de leitura com filtro e página</td>
+</tr>
+<tr>
+<td>nenhum método recebia <code>CancellationToken</code></td>
+<td>a listagem recebe o <code>ct</code> do endpoint e o repassa</td>
+<td>se o cliente desistir, a consulta é cancelada</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight"><code><span class="kt">var</span><span class="w"> </span><span class="n">query</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_contexto</span><span class="p">.</span><span class="n">FichasProduto</span><span class="p">.</span><span class="n">AsNoTracking</span><span class="p">();</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="kt">string</span><span class="p">.</span><span class="n">IsNullOrWhiteSpace</span><span class="p">(</span><span class="n">filtro</span><span class="p">))</span>
+<span class="w">    </span><span class="n">query</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">query</span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="p">.</span><span class="n">Contains</span><span class="p">(</span><span class="n">filtro</span><span class="p">));</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Trecho</th>
+<th>O que faz</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AsNoTracking()</code></td>
+<td>consulta só de leitura (6.6, 6.17)</td>
+</tr>
+<tr>
+<td><code>if (!string.IsNullOrWhiteSpace(filtro))</code></td>
+<td>o filtro é <strong>opcional</strong>; sem ele, a consulta pega todas as fichas</td>
+</tr>
+<tr>
+<td><code>Where(... Contains(filtro))</code></td>
+<td>no SQL vira <code>LIKE '%texto%'</code> (<strong>visto no log</strong>)</td>
+</tr>
+<tr>
+<td>nada vai ao banco até aqui</td>
+<td>a <code>query</code> descreve a consulta; ela só executa no <code>CountAsync</code> e no <code>ToListAsync</code> (6.18)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Resposta quando não há resultado.</strong> <code>200</code> com lista vazia, não <code>204</code>: &quot;consultei e não há nada&quot; é uma resposta válida, e o cliente trata sempre do mesmo jeito
+(percorre a lista). O <code>204</code> obrigaria a tratar um caso à parte. Há teste: <code>Filtro_sem_correspondencia_devolve_200_com_lista_vazia</code>.</p>
+<p><strong><code>CancellationToken</code>.</strong> O endpoint declara o parâmetro <code>CancellationToken ct</code>; o ASP.NET Core o liga à conexão da requisição (se o cliente fechar a conexão, o token
+é cancelado) e o endpoint o repassa ao repositório e daí a <code>CountAsync(ct)</code> e <code>ToListAsync(ct)</code>. <strong>Hoje só a listagem usa</strong>; <code>AdicionarAsync</code> e <code>ObterPorSkuAsync</code>
+ainda não recebem o token. O cancelamento em si <strong>não foi provado</strong> (nenhum teste derruba a conexão).</p>
+<p><strong>Três decisões e o preço de cada</strong></p>
+<table>
+<thead>
+<tr>
+<th>Decisão</th>
+<th>Ganho</th>
+<th><strong>Preço</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Contains</code> no banco (<code>LIKE '%x%'</code>)</td>
+<td>o filtro roda onde os dados estão</td>
+<td>o <code>LIKE</code> com <code>%</code> no começo <strong>não usa índice comum</strong>: com muitas fichas vira varredura da tabela (índice <code>pg_trgm</code> é a saída conhecida; não testada)</td>
+</tr>
+<tr>
+<td><code>200</code> com lista vazia</td>
+<td>cliente trata um caso só</td>
+<td>o cliente não distingue &quot;nada cadastrado&quot; de &quot;nada no filtro&quot;</td>
+</tr>
+<tr>
+<td><code>CancellationToken</code> na listagem</td>
+<td>não gasta banco com resposta que ninguém vai ler</td>
+<td>um parâmetro a mais em cada método; só a listagem tem</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Na entrevista:</strong> &quot;O que é execução adiada (<em>deferred execution</em>)?&quot; — a consulta LINQ descreve o que fazer e só roda quando o resultado é pedido (<code>ToListAsync</code>, <code>CountAsync</code>);
+&quot;onde o filtro deve rodar?&quot; — no banco, para não trazer dados à toa; &quot;para que serve o <code>CancellationToken</code>?&quot; — parar o trabalho quando o cliente desiste.</p>
+<p><strong>Erros comuns:</strong> chamar <code>ToListAsync()</code> <strong>antes</strong> do <code>Where</code> (traz tudo e filtra na memória); achar que montar a <code>query</code> já consulta o banco; esquecer de repassar o <code>ct</code>
+(o token existe e não é usado).</p>
+<p><strong>🧠 de cabeça:</strong> a consulta só roda no fim; o filtro vira <code>LIKE</code> no SQL; <code>200</code> vazio, não <code>204</code>. <strong>🔎 onde encontrar:</strong> a sintaxe dos operadores LINQ e a tradução de <code>Contains</code>.</p>
+<p><strong>Onde foi visto:</strong> S19. <strong>Status:</strong> executado e provado (log de SQL, <code>.http</code>, teste do filtro vazio); desempenho do <code>LIKE</code> com volume e o cancelamento <strong>não provados</strong>.</p>
+<hr />
+<p><a id="g6-17"></a></p>
+<h2 id="617-projeção-asnotracking-e-o-response-no-lugar-da-entidade">6.17 Projeção, <code>AsNoTracking</code> e o Response no lugar da entidade<button class="estudada" data-id="617-projeção-asnotracking-e-o-response-no-lugar-da-entidade" type="button">Marcar como estudada</button></h2>
+<p><strong>De → para</strong></p>
+<table>
+<thead>
+<tr>
+<th>Como aparece nas vagas</th>
+<th>Nome no laboratório</th>
+<th>O mundo do aluno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>projection</em>, <em>DTO</em>, <em>response model</em>, <em>no-tracking query</em></td>
+<td><code>Select(f =&gt; new ListarFichasProdutoItemResponse(...))</code>, <code>ListarFichasProdutoResponse</code></td>
+<td><code>AutoMapper</code> ou <code>ToList()</code> da entidade devolvida direto ao cliente</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Em uma frase:</strong> a API devolve um <strong>Response</strong> (um <code>record</code> feito para a resposta), nunca a entidade; e a consulta busca no banco só as colunas que o Response usa.</p>
+<p><strong>Pergunta que responde:</strong> posso devolver a <code>FichaProduto</code> na resposta da listagem?</p>
+<pre class="highlight"><code><span class="p">.</span><span class="n">Select</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ListarFichasProdutoItemResponse</span><span class="p">(</span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="p">,</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Descricao</span><span class="p">,</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Ncm</span><span class="p">))</span>
+</code></pre>
+
+<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">record</span><span class="w"> </span><span class="nf">ListarFichasProdutoItemResponse</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">Sku</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Descricao</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Ncm</span><span class="p">);</span>
+
+<span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">record</span><span class="w"> </span><span class="nf">ListarFichasProdutoResponse</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">Pagina</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">TamanhoPagina</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">TotalItens</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">TotalPaginas</span><span class="p">,</span>
+<span class="w">    </span><span class="n">IReadOnlyList</span><span class="o">&lt;</span><span class="n">ListarFichasProdutoItemResponse</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Itens</span><span class="p">);</span>
+</code></pre>
+
+<p><em>(Forma dos tipos; o tipo exato da coleção no arquivo real pode diferir.)</em></p>
+<table>
+<thead>
+<tr>
+<th>Como era (S16–S18)</th>
+<th>Como é agora (S19)</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST</code> e <code>GET {sku}</code> devolvem <code>Created&lt;FichaProduto&gt;</code> e <code>Ok&lt;FichaProduto&gt;</code> (a <strong>entidade</strong>)</td>
+<td>a listagem devolve <code>Ok&lt;ListarFichasProdutoResponse&gt;</code></td>
+<td>o contrato da API deixa de ser a classe do domínio</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Por que nunca a entidade</strong> (insight do aluno: &quot;nunca deveríamos retornar uma entidade, sempre um Response&quot;)</p>
+<table>
+<thead>
+<tr>
+<th>Entidade</th>
+<th>Response</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>guarda as regras do domínio (construtor que recusa vazio, <code>private set</code>)</td>
+<td>só descreve o formato da resposta HTTP</td>
+</tr>
+<tr>
+<td>muda quando o domínio muda</td>
+<td>muda quando o contrato com o cliente muda</td>
+</tr>
+<tr>
+<td>pode ter campo interno que não deve sair</td>
+<td>só sai o que está declarado</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Dívida aberta:</strong> o <code>POST</code> e o <code>GET</code> por SKU ainda devolvem a entidade; o PR seguinte troca por Response e renomeia <code>ObterFichaProduto</code> → <code>ObterUmaFichaProduto</code>.</p>
+<p><strong><code>AsNoTracking</code> + projeção.</strong> Como a consulta só lê, o rastreamento de mudanças é desperdício (6.6). Com <code>Select</code> para um tipo que <strong>não é entidade</strong>, o EF já não rastreia o resultado; o
+<code>AsNoTracking()</code> explícito deixa a intenção escrita.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Ganho</th>
+<th><strong>Preço</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Projeção com <code>Select</code></td>
+<td>busca só as colunas do Response</td>
+<td>a forma da resposta fica dentro da consulta; mudar a resposta exige mexer no repositório</td>
+</tr>
+<tr>
+<td>Response separado da entidade</td>
+<td>domínio e contrato mudam em ritmos diferentes</td>
+<td>um tipo a mais por funcionalidade e a cópia dos campos</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ganho hoje ≈ nulo</strong> (a ficha tem 3 colunas e o Response usa as 3); o ganho aparece quando a ficha ganhar colunas que a listagem não mostra. <strong>Não foi medido desempenho nenhum.</strong></p>
+<p><strong>Na entrevista:</strong> &quot;Por que não devolver a entidade?&quot; — contrato × domínio, campo interno que vaza, acoplamento da API ao modelo; &quot;o que é projeção?&quot; — pedir só as colunas necessárias;
+&quot;quando usar <code>AsNoTracking</code>?&quot; — consulta de leitura.</p>
+<p><strong>Erros comuns:</strong> devolver a entidade &quot;porque são os mesmos campos&quot; (hoje são; amanhã não); usar <code>AsNoTracking</code> numa consulta que vai alterar e salvar; achar que a projeção
+sempre acelera.</p>
+<p><strong>🧠 de cabeça:</strong> entidade × Response; leitura → <code>AsNoTracking</code>. <strong>🔎 onde encontrar:</strong> a sintaxe do <code>Select</code> e dos <code>record</code>.</p>
+<p><strong>Onde foi visto:</strong> S19. <strong>Status:</strong> executado; o Response foi decisão do aluno; o ganho de desempenho <strong>não provado</strong>.</p>
+<hr />
+<p><a id="g6-18"></a></p>
+<h2 id="618-paginação-por-deslocamento-×-por-chave-ordenação-estável-e-o-total">6.18 Paginação por deslocamento × por chave, ordenação estável e o total<button class="estudada" data-id="618-paginação-por-deslocamento-×-por-chave-ordenação-estável-e-o-total" type="button">Marcar como estudada</button></h2>
+<p><strong>De → para</strong></p>
+<table>
+<thead>
+<tr>
+<th>Como aparece nas vagas</th>
+<th>Nome no laboratório</th>
+<th>O mundo do aluno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>pagination</em>, <em>offset pagination</em>, <em>keyset/cursor pagination</em>, <code>Skip/Take</code></td>
+<td><code>Skip((pagina - 1) * tamanhoPagina).Take(tamanhoPagina)</code></td>
+<td><code>OFFSET ... FETCH NEXT</code> escrito à mão, ou <code>PagedList</code> de biblioteca</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Em uma frase:</strong> a listagem devolve <strong>um pedaço</strong> das fichas por vez (a página), numa ordem fixa, junto com o total para o cliente saber quantas páginas existem.</p>
+<p><strong>Pergunta que responde:</strong> como devolvo as fichas aos poucos, sem repetir nem perder nenhuma entre uma página e outra?</p>
+<pre class="highlight"><code><span class="kt">var</span><span class="w"> </span><span class="n">totalItens</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">query</span><span class="p">.</span><span class="n">CountAsync</span><span class="p">(</span><span class="n">ct</span><span class="p">);</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">itens</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">query</span>
+<span class="w">    </span><span class="p">.</span><span class="n">OrderBy</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">Skip</span><span class="p">((</span><span class="n">pagina</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">tamanhoPagina</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">Take</span><span class="p">(</span><span class="n">tamanhoPagina</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">Select</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ListarFichasProdutoItemResponse</span><span class="p">(</span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="p">,</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Descricao</span><span class="p">,</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Ncm</span><span class="p">))</span>
+<span class="w">    </span><span class="p">.</span><span class="n">ToListAsync</span><span class="p">(</span><span class="n">ct</span><span class="p">);</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">totalPaginas</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">Math</span><span class="p">.</span><span class="n">Ceiling</span><span class="p">(</span><span class="n">totalItens</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="kt">double</span><span class="p">)</span><span class="n">tamanhoPagina</span><span class="p">);</span>
+</code></pre>
+
+<p>No log de SQL: um <code>COUNT(*)::int</code> sem <code>ORDER BY</code>; a página com <code>ORDER BY f.sku LIMIT ... OFFSET ...</code>. <strong>Os valores de <code>LIMIT</code>/<code>OFFSET</code> apareceram como <code>'?'</code>: não foram vistos.</strong></p>
+<p><strong>Quatro peças e o porquê de cada</strong></p>
+<table>
+<thead>
+<tr>
+<th>Peça</th>
+<th>Por quê</th>
+<th>Se faltar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OrderBy(f =&gt; f.Sku)</code></td>
+<td>o banco relacional <strong>não garante ordem</strong> sem <code>ORDER BY</code>, nem pela chave primária; o <code>Sku</code> é único</td>
+<td>a página 2 pode repetir ou pular fichas</td>
+</tr>
+<tr>
+<td><code>Skip</code>/<code>Take</code></td>
+<td><code>OFFSET</code> e <code>LIMIT</code></td>
+<td>devolve tudo</td>
+</tr>
+<tr>
+<td><code>CountAsync</code> <strong>separado, antes</strong>, sem <code>ORDER BY</code>, com o mesmo <code>Where</code></td>
+<td>contar não depende da ordem; o total tem de seguir o filtro</td>
+<td>total que não bate com a lista</td>
+</tr>
+<tr>
+<td><code>Math.Ceiling(total / (double)tamanho)</code></td>
+<td>arredonda para cima; a divisão tem de ser em <code>double</code></td>
+<td>com inteiros, <code>23 / 10</code> dá <code>2</code> e a última página some</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ordenar por coluna única.</strong> Se a ordenação fosse por uma coluna que repete (descrição), seria preciso um desempate com coluna única (<code>ThenBy(f =&gt; f.Sku)</code>). A documentação do EF diz:
+&quot;sempre garanta que sua ordenação seja totalmente única&quot;.</p>
+<p><strong>Por deslocamento × por chave</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Deslocamento (usado)</th>
+<th>Chave (<em>keyset/cursor</em>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ir direto à página 7; &quot;página 3 de 12&quot;</td>
+<td><strong>sim</strong></td>
+<td>não (só próxima/anterior)</td>
+</tr>
+<tr>
+<td>Custo em página funda</td>
+<td><strong>cresce</strong>: o banco processa e descarta as linhas puladas</td>
+<td>estável, com índice na chave</td>
+</tr>
+<tr>
+<td>Dados mudando durante a navegação</td>
+<td>pode repetir ou pular itens</td>
+<td>não é sensível a mudanças nas linhas anteriores</td>
+</tr>
+<tr>
+<td>Complexidade</td>
+<td>baixa</td>
+<td>maior (chave composta exige <code>ThenBy</code> e condição composta)</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight"><code><span class="c1">// por chave (conceito; não implementado no Norte)</span>
+<span class="n">query</span><span class="p">.</span><span class="n">OrderBy</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="p">).</span><span class="n">Where</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="p">.</span><span class="n">CompareTo</span><span class="p">(</span><span class="n">ultimoSku</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">).</span><span class="n">Take</span><span class="p">(</span><span class="n">tamanho</span><span class="p">);</span>
+</code></pre>
+
+<p>A documentação do EF Core diz que o deslocamento tem &quot;severe shortcomings&quot;: o banco &quot;ainda precisa processar as primeiras N entradas, mesmo que não as devolva&quot;, e, com atualizações
+concorrentes, a paginação &quot;pode pular entradas ou mostrá-las duas vezes&quot;. Há também um modelo híbrido (chave para próxima/anterior, deslocamento para saltos).</p>
+<p><strong>Por que o Norte usa deslocamento (decisão do aluno).</strong> Catálogo é tela de consulta com &quot;página X de Y&quot;, poucas fichas, leitura mais frequente que escrita.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Ganho</th>
+<th><strong>Preço</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Deslocamento (escolhido)</td>
+<td>simples; qualquer página; mostra o total</td>
+<td>lento em página funda; instável com dados mudando; um <code>COUNT</code> a mais por listagem</td>
+</tr>
+<tr>
+<td>Chave</td>
+<td>rápido em qualquer profundidade</td>
+<td>sem salto e sem &quot;página X de Y&quot;; mais complexo</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O que não foi provado:</strong> a lentidão em página funda (<strong>sem teste de volume</strong>) e a instabilidade com dados mudando <strong>no Norte</strong> (esses fatos vêm da documentação do EF Core, não de reprodução). O <code>.http</code> e o
+teste provam que a <strong>página 2 devolve os itens certos, na ordem do SKU</strong>.</p>
+<p><strong>Na entrevista:</strong> &quot;Deslocamento ou cursor?&quot; — o quadro acima; &quot;por que a paginação por deslocamento fica lenta nas páginas profundas?&quot; — o banco percorre e descarta as linhas puladas; &quot;por que precisa de <code>ORDER BY</code>?&quot; —
+sem ele a ordem não é garantida e as páginas se sobrepõem.</p>
+<p><strong>Erros comuns:</strong> <code>Skip/Take</code> sem <code>OrderBy</code>; ordenar por coluna que repete; <code>COUNT</code> depois do <code>Skip/Take</code> (conta só a página) ou sem o filtro; dividir inteiros no total de páginas; <code>Skip((pagina) * tamanho)</code> (pula
+a primeira página).</p>
+<p><strong>🧠 de cabeça:</strong> ordem determinística; deslocamento × chave com o preço; <code>Ceiling</code> em <code>double</code>. <strong>🔎 onde encontrar:</strong> a tradução de <code>Skip/Take</code> em <code>OFFSET/LIMIT</code> e a página de paginação do EF Core.</p>
+<p><strong>Fonte:</strong> <a href="https://learn.microsoft.com/en-us/ef/core/querying/pagination">Pagination — EF Core</a></p>
+<p><strong>Onde foi visto:</strong> S19. <strong>Status:</strong> executado; página 2 provada em teste; lentidão em página funda <strong>não provada</strong>.</p>
+<hr />
+<p><a id="g6-19"></a></p>
+<h2 id="619-validação-nativa-em-asparameters-e-os-padrões-no-endpoint">6.19 Validação nativa em <code>[AsParameters]</code> e os padrões no endpoint<button class="estudada" data-id="619-validação-nativa-em-asparameters-e-os-padrões-no-endpoint" type="button">Marcar como estudada</button></h2>
+<p><strong>De → para</strong></p>
+<table>
+<thead>
+<tr>
+<th>Como aparece nas vagas</th>
+<th>Nome no laboratório</th>
+<th>O mundo do aluno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>parameter binding</em>, <code>[AsParameters]</code>, <em>query string</em>, <em>data annotations</em>, <em>default value</em></td>
+<td><code>ListarFichasProdutoRequest</code> (record posicional), <code>[FromQuery(Name = &quot;...&quot;)]</code>, <code>[Range]</code>, <code>[StringLength]</code></td>
+<td><code>[FromQuery] ModelState</code> num controller, ou três parâmetros soltos no método</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Em uma frase:</strong> os parâmetros da query string (<code>filtro</code>, <code>pagina</code>, <code>tamanhoPagina</code>) chegam agrupados num <strong>record</strong>, validados pelos atributos dele; o 400 sai antes do endpoint, e o
+<strong>valor padrão</strong> de quem não mandou é decidido <strong>no endpoint</strong>.</p>
+<p><strong>Pergunta que responde:</strong> como valido parâmetros de um <code>GET</code> sem escrever o <code>if</code> à mão, e onde fica o &quot;se não mandou, use 10&quot;?</p>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">record</span><span class="w"> </span><span class="nf">ListarFichasProdutoRequest</span><span class="p">(</span>
+<span class="w">    </span><span class="na">[FromQuery(Name = "filtro")]</span>
+<span class="w">    </span><span class="na">[StringLength(15, ErrorMessage = "O filtro deve ter no máximo 15 caracteres")]</span>
+<span class="w">    </span><span class="kt">string?</span><span class="w"> </span><span class="n">Filtro</span><span class="p">,</span>
+
+<span class="w">    </span><span class="na">[FromQuery(Name = "pagina")]</span>
+<span class="w">    </span><span class="na">[Range(1, 1_000_000, ErrorMessage = "A página deve estar entre 1 e 1.000.000.")]</span>
+<span class="w">    </span><span class="kt">int?</span><span class="w"> </span><span class="n">Pagina</span><span class="p">,</span>
+
+<span class="w">    </span><span class="na">[FromQuery(Name = "tamanhoPagina")]</span>
+<span class="w">    </span><span class="na">[Range(1, 100, ErrorMessage = "O tamanho da página deve estar entre 1 e 100.")]</span>
+<span class="w">    </span><span class="kt">int?</span><span class="w"> </span><span class="n">TamanhoPagina</span>
+<span class="w">    </span><span class="p">);</span>
+</code></pre>
+
+<pre class="highlight"><code><span class="c1">// ListarFichasProdutoEndpoint (constantes PaginaPadrao = 1, TamanhoPaginaPadrao = 10)</span>
+<span class="n">ExecutarAsync</span><span class="p">([</span><span class="n">AsParameters</span><span class="p">]</span><span class="w"> </span><span class="n">ListarFichasProdutoRequest</span><span class="w"> </span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">FichaProdutoRepository</span><span class="w"> </span><span class="n">fichas</span><span class="p">,</span><span class="w"> </span><span class="n">CancellationToken</span><span class="w"> </span><span class="n">ct</span><span class="p">)</span>
+<span class="c1">// ... var pagina = request.Pagina ?? PaginaPadrao;  var tamanho = request.TamanhoPagina ?? TamanhoPaginaPadrao;</span>
+</code></pre>
+
+<p><em>(Forma do endpoint; os nomes exatos no arquivo real podem diferir.)</em></p>
+<table>
+<thead>
+<tr>
+<th>Peça</th>
+<th>O que faz</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>[AsParameters]</code></td>
+<td>liga o record inteiro aos parâmetros do método (query string, rota, serviços)</td>
+</tr>
+<tr>
+<td><code>[FromQuery(Name = &quot;pagina&quot;)]</code></td>
+<td>o nome na URL (<code>pagina</code>) pode ser diferente do nome da propriedade (<code>Pagina</code>)</td>
+</tr>
+<tr>
+<td><code>[Range]</code> / <code>[StringLength]</code></td>
+<td>regras de entrada declaradas no próprio Request, como no <code>[Required]</code> do cadastro (3.11, ADR-003)</td>
+</tr>
+<tr>
+<td><code>AddValidation()</code></td>
+<td>já estava ativo no <code>CatalogoModulo</code>; é ele que faz a validação nativa valer</td>
+</tr>
+<tr>
+<td><code>int?</code></td>
+<td>&quot;não mandou&quot; é <code>null</code>; <strong><code>[Range]</code> com <code>null</code> passa</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>O que foi provado (testes e <code>.http</code>):</strong> <code>pagina=0</code>, <code>tamanhoPagina=0</code> e <code>tamanhoPagina=101</code> devolvem <strong>400</strong>; sem parâmetros devolve a página 1 com 10 fichas.</p>
+<p><strong>O que a documentação diz e o que não diz (consultada no fechamento).</strong> A página de <em>parameter binding</em> indica o <code>[AsParameters]</code> a partir do ASP.NET Core 7.0 (pelos metadados da página; o texto
+não afirma a versão), mostra <code>record</code> como substituto de <code>struct</code> e diz que o recurso liga &quot;tipos simples, não modelo complexo ou recursivo&quot;. Ela <strong>não</strong> mostra <code>[FromQuery(Name = ...)]</code> dentro de
+tipo <code>[AsParameters]</code>, nem validação: o que sustenta esse uso no Norte é o <strong>teste</strong>. Hipótese do aluno na sessão: &quot;antes em um GET não dava para passar tipos complexos, agora dá&quot; — <strong>parcialmente certa</strong>:
+agrupar parâmetros em um tipo vem do .NET 7; o que a S19 provou foi a <strong>validação nativa</strong> funcionando nesse tipo.</p>
+<p><strong>Quem decide o padrão: o endpoint.</strong> O repositório recebe <code>int</code> concreto: ele não sabe nada de HTTP nem de &quot;opcional&quot;.</p>
+<table>
+<thead>
+<tr>
+<th>Onde pôr o padrão</th>
+<th>Ganho</th>
+<th><strong>Preço</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>no endpoint (escolhido)</td>
+<td>repositório simples; o padrão é regra da API</td>
+<td>cada endpoint que paginar repete a decisão</td>
+</tr>
+<tr>
+<td>no repositório (<code>int? pagina</code>)</td>
+<td>um lugar só</td>
+<td>o repositório passa a conhecer o &quot;não mandou&quot; da API</td>
+</tr>
+<tr>
+<td>no Request (<code>int Pagina = 1</code>)</td>
+<td>declarado junto do parâmetro</td>
+<td><code>[Range]</code> não distingue &quot;mandou 1&quot; de &quot;não mandou&quot;; (não adotado)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Limites sem medição.</strong> 100 (tamanho máximo), 1.000.000 (página) e 15 (filtro) são <strong>escolhas</strong>, não resultado de medição. O tamanho máximo do <strong>SKU</strong> ainda não foi definido (o 15 do filtro não é regra do SKU).</p>
+<p><strong>Na entrevista:</strong> &quot;Como valida parâmetros de query no minimal API?&quot; — <code>[AsParameters]</code> + DataAnnotations com a validação nativa; &quot;o que acontece com <code>[Range]</code> e <code>int?</code> nulo?&quot; — passa; &quot;onde fica o valor padrão?&quot; — decisão do endpoint, não da
+validação.</p>
+<p><strong>Erros comuns:</strong> esperar que <code>[Range]</code> recuse <code>null</code>; esquecer o <code>AddValidation()</code>; <code>Request</code> <code>internal</code> (6.11: a validação some sem aviso); pôr o padrão no repositório.</p>
+<p><strong>🧠 de cabeça:</strong> <code>int?</code> nulo passa no <code>[Range]</code>; o padrão é do endpoint; 400 sai antes do endpoint. <strong>🔎 onde encontrar:</strong> a lista de atributos de DataAnnotations e a sintaxe de <code>[AsParameters]</code>.</p>
+<p><strong>Fontes:</strong> <a href="https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/parameter-binding?view=aspnetcore-10.0">Minimal APIs — parameter binding</a></p>
+<p><strong>Onde foi visto:</strong> S19. <strong>Status:</strong> executado e provado em teste e <code>.http</code>; <code>[FromQuery(Name=...)]</code> em <code>[AsParameters]</code> sustentado só pelo teste.</p>
+<hr />
+<p><a id="g6-20"></a></p>
+<h2 id="620-diagnóstico-os-problemas-da-s19-e-como-achar-a-causa">6.20 Diagnóstico: os problemas da S19 e como achar a causa<button class="estudada" data-id="620-diagnóstico-os-problemas-da-s19-e-como-achar-a-causa" type="button">Marcar como estudada</button></h2>
+<table>
+<thead>
+<tr>
+<th>Sintoma</th>
+<th>Causa</th>
+<th>Como confirmar / o que fazer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a página 2 repete ou pula fichas</td>
+<td><code>Skip/Take</code> sem <code>OrderBy</code>, ou <code>OrderBy</code> por coluna que repete</td>
+<td>ordenar por coluna única (<code>Sku</code>) e conferir o <code>ORDER BY</code> no log (6.18)</td>
+</tr>
+<tr>
+<td>o total de páginas está errado em 1 (11 itens, 10 por página dá 1)</td>
+<td>divisão de inteiros no <code>Ceiling</code></td>
+<td><code>totalItens / (double)tamanhoPagina</code></td>
+</tr>
+<tr>
+<td><code>totalItens</code> não bate com a lista filtrada</td>
+<td>o <code>CountAsync</code> foi feito antes do <code>Where</code> ou sem ele</td>
+<td>contar a partir da mesma <code>query</code> filtrada</td>
+</tr>
+<tr>
+<td><code>tamanhoPagina=0</code> ou <code>101</code> devolve 400, e <code>pagina</code> ausente devolve 200</td>
+<td>o <code>[Range]</code> recusa fora da faixa e aceita <code>null</code>; o padrão vem do endpoint</td>
+<td>comportamento esperado (6.19)</td>
+</tr>
+<tr>
+<td>a listagem devolve tudo (a chamada simples)</td>
+<td>o primeiro método não recebia página nem tamanho</td>
+<td>o aluno percebeu ao ver o código completo; método com página e tamanho (6.18)</td>
+</tr>
+<tr>
+<td><code>Contains</code> no log como <code>LIKE '%x%'</code></td>
+<td>é a tradução esperada</td>
+<td>conferir o log de SQL; custo com volume é pendência (6.16)</td>
+</tr>
+<tr>
+<td><code>LIMIT '?'</code>/<code>OFFSET '?'</code> no log</td>
+<td>o log não mostra os valores dos parâmetros</td>
+<td><strong>não provado</strong>; para ver os valores, ativar o log sensível (<code>EnableSensitiveDataLogging</code>) — não feito</td>
+</tr>
+<tr>
+<td><code>git branch -a</code> ainda lista a branch remota depois do merge</td>
+<td>a referência remota local está desatualizada</td>
+<td><code>git fetch --prune</code>; o GitHub já havia apagado a remota ao mergear</td>
+</tr>
+<tr>
+<td>CI &quot;queued&quot; por um tempo no PR</td>
+<td>o runner ainda não pegou o job</td>
+<td>esperar o &quot;All checks have passed&quot; antes do merge</td>
+</tr>
+<tr>
+<td>o <code>.http</code> final perdeu as requisições de obter por SKU</td>
+<td>o arquivo foi regravado só com cadastro e listagem</td>
+<td>recolocar as requisições de <code>GET {sku}</code> (pendência da S20)</td>
+</tr>
+</tbody>
+</table>
+<hr />
 <h2 id="juntando-tudo-parte-6">Juntando tudo (Parte 6)</h2>
 <p>O caminho de uma requisição, agora completo:</p>
 <ol>
@@ -1878,12 +2436,17 @@ em <code>problem+json</code> (o risco registrado em 6.10).</li>
 <li>O teste do 409 percorre esse caminho inteiro contra um Postgres descartável (6.9).</li>
 <li>Na subida em <code>Development</code>, antes do <code>app.Run()</code>, o seed garante as três fichas de exemplo sem duplicar (6.14); na fábrica de teste o ambiente é
 <code>Testing</code> e o seed não roda.</li>
+<li><strong>Para ler várias fichas:</strong> <code>GET /catalogo/fichas-produto?filtro=...&amp;pagina=...&amp;tamanhoPagina=...</code> → a validação nativa confere o <code>ListarFichasProdutoRequest</code> em <code>[AsParameters]</code> (400 fora da faixa, 6.19) →
+o endpoint aplica os padrões (<code>pagina ?? 1</code>, <code>tamanhoPagina ?? 10</code>) → o repositório monta a consulta de leitura com <code>AsNoTracking</code> e o filtro (6.16), conta o total, ordena por <code>Sku</code>, pula e toma a página e
+projeta para o Response (6.17, 6.18) → <code>200</code> com <code>Pagina</code>, <code>TamanhoPagina</code>, <code>TotalItens</code>, <code>TotalPaginas</code> e <code>Itens</code> (lista vazia se nada casar). O <code>CancellationToken</code> acompanha do endpoint ao banco (6.16).</li>
 </ol>
 <p><strong>Decisões desta parte:</strong> ADR-005 (entidade como classe) e ADR-006 (schema por módulo). Sem ADR, por serem baratas de
 desfazer: mapeamento em arquivo próprio; <code>Dominio/</code> e <code>Funcionalidades/</code>; rota por recurso; <code>Migrations</code> em inglês; Testcontainers em vez de provider em
-memória; verificar antes de gravar para o 409; <code>ubuntu-24.04</code> fixado no CI; recusar vazio com <code>ThrowIfNullOrWhiteSpace</code>; sem teste do <code>null</code>; seed que insere só o que falta; ambiente <code>Testing</code> na fábrica.</p>
-<p><strong>Ainda não visto:</strong> <code>CancellationToken</code> no repositório; listagem, paginação e projeções; migration automática na subida; concorrência otimista;
-índices; tratamento da <code>PostgresException</code> (<code>23505</code>) para a corrida; como dois módulos convivem no mesmo banco.</p>
+memória; verificar antes de gravar para o 409; <code>ubuntu-24.04</code> fixado no CI; recusar vazio com <code>ThrowIfNullOrWhiteSpace</code>; sem teste do <code>null</code>; seed que insere só o que falta; ambiente <code>Testing</code> na fábrica;
+<strong>paginação por deslocamento; padrões no endpoint; <code>200</code> com lista vazia; nunca devolver a entidade; limites 100 e 1.000.000.</strong></p>
+<p><strong>Ainda não visto:</strong> <code>CancellationToken</code> nos outros métodos do repositório; <code>POST</code> e <code>GET</code> por SKU devolvendo Response; migration automática na subida; concorrência otimista;
+índices (incluindo <code>pg_trgm</code> para o <code>LIKE '%x%'</code>); paginação por chave na prática; teste de volume da paginação; valores reais de <code>LIMIT/OFFSET</code> no log; tratamento da <code>PostgresException</code> (<code>23505</code>) para a corrida;
+como dois módulos convivem no mesmo banco.</p>
 <hr />
 <h2 id="teste-se-sem-consultar-uma-pergunta-por-vez">Teste-se (sem consultar, uma pergunta por vez)</h2>
 <ol>
@@ -1894,7 +2457,7 @@ se faltar a <code>MigrationsHistoryTable</code>.</li>
 <li>Qual a diferença entre <code>--project</code> e <code>--startup-project</code> no <code>dotnet ef</code>, e por que o Norte usa os dois?</li>
 <li>O que o <code>Add</code> faz e o que o <code>SaveChangesAsync</code> faz? E por que o repositório é <code>AddScoped</code> e não <code>AddSingleton</code>?</li>
 <li>Cadastrar o mesmo SKU duas vezes devolvia 500. Qual é a causa (em uma frase) e qual deveria ser o status?</li>
-<li>Por que <code>GET /catalogo/fichas-produto/</code> devolve 405 e não 400 nem 404?</li>
+<li>Por que <code>GET /catalogo/fichas-produto/</code> devolvia 405 (antes da listagem) e não 400 nem 404?</li>
 <li>Por que o schema por módulo <strong>não</strong> impede que um módulo leia a tabela de outro, e o que impede?</li>
 <li>Por que o teste do 409 usa um Postgres real e não o provider em memória do EF?</li>
 <li>Descreva, em ordem, o que a <code>ApiComPostgresFabrica</code> faz.</li>
@@ -1909,6 +2472,12 @@ se faltar a <code>MigrationsHistoryTable</code>.</li>
 <li>Por que o seed precisa de <code>CreateScope()</code>?</li>
 <li>O teste do 409 quebrou com <code>42P01</code> depois do seed. Por quê, e qual o conserto?</li>
 <li>Os testes passaram local e falharam no CI com <code>Connection refused 127.0.0.1:5432</code>. O que aconteceu, e que pergunta evita isso?</li>
+<li>Por que <code>Skip/Take</code> sem <code>OrderBy</code> é um defeito na listagem?</li>
+<li>Com 23 fichas e 10 por página, quantas páginas? O que a divisão só com inteiros daria?</li>
+<li>Por que o <code>COUNT</code> não leva <code>ORDER BY</code> e leva o <code>Where</code>?</li>
+<li>A requisição não manda <code>pagina</code>. Qual a resposta, e por que não é 400?</li>
+<li>Deslocamento × chave: quando você escolheria a paginação por chave, e o que perde?</li>
+<li>Por que a API não devolve a entidade <code>FichaProduto</code>? E qual é o ganho real da projeção hoje?</li>
 </ol>
 <hr />
 <h2 id="respostas">Respostas</h2><details class="respostas"><summary>Mostrar respostas</summary>
@@ -1932,8 +2501,8 @@ um scoped prenderia aquela instância para sempre.</li>
 <li>A chave primária em <code>sku</code> (<code>PK_fichas_produto</code>): o banco recusa o segundo <code>INSERT</code> (<code>23505</code>) e o EF lança
 <code>DbUpdateException</code>, que o tratamento de erros do host transforma em 500. Deveria ser <strong>409 Conflict</strong>, uma regra de
 negócio (resolvida na S17).</li>
-<li>A barra final casa com a rota do <strong>cadastro</strong> (<code>POST /fichas-produto</code>): o caminho existe, mas só para POST; o
-roteamento responde 405 com <code>Allow: POST</code> e o endpoint de consulta nem é chamado.</li>
+<li>A barra final casava com a rota do <strong>cadastro</strong> (<code>POST /fichas-produto</code>): o caminho existe, mas só para POST; o
+roteamento responde 405 com <code>Allow: POST</code> e o endpoint de consulta nem é chamado. (Desde a S19 existe um <code>GET</code> na coleção; o que a barra final faz agora não foi reconferido.)</li>
 <li>Porque o schema separa por <strong>organização</strong>, não por impedimento: o banco e o usuário são os mesmos, e uma consulta
 atravessa schemas. O que impede é <strong>convenção e revisão</strong> (e, como reforço não adotado, permissões por schema no
 Postgres).</li>
@@ -1958,6 +2527,15 @@ dados. Preço: uma consulta por ficha por subida, e exemplo alterado não atuali
 <li>A fábrica subia em <code>Development</code>, o seed rodava antes do <code>MigrateAsync</code> num banco vazio e a tabela não existia. Conserto: <code>UseEnvironment(&quot;Testing&quot;)</code> na fábrica.</li>
 <li>Subir a API passou a abrir conexão (por causa do seed) e os testes do 400 usavam a fábrica comum em <code>Development</code>; o CI não tem o Postgres de desenvolvimento, que
 estava de pé só na máquina local. A pergunta: &quot;o CI tem isso?&quot; antes de cada commit que muda a subida da API.</li>
+<li>O banco relacional não garante ordem sem <code>ORDER BY</code>, nem pela chave primária. Sem ordem fixa, duas consultas podem devolver as linhas em ordens diferentes, e a página 2 pode repetir ou omitir itens
+da página 1. Com <code>OrderBy</code> por coluna única (<code>Sku</code>), a mesma página devolve sempre os mesmos itens.</li>
+<li>3 páginas (<code>Math.Ceiling(23 / 10.0)</code>). Com inteiros, <code>23 / 10</code> dá 2 e a última página (com 3 fichas) some.</li>
+<li>Contar não depende da ordem; ordenar só acrescenta custo. O <code>COUNT</code> leva o mesmo <code>Where</code> do filtro, senão o total não bate com a lista.</li>
+<li><code>200</code>, com a página 1 e 10 fichas. O <code>[Range]</code> aceita <code>int?</code> nulo (só confere o valor quando ele existe); quem aplica o padrão é o endpoint (<code>pagina ?? 1</code>).</li>
+<li>Quando há muitos registros, o uso é &quot;próximo/anterior&quot; (feed, exportação) e os dados mudam durante a navegação: o custo não cresce com a profundidade e não repete nem pula itens. Perde-se o salto para a
+página N e o &quot;página X de Y&quot;, e o código fica mais complexo.</li>
+<li>Entidade e Response têm responsabilidades diferentes: a entidade guarda as regras do domínio; o Response é o contrato com o cliente. Devolver a entidade acopla a API ao modelo e pode expor
+campos internos. O ganho real da projeção hoje é ≈ nulo (3 colunas, todas usadas); aparece quando a ficha ganhar colunas que a listagem não mostra. Nenhum desempenho foi medido.</li>
 </ol>
 </details>
 </article>

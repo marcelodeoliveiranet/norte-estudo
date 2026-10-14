@@ -43,17 +43,18 @@ tente explicar em voz alta a linha &quot;Em uma frase&quot; e a seção &quot;Na
 <li>🔎 <strong>Saber onde encontrar</strong> — sintaxe exata, nome de <code>using</code>, comando de CLI. Qualquer sênior
 consulta; o <code>Ctrl+.</code> e a documentação resolvem.</li>
 </ul>
-<p><strong>Última atualização:</strong> 13/10/2026 (S18 — Parte 6 v1.2, entradas 6.12 a 6.15) · <strong>Versão:</strong> 1.11</p>
+<p><strong>Última atualização:</strong> 14/10/2026 (S19 — Parte 6 v1.3, entradas 6.16 a 6.20) · <strong>Versão:</strong> 1.12</p>
 <hr />
 <h2 id="onde-estamos-atualizado-a-cada-sessão">Onde estamos (atualizado a cada sessão)</h2>
-<p><strong>Fim da S18:</strong> o <code>Catalogo</code> <strong>recusa valor vazio no próprio construtor</strong> da ficha
-(<a href="parte-6.html#612-o-construtor-recusa-valor-vazio-argumentexceptionthrowifnullorwhitespace">6.12</a>), com testes de unidade que esperam falha
-(<a href="parte-6.html#613-teste-de-unidade-que-espera-falha-assertthrows-paramname-e-a-prova-do-vermelho">6.13</a>), e <strong>semeia três fichas de exemplo na subida em desenvolvimento</strong>, sem
-duplicar (<a href="parte-6.html#614-seed-idempotente-no-desenvolvimento-e-o-ambiente-testing-da-fábrica-de-teste">6.14</a>). Os três testes do 400 foram para o banco descartável, depois
-que o CI mostrou que o seed fazia a API abrir conexão na subida; o diagnóstico da sessão está em
-<a href="parte-6.html#615-diagnóstico-os-problemas-da-s18-e-como-achar-a-causa">6.15</a>. Ficou aberto: a corrida do SKU (500), o <code>CancellationToken</code>, o NCM de
-exemplo do seed e o experimento da classe de teste <code>internal</code>. Próximo passo de M1: <strong>S19</strong> — listagem
-com paginação.</p>
+<p><strong>Fim da S19:</strong> o <code>Catalogo</code> <strong>lista fichas</strong>: <code>GET /catalogo/fichas-produto</code> com filtro por SKU
+(<a href="parte-6.html#616-listar-com-filtro-a-consulta-que-só-roda-no-fim-contains-e-o-cancellationtoken">6.16</a>), projeção para um Response em vez da entidade
+(<a href="parte-6.html#617-projeção-asnotracking-e-o-response-no-lugar-da-entidade">6.17</a>), paginação por deslocamento com ordem estável e total
+(<a href="parte-6.html#618-paginação-por-deslocamento-×-por-chave-ordenação-estável-e-o-total">6.18</a>) e validação nativa dos parâmetros em <code>[AsParameters]</code>, com os padrões
+decididos no endpoint (<a href="parte-6.html#619-validação-nativa-em-asparameters-e-os-padrões-no-endpoint">6.19</a>). O diagnóstico da sessão está em
+<a href="parte-6.html#620-diagnóstico-os-problemas-da-s19-e-como-achar-a-causa">6.20</a>. Ficou aberto: o <code>POST</code> e o <code>GET</code> por SKU ainda devolvem a entidade
+(a S20 troca por Response), o <code>CancellationToken</code> só existe na listagem, e não foram provados o custo da
+paginação em página funda, o <code>LIKE '%x%'</code> com volume, os valores reais de <code>LIMIT/OFFSET</code> no log e o
+cancelamento. Próximo passo de M1: <strong>S20</strong> — Response no cadastro e na consulta por SKU.</p>
 <hr />
 <h2 id="partes">Partes</h2>
 <table>
@@ -100,7 +101,7 @@ com paginação.</p>
 <td><a href="parte-6.html"><code>GUIA-DOTNET-P6.md</code></a></td>
 <td>Parte 6 — o código grava no banco</td>
 <td>S16–</td>
-<td><strong>v1.2 (6.12–6.15 novas)</strong></td>
+<td><strong>v1.3 (6.16–6.20 novas)</strong></td>
 </tr>
 </tbody>
 </table>
@@ -185,6 +186,11 @@ da parte com a âncora.</p>
 <li><a href="parte-6.html#613-teste-de-unidade-que-espera-falha-assertthrows-paramname-e-a-prova-do-vermelho">6.13</a> <strong>Teste de unidade que espera falha: <code>Assert.Throws</code>, <code>ParamName</code> e a prova do vermelho</strong> (S18)</li>
 <li><a href="parte-6.html#614-seed-idempotente-no-desenvolvimento-e-o-ambiente-testing-da-fábrica-de-teste">6.14</a> <strong>Seed idempotente no desenvolvimento e o ambiente <code>Testing</code> da fábrica de teste</strong> (S18)</li>
 <li><a href="parte-6.html#615-diagnóstico-os-problemas-da-s18-e-como-achar-a-causa">6.15</a> <strong>Diagnóstico: os problemas da S18 e como achar a causa</strong></li>
+<li><a href="parte-6.html#616-listar-com-filtro-a-consulta-que-só-roda-no-fim-contains-e-o-cancellationtoken">6.16</a> <strong>Listar com filtro: a consulta que só roda no fim, <code>Contains</code> e o <code>CancellationToken</code></strong> (S19)</li>
+<li><a href="parte-6.html#617-projeção-asnotracking-e-o-response-no-lugar-da-entidade">6.17</a> <strong>Projeção, <code>AsNoTracking</code> e o Response no lugar da entidade</strong> (S19)</li>
+<li><a href="parte-6.html#618-paginação-por-deslocamento-×-por-chave-ordenação-estável-e-o-total">6.18</a> <strong>Paginação por deslocamento × por chave, ordenação estável e o total</strong> (S19)</li>
+<li><a href="parte-6.html#619-validação-nativa-em-asparameters-e-os-padrões-no-endpoint">6.19</a> <strong>Validação nativa em <code>[AsParameters]</code> e os padrões no endpoint</strong> (S19)</li>
+<li><a href="parte-6.html#620-diagnóstico-os-problemas-da-s19-e-como-achar-a-causa">6.20</a> <strong>Diagnóstico: os problemas da S19 e como achar a causa</strong></li>
 <li>Juntando tudo, Teste-se e respostas (no fim da Parte 6)</li>
 </ul>
 </li>
@@ -254,6 +260,11 @@ da parte com a âncora.</p>
 <td>1.11</td>
 <td>13/10/2026 (S18)</td>
 <td>Parte 6 v1.2: <strong>entradas 6.12–6.15</strong> (construtor que recusa vazio, teste de unidade que espera falha, seed idempotente e ambiente <code>Testing</code>, diagnóstico da S18); atualizações em 6.9, 6.11, &quot;Juntando tudo&quot; (passos 4 e 8), &quot;Ainda não visto&quot; e no Teste-se (perguntas 13–21); &quot;onde estamos&quot; no domínio protegido e no seed</td>
+</tr>
+<tr>
+<td>1.12</td>
+<td>14/10/2026 (S19)</td>
+<td>Parte 6 v1.3: <strong>entradas 6.16–6.20</strong> (listagem com filtro e <code>CancellationToken</code>, projeção e Response no lugar da entidade, paginação por deslocamento × chave, validação nativa em <code>[AsParameters]</code> e padrões no endpoint, diagnóstico da S19); atualizações em 6.7 e 6.8 (notas sobre o <code>GET</code> da coleção), 6.9 (testes da listagem), &quot;Juntando tudo&quot; (passo 9), &quot;Ainda não visto&quot; e no Teste-se (perguntas 22–27); &quot;onde estamos&quot; na leitura paginada do <code>Catalogo</code></td>
 </tr>
 </tbody>
 </table>
