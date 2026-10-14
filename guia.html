@@ -43,17 +43,17 @@ tente explicar em voz alta a linha &quot;Em uma frase&quot; e a seção &quot;Na
 <li>🔎 <strong>Saber onde encontrar</strong> — sintaxe exata, nome de <code>using</code>, comando de CLI. Qualquer sênior
 consulta; o <code>Ctrl+.</code> e a documentação resolvem.</li>
 </ul>
-<p><strong>Última atualização:</strong> 13/10/2026 (S17 — Parte 6 v1.1, entradas 6.9 a 6.11) · <strong>Versão:</strong> 1.10</p>
+<p><strong>Última atualização:</strong> 13/10/2026 (S18 — Parte 6 v1.2, entradas 6.12 a 6.15) · <strong>Versão:</strong> 1.11</p>
 <hr />
 <h2 id="onde-estamos-atualizado-a-cada-sessão">Onde estamos (atualizado a cada sessão)</h2>
-<p><strong>Fim da S17:</strong> o <code>Catalogo</code> <strong>recusa o SKU duplicado com 409</strong> e a regra tem <strong>teste com Postgres
-de verdade</strong>. O 409 nasce de uma consulta antes de gravar (<a href="parte-6.html#610-o-409-do-sku-duplicado-verificar-antes-de-gravar-×-tratar-o-23505">6.10</a>); o teste
-sobe um Postgres descartável com Testcontainers e uma fábrica da API
-(<a href="parte-6.html#69-teste-de-integração-com-postgres-real-testcontainers-e-a-fábrica-da-api">6.9</a>); o diagnóstico da sessão (inclusive o experimento com o <code>Request</code>
-<code>internal</code>) está em <a href="parte-6.html#611-diagnóstico-os-problemas-da-s17-e-como-achar-a-causa">6.11</a>. Ficou aberto: a corrida de duas requisições
-simultâneas ainda cai em 500, e os três testes do 400 ainda usam o banco de desenvolvimento.
-Próximo passo de M1: <strong>S18</strong> — terminar o <code>Catalogo</code> (seed, listagem, paginação) e as duas pendências
-da S17.</p>
+<p><strong>Fim da S18:</strong> o <code>Catalogo</code> <strong>recusa valor vazio no próprio construtor</strong> da ficha
+(<a href="parte-6.html#612-o-construtor-recusa-valor-vazio-argumentexceptionthrowifnullorwhitespace">6.12</a>), com testes de unidade que esperam falha
+(<a href="parte-6.html#613-teste-de-unidade-que-espera-falha-assertthrows-paramname-e-a-prova-do-vermelho">6.13</a>), e <strong>semeia três fichas de exemplo na subida em desenvolvimento</strong>, sem
+duplicar (<a href="parte-6.html#614-seed-idempotente-no-desenvolvimento-e-o-ambiente-testing-da-fábrica-de-teste">6.14</a>). Os três testes do 400 foram para o banco descartável, depois
+que o CI mostrou que o seed fazia a API abrir conexão na subida; o diagnóstico da sessão está em
+<a href="parte-6.html#615-diagnóstico-os-problemas-da-s18-e-como-achar-a-causa">6.15</a>. Ficou aberto: a corrida do SKU (500), o <code>CancellationToken</code>, o NCM de
+exemplo do seed e o experimento da classe de teste <code>internal</code>. Próximo passo de M1: <strong>S19</strong> — listagem
+com paginação.</p>
 <hr />
 <h2 id="partes">Partes</h2>
 <table>
@@ -100,7 +100,7 @@ da S17.</p>
 <td><a href="parte-6.html"><code>GUIA-DOTNET-P6.md</code></a></td>
 <td>Parte 6 — o código grava no banco</td>
 <td>S16–</td>
-<td><strong>v1.1 (6.9–6.11 novas)</strong></td>
+<td><strong>v1.2 (6.12–6.15 novas)</strong></td>
 </tr>
 </tbody>
 </table>
@@ -181,6 +181,10 @@ da parte com a âncora.</p>
 <li><a href="parte-6.html#69-teste-de-integração-com-postgres-real-testcontainers-e-a-fábrica-da-api">6.9</a> <strong>Teste de integração com Postgres real: Testcontainers e a fábrica da API</strong> (S17)</li>
 <li><a href="parte-6.html#610-o-409-do-sku-duplicado-verificar-antes-de-gravar-×-tratar-o-23505">6.10</a> <strong>O 409 do SKU duplicado: verificar antes de gravar × tratar o <code>23505</code></strong> (S17)</li>
 <li><a href="parte-6.html#611-diagnóstico-os-problemas-da-s17-e-como-achar-a-causa">6.11</a> <strong>Diagnóstico: os problemas da S17 e como achar a causa</strong></li>
+<li><a href="parte-6.html#612-o-construtor-recusa-valor-vazio-argumentexceptionthrowifnullorwhitespace">6.12</a> <strong>O construtor recusa valor vazio: <code>ArgumentException.ThrowIfNullOrWhiteSpace</code></strong> (S18)</li>
+<li><a href="parte-6.html#613-teste-de-unidade-que-espera-falha-assertthrows-paramname-e-a-prova-do-vermelho">6.13</a> <strong>Teste de unidade que espera falha: <code>Assert.Throws</code>, <code>ParamName</code> e a prova do vermelho</strong> (S18)</li>
+<li><a href="parte-6.html#614-seed-idempotente-no-desenvolvimento-e-o-ambiente-testing-da-fábrica-de-teste">6.14</a> <strong>Seed idempotente no desenvolvimento e o ambiente <code>Testing</code> da fábrica de teste</strong> (S18)</li>
+<li><a href="parte-6.html#615-diagnóstico-os-problemas-da-s18-e-como-achar-a-causa">6.15</a> <strong>Diagnóstico: os problemas da S18 e como achar a causa</strong></li>
 <li>Juntando tudo, Teste-se e respostas (no fim da Parte 6)</li>
 </ul>
 </li>
@@ -246,11 +250,16 @@ da parte com a âncora.</p>
 <td>13/10/2026 (S17)</td>
 <td>Parte 6 v1.1: <strong>entradas 6.9–6.11</strong> (Testcontainers e a fábrica da API, o 409 do SKU duplicado, diagnóstico da S17); atualizações em 6.6 (status), &quot;Juntando tudo&quot; (passos 3, 6 e 7), &quot;Ainda não visto&quot; e no Teste-se (perguntas 9–12); &quot;onde estamos&quot; no <code>Catalogo</code> com regra de negócio e teste com banco real</td>
 </tr>
+<tr>
+<td>1.11</td>
+<td>13/10/2026 (S18)</td>
+<td>Parte 6 v1.2: <strong>entradas 6.12–6.15</strong> (construtor que recusa vazio, teste de unidade que espera falha, seed idempotente e ambiente <code>Testing</code>, diagnóstico da S18); atualizações em 6.9, 6.11, &quot;Juntando tudo&quot; (passos 4 e 8), &quot;Ainda não visto&quot; e no Teste-se (perguntas 13–21); &quot;onde estamos&quot; no domínio protegido e no seed</td>
+</tr>
 </tbody>
 </table>
 
 </article>
-<footer class="rodape">Atualizado em 13/10/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 14/10/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="assets/search-index.js"></script>

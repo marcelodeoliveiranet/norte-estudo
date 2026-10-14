@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norte · S18 — A ficha recusa valor vazio e o Catalogo ganha um seed · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s18.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#norte--s18--a-ficha-recusa-valor-vazio-e-o-catalogo-ganha-um-seed" data-id="norte--s18--a-ficha-recusa-valor-vazio-e-o-catalogo-ganha-um-seed">Norte · S18 — A ficha recusa valor vazio e o Catalogo ganha um seed</a><a class="n2" href="#1-o-problema-que-a-sessão-resolve" data-id="1-o-problema-que-a-sessão-resolve">1. O problema que a sessão resolve</a><a class="n2" href="#2-as-peças" data-id="2-as-peças">2. As peças</a><a class="n2" href="#3-como-ler-o-código" data-id="3-como-ler-o-código">3. Como ler o código</a><a class="n2" href="#4-o-que-provou-que-o-seed-é-idempotente" data-id="4-o-que-provou-que-o-seed-é-idempotente">4. O que provou que o seed é idempotente</a><a class="n2" href="#5-o-que-quebrou-no-caminho-e-por-quê" data-id="5-o-que-quebrou-no-caminho-e-por-quê">5. O que quebrou no caminho (e por quê)</a><a class="n2" href="#6-o-preço-de-cada-decisão-ganho-×-preço" data-id="6-o-preço-de-cada-decisão-ganho-×-preço">6. O preço de cada decisão (ganho × preço)</a><a class="n2" href="#7-estrutura-dos-testes-do-catalogo-ao-fim-da-sessão" data-id="7-estrutura-dos-testes-do-catalogo-ao-fim-da-sessão">7. Estrutura dos testes do Catalogo ao fim da sessão</a><a class="n2" href="#8-erros-que-apareceram" data-id="8-erros-que-apareceram">8. Erros que apareceram</a><a class="n2" href="#9-onde-estudar" data-id="9-onde-estudar">9. Onde estudar</a><a class="n2" href="#10-provado-×-não-provado" data-id="10-provado-×-não-provado">10. Provado × não provado</a><a class="n2" href="#11-suas-decisões-na-sessão-registradas" data-id="11-suas-decisões-na-sessão-registradas">11. Suas decisões na sessão (registradas)</a><a class="n2" href="#12-teste-se-sem-consultar-uma-pergunta-por-vez" data-id="12-teste-se-sem-consultar-uma-pergunta-por-vez">12. Teste-se (sem consultar, uma pergunta por vez)</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a><a class="n2" href="#13-preparação-da-s19" data-id="13-preparação-da-s19">13. Preparação da S19</a></aside>
+<main class="conteudo"><article>
+<h1 id="norte--s18--a-ficha-recusa-valor-vazio-e-o-catalogo-ganha-um-seed">Norte · S18 — A ficha recusa valor vazio e o Catalogo ganha um seed</h1>
+<p><strong>Terça, 13/10/2026 · 19:33 → 22:14 · 2h39 líquidas (pausa de 0h02) · Marco M1 · segunda sessão do dia (a S17 foi pela manhã; o dia somou 6h21)</strong></p>
+<p>Objetivo da sessão: <strong>fechar duas pendências do <code>Catalogo</code></strong>: (1) a <code>FichaProduto</code> deixa de aceitar SKU, descrição e NCM vazios; (2) o módulo grava fichas iniciais (<em>seed</em>) sem quebrar ao rodar duas vezes. Entregue (dois PRs na <code>main</code>): o construtor que recusa valor vazio, com 6 testes (PR #12, merge <code>37b86a2</code>), e o seed, a fábrica de teste em ambiente <code>Testing</code> e os testes do 400 no banco descartável (PR #13, merge <code>41d94d8</code>). A <code>main</code> termina com <strong>11 testes verdes</strong>. A <strong>listagem e a paginação não foram feitas</strong>: ficam para a S19.</p>
+<blockquote>
+<p><strong>Antes de ler:</strong> a explicação completa de cada peça está nas entradas <strong>6.12 a 6.15 da Parte 6 do guia</strong>. Esta página é o roteiro de estudo da sessão.</p>
+</blockquote>
+<hr />
+<h2 id="1-o-problema-que-a-sessão-resolve">1. O problema que a sessão resolve</h2>
+<table>
+<thead>
+<tr>
+<th>Situação</th>
+<th>Resultado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>new FichaProduto(&quot;&quot;, &quot;&quot;, &quot;&quot;)</code></td>
+<td><strong>funcionava</strong>: criava uma ficha sem SKU, sem descrição e sem NCM</td>
+</tr>
+<tr>
+<td><code>POST</code> com um campo vazio</td>
+<td>400, porque o <code>Request</code> do endpoint barra antes de chegar à ficha</td>
+</tr>
+</tbody>
+</table>
+<p>Só o endpoint protegia a ficha. Quem a criasse por outro caminho (um teste, um seed, outro módulo) passava direto. A regra &quot;uma ficha nunca existe com SKU, descrição ou NCM vazios&quot; pertence <strong>à ficha</strong>.</p>
+<p>O segundo problema veio da próxima tarefa, a listagem: para listar, o banco de desenvolvimento precisa de fichas gravadas, e ele só tinha as cadastradas à mão.</p>
+<h2 id="2-as-peças">2. As peças</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Peça</th>
+<th>O que você faz</th>
+<th>Onde mora</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Construtor que recusa vazio</td>
+<td>uma linha <code>ArgumentException.ThrowIfNullOrWhiteSpace(...)</code> por campo, antes das atribuições</td>
+<td><code>Dominio/FichaProduto.cs</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Testes de unidade da regra</td>
+<td>6 testes (SKU, descrição e NCM × vazio e só espaços), cada um com <code>Assert.Throws</code></td>
+<td><code>tests/.../Dominio/FichaProdutoTests.cs</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Classe do seed</td>
+<td>consulta o SKU e grava só o que falta</td>
+<td><code>CatalogoSeed.cs</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Ponto de entrada público do seed</td>
+<td>método de extensão <code>SemearCatalogoAsync</code> que só age em <code>Development</code></td>
+<td><code>CatalogoModulo.cs</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Chamada no host</td>
+<td><code>await app.SemearCatalogoAsync();</code> antes do <code>app.Run()</code></td>
+<td><code>Program.cs</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td>Ambiente da fábrica de teste</td>
+<td><code>builder.UseEnvironment(&quot;Testing&quot;);</code></td>
+<td><code>ApiComPostgresFabrica.cs</code></td>
+</tr>
+<tr>
+<td>7</td>
+<td>Testes do 400 no banco descartável</td>
+<td>os 3 testes mudam de classe e ganham SKU por <code>Guid</code></td>
+<td><code>CadastrarFichaProdutoComBancoApiTests.cs</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Regra de decisão da ordem:</strong> cada regra nasce com o teste visto <strong>vermelho</strong>. O teste do SKU nasceu vermelho antes do código; os testes da descrição e do NCM foram vistos vermelhos depois, tirando o código protegido e rodando uma vez.</p>
+<p>Commits: PR #12 = <code>df37794</code> <code>feat(catalogo): recusar sku, descricao e ncm vazios na ficha de produto</code>. PR #13 = <code>0115ee5</code> <code>feat(catalogo): semear fichas de produto iniciais em development</code> e <code>62aaf1b</code> <code>test(catalogo): mover testes do 400 para o banco descartavel</code>.</p>
+<h2 id="3-como-ler-o-código">3. Como ler o código</h2>
+<h3 id="31-o-construtor">3.1 O construtor</h3>
+<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">FichaProduto</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="nf">FichaProduto</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">sku</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">descricao</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">ncm</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">ArgumentException</span><span class="p">.</span><span class="n">ThrowIfNullOrWhiteSpace</span><span class="p">(</span><span class="n">sku</span><span class="p">);</span>
+<span class="w">        </span><span class="n">ArgumentException</span><span class="p">.</span><span class="n">ThrowIfNullOrWhiteSpace</span><span class="p">(</span><span class="n">descricao</span><span class="p">);</span>
+<span class="w">        </span><span class="n">ArgumentException</span><span class="p">.</span><span class="n">ThrowIfNullOrWhiteSpace</span><span class="p">(</span><span class="n">ncm</span><span class="p">);</span>
+
+<span class="w">        </span><span class="n">Sku</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sku</span><span class="p">;</span>
+<span class="w">        </span><span class="n">Descricao</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">descricao</span><span class="p">;</span>
+<span class="w">        </span><span class="n">Ncm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ncm</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Sku</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Descricao</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Ncm</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Trecho</th>
+<th>Significado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ArgumentException.ThrowIfNullOrWhiteSpace(sku)</code></td>
+<td>se <code>sku</code> for nulo, vazio ou só espaços, lança a exceção; senão, não faz nada</td>
+</tr>
+<tr>
+<td>antes das atribuições</td>
+<td>a ficha <strong>nunca existe pela metade</strong>: ou nasce válida, ou o construtor lança</td>
+</tr>
+<tr>
+<td><code>ArgumentException</code></td>
+<td>o tipo da exceção para vazio ou só espaços. Para <code>null</code>, a documentação diz que o método lança <code>ArgumentNullException</code></td>
+</tr>
+<tr>
+<td>nome do parâmetro</td>
+<td>a exceção traz <code>ParamName == &quot;sku&quot;</code> sem você escrever o nome: o parâmetro <code>paramName</code> é opcional e foi preenchido sozinho (visto na saída: <code>(Parameter 'sku')</code>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-um-teste-de-unidade-que-espera-falha">3.2 Um teste de unidade que espera falha</h3>
+<pre class="highlight"><code><span class="na">[Fact]</span>
+<span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">FichaProduto_Com_Sku_Vazio_Lanca_Excecao</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Arrange: com que valores preparo o cenário?</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">skuInvalido</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">""</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Act + Assert: a criação da ficha deve falhar com ArgumentException</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">excecao</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Assert</span><span class="p">.</span><span class="n">Throws</span><span class="o">&lt;</span><span class="n">ArgumentException</span><span class="o">&gt;</span><span class="p">(</span>
+<span class="w">        </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FichaProduto</span><span class="p">(</span><span class="n">skuInvalido</span><span class="p">,</span><span class="w"> </span><span class="s">"Luva nitrilica"</span><span class="p">,</span><span class="w"> </span><span class="s">"40151900"</span><span class="p">));</span>
+
+<span class="w">    </span><span class="c1">// Assert: o que prova que a regra foi cumprida? O campo recusado foi o SKU</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="s">"sku"</span><span class="p">,</span><span class="w"> </span><span class="n">excecao</span><span class="p">.</span><span class="n">ParamName</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Parte</th>
+<th>Pergunta que responde</th>
+<th>Neste teste</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Arrange</strong></td>
+<td>com que valores eu preparo o cenário?</td>
+<td>SKU vazio; descrição e NCM <strong>válidos</strong>, para que só o SKU explique a falha</td>
+</tr>
+<tr>
+<td><strong>Act</strong></td>
+<td>qual ação deve falhar?</td>
+<td><code>new FichaProduto(...)</code>, embrulhada em <code>() =&gt; ...</code></td>
+</tr>
+<tr>
+<td><strong>Assert</strong></td>
+<td>o que prova que a regra foi cumprida?</td>
+<td>a exceção do tipo esperado foi lançada e o <code>ParamName</code> é <code>&quot;sku&quot;</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>Assert.Throws&lt;T&gt;(() =&gt; ...)</code> executa a ação por você dentro de um <code>try/catch</code> e confirma que ela lançou. Por isso o Act e o Assert ficam <strong>numa linha só</strong>.</p>
+<p><strong><code>Assert.Throws</code> exige o tipo exato.</strong> Visto na sessão: com o construtor lançando <code>ArgumentException</code> e o teste esperando <code>ArgumentNullException</code>, o teste falhou com <code>Exception type was not an exact match</code> (<code>Expected: ArgumentNullException</code>, <code>Actual: ArgumentException</code>).</p>
+<p><strong>Por que o teste confere o <code>ParamName</code> e não a mensagem?</strong> A mensagem é detalhe de como o erro foi escrito; se alguém a reescrever, o teste quebra sem a regra ter mudado. O <code>ParamName</code> diz <strong>qual campo</strong> foi recusado, que é o que a regra exige.</p>
+<p><strong>Os três vazios:</strong> <code>null</code>, <code>&quot;&quot;</code> e <code>&quot;   &quot;</code>. O <code>null</code> não tem teste: o parâmetro é <code>string</code> (sem <code>?</code>), então o compilador recusa passar um <code>null</code> conhecido (o aviso de nulidade vira erro pelo ADR-004; o número do erro não foi visto). Os testes cobrem o que o compilador <strong>não</strong> pega: <code>&quot;&quot;</code> e só espaços.</p>
+<h3 id="33-o-seed">3.3 O seed</h3>
+<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">CatalogoSeed</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="n">FichaProdutoRepository</span><span class="w"> </span><span class="n">_repositorio</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="nf">CatalogoSeed</span><span class="p">(</span><span class="n">FichaProdutoRepository</span><span class="w"> </span><span class="n">repositorio</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">_repositorio</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">repositorio</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">ExecutarAsync</span><span class="p">()</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="nf">GarantirFichaAsync</span><span class="p">(</span><span class="s">"LUV-NIT-001"</span><span class="p">,</span><span class="w"> </span><span class="s">"Luva nitrilica tamanho M"</span><span class="p">,</span><span class="w"> </span><span class="s">"40151900"</span><span class="p">);</span>
+<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="nf">GarantirFichaAsync</span><span class="p">(</span><span class="s">"LUV-NIT-002"</span><span class="p">,</span><span class="w"> </span><span class="s">"Luva nitrilica tamanho G"</span><span class="p">,</span><span class="w"> </span><span class="s">"40151900"</span><span class="p">);</span>
+<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="nf">GarantirFichaAsync</span><span class="p">(</span><span class="s">"LUV-LAT-001"</span><span class="p">,</span><span class="w"> </span><span class="s">"Luva de latex tamanho M"</span><span class="p">,</span><span class="w"> </span><span class="s">"40151900"</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">private</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">GarantirFichaAsync</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">sku</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">descricao</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">ncm</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">existente</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">_repositorio</span><span class="p">.</span><span class="n">ObterPorSkuAsync</span><span class="p">(</span><span class="n">sku</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">existente</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">null</span><span class="p">)</span>
+<span class="w">            </span><span class="k">return</span><span class="p">;</span>
+
+<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="n">_repositorio</span><span class="p">.</span><span class="n">AdicionarAsync</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">FichaProduto</span><span class="p">(</span><span class="n">sku</span><span class="p">,</span><span class="w"> </span><span class="n">descricao</span><span class="p">,</span><span class="w"> </span><span class="n">ncm</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Trecho</th>
+<th>O que faz</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GarantirFichaAsync</code></td>
+<td>&quot;garante que a ficha exista&quot;: consulta o SKU; se achar, sai sem gravar; se não achar, grava</td>
+</tr>
+<tr>
+<td><code>new FichaProduto(...)</code></td>
+<td>passa pelo construtor protegido: um valor vazio no seed lançaria exceção na subida</td>
+</tr>
+<tr>
+<td><code>internal sealed</code></td>
+<td>o host não enxerga a classe (ADR-002); por isso existe o método público abaixo</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">SemearCatalogoAsync</span><span class="p">(</span><span class="k">this</span><span class="w"> </span><span class="n">WebApplication</span><span class="w"> </span><span class="n">app</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">app</span><span class="p">.</span><span class="n">Environment</span><span class="p">.</span><span class="n">IsDevelopment</span><span class="p">())</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="nn">var</span><span class="w"> </span><span class="n">escopo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="n">Services</span><span class="p">.</span><span class="n">CreateScope</span><span class="p">();</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">seed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">escopo</span><span class="p">.</span><span class="n">ServiceProvider</span><span class="p">.</span><span class="n">GetRequiredService</span><span class="o">&lt;</span><span class="n">CatalogoSeed</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="n">seed</span><span class="p">.</span><span class="n">ExecutarAsync</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Trecho</th>
+<th>O que faz</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>this WebApplication app</code></td>
+<td>método de extensão: chamado como <code>app.SemearCatalogoAsync()</code></td>
+</tr>
+<tr>
+<td><code>if (!IsDevelopment()) return;</code></td>
+<td>fora de <code>Development</code>, não faz nada</td>
+</tr>
+<tr>
+<td><code>CreateScope()</code></td>
+<td>cria um escopo à mão: o <code>DbContext</code> e o repositório são <em>scoped</em>, e na subida não existe requisição para lhes dar um escopo</td>
+</tr>
+<tr>
+<td><code>using var escopo</code></td>
+<td>o escopo é descartado ao fim, o que libera o <code>DbContext</code></td>
+</tr>
+</tbody>
+</table>
+<p>No <code>Program.cs</code>, a chamada entra <strong>depois dos <code>Map...</code> e antes do <code>app.Run()</code></strong> (o <code>Run()</code> bloqueia atendendo requisições; depois dele a linha nunca executaria):</p>
+<pre class="highlight"><code><span class="k">await</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="n">SemearCatalogoAsync</span><span class="p">();</span>
+
+<span class="n">app</span><span class="p">.</span><span class="n">Run</span><span class="p">();</span>
+</code></pre>
+
+<p>E no <code>AddCatalogo</code> entra o registro <code>services.AddScoped&lt;CatalogoSeed&gt;();</code>.</p>
+<h2 id="4-o-que-provou-que-o-seed-é-idempotente">4. O que provou que o seed é idempotente</h2>
+<p>Três execuções do host em <code>Development</code>, olhando o log do EF e o banco:</p>
+<table>
+<thead>
+<tr>
+<th>Execução</th>
+<th>Estado do banco antes</th>
+<th>O que o log mostrou</th>
+<th>Banco depois</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1ª</td>
+<td>as 3 fichas do seed já existiam</td>
+<td>3 <code>SELECT ... WHERE f.sku = @sku</code> e <strong>nenhum</strong> <code>INSERT</code></td>
+<td>5 linhas, nenhuma duplicada</td>
+</tr>
+<tr>
+<td>(preparação)</td>
+<td><code>DELETE ... WHERE sku = 'LUV-LAT-001'</code></td>
+<td>—</td>
+<td>4 linhas</td>
+</tr>
+<tr>
+<td>2ª</td>
+<td>falta <code>LUV-LAT-001</code></td>
+<td>3 <code>SELECT</code> e <strong>1 <code>INSERT INTO catalogo.fichas_produto</code></strong></td>
+<td>5 linhas: a ficha voltou com a descrição do seed; as outras 4 intactas</td>
+</tr>
+</tbody>
+</table>
+<p>As fichas cadastradas à mão (<code>LUV-001</code> e a de SKU <code>9de5783c</code>) <strong>foram preservadas</strong>.</p>
+<h2 id="5-o-que-quebrou-no-caminho-e-por-quê">5. O que quebrou no caminho (e por quê)</h2>
+<h3 id="51-o-seed-rodou-dentro-da-fábrica-de-teste-antes-da-migration">5.1 O seed rodou dentro da fábrica de teste, antes da migration</h3>
+<p>Depois de ligar o seed ao <code>Program.cs</code>, o teste do 409 (o único que usa o Postgres descartável) falhou com:</p>
+<pre class="highlight"><code>Npgsql.PostgresException : 42P01: relation "catalogo.fichas_produto" does not exist
+</code></pre>
+
+<p>O rastro mostrou a cadeia: <code>ApiComPostgresFabrica.InitializeAsync()</code> → <code>SemearCatalogoAsync</code> → <code>CatalogoSeed.GarantirFichaAsync</code>. A fábrica estava em <code>Development</code>; ao tocar em <code>Services</code>, ela sobe a API inteira, o <code>Program.cs</code> roda até o seed, e o contêiner ainda <strong>não tem tabela</strong> (a <code>MigrateAsync</code> vem depois). O seed só funciona num banco que já tem a tabela.</p>
+<p>Conserto: <code>builder.UseEnvironment(&quot;Testing&quot;);</code> no <code>ConfigureWebHost</code> da fábrica. Qualquer nome diferente de <code>Development</code> serve, porque o <code>IsDevelopment()</code> do seed é que decide.</p>
+<h3 id="52-o-ci-pegou-o-que-a-máquina-local-escondia">5.2 O CI pegou o que a máquina local escondia</h3>
+<p>Com tudo verde local, o CI do PR #13 falhou em <strong>3 de 11</strong> testes, os três do 400, com <code>Failed to connect to 127.0.0.1:5432 ... Connection refused</code>. Rastro: <code>CreateClient()</code> → <code>Program.cs</code> → <code>SemearCatalogoAsync</code>. Esses testes usavam a fábrica <strong>comum</strong>, que sobe em <code>Development</code>; a partir do seed, <strong>subir a API passou a abrir uma conexão</strong>. No computador o Postgres de desenvolvimento estava de pé; no CI não existe. Antes do seed, esses testes nunca abriam conexão (a validação recusava a requisição antes de tocar o banco).</p>
+<p>Conserto: os 3 testes passam para a classe <code>CadastrarFichaProdutoComBancoApiTests</code> (fábrica com Postgres descartável, ambiente <code>Testing</code>), com SKU gerado por <code>Guid</code>. Isso também fecha a pendência da S17: nenhum teste que pode gravar toca o banco de desenvolvimento.</p>
+<p><strong>A lição:</strong> antes de ligar à subida da API algo que usa infraestrutura, perguntar <strong>&quot;o CI tem isso?&quot;</strong>. E esperar a caixa de checks <strong>do PR</strong> ficar verde antes do merge: o CI avisa, mas não impede.</p>
+<h2 id="6-o-preço-de-cada-decisão-ganho-×-preço">6. O preço de cada decisão (ganho × preço)</h2>
+<table>
+<thead>
+<tr>
+<th>Decisão</th>
+<th>Ganho</th>
+<th>Preço</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Recusar com exceção</strong> (<code>ArgumentException</code>), e não devolver um resultado de sucesso/falha</td>
+<td>a ficha nunca existe inválida; nenhum chamador precisa lembrar de checar; não mexe no construtor de 3 parâmetros (ADR-005)</td>
+<td>quem cria a ficha fora do endpoint e não trata recebe uma exceção (num endpoint, viraria 500). Aceito: o endpoint já barra a entrada vazia com 400 antes do construtor; o que sobra é bug do código</td>
+</tr>
+<tr>
+<td><strong>Uma linha <code>ThrowIfNullOrWhiteSpace</code> por campo</strong>, e não <code>if</code> manual com mensagem própria</td>
+<td>uma linha por campo; <code>&quot;&quot;</code> e só espaços lançam o mesmo tipo; o teste confere a regra, não o texto</td>
+<td>a mensagem passa a ser a padrão do .NET, em inglês. Não chega ao cliente (o endpoint barra antes)</td>
+</tr>
+<tr>
+<td><strong><code>null</code> por conta do compilador</strong>, sem teste próprio</td>
+<td>testa só o que o compilador não pega</td>
+<td>um <code>null</code> em tempo de execução (código com nullable desligado) não tem teste; forçar com <code>null!</code> silenciaria o compilador, contra o ADR-004</td>
+</tr>
+<tr>
+<td><strong>Seed no código do módulo, só em <code>Development</code></strong>, e não <code>HasData</code> na migration</td>
+<td>só o desenvolvimento recebe as fichas</td>
+<td>um método público novo e uma chamada no <code>Program.cs</code>. Com <code>HasData</code>, os dados entrariam em todo banco que aplica a migration, inclusive produção</td>
+</tr>
+<tr>
+<td><strong>Seed insere só o que falta</strong>, e não apaga e regrava</td>
+<td>preserva o que o desenvolvedor cadastrou; roda de novo sem duplicar</td>
+<td>uma consulta por ficha do seed; se alguém alterar uma ficha do seed no banco, o seed não corrige, porque só adiciona</td>
+</tr>
+<tr>
+<td><strong>Fábrica de teste em <code>Testing</code></strong>, e não <code>Development</code></td>
+<td>o seed não roda no banco descartável, que só tem o que o teste coloca nele</td>
+<td>a fábrica deixa de reproduzir o ambiente de desenvolvimento. A alternativa (o seed aplicar a migration antes de gravar) faria o host migrar sozinho na subida e o banco dos testes nasceria com as fichas</td>
+</tr>
+<tr>
+<td><strong>Testes do 400 na classe do banco descartável</strong></td>
+<td>nenhum teste que grava toca o banco de desenvolvimento; um só contêiner; o CI passa sem Postgres fora dos testes</td>
+<td>a classe mistura 400 e 409, e o nome <code>ComBanco</code> diz a infraestrutura, não o assunto</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-estrutura-dos-testes-do-catalogo-ao-fim-da-sessão">7. Estrutura dos testes do <code>Catalogo</code> ao fim da sessão</h2>
+<table>
+<thead>
+<tr>
+<th>Pasta / arquivo</th>
+<th>O que guarda</th>
+<th>Tipo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Dominio/FichaProdutoTests.cs</code></td>
+<td>6 testes da regra do construtor</td>
+<td>unidade (sem API, sem HTTP, sem contêiner; milissegundos)</td>
+</tr>
+<tr>
+<td><code>Funcionalidades/CadastrarFichaProduto/CadastrarFichaProdutoComBancoApiTests.cs</code></td>
+<td>409 e os 3 do 400</td>
+<td>integração, com Postgres descartável</td>
+</tr>
+<tr>
+<td><code>Funcionalidades/CadastrarFichaProduto/CadastrarFichaProdutoApiTests.cs</code></td>
+<td>o do 500</td>
+<td>integração, fábrica comum em <code>Production</code></td>
+</tr>
+<tr>
+<td><code>ApiComPostgresFabrica.cs</code></td>
+<td>a fábrica do Postgres descartável</td>
+<td>apoio</td>
+</tr>
+</tbody>
+</table>
+<p>Total: <strong>11 testes</strong> (6 + 4 + 1).</p>
+<h2 id="8-erros-que-apareceram">8. Erros que apareceram</h2>
+<table>
+<thead>
+<tr>
+<th>O que apareceu</th>
+<th>Causa</th>
+<th>O que fazer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Assert.Throws() Failure: No exception was thrown</code></td>
+<td>o código protegido ainda não existe (ou foi comentado)</td>
+<td>é o vermelho esperado; escrever/restaurar o código</td>
+</tr>
+<tr>
+<td><code>Exception type was not an exact match</code></td>
+<td><code>Assert.Throws&lt;T&gt;</code> exige o tipo exato; o construtor lança outro tipo</td>
+<td>trocar o <code>T</code> do teste pelo tipo da regra</td>
+</tr>
+<tr>
+<td><code>42P01: relation &quot;catalogo.fichas_produto&quot; does not exist</code></td>
+<td>o seed rodou num banco sem a tabela (fábrica em <code>Development</code>)</td>
+<td>fábrica em <code>Testing</code></td>
+</tr>
+<tr>
+<td><code>Failed to connect to 127.0.0.1:5432 ... Connection refused</code> (só no CI)</td>
+<td>subir a API passou a abrir conexão e o CI não tem o Postgres de desenvolvimento</td>
+<td>testes que sobem a API e podem gravar usam o banco descartável</td>
+</tr>
+<tr>
+<td><code>Total: 8</code> quando a conta dava 11</td>
+<td>um arquivo de teste não foi substituído (o build passa nos dois casos)</td>
+<td><code>dotnet test --no-build --list-tests</code> lista os testes que existem</td>
+</tr>
+<tr>
+<td><code>Norte.slnx</code> aparece modificado no <code>git status</code></td>
+<td>o Visual Studio regravou o arquivo (uma linha pondo o <code>ci.yml</code> em <em>Solution Items</em>)</td>
+<td><code>git restore Norte.slnx</code> se não for intencional</td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-onde-estudar">9. Onde estudar</h2>
+<ol>
+<li><a href="https://learn.microsoft.com/en-us/dotnet/api/system.argumentexception.throwifnullorwhitespace?view=net-10.0"><code>ArgumentException.ThrowIfNullOrWhiteSpace</code></a>: assinatura, quando lança <code>ArgumentNullException</code> e quando <code>ArgumentException</code>.</li>
+<li>Parte 6 do guia, entradas <strong>6.12 a 6.15</strong>, e a <strong>6.9</strong> (a fábrica de teste com Postgres real).</li>
+</ol>
+<h2 id="10-provado-×-não-provado">10. Provado × não provado</h2>
+<table>
+<thead>
+<tr>
+<th>Provado na sessão</th>
+<th>Não provado (ficou aberto)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>O construtor recusa <code>&quot;&quot;</code> e só espaços nos três campos; os 6 testes passam e foram vistos vermelhos</td>
+<td>Uma classe de <strong>teste</strong> <code>internal</code>: o xUnit a ignora ou o build reclama? (a pergunta surgiu e o experimento não foi feito)</td>
+</tr>
+<tr>
+<td><code>Assert.Throws&lt;T&gt;</code> exige o tipo exato</td>
+<td>O número do erro do compilador para <code>null</code> numa variável <code>string?</code> (quem viu foi quem escreveu o teste)</td>
+</tr>
+<tr>
+<td>O seed grava só a ficha que falta; as cadastradas à mão ficam intactas</td>
+<td>Se o NCM de exemplo do seed (<code>40151900</code>) existe na tabela oficial (valor copiado dos testes, não conferido)</td>
+</tr>
+<tr>
+<td>Com o seed, subir a API em <code>Development</code> abre conexão: o CI sem Postgres falhou nos 3 testes do 400</td>
+<td>O que acontece se o seed rodar num banco <strong>sem a tabela</strong> fora de teste (só foi visto no teste do 409)</td>
+</tr>
+<tr>
+<td>Com a fábrica em <code>Testing</code>, o seed não roda e o teste do 409 volta a passar</td>
+<td>Se <code>Testing</code> muda outro comportamento da API além do seed (nada foi visto)</td>
+</tr>
+<tr>
+<td>CI verde no PR #13 depois de mover os 3 testes</td>
+<td>Teste automatizado do seed (não existe, de propósito: é conveniência de desenvolvimento, não regra de negócio)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="11-suas-decisões-na-sessão-registradas">11. Suas decisões na sessão (registradas)</h2>
+<ul>
+<li>Construtor recusa com <strong>exceção</strong> (A); uma linha por campo, <code>ThrowIfNullOrWhiteSpace</code> (B); o <code>null</code> fica com o compilador (A).</li>
+<li>Seed no <strong>código do módulo, só em <code>Development</code></strong> (A); <strong>insere só o que falta</strong> (B).</li>
+<li>Fábrica de teste em <strong><code>Testing</code></strong> (A); <strong>mover os 3 testes do 400</strong> para o banco descartável (A).</li>
+<li>Abrir cada PR assim que o objetivo fecha (A, duas vezes); <strong>encerrar a sessão</strong> depois dos dois PRs, deixando a listagem para a S19 (B).</li>
+</ul>
+<h2 id="12-teste-se-sem-consultar-uma-pergunta-por-vez">12. Teste-se (sem consultar, uma pergunta por vez)</h2>
+<ol>
+<li>Por que a regra &quot;ficha sem SKU, descrição ou NCM&quot; pertence à ficha e não só ao endpoint?</li>
+<li>O que <code>ArgumentException.ThrowIfNullOrWhiteSpace(sku)</code> faz? Qual exceção sai para <code>null</code> e qual sai para <code>&quot;&quot;</code>?</li>
+<li>Por que o teste confere <code>ParamName</code> e não a mensagem da exceção?</li>
+<li>Por que o <code>null</code> não tem teste de unidade?</li>
+<li>Descreva em Arrange / Act / Assert o teste &quot;SKU vazio lança exceção&quot;.</li>
+<li><code>Assert.Throws&lt;ArgumentNullException&gt;</code> e o código lança <code>ArgumentException</code>. O teste passa? Como isso foi visto?</li>
+<li>Como você viu que os testes da descrição e do NCM realmente protegem a regra?</li>
+<li>Por que o seed consulta o SKU antes de gravar, e o que acontece rodando o host duas vezes?</li>
+<li>Dê um <strong>preço</strong> (não um ganho) de o seed inserir só o que falta, em vez de apagar e regravar.</li>
+<li>Por que o seed quebrou o teste do 409 e como a fábrica passou a evitar isso?</li>
+<li>Por que 3 testes passavam no computador e falharam no CI depois do seed?</li>
+<li>O que fazer antes de ligar à subida da API algo que usa banco?</li>
+</ol>
+<h2 id="respostas">Respostas</h2><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>Porque a ficha pode ser criada por outros caminhos (teste, seed, outro módulo) que não passam pelo <code>Request</code>; a regra mora onde protege todos eles.</li>
+<li>Recusa o valor nulo, vazio ou só com espaços, antes das atribuições. Para <code>null</code>, lança <code>ArgumentNullException</code>; para <code>&quot;&quot;</code> (e só espaços), lança <code>ArgumentException</code>.</li>
+<li>A mensagem é detalhe de escrita: reescrevê-la quebraria o teste sem a regra mudar. O <code>ParamName</code> diz qual campo foi recusado, que é o que a regra exige.</li>
+<li>O parâmetro é <code>string</code> (sem <code>?</code>): o compilador recusa passar um <code>null</code> conhecido, então o teste nem compila. Os testes cobrem o que o compilador não pega.</li>
+<li><strong>Arrange:</strong> SKU vazio, descrição e NCM válidos. <strong>Act:</strong> criar a ficha (a ação que deve falhar). <strong>Assert:</strong> a exceção do tipo esperado foi lançada e o <code>ParamName</code> é <code>&quot;sku&quot;</code>.</li>
+<li>Não passa: <code>Assert.Throws&lt;T&gt;</code> exige o tipo exato. Foi visto: <code>Exception type was not an exact match</code>, com <code>Expected</code> e <code>Actual</code> diferentes.</li>
+<li>Tirando (comentando) as linhas da descrição e do NCM no construtor e rodando uma vez: os 4 testes ficaram vermelhos (<code>Failed: 4, Passed: 2</code>) e os 2 do SKU continuaram verdes.</li>
+<li>Para só gravar o que falta: se o SKU existe, pula. Rodando duas vezes: na primeira grava o que falta; na segunda só consulta, sem gravar e sem erro.</li>
+<li>Uma consulta por ficha do seed em toda subida; e se alguém alterar uma ficha do seed no banco, o seed não corrige, porque só adiciona.</li>
+<li>A fábrica estava em <code>Development</code>: ao subir a API, o seed rodou antes da migration e o contêiner não tinha a tabela (<code>42P01</code>). A fábrica passou a subir em <code>Testing</code>, e o <code>IsDevelopment()</code> do seed devolve falso.</li>
+<li>Subir a API passou a abrir conexão com o banco (o seed); no computador o Postgres de desenvolvimento estava de pé, no CI não existe (<code>Connection refused</code>).</li>
+<li>Perguntar &quot;o CI tem isso?&quot; e, se não tiver, mover para o banco descartável os testes que sobem a API e podem gravar.</li>
+</ol>
+</details><h2 id="13-preparação-da-s19">13. Preparação da S19</h2>
+<ul>
+<li><strong>Objetivo:</strong> listagem de fichas e paginação do <code>Catalogo</code>: <code>AsNoTracking</code> e projeção (<code>Select</code>) numa listagem simples; paginação por deslocamento × por chave; <code>CancellationToken</code>. <strong>Até 3 conceitos novos.</strong></li>
+<li><strong>Antes de 19/11:</strong> testar <code>ubuntu-26.04</code> no CI.</li>
+<li><strong>Sexta, 16/10:</strong> o mentor gera o <code>RECONSTRUCAO-2026-10-17.md</code> com o material da semana (S16, S17 e S18).</li>
+<li><strong>Banco de desenvolvimento:</strong> além do seed, tem as fichas cadastradas à mão (<code>LUV-001</code> e <code>9de5783c</code>); limpe se quiser.</li>
+</ul>
+
+</article>
+<footer class="rodape">Atualizado em 14/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>
