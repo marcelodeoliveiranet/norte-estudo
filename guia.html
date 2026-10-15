@@ -43,18 +43,20 @@ tente explicar em voz alta a linha &quot;Em uma frase&quot; e a seção &quot;Na
 <li>🔎 <strong>Saber onde encontrar</strong> — sintaxe exata, nome de <code>using</code>, comando de CLI. Qualquer sênior
 consulta; o <code>Ctrl+.</code> e a documentação resolvem.</li>
 </ul>
-<p><strong>Última atualização:</strong> 14/10/2026 (S19 — Parte 6 v1.3, entradas 6.16 a 6.20) · <strong>Versão:</strong> 1.12</p>
+<p><strong>Última atualização:</strong> 15/10/2026 (S20 — <strong>Parte 7 criada</strong>, entradas 7.1 a 7.7) · <strong>Versão:</strong> 1.13</p>
 <hr />
 <h2 id="onde-estamos-atualizado-a-cada-sessão">Onde estamos (atualizado a cada sessão)</h2>
-<p><strong>Fim da S19:</strong> o <code>Catalogo</code> <strong>lista fichas</strong>: <code>GET /catalogo/fichas-produto</code> com filtro por SKU
-(<a href="parte-6.html#616-listar-com-filtro-a-consulta-que-só-roda-no-fim-contains-e-o-cancellationtoken">6.16</a>), projeção para um Response em vez da entidade
-(<a href="parte-6.html#617-projeção-asnotracking-e-o-response-no-lugar-da-entidade">6.17</a>), paginação por deslocamento com ordem estável e total
-(<a href="parte-6.html#618-paginação-por-deslocamento-×-por-chave-ordenação-estável-e-o-total">6.18</a>) e validação nativa dos parâmetros em <code>[AsParameters]</code>, com os padrões
-decididos no endpoint (<a href="parte-6.html#619-validação-nativa-em-asparameters-e-os-padrões-no-endpoint">6.19</a>). O diagnóstico da sessão está em
-<a href="parte-6.html#620-diagnóstico-os-problemas-da-s19-e-como-achar-a-causa">6.20</a>. Ficou aberto: o <code>POST</code> e o <code>GET</code> por SKU ainda devolvem a entidade
-(a S20 troca por Response), o <code>CancellationToken</code> só existe na listagem, e não foram provados o custo da
-paginação em página funda, o <code>LIKE '%x%'</code> com volume, os valores reais de <code>LIMIT/OFFSET</code> no log e o
-cancelamento. Próximo passo de M1: <strong>S20</strong> — Response no cadastro e na consulta por SKU.</p>
+<p><strong>Fim da S20:</strong> o <code>Catalogo</code> tem o <strong>CRUD completo</strong> e <strong>nenhuma resposta devolve a entidade</strong>: o <code>POST</code> e o
+<code>GET /{sku}</code> passaram a devolver Response (<a href="parte-7.html#71-response-no-cadastro-e-na-consulta-por-sku-e-onde-mapear">7.1</a>); o SKU da rota entra num <code>Request</code>
+com <code>[AsParameters]</code> (<a href="parte-7.html#72-o-sku-da-rota-num-request-com-asparameters">7.2</a>); o limite de 20 caracteres do SKU vale no domínio, na coluna e na
+entrada, com uma migration na chave primária (<a href="parte-7.html#73-o-limite-do-sku-em-três-camadas-e-a-migration-na-chave-primária">7.3</a>); <code>DELETE</code> com <code>ExecuteDeleteAsync</code>
+(<a href="parte-7.html#74-excluir-executedeleteasync-204-×-404">7.4</a>) e <code>PUT</code> com rastreamento e método de domínio (<a href="parte-7.html#75-alterar-rastreamento-método-de-domínio-e-put">7.5</a>); o seed de
+volume provou a paginação em várias páginas (<a href="parte-7.html#76-o-seed-de-volume-e-a-paginação-provada-em-várias-páginas">7.6</a>). O diagnóstico da sessão está em
+<a href="parte-7.html#77-diagnóstico-os-problemas-da-s20-e-como-achar-a-causa">7.7</a>. <strong>A dívida aberta da S19 (o <code>POST</code> e o <code>GET</code> por SKU devolvendo a entidade) foi resolvida;
+a Parte 6 (6.17 e 6.20) não foi reescrita e vale a correção que está no início da Parte 7.</strong> Ficou aberto: o <code>PUT</code> com SKU
+de 21+ caracteres devolve 404, e não 400 (a rota não valida o tamanho); concorrência otimista (dois <code>PUT</code>); o cancelamento por
+<code>CancellationToken</code>; a lentidão do deslocamento em página funda; o SKU com estrutura validada. Próximo passo de M1: <strong>S21</strong>
+(à tarde do mesmo dia) — tema a definir; depois, o <code>Pedidos</code>.</p>
 <hr />
 <h2 id="partes">Partes</h2>
 <table>
@@ -101,7 +103,13 @@ cancelamento. Próximo passo de M1: <strong>S20</strong> — Response no cadastr
 <td><a href="parte-6.html"><code>GUIA-DOTNET-P6.md</code></a></td>
 <td>Parte 6 — o código grava no banco</td>
 <td>S16–</td>
-<td><strong>v1.3 (6.16–6.20 novas)</strong></td>
+<td>v1.3</td>
+</tr>
+<tr>
+<td><a href="parte-7.html"><code>GUIA-DOTNET-P7.md</code></a></td>
+<td>Parte 7 — o CRUD do Catálogo fica completo</td>
+<td>S20–</td>
+<td><strong>v1.0 (nova, 7.1–7.7)</strong></td>
 </tr>
 </tbody>
 </table>
@@ -194,6 +202,18 @@ da parte com a âncora.</p>
 <li>Juntando tudo, Teste-se e respostas (no fim da Parte 6)</li>
 </ul>
 </li>
+<li><a href="parte-7.html#guia-dotnet--parte-7-o-crud-do-cat%C3%A1logo-fica-completo">Parte 7 — O CRUD do Catálogo fica completo (S20–)</a>
+<ul>
+<li><a href="parte-7.html#71-response-no-cadastro-e-na-consulta-por-sku-e-onde-mapear">7.1</a> <strong>Response no cadastro e na consulta por SKU, e onde mapear</strong> (S20)</li>
+<li><a href="parte-7.html#72-o-sku-da-rota-num-request-com-asparameters">7.2</a> <strong>O SKU da rota num <code>Request</code> com <code>[AsParameters]</code></strong> (S20)</li>
+<li><a href="parte-7.html#73-o-limite-do-sku-em-três-camadas-e-a-migration-na-chave-primária">7.3</a> <strong>O limite do SKU em três camadas e a migration na chave primária</strong> (S20)</li>
+<li><a href="parte-7.html#74-excluir-executedeleteasync-204-×-404">7.4</a> <strong>Excluir: <code>ExecuteDeleteAsync</code>, 204 × 404</strong> (S20)</li>
+<li><a href="parte-7.html#75-alterar-rastreamento-método-de-domínio-e-put">7.5</a> <strong>Alterar: rastreamento, método de domínio e <code>PUT</code></strong> (S20)</li>
+<li><a href="parte-7.html#76-o-seed-de-volume-e-a-paginação-provada-em-várias-páginas">7.6</a> <strong>O seed de volume e a paginação provada em várias páginas</strong> (S20)</li>
+<li><a href="parte-7.html#77-diagnóstico-os-problemas-da-s20-e-como-achar-a-causa">7.7</a> <strong>Diagnóstico: os problemas da S20 e como achar a causa</strong></li>
+<li>Juntando tudo, Teste-se e respostas (no fim da Parte 7)</li>
+</ul>
+</li>
 </ul>
 <hr />
 <h2 id="histórico-do-guia">Histórico do guia</h2>
@@ -266,11 +286,16 @@ da parte com a âncora.</p>
 <td>14/10/2026 (S19)</td>
 <td>Parte 6 v1.3: <strong>entradas 6.16–6.20</strong> (listagem com filtro e <code>CancellationToken</code>, projeção e Response no lugar da entidade, paginação por deslocamento × chave, validação nativa em <code>[AsParameters]</code> e padrões no endpoint, diagnóstico da S19); atualizações em 6.7 e 6.8 (notas sobre o <code>GET</code> da coleção), 6.9 (testes da listagem), &quot;Juntando tudo&quot; (passo 9), &quot;Ainda não visto&quot; e no Teste-se (perguntas 22–27); &quot;onde estamos&quot; na leitura paginada do <code>Catalogo</code></td>
 </tr>
+<tr>
+<td>1.13</td>
+<td>15/10/2026 (S20)</td>
+<td><strong>Parte 7 criada</strong> (<code>GUIA-DOTNET-P7.md</code>, entradas 7.1–7.7: Response no cadastro e na consulta por SKU, o SKU da rota num <code>Request</code>, o limite do SKU em três camadas e a migration, excluir com <code>ExecuteDeleteAsync</code>, alterar com rastreamento e <code>PUT</code>, seed de volume, diagnóstico da S20); a Parte 6 <strong>não foi reescrita</strong> e a Parte 7 traz a correção da dívida da 6.17 e da última linha da 6.20; &quot;onde estamos&quot; no CRUD completo do <code>Catalogo</code></td>
+</tr>
 </tbody>
 </table>
 
 </article>
-<footer class="rodape">Atualizado em 14/10/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 15/10/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="assets/search-index.js"></script>

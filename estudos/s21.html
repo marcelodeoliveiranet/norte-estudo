@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ESTUDO-S21 — Catálogo: o 404 do PUT fica, e dois testes o provam · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s21.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#estudo-s21--catálogo-o-404-do-put-fica-e-dois-testes-o-provam" data-id="estudo-s21--catálogo-o-404-do-put-fica-e-dois-testes-o-provam">ESTUDO-S21 — Catálogo: o 404 do PUT fica, e dois testes o provam</a><a class="n2" href="#mapa-da-sessão" data-id="mapa-da-sessão">Mapa da sessão</a><a class="n2" href="#1-decidir-não-mudar-o-404-do-put" data-id="1-decidir-não-mudar-o-404-do-put">1. Decidir não mudar: o 404 do PUT</a><a class="n2" href="#2-teste-ncm-vazio-no-put-devolve-400" data-id="2-teste-ncm-vazio-no-put-devolve-400">2. Teste: NCM vazio no PUT devolve 400</a><a class="n2" href="#3-teste-sku-de-21-caracteres-devolve-404-com-o-título-da-regra" data-id="3-teste-sku-de-21-caracteres-devolve-404-com-o-título-da-regra">3. Teste: SKU de 21 caracteres devolve 404 com o título da regra</a><a class="n2" href="#4-provar-que-cada-teste-protege" data-id="4-provar-que-cada-teste-protege">4. Provar que cada teste protege</a><a class="n2" href="#5-template-de-pull-request" data-id="5-template-de-pull-request">5. Template de Pull Request</a><a class="n2" href="#provado-×-não-provado-resumo" data-id="provado-×-não-provado-resumo">Provado × não provado (resumo)</a><a class="n2" href="#pontos-para-explicar-numa-entrevista" data-id="pontos-para-explicar-numa-entrevista">Pontos para explicar numa entrevista</a><a class="n2" href="#teste-se" data-id="teste-se">Teste-se</a></aside>
+<main class="conteudo"><article>
+<h1 id="estudo-s21--catálogo-o-404-do-put-fica-e-dois-testes-o-provam">ESTUDO-S21 — Catálogo: o 404 do PUT fica, e dois testes o provam</h1>
+<blockquote>
+<p>Material para estudar sozinho. Cada tema é uma página: o que é, o ganho, o preço, o que foi provado e o que não foi.
+Sessão de 15/10/2026 (tarde). Tempo líquido: 2h13. Resultado: PRs #18 e #19 mergeados, 31 testes verdes (eram 29), CI verde.</p>
+</blockquote>
+<p><strong>Por que esta sessão existe.</strong> A S20 deixou uma lacuna conhecida: <code>PUT /catalogo/fichas-produto/{sku}</code> com SKU de 21 caracteres devolve <strong>404</strong>, enquanto o <code>GET</code> e o <code>DELETE</code> devolvem <strong>400</strong>. O plano era dar ao <code>PUT</code> um <code>Request</code> com o SKU da rota. A sessão terminou <strong>sem mudar o código de produção</strong>: a lacuna virou <strong>decisão</strong>, e a decisão virou <strong>teste</strong>.</p>
+<h2 id="mapa-da-sessão">Mapa da sessão</h2>
+<table>
+<thead>
+<tr>
+<th>Tema</th>
+<th>Em uma frase</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Decidir não mudar</td>
+<td>O <code>PUT</code> continua devolvendo 404 para SKU de 21+ caracteres, e o preço fica escrito</td>
+</tr>
+<tr>
+<td>2. Teste: NCM vazio devolve 400</td>
+<td>A validação nativa do corpo do <code>PUT</code> ganha a cobertura que só a descrição tinha</td>
+</tr>
+<tr>
+<td>3. Teste: SKU de 21 caracteres devolve 404</td>
+<td>A decisão do tema 1 fica fixada por um teste de API</td>
+</tr>
+<tr>
+<td>4. Provar que cada teste protege</td>
+<td>Estragar o código de propósito e ver o vermelho, com commit antes</td>
+</tr>
+<tr>
+<td>5. Template de Pull Request</td>
+<td>Três perguntas já escritas na descrição do PR, para não depender da memória</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="1-decidir-não-mudar-o-404-do-put">1. Decidir não mudar: o 404 do <code>PUT</code></h2>
+<p><strong>O problema.</strong> A rota do <code>PUT</code> recebe o SKU como <code>string sku</code> solta. Não há <code>[StringLength(20)]</code> nela, então a validação nativa não vê o tamanho. O SKU de 21 caracteres chega ao repositório, a busca não acha nada e o endpoint responde 404 com o título &quot;Ficha não encontrada&quot;.</p>
+<p><strong>Duas saídas pensadas.</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Deixar como está</th>
+<th>Dar ao <code>PUT</code> um <code>Request</code> com o SKU</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Resposta para SKU de 21 caracteres</td>
+<td>404 &quot;Ficha não encontrada&quot;</td>
+<td>400 (validação nativa), como no <code>GET</code> e no <code>DELETE</code></td>
+</tr>
+<tr>
+<td>Código</td>
+<td>nenhum</td>
+<td>um parâmetro a mais no <code>Request</code> do corpo, ou um segundo <code>Request</code> só para a rota, com <code>[AsParameters]</code></td>
+</tr>
+<tr>
+<td><strong>Preço</strong></td>
+<td>duas respostas diferentes para o mesmo erro de entrada: 400 no <code>GET</code>/<code>DELETE</code>, 404 no <code>PUT</code></td>
+<td>o corpo (<code>descricao</code>, <code>ncm</code>) e a rota (<code>sku</code>) passam a morar no mesmo tipo ou em dois tipos; mais mudança num endpoint que já funciona</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O argumento que decidiu.</strong> Para o <code>PUT</code>, SKU com mais de 20 caracteres e SKU que não existe levam ao mesmo lugar: nenhuma ficha. A busca devolve <code>null</code> e o endpoint já trata <code>null</code> com 404. Nenhuma ficha é gravada ou alterada por engano. A consequência para quem chama é só a mensagem: &quot;não existe&quot; em vez de &quot;tem caracteres demais&quot;.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ganho</strong></td>
+<td>Nenhum código novo num endpoint que funciona; o 404 já é consistente com &quot;a ficha não existe&quot;.</td>
+</tr>
+<tr>
+<td><strong>Preço</strong></td>
+<td>Quem chama o <code>PUT</code> com um SKU longo não é avisado de que o problema é o tamanho. A API responde de dois jeitos ao mesmo erro de entrada. Além disso, não há como consultar o banco por um SKU que a coluna (<code>character varying(20)</code>) nunca poderia ter guardado: a resposta 404 é correta por acaso, não por regra.</td>
+</tr>
+<tr>
+<td><strong>Provado</strong></td>
+<td><code>PUT</code> com SKU de 21 caracteres devolve 404 com o título &quot;Ficha não encontrada&quot; (teste do tema 3).</td>
+</tr>
+<tr>
+<td><strong>Não provado</strong></td>
+<td>Que quem usa a API prefira 404 a 400 nesse caso. É decisão de contrato, sem usuário real para confirmar.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Sem ADR.</strong> A decisão é barata de desfazer: trocar para 400 depois é dar um <code>Request</code> à rota e atualizar um teste.</p>
+<hr />
+<h2 id="2-teste-ncm-vazio-no-put-devolve-400">2. Teste: NCM vazio no <code>PUT</code> devolve 400</h2>
+<p><strong>Antes:</strong> o <code>AtualizarFichaProdutoComBancoApiTests</code> cobria o caminho feliz, o SKU inexistente e a <strong>descrição</strong> vazia. O <code>NCM</code> vazio não tinha teste de API, embora o <code>Request</code> o exija:</p>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">record</span><span class="w"> </span><span class="nf">AtualizarFichaProdutoRequest</span><span class="p">(</span>
+<span class="w">    </span><span class="na">[Required(ErrorMessage = "A Descrição é obrigatória")]</span><span class="w"> </span><span class="kt">string?</span><span class="w"> </span><span class="n">Descricao</span><span class="p">,</span>
+<span class="w">    </span><span class="na">[Required(ErrorMessage = "O Ncm é obrigatório")]</span><span class="w"> </span><span class="kt">string?</span><span class="w"> </span><span class="n">Ncm</span><span class="p">);</span>
+</code></pre>
+
+<p><strong>O teste</strong> (Arrange/Act/Assert, cada parte com a pergunta que responde):</p>
+<pre class="highlight"><code><span class="na">[Fact]</span>
+<span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">Atualizar_com_ncm_vazio_devolve_400</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Arrange: um corpo válido em tudo, menos no ncm, que vai vazio</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">cliente</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fabrica</span><span class="p">.</span><span class="n">CreateClient</span><span class="p">();</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">sku</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Guid</span><span class="p">.</span><span class="n">NewGuid</span><span class="p">().</span><span class="n">ToString</span><span class="p">().</span><span class="n">Substring</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">corpo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">descricao</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"Luva nitrilica"</span><span class="p">,</span><span class="w"> </span><span class="n">ncm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">""</span><span class="w"> </span><span class="p">};</span>
+
+<span class="w">    </span><span class="c1">// Act: requisição de verdade — passa pela validação nativa antes do Executar</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">resposta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">cliente</span><span class="p">.</span><span class="n">PutAsJsonAsync</span><span class="p">(</span><span class="s">$"/catalogo/fichas-produto/{sku}"</span><span class="p">,</span><span class="w"> </span><span class="n">corpo</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Assert: 400, com erro no campo Ncm (e só a falta do ncm explica o erro)</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">HttpStatusCode</span><span class="p">.</span><span class="n">BadRequest</span><span class="p">,</span><span class="w"> </span><span class="n">resposta</span><span class="p">.</span><span class="n">StatusCode</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">problema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">resposta</span><span class="p">.</span><span class="n">Content</span><span class="p">.</span><span class="n">ReadFromJsonAsync</span><span class="o">&lt;</span><span class="n">HttpValidationProblemDetails</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">NotNull</span><span class="p">(</span><span class="n">problema</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Contains</span><span class="p">(</span><span class="s">"Ncm"</span><span class="p">,</span><span class="w"> </span><span class="n">problema</span><span class="p">.</span><span class="n">Errors</span><span class="p">.</span><span class="n">Keys</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Parte</th>
+<th>Pergunta que responde</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Arrange</td>
+<td>O que precisa existir para que <strong>só</strong> o NCM esteja errado? (<code>descricao</code> válida; o SKU nem precisa existir, porque a validação acontece antes da busca)</td>
+</tr>
+<tr>
+<td>Act</td>
+<td>Qual é a ação que o cliente da API faz? (um <code>PUT</code>, de verdade, pelo <code>HttpClient</code> da fábrica)</td>
+</tr>
+<tr>
+<td>Assert</td>
+<td>Como saber que o 400 veio do NCM, e não de outra coisa? (a chave <code>Ncm</code> está em <code>Errors</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Detalhe do corpo.</strong> O corpo do teste usa <code>descricao = &quot;Luva nitrilica&quot;</code> (e não &quot;Luva de latex&quot;): o teste da descrição vazia já usa outra, e o texto não é regra de negócio. O que importa é que a descrição esteja <strong>preenchida</strong>.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ganho</strong></td>
+<td>Se alguém tirar o <code>[Required]</code> do <code>Ncm</code>, o <code>PUT</code> passa a aceitar NCM vazio e este teste fica vermelho.</td>
+</tr>
+<tr>
+<td><strong>Preço</strong></td>
+<td>Mais um teste com banco real (Testcontainers): a suíte roda um pouco mais devagar. Este teste nem toca no banco, mas está na classe que sobe o container.</td>
+</tr>
+<tr>
+<td><strong>Provado</strong></td>
+<td>Prova do vermelho no tema 4.</td>
+</tr>
+<tr>
+<td><strong>Não provado</strong></td>
+<td>O NCM com tamanho errado (3 dígitos) passa: o <code>Request</code> só exige que não seja vazio.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-teste-sku-de-21-caracteres-devolve-404-com-o-título-da-regra">3. Teste: SKU de 21 caracteres devolve 404 com o título da regra</h2>
+<p>Este teste <strong>fixa</strong> a decisão do tema 1. Sem ele, o 404 é um acaso do código; com ele, qualquer mudança futura (um <code>Request</code> na rota, por exemplo) quebra o teste de propósito e obriga a rever a decisão.</p>
+<pre class="highlight"><code><span class="na">[Fact]</span>
+<span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">Atualizar_com_sku_maior_que_20_caracteres_devolve_404_com_o_titulo_da_regra</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Arrange: ficha com SKU de 20 caracteres gravada; SKU de 21 (o mesmo + "X") que não existe</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">cliente</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fabrica</span><span class="p">.</span><span class="n">CreateClient</span><span class="p">();</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">skuCadastrado</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Guid</span><span class="p">.</span><span class="n">NewGuid</span><span class="p">().</span><span class="n">ToString</span><span class="p">().</span><span class="n">Substring</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">cadastro</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CadastrarFichaProdutoRequest</span><span class="p">(</span><span class="n">skuCadastrado</span><span class="p">,</span><span class="w"> </span><span class="s">"Luva nitrilica"</span><span class="p">,</span><span class="w"> </span><span class="s">"40151900"</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">respostaCadastro</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">cliente</span><span class="p">.</span><span class="n">PostAsJsonAsync</span><span class="p">(</span><span class="s">"/catalogo/fichas-produto"</span><span class="p">,</span><span class="w"> </span><span class="n">cadastro</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">HttpStatusCode</span><span class="p">.</span><span class="n">Created</span><span class="p">,</span><span class="w"> </span><span class="n">respostaCadastro</span><span class="p">.</span><span class="n">StatusCode</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">skuLongo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">skuCadastrado</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">"X"</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">corpo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">descricao</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"Luva nitrilica"</span><span class="p">,</span><span class="w"> </span><span class="n">ncm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"40151900"</span><span class="w"> </span><span class="p">};</span>
+
+<span class="w">    </span><span class="c1">// Act: só a requisição, com o SKU de 21 caracteres na rota</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">resposta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">cliente</span><span class="p">.</span><span class="n">PutAsJsonAsync</span><span class="p">(</span><span class="s">$"/catalogo/fichas-produto/{skuLongo}"</span><span class="p">,</span><span class="w"> </span><span class="n">corpo</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Assert: 404 + título "Ficha não encontrada"</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">HttpStatusCode</span><span class="p">.</span><span class="n">NotFound</span><span class="p">,</span><span class="w"> </span><span class="n">resposta</span><span class="p">.</span><span class="n">StatusCode</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">problema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">resposta</span><span class="p">.</span><span class="n">Content</span><span class="p">.</span><span class="n">ReadFromJsonAsync</span><span class="o">&lt;</span><span class="n">ProblemDetails</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">NotNull</span><span class="p">(</span><span class="n">problema</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="s">"Ficha não encontrada"</span><span class="p">,</span><span class="w"> </span><span class="n">problema</span><span class="p">.</span><span class="n">Title</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+
+<p><strong>Por que o Arrange grava uma ficha antes?</strong> Para o teste ser capaz de <strong>falhar do jeito certo</strong>. A ficha gravada tem 20 caracteres, e o <code>PUT</code> usa esses mesmos 20 <strong>mais um <code>X</code></strong>. Se o 404 viesse da regra de tamanho, o SKU de 20 deveria ser aceito; o <code>X</code> extra é a única diferença. Assim, o teste não confunde &quot;o SKU não existe&quot; com &quot;o SKU é longo demais&quot;.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ganho</strong></td>
+<td>A decisão do tema 1 passa a ter um teste. Um SKU longo parecido com um SKU <strong>existente</strong> continua sem alterar a ficha existente.</td>
+</tr>
+<tr>
+<td><strong>Preço</strong></td>
+<td>O Arrange fica mais longo (um <code>POST</code> antes do <code>PUT</code>) e o teste depende do <code>POST</code> funcionar: se o cadastro quebrar, este teste falha por outra razão (por isso o <code>Assert</code> do 201 dentro do Arrange).</td>
+</tr>
+<tr>
+<td><strong>Provado</strong></td>
+<td>Prova do vermelho no tema 4: sem o <code>X</code>, o <code>PUT</code> devolve 200.</td>
+</tr>
+<tr>
+<td><strong>Não provado</strong></td>
+<td>O <code>DELETE</code> com SKU de 21 caracteres continua sem teste (o <code>Request</code> dele tem o limite, mas ninguém o exercitou).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-provar-que-cada-teste-protege">4. Provar que cada teste protege</h2>
+<p>Teste que nunca foi visto vermelho pode estar passando à toa. Regra do laboratório: <strong>todo teste novo é visto falhar pelo menos uma vez</strong>. Nesta sessão a prova foi feita <strong>dois jeitos</strong>, e deu errado de um jeito que ensina.</p>
+<table>
+<thead>
+<tr>
+<th>Teste</th>
+<th>O estrago</th>
+<th>O que se viu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NCM vazio</td>
+<td>remover <code>[Required]</code> do <code>Ncm</code> no <code>AtualizarFichaProdutoRequest</code></td>
+<td><code>Expected: BadRequest</code> / <code>Actual: NotFound</code>: sem a validação, o corpo passa e o endpoint responde 404 (SKU inexistente)</td>
+</tr>
+<tr>
+<td>SKU de 21</td>
+<td>trocar <code>skuCadastrado + &quot;X&quot;</code> por <code>skuCadastrado</code> (sem o <code>X</code>)</td>
+<td><code>Expected: NotFound</code> / <code>Actual: OK</code>: o SKU agora existe, o <code>PUT</code> atualiza e devolve 200</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ordem do procedimento (aprendida na sessão):</strong></p>
+<ol>
+<li><strong>Commit do teste antes do estrago.</strong> O teste do NCM foi commitado antes (<code>adb62bb</code>). O do SKU de 21 foi estragado <strong>sem commit antes</strong>: um <code>git restore</code> para desfazer o estrago teria apagado o próprio teste, que ainda não estava salvo no Git. Foi desfeito editando a linha à mão e conferindo com <code>Select-String</code>.</li>
+<li><strong>Um passo só para o estrago</strong>, e o <code>git status</code> confirma que a alteração está lá antes de rodar.</li>
+<li>Rodar o teste e <strong>ler o <code>Expected</code>/<code>Actual</code></strong>: a causa do vermelho precisa ser a que se espera, não outra. O vermelho do NCM apareceu com <code>Actual: NotFound</code>, que é a consequência certa de tirar o <code>[Required]</code>.</li>
+<li>Desfazer o estrago e rodar de novo para ver o verde.</li>
+</ol>
+<p><strong>Um erro de filtro.</strong> Rodar <code>dotnet test --filter</code> com o nome errado (<code>..._vazia_...</code> em vez de <code>..._vazio_...</code>) devolve <code>total: 0</code> e <strong>não falha</strong>: nenhum teste foi executado. <code>total: 0</code> não é &quot;verde&quot;.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ganho</strong></td>
+<td>Cada um dos 2 testes novos protege uma coisa específica, vista falhar pelo motivo certo.</td>
+</tr>
+<tr>
+<td><strong>Preço</strong></td>
+<td>Mexer no código de produção de propósito: se o estrago for commitado ou esquecido, vira defeito de verdade. O commit do teste antes e o <code>git status</code> depois são o freio.</td>
+</tr>
+<tr>
+<td><strong>Provado</strong></td>
+<td>Os dois vermelhos acima; depois, 31 testes verdes.</td>
+</tr>
+<tr>
+<td><strong>Não provado</strong></td>
+<td>Que os 5 testes de API do <code>PUT</code> protejam contra <strong>todos</strong> os estragos possíveis (só se provou um por teste).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-template-de-pull-request">5. Template de Pull Request</h2>
+<p><strong>O problema (dito pelo aluno).</strong> Depois de tantas idas e vindas, na hora de abrir o PR ele não lembrava o que escrever. Descrição de PR escrita de memória, no fim, sai pobre.</p>
+<p><strong>A solução.</strong> Um arquivo <code>.github/pull_request_template.md</code> na <code>main</code>: o GitHub pré-preenche o campo da descrição de <strong>todo PR novo</strong> com o texto dele.</p>
+<table>
+<thead>
+<tr>
+<th>Seção</th>
+<th>Pergunta que ela faz</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>## O que muda</code></td>
+<td>O que este PR faz, em poucas linhas?</td>
+</tr>
+<tr>
+<td><code>## Como verificar</code></td>
+<td>Como quem revisa confirma que funciona? (comandos, testes)</td>
+</tr>
+<tr>
+<td><code>## Decisões</code></td>
+<td>Que decisão foi tomada, <strong>o que evito e o que PAGO</strong>?</td>
+</tr>
+</tbody>
+</table>
+<p>Cada seção tem um comentário HTML (<code>&lt;!-- ... --&gt;</code>) com a pergunta de apoio; ele não aparece na página do PR.</p>
+<p><strong>Como funciona:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Fato</th>
+<th>Detalhe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Onde fica</td>
+<td><code>.github/pull_request_template.md</code>, na branch padrão (<code>main</code>)</td>
+</tr>
+<tr>
+<td>Quando vale</td>
+<td>A partir do <strong>próximo</strong> PR depois do merge do template; o PR que cria o template não o usa</td>
+</tr>
+<tr>
+<td>Se não aparecer</td>
+<td>O PR foi aberto antes do merge, ou o arquivo está em outra pasta/nome</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ganho</strong></td>
+<td>A descrição nasce com as três perguntas; o campo &quot;Decisões&quot; cobra o preço (ponto fraco recorrente do aluno).</td>
+</tr>
+<tr>
+<td><strong>Preço</strong></td>
+<td>Mais texto para apagar quando o PR é pequeno; um template ruim vira ritual sem conteúdo.</td>
+</tr>
+<tr>
+<td><strong>Provado</strong></td>
+<td>O arquivo foi commitado, o CI passou e o PR #19 foi mergeado; <code>main</code> em <code>3c407c3</code>.</td>
+</tr>
+<tr>
+<td><strong>Não provado</strong></td>
+<td><strong>Que o template aparece no próximo PR.</strong> Ainda não foi visto acontecer: é a primeira coisa a conferir.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="provado-×-não-provado-resumo">Provado × não provado (resumo)</h2>
+<table>
+<thead>
+<tr>
+<th>Provado</th>
+<th>Não provado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PUT</code> sem NCM devolve 400 com a chave <code>Ncm</code> (vermelho visto: sem <code>[Required]</code>, <code>Actual: NotFound</code>)</td>
+<td>O template de PR aparecer no próximo PR</td>
+</tr>
+<tr>
+<td><code>PUT</code> com SKU de 21 caracteres devolve 404 &quot;Ficha não encontrada&quot; (vermelho visto: sem o <code>X</code>, <code>Actual: OK</code>)</td>
+<td><code>DELETE</code> com SKU de 21 caracteres</td>
+</tr>
+<tr>
+<td>31 testes verdes local e no CI (PRs #18 e #19)</td>
+<td>Cancelamento por <code>CancellationToken</code>; <code>AdicionarAsync</code> e <code>ObterPorSkuAsync</code> não recebem o token</td>
+</tr>
+<tr>
+<td>O 404 do <code>PUT</code> com SKU longo é igual ao 404 de SKU inexistente (mesmo título)</td>
+<td>Concorrência: dois <code>PUT</code> simultâneos</td>
+</tr>
+<tr>
+<td></td>
+<td>A causa de o CI do PR #18 ter travado 7m39s em <code>dotnet test</code> e passar em 1 min ao ser reexecutado</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="pontos-para-explicar-numa-entrevista">Pontos para explicar numa entrevista</h2>
+<ol>
+<li><strong>Lacuna de comportamento pode virar decisão:</strong> nem toda inconsistência pede código. Escreve-se o preço e fixa-se com um teste.</li>
+<li><strong>Por que o teste do 404 grava uma ficha antes:</strong> para separar &quot;o SKU não existe&quot; de &quot;o SKU é longo&quot;.</li>
+<li><strong>Prova do vermelho:</strong> estragar o código de propósito e ler o <code>Expected</code>/<code>Actual</code>, com o teste já commitado.</li>
+<li><strong><code>total: 0</code> não é verde:</strong> filtro errado roda zero testes.</li>
+<li><strong>Template de PR:</strong> como transformar um hábito difícil de lembrar em um formulário.</li>
+</ol>
+<hr />
+<h2 id="teste-se">Teste-se</h2>
+<details>
+<summary>1. Por que o <code>PUT</code> com SKU de 21 caracteres continua devolvendo 404, e qual é o preço dessa escolha?</summary>
+<p>Porque o SKU solto na rota não passa por validação de tamanho; a busca não acha nenhuma ficha e o endpoint já responde 404 para &quot;não existe&quot;. O preço: o mesmo erro de entrada recebe 400 no <code>GET</code>/<code>DELETE</code> e 404 no <code>PUT</code>, e quem chama não é avisado de que o problema é o tamanho.</p>
+</details>
+<details>
+<summary>2. No teste do NCM vazio, o que o Arrange precisa garantir e como o Assert prova que o 400 veio do NCM?</summary>
+<p>O Arrange garante que tudo esteja válido, menos o NCM (descrição preenchida, NCM <code>&quot;&quot;</code>). O Assert confere o status 400 <strong>e</strong> que a chave <code>Ncm</code> está em <code>Errors</code>: só a falta do NCM explica o erro.</p>
+</details>
+<details>
+<summary>3. Por que o teste do SKU de 21 caracteres grava antes uma ficha de 20?</summary>
+<p>Para a única diferença entre o SKU gravado e o SKU do <code>PUT</code> ser o caractere <code>X</code> a mais. Assim o 404 só pode vir do SKU a mais, e a prova do vermelho (tirar o <code>X</code>) devolve 200.</p>
+</details>
+<details>
+<summary>4. Como se prova que o teste do NCM protege? O que foi visto?</summary>
+<p>Remove-se o <code>[Required]</code> do <code>Ncm</code> no <code>Request</code> e roda-se o teste: ele fica vermelho com <code>Expected: BadRequest</code> e <code>Actual: NotFound</code>. Devolvido o atributo, volta ao verde.</p>
+</details>
+<details>
+<summary>5. Por que o teste deve estar commitado antes de estragar o código para a prova do vermelho?</summary>
+<p>Porque desfazer o estrago com <code>git restore</code> descarta todas as alterações não commitadas do arquivo, inclusive o teste novo. Com o teste commitado, o <code>git restore</code> só desfaz o estrago.</p>
+</details>
+<details>
+<summary>6. <code>dotnet test --filter</code> mostrou <code>total: 0</code>. Isso significa que o teste passou?</summary>
+<p>Não. Significa que nenhum teste foi executado (o filtro não achou o nome). É preciso ver <code>total: 1</code> (ou mais) com <code>succeeded</code> igual.</p>
+</details>
+<details>
+<summary>7. Quando o template de PR passa a valer, e como se confirma que funciona?</summary>
+<p>A partir do próximo PR aberto depois do merge do template na <code>main</code>. Confirma-se abrindo um PR e vendo o campo da descrição já preenchido com as três seções.</p>
+</details>
+<details>
+<summary>8. Por que não foi escrito um ADR para a decisão do 404?</summary>
+<p>Porque é barata de desfazer: trocar para 400 é dar ao <code>PUT</code> um <code>Request</code> com o SKU e atualizar um teste. O preço ficou registrado no PR #18 e no teste.</p>
+</details>
+
+</article>
+<footer class="rodape">Atualizado em 15/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

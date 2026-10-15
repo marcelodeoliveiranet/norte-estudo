@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ESTUDO-S20 — Catálogo: CRUD completo com Response · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s20.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#estudo-s20--catálogo-crud-completo-com-response" data-id="estudo-s20--catálogo-crud-completo-com-response">ESTUDO-S20 — Catálogo: CRUD completo com Response</a><a class="n2" href="#mapa-da-sessão" data-id="mapa-da-sessão">Mapa da sessão</a><a class="n2" href="#1-response-no-cadastro-e-na-consulta-por-sku" data-id="1-response-no-cadastro-e-na-consulta-por-sku">1. Response no cadastro e na consulta por SKU</a><a class="n2" href="#2-request-na-rota" data-id="2-request-na-rota">2. Request na rota</a><a class="n2" href="#3-o-limite-do-sku-em-três-camadas" data-id="3-o-limite-do-sku-em-três-camadas">3. O limite do SKU em três camadas</a><a class="n2" href="#4-excluir" data-id="4-excluir">4. Excluir</a><a class="n2" href="#5-alterar" data-id="5-alterar">5. Alterar</a><a class="n2" href="#6-seed-de-volume-a-paginação-em-várias-páginas" data-id="6-seed-de-volume-a-paginação-em-várias-páginas">6. Seed de volume: a paginação em várias páginas</a><a class="n2" href="#7-provar-que-o-teste-protege-o-vermelho-do-atualizar" data-id="7-provar-que-o-teste-protege-o-vermelho-do-atualizar">7. Provar que o teste protege: o vermelho do Atualizar</a><a class="n2" href="#provado-×-não-provado-resumo" data-id="provado-×-não-provado-resumo">Provado × não provado (resumo)</a><a class="n2" href="#pontos-para-explicar-numa-entrevista" data-id="pontos-para-explicar-numa-entrevista">Pontos para explicar numa entrevista</a><a class="n2" href="#teste-se" data-id="teste-se">Teste-se</a></aside>
+<main class="conteudo"><article>
+<h1 id="estudo-s20--catálogo-crud-completo-com-response">ESTUDO-S20 — Catálogo: CRUD completo com Response</h1>
+<blockquote>
+<p>Material para estudar sozinho. Cada tema é uma página: o que é, o ganho, o preço, o que foi provado e o que não foi.
+Sessão de 15/10/2026. Tempo líquido: 2h44. Resultado: PRs #15, #16 e #17 mergeados, 29 testes verdes (eram 17), CI verde.</p>
+</blockquote>
+<p><strong>Por que esta sessão existe.</strong> Observação do aluno: &quot;tem inclusão e consulta, por que não tem alteração e exclusão?&quot; Um recurso sem alterar e excluir parece inacabado para quem abre o repositório. Por isso o <code>Catalogo</code> fechou o CRUD antes de o <code>Pedidos</code> começar.</p>
+<h2 id="mapa-da-sessão">Mapa da sessão</h2>
+<table>
+<thead>
+<tr>
+<th>Tema</th>
+<th>Em uma frase</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Response no cadastro e na consulta por SKU</td>
+<td>A API deixou de devolver a entidade nos dois últimos pontos que ainda devolviam</td>
+</tr>
+<tr>
+<td>2. Request na rota</td>
+<td>O SKU da URL entra num record com <code>[AsParameters]</code> e ganha validação nativa</td>
+</tr>
+<tr>
+<td>3. Limite do SKU em três camadas</td>
+<td>Domínio, coluna e <code>Request</code> dizem a mesma coisa: até 20 caracteres</td>
+</tr>
+<tr>
+<td>4. Excluir</td>
+<td><code>ExecuteDeleteAsync</code> apaga numa ida ao banco; 204 ou 404</td>
+</tr>
+<tr>
+<td>5. Alterar</td>
+<td>Busca com rastreamento, método de domínio, <code>PUT</code>; 200, 404 ou 400</td>
+</tr>
+<tr>
+<td>6. Seed de volume</td>
+<td>40 fichas a mais provam a paginação em várias páginas</td>
+</tr>
+<tr>
+<td>7. Provar que o teste protege</td>
+<td>Comentar a guarda de propósito e ver 4 testes ficarem vermelhos</td>
+</tr>
+</tbody>
+</table>
+<p>Guia: a explicação completa de cada tema está na <strong>Parte 7</strong> (<a href="../parte-7.html">GUIA-DOTNET-P7.md</a>).</p>
+<hr />
+<h2 id="1-response-no-cadastro-e-na-consulta-por-sku">1. Response no cadastro e na consulta por SKU</h2>
+<p><strong>O que é.</strong> Até a S19, o <code>POST</code> devolvia <code>Created&lt;FichaProduto&gt;</code> e o <code>GET /{sku}</code> devolvia <code>Ok&lt;FichaProduto&gt;</code>: a entidade na resposta. Agora cada funcionalidade tem o seu Response, um <code>internal sealed record</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Funcionalidade</th>
+<th>Response</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CadastrarFichaProduto</code></td>
+<td><code>CadastrarFichaProdutoResponse(Sku, Descricao, Ncm)</code></td>
+</tr>
+<tr>
+<td><code>ObterUmaFichaProduto</code></td>
+<td><code>ObterUmaFichaProdutoResponse(Sku, Descricao, Ncm)</code></td>
+</tr>
+<tr>
+<td><code>AtualizarFichaProduto</code></td>
+<td><code>AtualizarFichaProdutoResponse(Sku, Descricao, Ncm)</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Onde o mapeamento mora</strong> (a decisão da sessão):</p>
+<table>
+<thead>
+<tr>
+<th>Funcionalidade</th>
+<th>Quem monta o Response</th>
+<th>Por quê</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /{sku}</code></td>
+<td>o repositório, com <code>Select</code> direto da consulta (como na listagem)</td>
+<td>o aluno pediu &quot;seguir o modelo da listagem&quot;</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td>o endpoint, depois de gravar (<code>new CadastrarFichaProdutoResponse(ficha.Sku, ficha.Descricao, ficha.Ncm)</code>)</td>
+<td>não há consulta depois do <code>AdicionarAsync</code>; a entidade já está na mão</td>
+</tr>
+<tr>
+<td><code>PUT</code></td>
+<td>o endpoint, a partir da entidade que o repositório devolve</td>
+<td>o repositório não importa o Response de outra funcionalidade</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ganho</strong></td>
+<td>A API e o domínio mudam em ritmos diferentes; nenhum campo interno vaza por acidente.</td>
+</tr>
+<tr>
+<td><strong>Preço</strong></td>
+<td>Um tipo a mais por funcionalidade e a cópia dos campos. Hoje os três Response têm os mesmos 3 campos, e a duplicação é visível.</td>
+</tr>
+<tr>
+<td><strong>Provado</strong></td>
+<td><code>curl</code> do <code>GET</code> (200 com JSON), do <code>404</code> e do <code>POST</code> (201 com <code>Location: /catalogo/fichas-produto/TESTE-201</code> e o corpo do Response).</td>
+</tr>
+<tr>
+<td><strong>Não provado</strong></td>
+<td>Que o formato escolhido seja o melhor quando as funcionalidades divergirem.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Rename.</strong> <code>ObterFichaProduto</code> virou <code>ObterUmaFichaProduto</code> (pasta, namespace, classe, <code>using</code>, <code>MapGet</code>), num commit só dele (<code>git mv</code>, +4 −4): refactor puro, sem regra nova.</p>
+<hr />
+<h2 id="2-request-na-rota">2. Request na rota</h2>
+<p>O SKU deixou de ser uma <code>string</code> solta no método do endpoint e virou um record, como o da listagem:</p>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">record</span><span class="w"> </span><span class="nf">ObterUmaFichaProdutoRequest</span><span class="p">(</span>
+<span class="w">    </span><span class="na">[FromRoute(Name = "sku")]</span><span class="w"> </span><span class="p">[</span><span class="n">StringLength</span><span class="p">(</span><span class="mi">20</span><span class="p">)]</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Sku</span><span class="p">);</span>
+</code></pre>
+
+<p><em>(Forma do tipo; os nomes exatos no arquivo real podem diferir.)</em></p>
+<p>O endpoint recebe <code>[AsParameters] ObterUmaFichaProdutoRequest request</code> e um <code>CancellationToken</code>.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ganho</strong></td>
+<td>A validação nativa passa a valer no <code>GET</code>: SKU com 21 caracteres devolve <strong>400</strong>, não 404.</td>
+</tr>
+<tr>
+<td><strong>Preço</strong></td>
+<td>Mais um arquivo por funcionalidade, para um parâmetro só.</td>
+</tr>
+<tr>
+<td><strong>Provado</strong></td>
+<td><code>curl</code> e <code>.http</code>: <code>LUV-NIT-001</code> → 200; <code>NAO-EXISTE</code> → 404; 21 caracteres → 400 (<code>errors.Sku</code>: &quot;O sku deve ter no máximo 20 caracteres&quot;).</td>
+</tr>
+<tr>
+<td><strong>Não provado</strong></td>
+<td><code>[FromRoute(Name=...)]</code> dentro de <code>[AsParameters]</code> não foi conferido na documentação; o que sustenta o uso é a prova com <code>curl</code>.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Lacuna conhecida:</strong> o <code>PUT</code> recebe o <code>string sku</code> da rota <strong>sem</strong> esse <code>Request</code>. Por isso, <code>PUT</code> com SKU de 21 caracteres devolve <strong>404</strong>, não 400 (provado com <code>Invoke-WebRequest</code>: <code>404</code>, &quot;Ficha não encontrada&quot;). Fica para a S21.</p>
+<hr />
+<h2 id="3-o-limite-do-sku-em-três-camadas">3. O limite do SKU em três camadas</h2>
+<p>Regra de negócio (do aluno): o SKU é o código &quot;inteligente&quot; que localiza o produto no estoque, e o recomendado é <strong>até 20 caracteres</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Camada</th>
+<th>O que faz</th>
+<th>Onde</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Domínio</td>
+<td>recusa SKU maior que 20 (<code>ArgumentException</code>, <code>ParamName</code> = <code>sku</code>)</td>
+<td>construtor de <code>FichaProduto</code>, constante <code>TamanhoMaximoSku = 20</code></td>
+</tr>
+<tr>
+<td>Banco</td>
+<td>a coluna passa de <code>text</code> a <code>character varying(20)</code></td>
+<td><code>FichaProdutoConfiguration</code> com <code>HasMaxLength(FichaProduto.TamanhoMaximoSku)</code></td>
+</tr>
+<tr>
+<td>Entrada HTTP</td>
+<td>400 antes de chegar ao endpoint</td>
+<td><code>[StringLength(20)]</code> no <code>CadastrarFichaProdutoRequest</code> (e nos Requests do GET e do DELETE)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>A migration.</strong> <code>20261015142156_LimitaTamanhoDoSku</code> faz <code>AlterColumn</code> da coluna <code>sku</code> (<code>text</code> → <code>character varying(20)</code>). Como a coluna é a <strong>chave primária</strong>, o SQL foi lido <strong>antes</strong> de aplicar, e só depois a migration rodou no banco de desenvolvimento (as 6 fichas existentes tinham no máximo 11 caracteres).</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ganho</strong></td>
+<td>A mesma regra nas três camadas: nenhum caminho cria ou grava SKU maior que 20.</td>
+</tr>
+<tr>
+<td><strong>Preço</strong></td>
+<td>Três lugares para manter coerentes (o número 20 vem da constante do domínio nos dois primeiros; o atributo de validação usa o literal). Uma migration na chave primária.</td>
+</tr>
+<tr>
+<td><strong>Provado</strong></td>
+<td>Dois testes nasceram vermelhos e ficaram verdes: <code>Recusa_ficha_com_sku_maior_que_20_caracteres_e_devolve_400</code> (API) e <code>FichaProduto_Com_Sku_Maior_Que_20_Caracteres_Lanca_Excecao</code> (domínio).</td>
+</tr>
+<tr>
+<td><strong>Não provado</strong></td>
+<td>O que acontece com SKUs já existentes maiores que 20 (não havia).</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O que o limite não faz.</strong> O SKU &quot;inteligente&quot; (<code>MON-34G5-165-PR</code>: categoria, modelo, especificação, cor) é <strong>convenção para pessoas</strong>. O construtor <strong>não valida formato</strong>: só vazio e tamanho. Validar a estrutura seria outra decisão, não tomada.</p>
+<hr />
+<h2 id="4-excluir">4. Excluir</h2>
+<p><code>DELETE /catalogo/fichas-produto/{sku}</code>: 204 se apagou, 404 se a ficha não existe.</p>
+<pre class="highlight"><code><span class="c1">// forma do repositório</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">linhas</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">_contexto</span><span class="p">.</span><span class="n">FichasProduto</span>
+<span class="w">    </span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">sku</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">ExecuteDeleteAsync</span><span class="p">(</span><span class="n">ct</span><span class="p">);</span>
+<span class="k">return</span><span class="w"> </span><span class="n">linhas</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</code></pre>
+
+<p><code>ExecuteDeleteAsync</code> manda um <code>DELETE ... WHERE</code> <strong>direto ao banco</strong> (uma ida), sem carregar a ficha.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><code>ExecuteDeleteAsync</code> (escolhido)</th>
+<th>Buscar, <code>Remove</code>, <code>SaveChangesAsync</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ganho</td>
+<td>uma ida ao banco; o resultado (linhas apagadas) já diz se existia</td>
+<td>o EF rastreia a entidade; vale se houver regra ao apagar</td>
+</tr>
+<tr>
+<td><strong>Preço</strong></td>
+<td>não passa pelo rastreamento nem por eventos do <code>SaveChanges</code>; não carrega a entidade para uma regra de domínio</td>
+<td>duas idas (buscar e apagar)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Apagar de verdade serve hoje</strong> porque o <code>Pedidos</code> ainda não referencia fichas. Quando o contrato entre <code>Pedidos</code> e <code>Catalogo</code> nascer, esta decisão volta (ficha usada por pedido não pode sumir).</p>
+<p><strong>Provado:</strong> <code>curl</code>: <code>DELETE TESTE-201</code> → 204; segundo <code>DELETE</code> → 404; <code>GET</code> depois → 404. Dois testes de banco: 204 com a ficha sumindo, e 404 com o título &quot;Ficha não encontrada&quot;.</p>
+<hr />
+<h2 id="5-alterar">5. Alterar</h2>
+<p><code>PUT /catalogo/fichas-produto/{sku}</code>: o SKU (a chave) <strong>não muda</strong>; só <code>descricao</code> e <code>ncm</code>.</p>
+<pre class="highlight"><code><span class="c1">// na entidade</span>
+<span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">Atualizar</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">descricao</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">ncm</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">ArgumentException</span><span class="p">.</span><span class="n">ThrowIfNullOrWhiteSpace</span><span class="p">(</span><span class="n">descricao</span><span class="p">);</span>
+<span class="w">    </span><span class="n">ArgumentException</span><span class="p">.</span><span class="n">ThrowIfNullOrWhiteSpace</span><span class="p">(</span><span class="n">ncm</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">Descricao</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">descricao</span><span class="p">;</span>
+<span class="w">    </span><span class="n">Ncm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ncm</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+
+<p><em>(Forma do método; os nomes exatos no arquivo real podem diferir.)</em></p>
+<p>O repositório busca a ficha <strong>com rastreamento</strong> (sem <code>AsNoTracking</code>), chama <code>Atualizar</code> e o <code>SaveChangesAsync</code> grava só o que mudou. Devolve a entidade (ou <code>null</code> se não existe); o endpoint monta o <code>AtualizarFichaProdutoResponse</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Resultado</th>
+<th>Quando</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200 + Response</td>
+<td>ficha existe e o corpo é válido</td>
+</tr>
+<tr>
+<td>404 &quot;Ficha não encontrada&quot;</td>
+<td>SKU inexistente</td>
+</tr>
+<tr>
+<td>400</td>
+<td><code>descricao</code> ou <code>ncm</code> vazios (validação nativa do <code>Request</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Decisões:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Decisão</th>
+<th>Escolha</th>
+<th>Preço</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PUT</code> ou <code>PATCH</code></td>
+<td><code>PUT</code></td>
+<td>só 2 campos; <code>PATCH</code> traria complexidade sem ganho; o preço é mandar os dois campos sempre</td>
+</tr>
+<tr>
+<td><code>AtualizarAsync</code> devolve a entidade</td>
+<td>sim</td>
+<td>o endpoint precisa conhecer a entidade para montar o Response</td>
+</tr>
+<tr>
+<td>Regra no método da entidade</td>
+<td><code>Atualizar</code> recusa vazio como o construtor</td>
+<td>a regra de &quot;vazio&quot; aparece em dois lugares (construtor e <code>Atualizar</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>AsNoTracking</code> × com rastreamento.</strong> Leitura pura → <code>AsNoTracking</code>. Consulta que vai <strong>alterar e salvar</strong> → com rastreamento: o EF só sabe o que mudou porque rastreou a entidade.</p>
+<p><strong>Não tratado:</strong> dois <code>PUT</code> simultâneos na mesma ficha → o último vence, sem aviso. É o tema de <strong>concorrência otimista</strong> do roteiro de M1.</p>
+<p><strong>Provado:</strong> <code>curl</code>: <code>POST</code> → 201; <code>PUT</code> → 200 com valores novos; <code>GET</code> confirma; <code>PUT</code> com descrição vazia → 400; <code>PUT</code> em SKU inexistente → 404; <code>DELETE</code> → 204. Três testes de banco (200 e confere o banco, 404 com o título, 400).</p>
+<hr />
+<h2 id="6-seed-de-volume-a-paginação-em-várias-páginas">6. Seed de volume: a paginação em várias páginas</h2>
+<p>O seed agora inclui <code>LUV-VOL-001</code> a <code>LUV-VOL-040</code> (SKU de 11 caracteres), além das 3 fichas antigas. O prefixo <code>VOL</code> evita mexer no filtro <code>NIT</code> do <code>.http</code> (que continua devolvendo 2).</p>
+<p><strong>Provado (API em <code>Development</code>):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Consulta</th>
+<th>Resultado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>filtro=VOL</code>, 10 por página, página 1</td>
+<td><code>totalItens</code> 40, <code>totalPaginas</code> 4; <code>LUV-VOL-001</code> a <code>010</code></td>
+</tr>
+<tr>
+<td><code>filtro=VOL</code>, página 4</td>
+<td><code>LUV-VOL-031</code> a <code>040</code></td>
+</tr>
+<tr>
+<td><code>filtro=VOL</code>, 15 por página, página 3</td>
+<td><code>totalPaginas</code> 3 (<code>Math.Ceiling(40/15)</code>); <strong>10 itens</strong>: a última página parcial</td>
+</tr>
+<tr>
+<td><code>filtro=VOL</code>, 1 por página</td>
+<td><code>totalPaginas</code> 40</td>
+</tr>
+<tr>
+<td><code>filtro=NIT</code></td>
+<td><code>totalItens</code> 2</td>
+</tr>
+<tr>
+<td>subir a API duas vezes</td>
+<td><code>totalItens</code> continua 40 (nada duplicou)</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ganho</strong></td>
+<td>Fecha o &quot;não provado&quot; da S19 sobre a paginação em várias páginas (a ordem por SKU e o total coerentes).</td>
+</tr>
+<tr>
+<td><strong>Preço</strong></td>
+<td>40 consultas a mais em cada subida em <code>Development</code>; o banco de desenvolvimento ganha 40 fichas de enfeite.</td>
+</tr>
+<tr>
+<td><strong>Não provado</strong></td>
+<td>A lentidão do deslocamento em página funda (40 fichas não medem isso).</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Atenção ao nome da branch.</strong> O seed de &quot;SKU inteligente&quot; que o aluno descreveu (<code>MON-34G5-165-PR</code>: categoria, modelo, especificação, cor) <strong>não foi feito</strong>. A decisão foi gerar volume (<code>LUV-VOL-NNN</code>). A branch ficou com o nome <code>...sku-inteligente</code>, que descreve o plano, não o resultado.</p>
+<hr />
+<h2 id="7-provar-que-o-teste-protege-o-vermelho-do-atualizar">7. Provar que o teste protege: o vermelho do <code>Atualizar</code></h2>
+<p>Os 5 testes de unidade do <code>Atualizar</code> nasceram <strong>verdes</strong> (a guarda já existia), e teste que nunca falhou não prova nada. A prova: comentar as duas linhas <code>ThrowIfNullOrWhiteSpace</code> do <code>Atualizar</code> e rodar.</p>
+<table>
+<thead>
+<tr>
+<th>Passo</th>
+<th>Esperado</th>
+<th>Visto</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>os 12 testes do <code>FichaProdutoTests</code></td>
+<td>12 verdes</td>
+<td>12 verdes</td>
+</tr>
+<tr>
+<td>guardas comentadas</td>
+<td>4 vermelhos (descrição vazia e em branco; NCM vazio e em branco) e 8 verdes</td>
+<td>4 vermelhos, 8 verdes</td>
+</tr>
+<tr>
+<td>guardas devolvidas, suíte inteira</td>
+<td>29 verdes</td>
+<td>29 verdes</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O que deu errado no caminho, e vale como lição:</strong> o primeiro &quot;teste com o estrago&quot; foi rodado <strong>sem</strong> o estrago (12 verdes de novo). O resultado idêntico ao anterior foi o sinal. Verificar <code>git status</code> antes de concluir mostrou que o <code>FichaProduto.cs</code> não estava modificado.</p>
+<hr />
+<h2 id="provado-×-não-provado-resumo">Provado × não provado (resumo)</h2>
+<table>
+<thead>
+<tr>
+<th>Provado</th>
+<th>Não provado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10 requisições novas do <code>.http</code> com o status esperado</td>
+<td>Cancelamento por <code>CancellationToken</code></td>
+</tr>
+<tr>
+<td><code>PUT</code> com SKU de 21 caracteres devolve 404 (lacuna confirmada)</td>
+<td>Concorrência: dois <code>PUT</code> simultâneos</td>
+</tr>
+<tr>
+<td>Seed idempotente com 43 fichas; paginação em 4 e em 3 páginas (a última parcial)</td>
+<td>Lentidão do deslocamento em página funda</td>
+</tr>
+<tr>
+<td>As guardas do <code>Atualizar</code> protegidas (4 vermelhos com a guarda removida)</td>
+<td>O que o limite de 20 faz com SKUs antigos maiores (não havia)</td>
+</tr>
+<tr>
+<td>29 testes verdes localmente e no CI</td>
+<td>O comportamento do <code>DELETE</code> com SKU de 21 caracteres (o <code>Request</code> tem o limite, mas não foi testado)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="pontos-para-explicar-numa-entrevista">Pontos para explicar numa entrevista</h2>
+<ol>
+<li><strong>Por que o CRUD precisa estar completo?</strong> Sinal de acabamento para quem lê o repositório; e o <code>404</code> e o <code>204</code> documentam o contrato.</li>
+<li><strong><code>ExecuteDelete</code> × <code>Remove</code>:</strong> uma ida ao banco sem rastrear, contra duas idas com rastreamento.</li>
+<li><strong>Rastreamento:</strong> só se altera e salva entidade rastreada; leitura pura usa <code>AsNoTracking</code>.</li>
+<li><strong>O mesmo limite em três camadas:</strong> o domínio protege o objeto, a coluna protege o banco, o <code>Request</code> protege a entrada.</li>
+<li><strong><code>PUT</code> × <code>PATCH</code>:</strong> <code>PUT</code> envia o recurso inteiro (aqui, 2 campos); <code>PATCH</code> só o que muda.</li>
+<li><strong>Migration na chave primária:</strong> ler o SQL antes de aplicar.</li>
+</ol>
+<hr />
+<h2 id="teste-se">Teste-se</h2>
+<details>
+<summary>1. Por que o <code>GET /{sku}</code> com 21 caracteres devolve 400, e o <code>PUT</code> com 21 caracteres devolve 404?</summary>
+<p>O <code>GET</code> recebe o SKU num <code>Request</code> com <code>[StringLength(20)]</code>, e a validação nativa recusa antes do endpoint. O <code>PUT</code> recebe o <code>string sku</code> da rota sem Request: a busca no banco não acha nada e o endpoint responde 404.</p>
+</details>
+<details>
+<summary>2. Onde o limite de 20 caracteres do SKU é aplicado? Dê as três camadas.</summary>
+<p>No construtor da entidade (lança <code>ArgumentException</code>), na coluna do banco (<code>character varying(20)</code>, via <code>HasMaxLength</code> e migration) e no <code>Request</code> do cadastro (<code>[StringLength(20)]</code>, que devolve 400).</p>
+</details>
+<details>
+<summary>3. Por que a migration do limite do SKU foi lida antes de aplicar?</summary>
+<p>Porque a coluna é a chave primária: alterar o tipo de uma chave é mais arriscado que alterar uma coluna comum, e o SQL gerado mostra exatamente o que o banco vai executar.</p>
+</details>
+<details>
+<summary>4. Qual a diferença entre <code>ExecuteDeleteAsync</code> e buscar, <code>Remove</code> e <code>SaveChangesAsync</code>?</summary>
+<p><code>ExecuteDeleteAsync</code> manda um <code>DELETE ... WHERE</code> direto ao banco, sem carregar nem rastrear a ficha, e devolve quantas linhas apagou. A forma com <code>Remove</code> carrega a entidade (duas idas) e passa pelo rastreamento.</p>
+</details>
+<details>
+<summary>5. Por que o <code>AtualizarAsync</code> busca a ficha sem <code>AsNoTracking</code>?</summary>
+<p>Porque o <code>SaveChangesAsync</code> só grava a alteração de uma entidade rastreada. Com <code>AsNoTracking</code>, o EF não saberia que a ficha mudou.</p>
+</details>
+<details>
+<summary>6. Dois <code>PUT</code> simultâneos na mesma ficha: o que acontece, e que tema do roteiro trata isso?</summary>
+<p>O último vence, sem aviso ao primeiro. O tema é concorrência otimista (roteiro de M1), que ainda não foi feito.</p>
+</details>
+<details>
+<summary>7. Por que os 5 testes de unidade do <code>Atualizar</code> nasceram verdes, e como se sabe que protegem?</summary>
+<p>A guarda já existia quando os testes foram escritos. Para saber que protegem, comentou-se a guarda de propósito: 4 testes ficaram vermelhos. Teste que nunca viu o vermelho pode estar passando à toa.</p>
+</details>
+<details>
+<summary>8. Com 40 fichas e 15 por página, quantas páginas, e quantos itens na última?</summary>
+<p>3 páginas (<code>Math.Ceiling(40 / 15.0)</code>), e a última traz 10 itens (<code>LUV-VOL-031</code> a <code>040</code>). Foi visto na API.</p>
+</details>
+
+</article>
+<footer class="rodape">Atualizado em 15/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>
