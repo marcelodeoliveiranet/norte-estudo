@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norte · S22 — Catálogo fechado e o Pedido: modelagem e primeira classe · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s22.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#norte--s22--catálogo-fechado-e-o-pedido-modelagem-e-primeira-classe" data-id="norte--s22--catálogo-fechado-e-o-pedido-modelagem-e-primeira-classe">Norte · S22 — Catálogo fechado e o Pedido: modelagem e primeira classe</a><a class="n2" href="#1-resultado-do-dia" data-id="1-resultado-do-dia">1. Resultado do dia</a><a class="n2" href="#2-onde-isso-está-no-mapa-dos-níveis" data-id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</a><a class="n2" href="#3-conceitos" data-id="3-conceitos">3. Conceitos</a><a class="n2" href="#4-termos-da-sessão" data-id="4-termos-da-sessão">4. Termos da sessão</a><a class="n2" href="#5-dúvidas-e-respostas" data-id="5-dúvidas-e-respostas">5. Dúvidas e respostas</a><a class="n2" href="#6-divergências" data-id="6-divergências">6. Divergências</a><a class="n2" href="#7-avaliação" data-id="7-avaliação">7. Avaliação</a><a class="n2" href="#8-pontos-a-melhorar" data-id="8-pontos-a-melhorar">8. Pontos a melhorar</a><a class="n2" href="#9-teste-se" data-id="9-teste-se">9. Teste-se</a><a class="n2" href="#10-preparação-para-o-próximo-chat-s23" data-id="10-preparação-para-o-próximo-chat-s23">10. Preparação para o próximo chat (S23)</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a></aside>
+<main class="conteudo"><article>
+<h1 id="norte--s22--catálogo-fechado-e-o-pedido-modelagem-e-primeira-classe">Norte · S22 — Catálogo fechado e o Pedido: modelagem e primeira classe</h1>
+<p><strong>Sexta, 16/10/2026 · tempo líquido: 7h59 (acima do limite de 5h) · Marco M1</strong></p>
+<p>Hoje você fechou as pontas do <code>Catalogo</code> e modelou o <code>Pedido</code> inteiro em português, sem banco. No fim, escreveu o primeiro teste e a primeira classe do <code>Pedido</code> em um módulo novo de testes. O erro a evitar: tratar um teste vermelho como defeito do teste. <strong>Vermelho quase sempre é o código errado; o teste é o contrato.</strong></p>
+<h2 id="1-resultado-do-dia">1. Resultado do dia</h2>
+<table>
+<thead>
+<tr>
+<th>PR</th>
+<th>O que entrou</th>
+<th>Merge</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#20</td>
+<td>glossário do SKU + <code>.slnx</code></td>
+<td><code>ff0ea0d</code></td>
+</tr>
+<tr>
+<td>#21</td>
+<td>teste do <code>DELETE</code> com SKU de 21 caracteres</td>
+<td><code>7811fb8</code></td>
+</tr>
+<tr>
+<td>#22</td>
+<td>template de PR</td>
+<td><code>1fca23a</code></td>
+</tr>
+<tr>
+<td>#23</td>
+<td><code>CancellationToken</code> no cadastro</td>
+<td><code>0310131</code></td>
+</tr>
+<tr>
+<td>#24</td>
+<td>projeto de teste do <code>Pedidos</code> + primeira classe <code>Pedido</code></td>
+<td><code>c9eb7cc</code></td>
+</tr>
+</tbody>
+</table>
+<p>Estado final: <code>main</code> em <code>c9eb7cc</code>, <strong>33 testes verdes</strong> (32 do <code>Catalogo</code> + 1 do <code>Pedidos</code>), CI verde.</p>
+<h2 id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</h2>
+<p>Solution → módulos → funcionalidades → camadas. Hoje o <code>Catalogo</code> ficou completo (CRUD, limite do SKU, testes) e o módulo <code>Pedidos</code> ganhou o <strong>primeiro projeto de teste</strong> e o <strong>primeiro tipo de domínio</strong> (<code>Pedido</code>, <code>OrigemPedido</code>, <code>SituacaoPedido</code>). O <code>Pedido</code> ainda não tem persistência, itens nem endpoint.</p>
+<h2 id="3-conceitos">3. Conceitos</h2>
+<h3 id="31-o-que-é-do-pedido-e-o-que-é-do-item">3.1 O que é do pedido e o que é do item</h3>
+<table>
+<thead>
+<tr>
+<th>Fica no pedido</th>
+<th>Fica no item</th>
+<th>Fica em outro módulo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PedidoId</code>, <code>Origem</code>, <code>Situacao</code></td>
+<td><code>Sku</code></td>
+<td>quem reservou e quando (<code>Estoque</code>)</td>
+</tr>
+<tr>
+<td><code>ClienteId</code>, <code>RepresentanteId</code></td>
+<td><code>Quantidade</code>, <code>QuantidadeReservada</code></td>
+<td>razão social e dados do cliente (dono do cadastro, a decidir)</td>
+</tr>
+<tr>
+<td><code>CriadoPor</code>, <code>DataHoraCriacao</code> (nunca mudam)</td>
+<td><code>QuantidadeCancelada</code>, <code>QuantidadeFaturada</code></td>
+<td>descrição do produto (<code>Catalogo</code>)</td>
+</tr>
+<tr>
+<td>carimbo do comercial (nome e data/hora; nunca muda)</td>
+<td><code>PrecoUnitario</code> (<strong>o único dado que congela</strong>), <code>ValorDesconto</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>UltimaAtualizacaoPor</code>, <code>DataHoraUltimaAtualizacao</code> (sobrescrevem, sem histórico)</td>
+<td>saldo = quantidade − faturada − cancelada</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Regra de decisão para saber onde um dado mora: <strong>quem é o dono do dado?</strong> O pedido guarda o identificador; o nome vem de quem é dono. Só o preço congela, porque a tabela de preço pode mudar depois (R3 do <code>DOMINIO.md</code>).</p>
+<h3 id="32-situações-do-pedido">3.2 Situações do pedido</h3>
+<p><code>Digitado</code> → <code>Aprovado</code> → <code>FaturadoParcialmente</code> / <code>FaturadoTotalmente</code>; <code>Cancelado</code> é possível enquanto há saldo. A situação é <strong>guardada</strong> (não só calculada) para facilitar a vida de quem opera. O cancelamento age sobre o <strong>saldo</strong> (por isso o item tem <code>QuantidadeCancelada</code>).</p>
+<h3 id="33-decisões-de-negócio-tomadas-hoje">3.3 Decisões de negócio tomadas hoje</h3>
+<ul>
+<li><strong>Origem do pedido</strong> é uma lista fechada: Feira, WhatsApp, App, Site, E-mail, Interno.</li>
+<li><strong>Quem criou e quando</strong> é imutável. A última atualização sobrescreve, sem histórico (por enquanto).</li>
+<li><strong>O carimbo do comercial é um fato imutável</strong> (quem e quando verificou). Checagem de crédito por gerente comercial e financeiro fica em aberto.</li>
+<li><strong>A reserva de estoque</strong> mora no <code>Estoque</code>; o pedido só mostra a quantidade reservada. <strong>Só o estoque cancela uma reserva.</strong></li>
+<li><strong>O representante pode mudar</strong> até o faturamento. Quem congela o representante é a venda.</li>
+<li><strong>O pedido nasce sem itens</strong> (opção B). A regra &quot;não aprova sem item&quot; fica para a próxima sessão, com dois testes.</li>
+</ul>
+<h3 id="34-projeto-de-teste-novo-e-internalsvisibleto">3.4 Projeto de teste novo e <code>InternalsVisibleTo</code></h3>
+<p>O <code>Pedido</code> é <code>internal sealed</code>. Para o projeto de teste enxergá-lo, o <code>Norte.Pedidos.csproj</code> ganhou:</p>
+<pre class="highlight"><code><span class="nt">&lt;InternalsVisibleTo</span><span class="w"> </span><span class="na">Include=</span><span class="s">"Norte.Pedidos.Tests"</span><span class="w"> </span><span class="nt">/&gt;</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Como era</th>
+<th>Como é agora</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>atributo <code>[assembly: InternalsVisibleTo(&quot;...&quot;)]</code> num <code>.cs</code></td>
+<td>item MSBuild <code>&lt;InternalsVisibleTo Include=&quot;...&quot; /&gt;</code> no <code>.csproj</code></td>
+<td>o <code>.csproj</code> gera o atributo; não precisa de arquivo solto</td>
+</tr>
+</tbody>
+</table>
+<p>A <strong>classe de teste continua <code>public</code></strong> (o xUnit exige).</p>
+<h3 id="35-teste-de-valor-que-o-próprio-objeto-gera">3.5 Teste de valor que o próprio objeto gera</h3>
+<p>O construtor gera <code>PedidoId</code> (<code>Guid.NewGuid()</code>) e as datas (<code>DateTimeOffset.UtcNow</code>, lido <strong>uma vez</strong> em <code>agora</code>). Você não pode comparar com um valor fixo. Dois padrões:</p>
+<pre class="highlight"><code><span class="n">Assert</span><span class="p">.</span><span class="n">NotEqual</span><span class="p">(</span><span class="n">Guid</span><span class="p">.</span><span class="n">Empty</span><span class="p">,</span><span class="w"> </span><span class="n">pedido</span><span class="p">.</span><span class="n">PedidoId</span><span class="p">);</span><span class="w">        </span><span class="c1">// foi gerado</span>
+<span class="n">Assert</span><span class="p">.</span><span class="n">InRange</span><span class="p">(</span><span class="n">pedido</span><span class="p">.</span><span class="n">DataHoraCriacao</span><span class="p">,</span><span class="w"> </span><span class="n">antes</span><span class="p">,</span><span class="w"> </span><span class="n">depois</span><span class="p">);</span><span class="w"> </span><span class="c1">// caiu na janela do teste</span>
+</code></pre>
+
+<p><code>antes</code> é lido antes do Act; <code>depois</code>, depois. A data tem de cair entre os dois. As propriedades que nunca mudam têm só <code>{ get; }</code>; as que podem mudar têm <code>private set</code>.</p>
+<p>Veja o mesmo raciocínio de construtor e teste em <a href="../parte-6.html#612-o-construtor-recusa-valor-vazio-argumentexceptionthrowifnullorwhitespace">6.12–6.13</a>.</p>
+<h3 id="36-o-teste-vermelho-de-duas-formas">3.6 O teste vermelho de duas formas</h3>
+<table>
+<thead>
+<tr>
+<th>Forma</th>
+<th>Como aparece</th>
+<th>Exemplo de hoje</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Não compila</strong></td>
+<td>erro de build, um de cada vez, em cadeia</td>
+<td><code>CS0234</code> (o <code>using</code> do namespace), depois <code>CS0246</code> (o tipo)</td>
+</tr>
+<tr>
+<td><strong>Falha na asserção</strong></td>
+<td><code>Expected</code> / <code>Actual</code></td>
+<td>trocamos <code>Digitado</code> por <code>Aprovado</code> no construtor: <code>Expected: Digitado</code>, <code>Actual: Aprovado</code></td>
+</tr>
+</tbody>
+</table>
+<p>O estrago foi desfeito com <code>git restore</code> e o teste voltou ao verde. <strong>Conclusão:</strong> quando o <code>Actual</code> está errado, o defeito está no código; o teste descreve o que o <code>Pedido</code> deve ser.</p>
+<h3 id="37-enums-com-valor-explícito">3.7 Enums com valor explícito</h3>
+<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="n">SituacaoPedido</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">Digitado</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Aprovado</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<span class="w">    </span><span class="n">FaturadoTotalmente</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="w">    </span><span class="n">FaturadoParcialmente</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Cancelado</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="p">}</span>
+</code></pre>
+
+<p><strong>O que fica pior sem o valor explícito:</strong> quem reordenar os nomes muda o número que já foi gravado no banco. Os enums moram em <code>Dominio/</code> (organização por assunto); não criamos pasta <code>Enums/</code> sem decisão.</p>
+<h3 id="38-cancellationtoken-obrigatório-no-cadastro">3.8 <code>CancellationToken</code> obrigatório no cadastro</h3>
+<p>O token passou a ser exigido no cadastro. Foi provado com o seed: 40 → 39 → 40 fichas (a prova apagou uma ficha e o seed devolveu).</p>
+<h2 id="4-termos-da-sessão">4. Termos da sessão</h2>
+<table>
+<thead>
+<tr>
+<th>Termo</th>
+<th>Em uma linha</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Carimbo</td>
+<td>registro imutável de quem verificou o pedido e quando</td>
+</tr>
+<tr>
+<td>Saldo</td>
+<td>quantidade pedida − faturada − cancelada</td>
+</tr>
+<tr>
+<td><code>InternalsVisibleTo</code></td>
+<td>libera os tipos <code>internal</code> a outro assembly (o de teste)</td>
+</tr>
+<tr>
+<td>MSB3026</td>
+<td>o build não consegue copiar a DLL porque outro processo a está usando</td>
+</tr>
+<tr>
+<td>Valor gerado</td>
+<td>dado que o objeto cria sozinho (Guid, data): não se compara com literal</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-dúvidas-e-respostas">5. Dúvidas e respostas</h2>
+<p><strong>O que é &quot;código da aplicação&quot;?</strong> O código que roda para o usuário (em oposição ao código dos testes).</p>
+<p><strong>O que o teste tem que fazer?</strong> Fixar uma regra de negócio: descrever, com valores que você controla, o que deve ser verdade depois do Act.</p>
+<p><strong>Como atualizo o Solution Explorer?</strong> Um projeto novo só aparece depois do <code>dotnet sln add</code> (ou de editar o <code>.slnx</code>). Hoje o <code>.slnx</code> ganhou a pasta virtual <code>/tests/Modulos/Pedidos/</code>.</p>
+<p><strong>O build deu 4 erros e 20 avisos. Por quê?</strong> A API ainda estava rodando e travou as DLLs (<code>MSB3026</code>, &quot;locked by Norte.Api&quot;). Fechar a API e rodar o build de novo.</p>
+<h2 id="6-divergências">6. Divergências</h2>
+<table>
+<thead>
+<tr>
+<th>Tema</th>
+<th>Posição</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Copiar o nome do cliente no pedido</td>
+<td>guardar só o identificador (dono do dado é outro módulo) × guardar cópia congelada (documento emitido)</td>
+<td><strong>ressalva aberta:</strong> NF-e está fora de escopo, então vale só para o Norte</td>
+</tr>
+<tr>
+<td>Onde fica o cancelamento</td>
+<td>no pedido × por item</td>
+<td><strong>em aberto</strong></td>
+</tr>
+<tr>
+<td>Reajuste de preço em pedido com saldo</td>
+<td>fora de escopo do Norte</td>
+<td><strong>decidido</strong> (registrado no <code>DOMINIO.md</code>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-avaliação">7. Avaliação</h2>
+<p><strong>Fez bem:</strong> decidiu o negócio do pedido com clareza (cliente, nome fantasia, representante, reserva no estoque); identificou sozinho o método que prefere (criar os arquivos usando o <code>Catalogo</code> como referência); questionou a pasta dos enums.</p>
+<p><strong>Travou:</strong> na primeira versão do teste, o Assert comparava variáveis locais com literais (nunca falharia) e o construtor recebia campos demais; leu o vermelho da prova ao contrário (&quot;teríamos que alterar o teste&quot;).</p>
+<p><strong>O mentor conduziu mal:</strong> previu o erro do primeiro vermelho sem ver (o compilador mostrou só o <code>using</code>); sugeriu nomes de carimbo/verificação sem conferir; deixou o glossário do repositório para o fim.</p>
+<h2 id="8-pontos-a-melhorar">8. Pontos a melhorar</h2>
+<ul>
+<li><strong>Aluno:</strong> escrever o <code>Act</code> e o <code>Assert</code> pensando &quot;o que eu espero que seja verdade depois?&quot;, com valor que o teste controla.</li>
+<li><strong>Mentor:</strong> não prever mensagem de compilador; lembrar o glossário no começo; entregar código só quando o aluno pedir ou o conceito for novo (regra nova de hoje).</li>
+</ul>
+<h2 id="9-teste-se">9. Teste-se</h2>
+<ol>
+<li>Por que o pedido guarda só o preço congelado e não o nome do cliente?</li>
+<li>Por que o teste usa <code>NotEqual(Guid.Empty, ...)</code> e <code>InRange(...)</code> em vez de comparar com um valor fixo?</li>
+<li>O teste falhou com <code>Expected: Digitado</code>, <code>Actual: Aprovado</code>. O defeito está no teste ou no código?</li>
+<li>O que significa <code>MSB3026</code> e como resolver?</li>
+<li>Por que o pedido não guarda quem reservou o estoque e quando?</li>
+<li>Para que serve o <code>InternalsVisibleTo</code> e por que a classe de teste continua <code>public</code>?</li>
+<li>O que fica pior se os valores do enum não forem explícitos?</li>
+<li>Como se calcula o saldo de um item?</li>
+</ol>
+<h2 id="10-preparação-para-o-próximo-chat-s23">10. Preparação para o próximo chat (S23)</h2>
+<ol>
+<li>Glossário do repositório: seção <code>Pedidos</code> em <code>docs/domain/ubiquitous-language.md</code> (<code>Pedido</code>, <code>OrigemPedido</code>, <code>SituacaoPedido</code>), em branch própria.</li>
+<li><code>ItemPedido</code> e a regra &quot;não aprova sem item&quot; (2 testes).</li>
+<li>Validação dos campos obrigatórios do construtor (um teste por campo).</li>
+<li>Em aberto: comunicação <code>Estoque</code> → <code>Pedidos</code>; dono do cliente e tipo definitivo de <code>ClienteId</code>/<code>RepresentanteId</code>; número curto do pedido.</li>
+</ol>
+<hr />
+<h2 id="respostas">Respostas</h2><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>Porque o preço é o único dado que não pode mudar depois (R3); o nome pertence a outro módulo, que é o dono do dado. O pedido guarda o identificador.</li>
+<li>Porque o <code>Guid</code> e a data são gerados pelo próprio construtor. Não dá para prever o valor, então o teste verifica que o Guid não é vazio e que a data caiu entre o instante lido antes do Act e o lido depois.</li>
+<li>No código. O teste descreve o contrato (<code>Digitado</code>); o <code>Actual: Aprovado</code> mostra que o construtor está errado.</li>
+<li>O build não conseguiu copiar a DLL porque a API ainda estava rodando. Feche a API e rode o build de novo.</li>
+<li>Porque a reserva é do <code>Estoque</code>; o pedido só mostra a quantidade reservada. Só o estoque cancela uma reserva.</li>
+<li>Libera os tipos <code>internal</code> ao projeto de teste. O xUnit só descobre classes de teste <code>public</code>.</li>
+<li>Reordenar os nomes muda o número já gravado no banco.</li>
+<li>Quantidade − quantidade faturada − quantidade cancelada.</li>
+</ol>
+</details>
+</article>
+<footer class="rodape">Atualizado em 16/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>
