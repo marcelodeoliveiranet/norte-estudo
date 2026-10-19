@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Apêndice A — Mapa do Norte · Norte · Estudo</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/codigo.css">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+</head>
+<body data-chave="mapa.html" data-prefixo="">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="index.html">Início</a><a href="guia.html" class=ativo>Guia</a><a href="estudos.html">Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#guia-net-moderno--apêndice-a-mapa-do-norte-ferramentas-e-conceitos" data-id="guia-net-moderno--apêndice-a-mapa-do-norte-ferramentas-e-conceitos">GUIA .NET MODERNO — Apêndice A: Mapa do Norte (ferramentas e conceit…</a><a class="n2" href="#fio-condutor-a-viagem-de-um-cadastro-de-ficha" data-id="fio-condutor-a-viagem-de-um-cadastro-de-ficha">Fio condutor: a viagem de um cadastro de ficha</a><a class="n2" href="#1-estrutura" data-id="1-estrutura">1. Estrutura</a><a class="n2" href="#2-api" data-id="2-api">2. API</a><a class="n2" href="#3-domínio" data-id="3-domínio">3. Domínio</a><a class="n2" href="#4-persistência" data-id="4-persistência">4. Persistência</a><a class="n2" href="#5-testes" data-id="5-testes">5. Testes</a><a class="n2" href="#6-qualidade-e-fluxo" data-id="6-qualidade-e-fluxo">6. Qualidade e fluxo</a></aside>
+<main class="conteudo"><article>
+<h1 id="guia-net-moderno--apêndice-a-mapa-do-norte-ferramentas-e-conceitos">GUIA .NET MODERNO — Apêndice A: Mapa do Norte (ferramentas e conceitos)</h1>
+<p><strong>v1.0 · 17/10/2026 (depois da S22)</strong> · Apêndice do guia. Não tem entradas numeradas: é um mapa que liga as
+ferramentas e os conceitos das Partes 1 a 7 e do material de estudo da S22.</p>
+<p><strong>Para que serve.</strong> Cada entrada do guia explica uma coisa. Este mapa mostra como as coisas se encaixam: que problema
+cada ferramenta resolve e com o que ela se liga. Use-o antes de estudar uma parte (para ver o todo) e depois de uma
+sessão (para ver onde o conceito novo entrou).</p>
+<p><strong>Como ler.</strong> Seis camadas, da base para o topo. Cada linha diz: a ferramenta ou o conceito · o problema que resolve · com
+o que se liga · onde está explicado.</p>
+<p><strong>Como se mantém.</strong> Atualizado no fim de cada marco e quando uma ferramenta nova entra no laboratório; a cada sessão só
+se acrescentam linhas quando há conceito novo. Quando uma entrada do guia mudar de número, o mapa é corrigido junto.</p>
+<hr />
+<h2 id="fio-condutor-a-viagem-de-um-cadastro-de-ficha">Fio condutor: a viagem de um cadastro de ficha</h2>
+<p>Um <code>POST</code> em <code>/catalogo/fichas-produto</code> passa por todas as camadas, nesta ordem:</p>
+<ol>
+<li>O <code>Program.cs</code> do host chama <code>AddCatalogo</code> e <code>MapCatalogo</code> e entrega a rota ao módulo (estrutura, <a href="parte-0-1.html#18-pontos-de-entrada-do-módulo-addcatalogo-e-mapcatalogo">1.8</a>).</li>
+<li>O endpoint recebe um <code>Request</code> <code>public</code> e a validação nativa recusa a forma errada com 400 <code>ProblemDetails</code> (API, <a href="parte-3.html#311-validação-nativa-do-net-10-a-regra-de-entrada-declarada-no-request">3.11</a> e <a href="parte-3.html#315-erros-da-api-em-formato-padrão-addproblemdetails-useexceptionhandler-e-usestatuscodepages">3.15</a>).</li>
+<li>A regra de negócio consulta o SKU e devolve 409 &quot;Sku já cadastrado&quot; se ele existir (API + domínio, <a href="parte-6.html#610-o-409-do-sku-duplicado-verificar-antes-de-gravar-×-tratar-o-23505">6.10</a>).</li>
+<li>O construtor de <code>FichaProduto</code> recusa SKU vazio ou com mais de 20 caracteres (domínio, <a href="parte-6.html#612-o-construtor-recusa-valor-vazio-argumentexceptionthrowifnullorwhitespace">6.12</a> e <a href="parte-7.html#73-o-limite-do-sku-em-três-camadas-e-a-migration-na-chave-primária">7.3</a>).</li>
+<li>O repositório assíncrono grava pelo <code>DbContext</code>, no schema <code>catalogo</code> do Postgres (persistência, <a href="parte-6.html#63-o-dbcontext-e-o-mapeamento-da-tabela">6.3</a>, <a href="parte-6.html#65-um-schema-do-postgres-por-módulo-adr-006">6.5</a> e <a href="parte-6.html#66-repositório-e-endpoints-assíncronos">6.6</a>).</li>
+<li>O endpoint devolve 201 com um <code>Response</code>, nunca a entidade (API, <a href="parte-7.html#71-response-no-cadastro-e-na-consulta-por-sku-e-onde-mapear">7.1</a>).</li>
+<li>Um teste de unidade protege o construtor e um teste de integração, com Postgres descartável, protege o 409 (testes, <a href="parte-6.html#613-teste-de-unidade-que-espera-falha-assertthrows-paramname-e-a-prova-do-vermelho">6.13</a> e <a href="parte-6.html#69-teste-de-integração-com-postgres-real-testcontainers-e-a-fábrica-da-api">6.9</a>).</li>
+<li>O CI roda o mesmo build e os mesmos testes antes do merge do PR (qualidade e fluxo, <a href="parte-5.html#51-ci-básico-com-github-actions">5.1</a>).</li>
+</ol>
+<hr />
+<h2 id="1-estrutura">1. Estrutura</h2>
+<p>A estrutura responde onde cada coisa mora e quem pode enxergá-la.</p>
+<table>
+<thead>
+<tr>
+<th>Ferramenta ou conceito</th>
+<th>Problema que resolve</th>
+<th>Liga com</th>
+<th>Onde (guia)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.slnx</code> e solution</td>
+<td>Reunir host, módulos e testes num só lugar</td>
+<td><code>dotnet sln add</code> (projeto novo só aparece no Solution Explorer depois)</td>
+<td><a href="parte-0-1.html#11-solution-no-formato-slnx-e-as-pastas-virtuais-do-visual-studio">1.1</a></td>
+</tr>
+<tr>
+<td>Monolito modular, host, projeto por módulo</td>
+<td>Separar <code>Catalogo</code> de <code>Pedidos</code> sem virar serviços</td>
+<td>ADR-002</td>
+<td><a href="parte-0-1.html#12-monolito-modular-host--um-projeto-por-módulo">1.2</a></td>
+</tr>
+<tr>
+<td><code>public</code> × <code>internal</code></td>
+<td>Esconder o que é interno do módulo</td>
+<td><code>InternalsVisibleTo</code> para os testes; <code>Request</code> <code>public</code> (ADR-003)</td>
+<td><a href="parte-0-1.html#13-public-×-internal-a-fronteira-garantida-pelo-compilador">1.3</a></td>
+</tr>
+<tr>
+<td><code>Program.cs</code> moderno (<code>builder</code> e <code>app</code>)</td>
+<td>Configurar o host em duas fases</td>
+<td>Métodos de extensão</td>
+<td><a href="parte-0-1.html#14-programcs-moderno-de-startupcs-para-builder-e-app">1.4</a></td>
+</tr>
+<tr>
+<td>Métodos de extensão, <code>Add&lt;Modulo&gt;</code> e <code>Map&lt;Modulo&gt;</code></td>
+<td>Ligar um módulo ao host com duas linhas</td>
+<td>Fronteira pública do módulo</td>
+<td><a href="parte-0-1.html#17-métodos-de-extensão">1.7</a> e <a href="parte-0-1.html#18-pontos-de-entrada-do-módulo-addcatalogo-e-mapcatalogo">1.8</a></td>
+</tr>
+<tr>
+<td>Módulo × funcionalidade × departamento</td>
+<td>Decidir o que vira módulo</td>
+<td>A regra de negócio, não o departamento</td>
+<td><a href="parte-0-1.html#112-módulo-×-funcionalidade-×-departamento-o-critério-para-criar-módulo">1.12</a></td>
+</tr>
+<tr>
+<td><code>Funcionalidades/&lt;Verbo&gt;&lt;Coisa&gt;/</code>, <code>Dominio/</code>, <code>Configuracoes/</code></td>
+<td>Achar o código pela função, não pelo tipo técnico</td>
+<td>REPR</td>
+<td><a href="parte-3.html#313-pasta-por-funcionalidade-o-que-é-de-um-caso-de-uso-fica-junto">3.13</a> e <a href="parte-6.html#67-pastas-do-módulo-e-rota-por-recurso">6.7</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-api">2. API</h2>
+<p>A API define o contrato com quem chama e o formato dos erros.</p>
+<table>
+<thead>
+<tr>
+<th>Ferramenta ou conceito</th>
+<th>Problema que resolve</th>
+<th>Liga com</th>
+<th>Onde (guia)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Minimal APIs e <code>MapGroup</code></td>
+<td>Endpoint pequeno, agrupado por rota</td>
+<td><code>Map&lt;Modulo&gt;</code></td>
+<td><a href="parte-0-1.html#19-minimal-apis-as-formas-de-declarar-um-endpoint-e-o-mapgroup">1.9</a></td>
+</tr>
+<tr>
+<td>REPR, <code>Request</code>, <code>record</code></td>
+<td>Um arquivo por funcionalidade, dados que entram e saem</td>
+<td>Pasta por funcionalidade</td>
+<td><a href="parte-3.html#31-a-funcionalidade-no-estilo-repr-request-endpoint-repository">3.1</a> e <a href="parte-3.html#32-record-dados-que-entram-e-saem">3.2</a></td>
+</tr>
+<tr>
+<td>Respostas tipadas (<code>Results&lt;...&gt;</code>)</td>
+<td>Declarar no tipo quais respostas o endpoint pode dar</td>
+<td><code>ProblemDetails</code></td>
+<td><a href="parte-3.html#33-respostas-tipadas-created-validationproblem-e-o-400-no-formato-problemdetails">3.3</a></td>
+</tr>
+<tr>
+<td>Validação nativa (<code>AddValidation</code>)</td>
+<td>Recusar a forma errada da entrada com 400</td>
+<td><code>Request</code> <code>public</code> (ADR-003)</td>
+<td><a href="parte-3.html#311-validação-nativa-do-net-10-a-regra-de-entrada-declarada-no-request">3.11</a></td>
+</tr>
+<tr>
+<td><code>[AsParameters]</code> com <code>[FromRoute]</code> e <code>[FromQuery]</code></td>
+<td>Agrupar rota e query num <code>Request</code> validável</td>
+<td><code>[Range]</code>, <code>[StringLength]</code></td>
+<td><a href="parte-6.html#619-validação-nativa-em-asparameters-e-os-padrões-no-endpoint">6.19</a> e <a href="parte-7.html#72-o-sku-da-rota-num-request-com-asparameters">7.2</a></td>
+</tr>
+<tr>
+<td><code>ProblemDetails</code> e <code>UseExceptionHandler</code></td>
+<td>Todo erro sair em <code>problem+json</code> com <code>traceId</code></td>
+<td>400 × 404 × 409 × 500</td>
+<td><a href="parte-3.html#315-erros-da-api-em-formato-padrão-addproblemdetails-useexceptionhandler-e-usestatuscodepages">3.15</a></td>
+</tr>
+<tr>
+<td><code>TypedResults.Problem</code> com título</td>
+<td>Regra de negócio violada com título legível</td>
+<td>O título é contrato do teste</td>
+<td><a href="parte-6.html#610-o-409-do-sku-duplicado-verificar-antes-de-gravar-×-tratar-o-23505">6.10</a></td>
+</tr>
+<tr>
+<td><code>Response</code> por funcionalidade</td>
+<td>Não expor a entidade na API</td>
+<td>Mapeamento no endpoint</td>
+<td><a href="parte-6.html#617-projeção-asnotracking-e-o-response-no-lugar-da-entidade">6.17</a> e <a href="parte-7.html#71-response-no-cadastro-e-na-consulta-por-sku-e-onde-mapear">7.1</a></td>
+</tr>
+<tr>
+<td><code>CancellationToken</code></td>
+<td>Cancelar a consulta quando o cliente desiste</td>
+<td>Do endpoint até o repositório</td>
+<td><a href="parte-6.html#616-listar-com-filtro-a-consulta-que-só-roda-no-fim-contains-e-o-cancellationtoken">6.16</a></td>
+</tr>
+<tr>
+<td>Rota por recurso; <code>PUT</code> e <code>DELETE</code> em <code>/{sku}</code></td>
+<td>Substantivo no endereço, verbo no método</td>
+<td>Arquivo <code>.http</code> do módulo</td>
+<td><a href="parte-6.html#67-pastas-do-módulo-e-rota-por-recurso">6.7</a>, <a href="parte-3.html#34-arquivo-http-as-requisições-da-api-dentro-do-repositório">3.4</a>, <a href="parte-7.html#74-excluir-executedeleteasync-204-×-404">7.4</a> e <a href="parte-7.html#75-alterar-rastreamento-método-de-domínio-e-put">7.5</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-domínio">3. Domínio</h2>
+<p>O domínio garante que não exista objeto inválido, qualquer que seja o caminho que chegue a ele.</p>
+<table>
+<thead>
+<tr>
+<th>Ferramenta ou conceito</th>
+<th>Problema que resolve</th>
+<th>Liga com</th>
+<th>Onde (guia)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Entidade como <code>class</code> (ADR-005)</td>
+<td>Dar identidade e comportamento à ficha</td>
+<td><code>private set</code>, EF Core</td>
+<td><a href="parte-6.html#62-a-entidade-vira-classe-adr-005">6.2</a></td>
+</tr>
+<tr>
+<td>Construtor que recusa vazio (<code>ThrowIfNullOrWhiteSpace</code>)</td>
+<td>Nenhum caminho cria uma ficha inválida</td>
+<td>Teste com <code>Assert.Throws</code> e <code>ParamName</code></td>
+<td><a href="parte-6.html#612-o-construtor-recusa-valor-vazio-argumentexceptionthrowifnullorwhitespace">6.12</a></td>
+</tr>
+<tr>
+<td>Construtor × validação do <code>Request</code></td>
+<td>A entrada recusa a forma; o domínio recusa o valor</td>
+<td>Limite do SKU em três camadas (domínio, coluna, entrada)</td>
+<td><a href="parte-7.html#73-o-limite-do-sku-em-três-camadas-e-a-migration-na-chave-primária">7.3</a></td>
+</tr>
+<tr>
+<td>Método de domínio no <code>PUT</code></td>
+<td>Alterar a ficha por regra, não por atribuição solta</td>
+<td>Rastreamento do EF</td>
+<td><a href="parte-7.html#75-alterar-rastreamento-método-de-domínio-e-put">7.5</a></td>
+</tr>
+<tr>
+<td><code>Pedido</code>, <code>OrigemPedido</code>, <code>SituacaoPedido</code></td>
+<td>Modelar a intenção de compra, com enums de valor explícito</td>
+<td>Ainda sem itens, sem validação e sem banco</td>
+<td>Material de estudo da S22</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-persistência">4. Persistência</h2>
+<p>A persistência guarda a ficha no Postgres e a devolve sem custo desnecessário.</p>
+<table>
+<thead>
+<tr>
+<th>Ferramenta ou conceito</th>
+<th>Problema que resolve</th>
+<th>Liga com</th>
+<th>Onde (guia)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Postgres 18 no Docker Compose, connection string</td>
+<td>Banco local igual para todos</td>
+<td>Provider do EF</td>
+<td><a href="parte-6.html#61-o-postgres-local-a-connection-string-e-o-provider">6.1</a></td>
+</tr>
+<tr>
+<td><code>DbContext</code>, <code>DbSet</code>, Fluent API em <code>Configuracoes/</code></td>
+<td>Mapear a entidade para a tabela</td>
+<td>Um <code>DbContext</code> por módulo</td>
+<td><a href="parte-6.html#63-o-dbcontext-e-o-mapeamento-da-tabela">6.3</a></td>
+</tr>
+<tr>
+<td>Migrations e <code>dotnet ef</code></td>
+<td>Versionar o banco junto com o código</td>
+<td>Ler o SQL da migration que altera a chave primária</td>
+<td><a href="parte-6.html#64-migrations-a-tabela-criada-pela-ferramenta">6.4</a> e <a href="parte-7.html#73-o-limite-do-sku-em-três-camadas-e-a-migration-na-chave-primária">7.3</a></td>
+</tr>
+<tr>
+<td>Schema por módulo (ADR-006)</td>
+<td>Cada módulo dono das suas tabelas</td>
+<td><code>HasDefaultSchema</code>, tabela de histórico</td>
+<td><a href="parte-6.html#65-um-schema-do-postgres-por-módulo-adr-006">6.5</a></td>
+</tr>
+<tr>
+<td>Repositório assíncrono</td>
+<td>Isolar o acesso ao banco</td>
+<td><code>AsNoTracking</code> na leitura, rastreamento no <code>PUT</code></td>
+<td><a href="parte-6.html#66-repositório-e-endpoints-assíncronos">6.6</a> e <a href="parte-7.html#75-alterar-rastreamento-método-de-domínio-e-put">7.5</a></td>
+</tr>
+<tr>
+<td><code>23505</code> (violação de unicidade) e o 409</td>
+<td>Entender a corrida do SKU</td>
+<td>Verificar antes de gravar × tratar o erro do banco</td>
+<td><a href="parte-6.html#610-o-409-do-sku-duplicado-verificar-antes-de-gravar-×-tratar-o-23505">6.10</a></td>
+</tr>
+<tr>
+<td>Seed idempotente, só em <code>Development</code></td>
+<td>Dados de exemplo sem duplicar</td>
+<td><code>CreateScope()</code>, ambiente <code>Testing</code></td>
+<td><a href="parte-6.html#614-seed-idempotente-no-desenvolvimento-e-o-ambiente-testing-da-fábrica-de-teste">6.14</a> e <a href="parte-7.html#76-o-seed-de-volume-e-a-paginação-provada-em-várias-páginas">7.6</a></td>
+</tr>
+<tr>
+<td>Filtro, projeção e <code>AsNoTracking</code></td>
+<td>Consulta que só lê</td>
+<td><code>Contains</code>, <code>Select</code> para o <code>Response</code></td>
+<td><a href="parte-6.html#616-listar-com-filtro-a-consulta-que-só-roda-no-fim-contains-e-o-cancellationtoken">6.16</a> e <a href="parte-6.html#617-projeção-asnotracking-e-o-response-no-lugar-da-entidade">6.17</a></td>
+</tr>
+<tr>
+<td>Paginação por deslocamento, <code>OrderBy</code> estável, <code>COUNT</code> separado</td>
+<td>Não repetir nem perder itens entre páginas</td>
+<td>Paginação por chave quando houver volume real</td>
+<td><a href="parte-6.html#618-paginação-por-deslocamento-×-por-chave-ordenação-estável-e-o-total">6.18</a></td>
+</tr>
+<tr>
+<td><code>ExecuteDeleteAsync</code></td>
+<td>Excluir sem carregar a entidade</td>
+<td>204 × 404</td>
+<td><a href="parte-7.html#74-excluir-executedeleteasync-204-×-404">7.4</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-testes">5. Testes</h2>
+<p>O teste de uma regra de negócio é o contrato, e só vale depois de visto vermelho.</p>
+<table>
+<thead>
+<tr>
+<th>Ferramenta ou conceito</th>
+<th>Problema que resolve</th>
+<th>Liga com</th>
+<th>Onde (guia)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Projeto de testes, xUnit e <code>InternalsVisibleTo</code></td>
+<td>Testar o que é <code>internal</code></td>
+<td>Um projeto de teste por módulo</td>
+<td><a href="parte-3.html#35-o-projeto-de-testes-xunit-referência-e-internalsvisibleto">3.5</a></td>
+</tr>
+<tr>
+<td>Arrange/Act/Assert</td>
+<td>Escrever o teste com a pergunta de cada parte</td>
+<td>Nome = regra + resultado</td>
+<td><a href="parte-3.html#36-anatomia-de-um-teste-arrange-act-assert">3.6</a> e <a href="parte-3.html#310-como-pensar-um-teste-da-frase-do-negócio-ao-assert">3.10</a></td>
+</tr>
+<tr>
+<td>Vermelho → verde, prova do vermelho</td>
+<td>Saber que o teste consegue falhar</td>
+<td>Commit do teste antes do estrago</td>
+<td><a href="parte-3.html#37-vermelho-→-verde-como-saber-que-o-teste-protege-a-regra">3.7</a>, <a href="parte-5.html#51-ci-básico-com-github-actions">5.1</a> e <a href="parte-6.html#613-teste-de-unidade-que-espera-falha-assertthrows-paramname-e-a-prova-do-vermelho">6.13</a></td>
+</tr>
+<tr>
+<td>Teste de unidade do domínio</td>
+<td>Provar o construtor sem banco e sem API</td>
+<td><code>Assert.Throws</code>, <code>ParamName</code></td>
+<td><a href="parte-6.html#613-teste-de-unidade-que-espera-falha-assertthrows-paramname-e-a-prova-do-vermelho">6.13</a></td>
+</tr>
+<tr>
+<td>Teste de integração com <code>WebApplicationFactory</code></td>
+<td>Provar o endpoint inteiro</td>
+<td>Validação nativa, <code>ProblemDetails</code></td>
+<td><a href="parte-3.html#312-teste-de-integração-com-webapplicationfactory-o-teste-passa-por-onde-a-regra-mora">3.12</a></td>
+</tr>
+<tr>
+<td>Testcontainers e a fábrica da API</td>
+<td>Provar regra que depende do banco</td>
+<td>Docker aberto; ambiente <code>Testing</code></td>
+<td><a href="parte-6.html#69-teste-de-integração-com-postgres-real-testcontainers-e-a-fábrica-da-api">6.9</a></td>
+</tr>
+<tr>
+<td><em>Test double</em></td>
+<td>Trocar uma dependência por uma falsa</td>
+<td>Interface</td>
+<td><a href="parte-3.html#316-dublê-de-teste-e-ambiente-do-teste-trocar-uma-peça-só-no-teste">3.16</a></td>
+</tr>
+<tr>
+<td>Leitura do vermelho (<code>Expected</code> × <code>Actual</code>)</td>
+<td>Achar o defeito: o teste é o contrato</td>
+<td>O código está errado, não o teste</td>
+<td>Material de estudo da S22</td>
+</tr>
+<tr>
+<td>Teste de valor gerado (<code>NotEqual(Guid.Empty)</code>, <code>InRange</code>)</td>
+<td>Testar o que o objeto gera sozinho</td>
+<td><code>Pedido</code></td>
+<td>Material de estudo da S22</td>
+</tr>
+<tr>
+<td><code>total: 0</code> não é verde</td>
+<td>Não confundir &quot;nenhum teste rodou&quot; com &quot;passou&quot;</td>
+<td>Conferir o número de testes</td>
+<td>Material de estudo da S21</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-qualidade-e-fluxo">6. Qualidade e fluxo</h2>
+<p>Esta camada impede que o erro de uma pessoa chegue à <code>main</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Ferramenta ou conceito</th>
+<th>Problema que resolve</th>
+<th>Liga com</th>
+<th>Onde (guia)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Directory.Build.props</code>, <code>TreatWarningsAsErrors</code></td>
+<td>Todo aviso vira erro no build</td>
+<td>ADR-004</td>
+<td><a href="parte-4.html#41-directorybuildprops-e-treatwarningsaserrors-a-configuração-comum-e-o-aviso-que-vira-erro">4.1</a></td>
+</tr>
+<tr>
+<td><code>.editorconfig</code> e analyzers</td>
+<td>Estilo e regras iguais para todos</td>
+<td>Exceção só no arquivo, com motivo; nunca <code>#pragma</code></td>
+<td><a href="parte-4.html#42-editorconfig-e-analyzers-as-convenções-do-norte-cobradas-pelo-compilador">4.2</a></td>
+</tr>
+<tr>
+<td>Central Package Management</td>
+<td>Uma única versão de cada pacote</td>
+<td><code>Directory.Packages.props</code></td>
+<td><a href="parte-4.html#43-central-package-management-uma-versão-por-pacote-num-lugar-só">4.3</a></td>
+</tr>
+<tr>
+<td>GitHub Actions (<code>ci.yml</code>)</td>
+<td>Rodar build e testes a cada PR</td>
+<td><code>ubuntu-24.04</code>; o CI avisa, não impede o merge</td>
+<td><a href="parte-5.html#51-ci-básico-com-github-actions">5.1</a></td>
+</tr>
+<tr>
+<td>Branch por objetivo, mover commit, três cópias de uma branch</td>
+<td>Histórico legível e reversível</td>
+<td>Experimento sempre em branch</td>
+<td><a href="parte-0-1.html#111-git-branch-por-objetivo-de-sessão">1.11</a> e <a href="parte-5.html#52-mover-um-commit-para-outra-branch-e-as-três-cópias-de-uma-branch">5.2</a></td>
+</tr>
+<tr>
+<td>Comandos de Git, <code>gh</code> e <code>dotnet</code> do dia a dia</td>
+<td>Saber qual comando usar em cada situação</td>
+<td>Pull request, commit, build</td>
+<td><a href="comandos.html">Apêndice B</a></td>
+</tr>
+<tr>
+<td>ADRs</td>
+<td>Registrar a decisão cara de desfazer, com o porquê</td>
+<td>Decisões baratas de desfazer ficam sem ADR</td>
+<td><code>docs/adr/</code> no repositório</td>
+</tr>
+<tr>
+<td>Glossário do repositório</td>
+<td>Mesma palavra com o mesmo significado</td>
+<td><code>docs/domain/ubiquitous-language.md</code></td>
+<td>Material de estudo da S22</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ainda sem cobertura:</strong> concorrência otimista, índices, OpenAPI/Scalar, logging, comunicação entre <code>Pedidos</code> e
+<code>Catalogo</code>. Entram no roteiro de M1.</p>
+
+</article>
+<footer class="rodape">Atualizado em 17/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

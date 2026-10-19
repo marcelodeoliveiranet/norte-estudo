@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Apêndice B — Comandos do dia a dia · Norte · Estudo</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/codigo.css">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+</head>
+<body data-chave="comandos.html" data-prefixo="">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="index.html">Início</a><a href="guia.html" class=ativo>Guia</a><a href="estudos.html">Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#guia-net-moderno--apêndice-b-comandos-do-dia-a-dia-dotnet-git-github-e-powershell" data-id="guia-net-moderno--apêndice-b-comandos-do-dia-a-dia-dotnet-git-github-e-powershell">GUIA .NET MODERNO — Apêndice B: Comandos do dia a dia (dotnet, Git, …</a><a class="n2" href="#como-ler" data-id="como-ler">Como ler</a><a class="n2" href="#preciso-rodar-build-testes-e-a-api" data-id="preciso-rodar-build-testes-e-a-api">Preciso rodar build, testes e a API</a><a class="n2" href="#preciso-começar-um-trabalho-novo" data-id="preciso-começar-um-trabalho-novo">Preciso começar um trabalho novo</a><a class="n2" href="#preciso-ver-o-que-mudou" data-id="preciso-ver-o-que-mudou">Preciso ver o que mudou</a><a class="n2" href="#preciso-guardar-e-enviar-o-trabalho" data-id="preciso-guardar-e-enviar-o-trabalho">Preciso guardar e enviar o trabalho</a><a class="n2" href="#preciso-abrir-acompanhar-e-fechar-um-pr" data-id="preciso-abrir-acompanhar-e-fechar-um-pr">Preciso abrir, acompanhar e fechar um PR</a><a class="n2" href="#preciso-desfazer-algo" data-id="preciso-desfazer-algo">Preciso desfazer algo</a><a class="n2" href="#preciso-olhar-arquivos-e-criar-pastas" data-id="preciso-olhar-arquivos-e-criar-pastas">Preciso olhar arquivos e criar pastas</a><a class="n2" href="#o-que-decorar-primeiro-e-o-que-só-reconhecer" data-id="o-que-decorar-primeiro-e-o-que-só-reconhecer">O que decorar primeiro e o que só reconhecer</a></aside>
+<main class="conteudo"><article>
+<h1 id="guia-net-moderno--apêndice-b-comandos-do-dia-a-dia-dotnet-git-github-e-powershell">GUIA .NET MODERNO — Apêndice B: Comandos do dia a dia (dotnet, Git, GitHub e PowerShell)</h1>
+<p><strong>v1.0 · 17/10/2026 (depois da S22)</strong> · Apêndice do guia. Não tem entradas numeradas: é um guia de consulta,
+organizado pelo que você precisa fazer.</p>
+<p><strong>Para que serve.</strong> Reunir os comandos usados nas sessões do laboratório, dizer o que cada um faz, por que usá-lo, dar um
+exemplo do Norte e separar o que um desenvolvedor usa todo dia do que serve só para inspecionar.</p>
+<p><strong>Como se mantém.</strong> Uma linha nova quando um comando novo entra numa sessão. Nada é apagado: o comando que deixar de
+ser usado é marcado, não removido.</p>
+<h2 id="como-ler">Como ler</h2>
+<p>Cada comando aparece com o que faz, por que usar, um exemplo do Norte e o grupo a que pertence.</p>
+<table>
+<thead>
+<tr>
+<th>Grupo</th>
+<th>Significa</th>
+<th>Exemplos</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Todo dia</strong></td>
+<td>Um desenvolvedor digita sem pensar. Vale decorar.</td>
+<td><code>git status</code>, <code>git switch -c</code>, <code>git add</code>, <code>git commit</code>, <code>git push</code>, <code>dotnet build</code>, <code>dotnet test</code>, <code>gh pr create</code></td>
+</tr>
+<tr>
+<td><strong>De vez em quando</strong></td>
+<td>Resolve uma situação específica. Saiba que existe.</td>
+<td><code>git fetch --prune</code>, <code>dotnet test --filter</code>, <code>gh pr checks</code>, <code>git restore</code>, <code>git log --oneline</code></td>
+</tr>
+<tr>
+<td><strong>Diagnóstico</strong></td>
+<td>Serve para inspecionar o que está no disco quando não há IDE à mão, ou para mostrar o estado do terminal a quem ajuda. Na prática a IDE faz o mesmo com um clique. Basta reconhecer.</td>
+<td><code>(Get-Content arquivo).Count</code>, <code>git show --stat</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>O terminal do laboratório é o Windows PowerShell 5.1.</strong> Três diferenças em relação ao que se vê em tutoriais, que usam bash:</p>
+<ul>
+<li>Para chamar o <code>curl</code> de verdade, escreva <code>curl.exe</code>. O <code>curl</code> sozinho é apelido de outro comando do PowerShell.</li>
+<li>No lugar de <code>grep</code> use <code>Select-String</code>; no lugar de <code>cat</code> use <code>Get-Content</code>; no lugar de <code>head</code> use <code>Select-Object -First</code>.</li>
+<li>A barra de caminho é <code>\</code> (como em <code>src\Norte.Api</code>). O Git e o <code>dotnet</code> aceitam as duas.</li>
+</ul>
+<hr />
+<h2 id="preciso-rodar-build-testes-e-a-api">Preciso rodar build, testes e a API</h2>
+<table>
+<thead>
+<tr>
+<th>Comando</th>
+<th>O que faz</th>
+<th>Por que usar</th>
+<th>Exemplo no Norte</th>
+<th>Grupo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dotnet build Norte.slnx</code></td>
+<td>Compila todos os projetos da solution</td>
+<td>Ver os erros antes de commitar; no Norte todo aviso é erro (<a href="parte-4.html#41-directorybuildprops-e-treatwarningsaserrors-a-configuração-comum-e-o-aviso-que-vira-erro">4.1</a>)</td>
+<td><code>dotnet build Norte.slnx</code></td>
+<td>Todo dia</td>
+</tr>
+<tr>
+<td><code>dotnet test Norte.slnx</code></td>
+<td>Compila e roda todos os testes</td>
+<td>Provar que nada quebrou; exige o Docker aberto (<a href="parte-6.html#69-teste-de-integração-com-postgres-real-testcontainers-e-a-fábrica-da-api">6.9</a>)</td>
+<td><code>dotnet test Norte.slnx</code></td>
+<td>Todo dia</td>
+</tr>
+<tr>
+<td><code>dotnet test Norte.slnx --no-build</code></td>
+<td>Roda os testes sem compilar de novo</td>
+<td>Ganhar tempo logo depois de um <code>build</code> verde (o CI faz assim)</td>
+<td><code>dotnet test Norte.slnx --no-build</code></td>
+<td>Todo dia</td>
+</tr>
+<tr>
+<td><code>dotnet test --filter &quot;FullyQualifiedName~Nome&quot;</code></td>
+<td>Roda só os testes cujo nome completo contém o texto</td>
+<td>Repetir um teste sem esperar a suíte inteira, na prova do vermelho por exemplo (<a href="parte-6.html#613-teste-de-unidade-que-espera-falha-assertthrows-paramname-e-a-prova-do-vermelho">6.13</a>)</td>
+<td><code>dotnet test --filter &quot;FullyQualifiedName~ExcluirFichaProdutoComBancoApiTests&quot;</code></td>
+<td>De vez em quando</td>
+</tr>
+<tr>
+<td><code>dotnet test Norte.slnx --list-tests</code></td>
+<td>Lista os testes sem executar</td>
+<td>Descobrir o nome certo para o filtro</td>
+<td>Veja o bloco abaixo</td>
+<td>De vez em quando</td>
+</tr>
+<tr>
+<td><code>dotnet run --project src\Norte.Api --environment Development</code></td>
+<td>Sobe a API em <code>Development</code></td>
+<td>Testar na mão com o <code>.http</code> (<a href="parte-3.html#34-arquivo-http-as-requisições-da-api-dentro-do-repositório">3.4</a>); o seed só roda em <code>Development</code> (<a href="parte-6.html#614-seed-idempotente-no-desenvolvimento-e-o-ambiente-testing-da-fábrica-de-teste">6.14</a>)</td>
+<td>A API sobe em <code>http://localhost:5071</code></td>
+<td>Todo dia</td>
+</tr>
+<tr>
+<td><code>dotnet sln add &lt;projeto&gt;</code></td>
+<td>Inclui um projeto na solution</td>
+<td>Projeto criado pelo terminal só aparece no Solution Explorer depois disso (<a href="parte-0-1.html#11-solution-no-formato-slnx-e-as-pastas-virtuais-do-visual-studio">1.1</a>)</td>
+<td><code>dotnet sln Norte.slnx add tests\Modulos\Pedidos\Norte.Pedidos.Tests</code></td>
+<td>De vez em quando</td>
+</tr>
+</tbody>
+</table>
+<p>Listar e filtrar pelo nome (o <code>|</code> encadeia a saída de um comando na entrada do outro):</p>
+<pre class="highlight"><code><span class="n">dotnet</span> <span class="n">test</span> <span class="n">Norte</span><span class="p">.</span><span class="n">slnx</span> <span class="p">-</span><span class="n">-list-tests</span> <span class="p">|</span> <span class="nb">Select-String</span> <span class="s2">"ExcluirFichaProdutoComBancoApiTests"</span>
+</code></pre>
+
+<p><strong>Cuidado que já custou tempo:</strong> com a API rodando, o <code>build</code> e o <code>test</code> falham com <code>MSB3026</code> (arquivo bloqueado por
+<code>Norte.Api</code>). Feche a API (Ctrl+C no terminal dela) antes de compilar.</p>
+<p><strong>Atenção ao <code>total: 0</code>:</strong> se o resumo do <code>dotnet test</code> mostra <code>total: 0</code>, nenhum teste rodou. Isso quase sempre é
+nome errado no filtro, e não é sucesso.</p>
+<h2 id="preciso-começar-um-trabalho-novo">Preciso começar um trabalho novo</h2>
+<p>No Norte, cada objetivo de sessão tem a sua branch (<a href="parte-0-1.html#111-git-branch-por-objetivo-de-sessão">1.11</a>). Nunca se trabalha direto na
+<code>main</code>, e todo experimento também vai para uma branch.</p>
+<table>
+<thead>
+<tr>
+<th>Comando</th>
+<th>O que faz</th>
+<th>Por que usar</th>
+<th>Exemplo no Norte</th>
+<th>Grupo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>git switch main</code></td>
+<td>Troca para a <code>main</code></td>
+<td>Começar sempre de uma base atualizada</td>
+<td><code>git switch main</code></td>
+<td>Todo dia</td>
+</tr>
+<tr>
+<td><code>git pull</code></td>
+<td>Traz da origem os commits novos da branch atual</td>
+<td>Atualizar a <code>main</code> depois de um merge</td>
+<td><code>git pull</code></td>
+<td>Todo dia</td>
+</tr>
+<tr>
+<td><code>git switch -c &lt;branch&gt;</code></td>
+<td>Cria uma branch e já troca para ela</td>
+<td>Um objetivo, uma branch</td>
+<td><code>git switch -c test/catalogo-excluir-sku-maior-que-20</code></td>
+<td>Todo dia</td>
+</tr>
+<tr>
+<td><code>git branch --show-current</code></td>
+<td>Mostra em que branch você está</td>
+<td>Conferir antes de commitar</td>
+<td><code>git branch --show-current</code></td>
+<td>De vez em quando</td>
+</tr>
+<tr>
+<td><code>git fetch --prune</code></td>
+<td>Atualiza o que existe na origem e remove as referências a branches que já foram apagadas lá</td>
+<td>Limpar o que sobrou depois do merge de um PR</td>
+<td><code>git fetch --prune</code></td>
+<td>De vez em quando</td>
+</tr>
+<tr>
+<td><code>git branch -d &lt;branch&gt;</code></td>
+<td>Apaga a branch local já mesclada</td>
+<td>Manter a lista de branches curta</td>
+<td><code>git branch -d test/catalogo-excluir-sku-maior-que-20</code></td>
+<td>De vez em quando</td>
+</tr>
+</tbody>
+</table>
+<p>O nome da branch segue <code>&lt;tipo&gt;/&lt;modulo&gt;-&lt;assunto&gt;</code>, em português. O <code>git switch</code> e o <code>git restore</code> substituem os usos
+antigos do <code>git checkout</code>. Se o dedo for no <code>checkout</code>, funciona, mas o idioma atual é este.</p>
+<h2 id="preciso-ver-o-que-mudou">Preciso ver o que mudou</h2>
+<p>Antes de commitar, olhe o que vai entrar. É o hábito que mais evita commit errado.</p>
+<table>
+<thead>
+<tr>
+<th>Comando</th>
+<th>O que faz</th>
+<th>Por que usar</th>
+<th>Exemplo no Norte</th>
+<th>Grupo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>git status</code></td>
+<td>Lista os arquivos alterados, novos e já preparados</td>
+<td>Saber em que ponto está; é o primeiro comando de qualquer sessão</td>
+<td><code>git status</code></td>
+<td>Todo dia</td>
+</tr>
+<tr>
+<td><code>git diff</code></td>
+<td>Mostra as linhas alteradas que ainda não foram preparadas</td>
+<td>Revisar o que você mexeu</td>
+<td><code>git diff</code></td>
+<td>Todo dia</td>
+</tr>
+<tr>
+<td><code>git diff --staged</code> (ou <code>--cached</code>)</td>
+<td>Mostra as linhas que já estão preparadas para o commit</td>
+<td>Revisar exatamente o que vai para o commit</td>
+<td><code>git diff --staged</code></td>
+<td>Todo dia</td>
+</tr>
+<tr>
+<td><code>git diff --cached --stat</code></td>
+<td>Resume por arquivo: quantas linhas entraram e saíram</td>
+<td>Achar surpresas, como arquivo vazio (0 inserções) ou deleção inesperada</td>
+<td>Na S21 revelou o template de PR vazio e uma deleção no teste</td>
+<td>De vez em quando</td>
+</tr>
+<tr>
+<td><code>git log --oneline -3</code></td>
+<td>Mostra os últimos commits, um por linha</td>
+<td>Conferir em que commit você está</td>
+<td><code>git log --oneline -3</code></td>
+<td>Todo dia</td>
+</tr>
+<tr>
+<td><code>git log --oneline --graph -20</code></td>
+<td>O mesmo, com o desenho das branches</td>
+<td>Entender merges</td>
+<td><code>git log --oneline --graph -20</code></td>
+<td>De vez em quando</td>
+</tr>
+<tr>
+<td><code>git show --stat &lt;commit&gt;</code></td>
+<td>Mostra um commit e os arquivos que ele tocou</td>
+<td>Conferir um commit específico</td>
+<td><code>git show --stat c9eb7cc</code></td>
+<td>Diagnóstico</td>
+</tr>
+<tr>
+<td><code>git diff main...HEAD --stat</code></td>
+<td>Alcance da sua branch em relação à <code>main</code> (três pontos)</td>
+<td>Escrever a descrição do PR</td>
+<td><code>git diff main...HEAD --stat</code></td>
+<td>De vez em quando</td>
+</tr>
+<tr>
+<td><code>git log main..HEAD --pretty=format:&quot;%s%n%b%n---&quot;</code></td>
+<td>Lista os commits da branch, com o corpo</td>
+<td>Material para a descrição do PR</td>
+<td>Copiar a saída e resumir</td>
+<td>De vez em quando</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Dois pontos × três pontos:</strong> <code>main..HEAD</code> são os commits que a sua branch tem e a <code>main</code> não. <code>main...HEAD</code> compara a sua
+branch com o ponto em que ela saiu da <code>main</code>, e é o que mostra o seu trabalho sem o ruído do que a <code>main</code> ganhou depois.</p>
+<h2 id="preciso-guardar-e-enviar-o-trabalho">Preciso guardar e enviar o trabalho</h2>
+<table>
+<thead>
+<tr>
+<th>Comando</th>
+<th>O que faz</th>
+<th>Por que usar</th>
+<th>Exemplo no Norte</th>
+<th>Grupo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>git add &lt;arquivo&gt;</code></td>
+<td>Prepara um arquivo para o próximo commit</td>
+<td>Escolher o que entra, em vez de levar tudo</td>
+<td><code>git add tests\Modulos\Pedidos</code></td>
+<td>Todo dia</td>
+</tr>
+<tr>
+<td><code>git commit -m &quot;tipo(escopo): descrição&quot;</code></td>
+<td>Grava o que está preparado</td>
+<td>Um commit é uma mudança coerente que deixa o build verde</td>
+<td><code>git commit -m &quot;test(catalogo): provar o 400 do delete com sku de 21 caracteres&quot;</code></td>
+<td>Todo dia</td>
+</tr>
+<tr>
+<td><code>git push -u origin &lt;branch&gt;</code></td>
+<td>Envia a branch para o GitHub e guarda o vínculo</td>
+<td>A primeira vez de cada branch; depois basta <code>git push</code></td>
+<td><code>git push -u origin test/catalogo-excluir-sku-maior-que-20</code></td>
+<td>Todo dia</td>
+</tr>
+<tr>
+<td><code>git push</code></td>
+<td>Envia os commits novos da branch</td>
+<td>Depois do primeiro <code>push</code></td>
+<td><code>git push</code></td>
+<td>Todo dia</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Formato do commit no Norte:</strong> <code>&lt;tipo&gt;(&lt;escopo&gt;): &lt;descrição&gt;</code>. O tipo fica em inglês (<code>feat</code>, <code>fix</code>, <code>test</code>, <code>docs</code>,
+<code>build</code>, <code>ci</code>, <code>refactor</code>, <code>chore</code>). O escopo e a descrição ficam em português, em minúsculas, sem ponto final e com até
+72 caracteres. O escopo é o módulo (<code>catalogo</code>, <code>pedidos</code>); sem módulo, omita.</p>
+<p><strong>Regra de ouro:</strong> commit que já foi enviado não se reescreve. Corrigir erro de digitação em commit enviado é deixar como está.</p>
+<h2 id="preciso-abrir-acompanhar-e-fechar-um-pr">Preciso abrir, acompanhar e fechar um PR</h2>
+<p>O <code>gh</code> é a linha de comando do GitHub. Ele faz pelo terminal o que a página do GitHub faz. Você não depende dele, mas ele
+salva a sessão quando a página falha (na S21 o GitHub mostrou &quot;Unable to load page&quot; e o merge foi feito por ele).</p>
+<table>
+<thead>
+<tr>
+<th>Comando</th>
+<th>O que faz</th>
+<th>Por que usar</th>
+<th>Exemplo no Norte</th>
+<th>Grupo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gh pr create --web</code></td>
+<td>Abre no navegador o formulário do PR já preenchido</td>
+<td>Escrever a descrição com calma, vendo o template</td>
+<td>Veja o bloco abaixo</td>
+<td>Todo dia</td>
+</tr>
+<tr>
+<td><code>gh pr list</code></td>
+<td>Lista os PRs abertos</td>
+<td>Ver o que está pendente</td>
+<td><code>gh pr list</code></td>
+<td>De vez em quando</td>
+</tr>
+<tr>
+<td><code>gh pr view &lt;número&gt;</code></td>
+<td>Mostra o título, a descrição e o estado de um PR</td>
+<td>Conferir um PR sem abrir o navegador</td>
+<td><code>gh pr view 24</code></td>
+<td>De vez em quando</td>
+</tr>
+<tr>
+<td><code>gh pr checks &lt;número&gt;</code></td>
+<td>Mostra o resultado do CI do PR</td>
+<td>Esperar o verde antes do merge. O CI avisa, mas não impede o merge (<a href="parte-5.html#51-ci-básico-com-github-actions">5.1</a>)</td>
+<td><code>gh pr checks 24</code></td>
+<td>Todo dia</td>
+</tr>
+<tr>
+<td><code>gh pr merge &lt;número&gt; --merge</code></td>
+<td>Faz o merge criando um commit de merge</td>
+<td>O Norte não usa squash, para manter os commits individuais</td>
+<td><code>gh pr merge 24 --merge</code></td>
+<td>De vez em quando</td>
+</tr>
+</tbody>
+</table>
+<p>O comando completo, com cada parte explicada:</p>
+<pre class="highlight"><code><span class="n">gh</span> <span class="n">pr</span> <span class="n">create</span> <span class="p">-</span><span class="n">-base</span> <span class="n">main</span> <span class="p">-</span><span class="n">-head</span> <span class="n">test</span><span class="p">/</span><span class="n">catalogo-excluir-sku-maior-que</span><span class="p">-</span><span class="n">20</span> <span class="p">-</span><span class="n">-title</span> <span class="s2">"test(catalogo): provar o 400 do delete com sku de 21 caracteres"</span> <span class="p">-</span><span class="n">-web</span>
+</code></pre>
+
+<ul>
+<li><code>--base main</code>: a branch de destino, para onde as mudanças vão.</li>
+<li><code>--head &lt;branch&gt;</code>: a branch de origem, a que tem os seus commits. Se você já está nela, pode omitir.</li>
+<li><code>--title</code>: o título, no mesmo formato do commit (Conventional Commits).</li>
+<li><code>--web</code>: abre o formulário no navegador em vez de criar direto, para você preencher a descrição e só então clicar em
+Create pull request.</li>
+</ul>
+<p><strong>Depois do merge</strong>, volte à base e limpe: <code>git switch main</code>, <code>git pull</code>, <code>git fetch --prune</code>, <code>git branch -d &lt;branch&gt;</code>.</p>
+<p><strong>Onde fica a descrição:</strong> no GitHub, no PR. A descrição do PR não é do Git. O template do repositório
+(<code>.github/pull_request_template.md</code>) já traz as três seções: o que muda, como verificar e decisões.</p>
+<h2 id="preciso-desfazer-algo">Preciso desfazer algo</h2>
+<table>
+<thead>
+<tr>
+<th>Comando</th>
+<th>O que faz</th>
+<th>Por que usar</th>
+<th>Exemplo no Norte</th>
+<th>Grupo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>git restore &lt;arquivo&gt;</code></td>
+<td>Descarta as mudanças locais do arquivo e volta à última versão commitada</td>
+<td>Desfazer o estrago depois da prova do vermelho</td>
+<td><code>git restore src\Modulos\Pedidos\Norte.Pedidos\Dominio\Pedido.cs</code></td>
+<td>Todo dia</td>
+</tr>
+<tr>
+<td><code>git restore --staged &lt;arquivo&gt;</code></td>
+<td>Tira o arquivo do que foi preparado, sem perder a mudança</td>
+<td>Você deu <code>git add</code> no arquivo errado</td>
+<td><code>git restore --staged Norte.slnx</code></td>
+<td>De vez em quando</td>
+</tr>
+<tr>
+<td><code>git commit --amend --no-edit</code></td>
+<td>Acrescenta ao último commit sem mudar a mensagem</td>
+<td>Esqueceu um arquivo; <strong>só antes do push</strong></td>
+<td><code>git commit --amend --no-edit</code></td>
+<td>De vez em quando</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cuidado com o <code>git restore &lt;arquivo&gt;</code>:</strong> ele <strong>apaga</strong> o trabalho não commitado daquele arquivo, sem pergunta e sem volta.
+Por isso o Norte exige, na prova do vermelho, commitar o teste <strong>antes</strong> de estragar o código. Assim o <code>restore</code> só desfaz o estrago.</p>
+<p><strong>Reescrever histórico</strong> (<code>amend</code>, <code>rebase -i</code>) é livre antes do <code>push</code> e proibido depois, em branch compartilhada.</p>
+<h2 id="preciso-olhar-arquivos-e-criar-pastas">Preciso olhar arquivos e criar pastas</h2>
+<p>Na prática, você abre o arquivo na IDE. Estes comandos servem quando não há IDE (um servidor, o CI) ou quando é preciso
+uma prova do que está no disco.</p>
+<table>
+<thead>
+<tr>
+<th>Comando</th>
+<th>Equivalente no bash</th>
+<th>O que faz</th>
+<th>Exemplo no Norte</th>
+<th>Grupo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Get-Content &lt;arquivo&gt;</code></td>
+<td><code>cat</code></td>
+<td>Mostra o conteúdo do arquivo</td>
+<td><code>Get-Content .github\pull_request_template.md</code></td>
+<td>Diagnóstico</td>
+</tr>
+<tr>
+<td><code>(Get-Content &lt;arquivo&gt;).Count</code></td>
+<td><code>wc -l</code></td>
+<td>Conta as linhas. Foi assim que se descobriu que um <code>.csproj</code> colado no terminal tinha quebrado</td>
+<td><code>(Get-Content tests\Modulos\Pedidos\Norte.Pedidos.Tests\Norte.Pedidos.Tests.csproj).Count</code> (esperado: 25)</td>
+<td>Diagnóstico</td>
+</tr>
+<tr>
+<td><code>Select-String &quot;texto&quot; &lt;arquivo&gt;</code></td>
+<td><code>grep</code></td>
+<td>Procura um texto dentro de arquivos</td>
+<td><code>Select-String &quot;InternalsVisibleTo&quot; src\Modulos\Pedidos\Norte.Pedidos\*.csproj</code></td>
+<td>De vez em quando</td>
+</tr>
+<tr>
+<td><code>Get-ChildItem</code> (ou <code>ls</code>)</td>
+<td><code>ls</code></td>
+<td>Lista arquivos e pastas</td>
+<td><code>Get-ChildItem tests\Modulos</code></td>
+<td>Todo dia</td>
+</tr>
+<tr>
+<td><code>New-Item -ItemType Directory -Path &lt;pasta&gt;</code></td>
+<td><code>mkdir</code></td>
+<td>Cria uma pasta</td>
+<td><code>New-Item -ItemType Directory -Path tests\Modulos\Pedidos\Norte.Pedidos.Tests</code></td>
+<td>De vez em quando</td>
+</tr>
+<tr>
+<td><code>curl.exe</code></td>
+<td><code>curl</code></td>
+<td>Faz uma requisição HTTP</td>
+<td><code>curl.exe -i http://localhost:5071/catalogo/fichas-produto</code></td>
+<td>De vez em quando</td>
+</tr>
+</tbody>
+</table>
+<p>Duas dicas de segurança:</p>
+<ul>
+<li><strong>Nunca cole um bloco grande no terminal.</strong> Na S22 isso quebrou linhas duas vezes. Crie o arquivo pelo editor e confira
+com <code>(Get-Content arquivo).Count</code>.</li>
+<li>Para o dia a dia de requisições, o arquivo <code>.http</code> do módulo (<code>Catalogo.http</code>) é mais confortável que o <code>curl.exe</code>.</li>
+</ul>
+<h2 id="o-que-decorar-primeiro-e-o-que-só-reconhecer">O que decorar primeiro e o que só reconhecer</h2>
+<p><strong>Decore (uns doze comandos cobrem 90% do dia):</strong></p>
+<ol>
+<li><code>git status</code>, <code>git diff</code>, <code>git diff --staged</code></li>
+<li><code>git switch -c</code>, <code>git switch main</code>, <code>git pull</code></li>
+<li><code>git add</code>, <code>git commit -m</code>, <code>git push -u origin</code></li>
+<li><code>dotnet build</code>, <code>dotnet test</code>, <code>dotnet run --project</code></li>
+<li><code>gh pr create --web</code>, <code>gh pr checks</code></li>
+</ol>
+<p><strong>Saiba que existe, procure quando precisar:</strong> <code>--filter</code>, <code>--list-tests</code>, <code>git fetch --prune</code>, <code>git restore</code>,
+<code>git log main..HEAD</code>, <code>gh pr merge</code>.</p>
+<p><strong>Só reconheça:</strong> <code>Get-Content</code>, <code>Select-String</code>, <code>git show --stat</code>, <code>git diff --cached --stat</code>. São ferramentas de
+inspeção, e a IDE costuma fazer o mesmo com um clique.</p>
+<p><strong>Dica:</strong> mantenha uma lista curta e viva com o que você usou de verdade na semana. Uma lista curta que se abre vale mais
+que uma completa que ninguém consulta.</p>
+
+</article>
+<footer class="rodape">Atualizado em 17/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
