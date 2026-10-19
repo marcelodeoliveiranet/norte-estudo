@@ -22,8 +22,10 @@
 <aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#guia-net-moderno--apêndice-b-comandos-do-dia-a-dia-dotnet-git-github-e-powershell" data-id="guia-net-moderno--apêndice-b-comandos-do-dia-a-dia-dotnet-git-github-e-powershell">GUIA .NET MODERNO — Apêndice B: Comandos do dia a dia (dotnet, Git, …</a><a class="n2" href="#como-ler" data-id="como-ler">Como ler</a><a class="n2" href="#preciso-rodar-build-testes-e-a-api" data-id="preciso-rodar-build-testes-e-a-api">Preciso rodar build, testes e a API</a><a class="n2" href="#preciso-começar-um-trabalho-novo" data-id="preciso-começar-um-trabalho-novo">Preciso começar um trabalho novo</a><a class="n2" href="#preciso-ver-o-que-mudou" data-id="preciso-ver-o-que-mudou">Preciso ver o que mudou</a><a class="n2" href="#preciso-guardar-e-enviar-o-trabalho" data-id="preciso-guardar-e-enviar-o-trabalho">Preciso guardar e enviar o trabalho</a><a class="n2" href="#preciso-abrir-acompanhar-e-fechar-um-pr" data-id="preciso-abrir-acompanhar-e-fechar-um-pr">Preciso abrir, acompanhar e fechar um PR</a><a class="n2" href="#preciso-desfazer-algo" data-id="preciso-desfazer-algo">Preciso desfazer algo</a><a class="n2" href="#preciso-olhar-arquivos-e-criar-pastas" data-id="preciso-olhar-arquivos-e-criar-pastas">Preciso olhar arquivos e criar pastas</a><a class="n2" href="#o-que-decorar-primeiro-e-o-que-só-reconhecer" data-id="o-que-decorar-primeiro-e-o-que-só-reconhecer">O que decorar primeiro e o que só reconhecer</a></aside>
 <main class="conteudo"><article>
 <h1 id="guia-net-moderno--apêndice-b-comandos-do-dia-a-dia-dotnet-git-github-e-powershell">GUIA .NET MODERNO — Apêndice B: Comandos do dia a dia (dotnet, Git, GitHub e PowerShell)</h1>
-<p><strong>v1.0 · 17/10/2026 (depois da S22)</strong> · Apêndice do guia. Não tem entradas numeradas: é um guia de consulta,
+<p><strong>v1.1 · 19/10/2026 (depois da S23)</strong> · Apêndice do guia. Não tem entradas numeradas: é um guia de consulta,
 organizado pelo que você precisa fazer.</p>
+<p><strong>O que mudou na v1.1 (S23):</strong> <code>git add .</code> (e quando usar), o <code>git commit -m</code> com duas mensagens (título e corpo), o erro
+de usar <code>-u</code> no <code>commit</code> (o <code>-u</code> é só do <code>push</code>), <code>git log -n --oneline</code> e <code>gh pr status</code>.</p>
 <p><strong>Para que serve.</strong> Reunir os comandos usados nas sessões do laboratório, dizer o que cada um faz, por que usá-lo, dar um
 exemplo do Norte e separar o que um desenvolvedor usa todo dia do que serve só para inspecionar.</p>
 <p><strong>Como se mantém.</strong> Uma linha nova quando um comando novo entra numa sessão. Nada é apagado: o comando que deixar de
@@ -187,7 +189,7 @@ nome errado no filtro, e não é sucesso.</p>
 <td><code>git branch -d &lt;branch&gt;</code></td>
 <td>Apaga a branch local já mesclada</td>
 <td>Manter a lista de branches curta</td>
-<td><code>git branch -d test/catalogo-excluir-sku-maior-que-20</code></td>
+<td><code>git branch -d test/pedido-criar-pedido-com-itens</code></td>
 <td>De vez em quando</td>
 </tr>
 </tbody>
@@ -236,10 +238,10 @@ antigos do <code>git checkout</code>. Se o dedo for no <code>checkout</code>, fu
 <td>De vez em quando</td>
 </tr>
 <tr>
-<td><code>git log --oneline -3</code></td>
-<td>Mostra os últimos commits, um por linha</td>
+<td><code>git log --oneline -3</code> (ou <code>git log -3 --oneline</code>)</td>
+<td>Mostra os últimos commits, um por linha. O número diz quantos</td>
 <td>Conferir em que commit você está</td>
-<td><code>git log --oneline -3</code></td>
+<td><code>git log -4 --oneline</code></td>
 <td>Todo dia</td>
 </tr>
 <tr>
@@ -294,11 +296,25 @@ branch com o ponto em que ela saiu da <code>main</code>, e é o que mostra o seu
 <td>Todo dia</td>
 </tr>
 <tr>
+<td><code>git add .</code></td>
+<td>Prepara <strong>tudo</strong> o que mudou na pasta atual e abaixo</td>
+<td>Só depois de conferir o <code>git status</code> e ver que são só os arquivos que você quer. <strong>Sem o <code>add</code> o <code>commit</code> sai vazio</strong> (<code>no changes added to commit</code>)</td>
+<td><code>git add .</code></td>
+<td>Todo dia</td>
+</tr>
+<tr>
 <td><code>git commit -m &quot;tipo(escopo): descrição&quot;</code></td>
 <td>Grava o que está preparado</td>
 <td>Um commit é uma mudança coerente que deixa o build verde</td>
 <td><code>git commit -m &quot;test(catalogo): provar o 400 do delete com sku de 21 caracteres&quot;</code></td>
 <td>Todo dia</td>
+</tr>
+<tr>
+<td><code>git commit -m &quot;título&quot; -m &quot;corpo&quot;</code></td>
+<td>Grava com uma mensagem de duas partes: o primeiro <code>-m</code> é o título; o segundo, o corpo</td>
+<td>Quando o título não explica o porquê</td>
+<td><code>git commit -m &quot;feat(pedidos): recusa lista de itens vazia&quot; -m &quot;o pedido sem item não faz sentido para o negócio&quot;</code></td>
+<td>De vez em quando</td>
 </tr>
 <tr>
 <td><code>git push -u origin &lt;branch&gt;</code></td>
@@ -316,9 +332,12 @@ branch com o ponto em que ela saiu da <code>main</code>, e é o que mostra o seu
 </tr>
 </tbody>
 </table>
+<p><strong><code>-m</code> × <code>-u</code>:</strong> o <code>-m</code> é do <code>commit</code> (a mensagem). O <code>-u</code> é só do <code>push</code> (liga a branch local à remota). Escrever
+<code>git commit -u &quot;...&quot;</code> não funciona. Na S23 esse erro apareceu quatro vezes seguidas.</p>
 <p><strong>Formato do commit no Norte:</strong> <code>&lt;tipo&gt;(&lt;escopo&gt;): &lt;descrição&gt;</code>. O tipo fica em inglês (<code>feat</code>, <code>fix</code>, <code>test</code>, <code>docs</code>,
 <code>build</code>, <code>ci</code>, <code>refactor</code>, <code>chore</code>). O escopo e a descrição ficam em português, em minúsculas, sem ponto final e com até
-72 caracteres. O escopo é o módulo (<code>catalogo</code>, <code>pedidos</code>); sem módulo, omita.</p>
+72 caracteres. O escopo é o módulo (<code>catalogo</code>, <code>pedidos</code>); sem módulo, omita. A mensagem diz <strong>o que o código passa a
+fazer</strong> (a regra), não o que o teste faz.</p>
 <p><strong>Regra de ouro:</strong> commit que já foi enviado não se reescreve. Corrigir erro de digitação em commit enviado é deixar como está.</p>
 <h2 id="preciso-abrir-acompanhar-e-fechar-um-pr">Preciso abrir, acompanhar e fechar um PR</h2>
 <p>O <code>gh</code> é a linha de comando do GitHub. Ele faz pelo terminal o que a página do GitHub faz. Você não depende dele, mas ele
@@ -346,6 +365,13 @@ salva a sessão quando a página falha (na S21 o GitHub mostrou &quot;Unable to 
 <td>Lista os PRs abertos</td>
 <td>Ver o que está pendente</td>
 <td><code>gh pr list</code></td>
+<td>De vez em quando</td>
+</tr>
+<tr>
+<td><code>gh pr status</code></td>
+<td>Mostra o PR da branch atual, os que você abriu e o resultado dos checks</td>
+<td>Ver de uma vez se o PR foi mesclado e se o CI passou</td>
+<td><code>gh pr status</code></td>
 <td>De vez em quando</td>
 </tr>
 <tr>
@@ -378,7 +404,8 @@ salva a sessão quando a página falha (na S21 o GitHub mostrou &quot;Unable to 
 <ul>
 <li><code>--base main</code>: a branch de destino, para onde as mudanças vão.</li>
 <li><code>--head &lt;branch&gt;</code>: a branch de origem, a que tem os seus commits. Se você já está nela, pode omitir.</li>
-<li><code>--title</code>: o título, no mesmo formato do commit (Conventional Commits).</li>
+<li><code>--title &quot;...&quot;</code>: o título, no mesmo formato do commit (Conventional Commits). <strong>As aspas fecham o texto</strong>; sem elas o
+PowerShell corta o título no primeiro espaço.</li>
 <li><code>--web</code>: abre o formulário no navegador em vez de criar direto, para você preencher a descrição e só então clicar em
 Create pull request.</li>
 </ul>
@@ -497,14 +524,14 @@ com <code>(Get-Content arquivo).Count</code>.</li>
 <li><code>gh pr create --web</code>, <code>gh pr checks</code></li>
 </ol>
 <p><strong>Saiba que existe, procure quando precisar:</strong> <code>--filter</code>, <code>--list-tests</code>, <code>git fetch --prune</code>, <code>git restore</code>,
-<code>git log main..HEAD</code>, <code>gh pr merge</code>.</p>
+<code>git log main..HEAD</code>, <code>gh pr merge</code>, <code>gh pr status</code>.</p>
 <p><strong>Só reconheça:</strong> <code>Get-Content</code>, <code>Select-String</code>, <code>git show --stat</code>, <code>git diff --cached --stat</code>. São ferramentas de
 inspeção, e a IDE costuma fazer o mesmo com um clique.</p>
 <p><strong>Dica:</strong> mantenha uma lista curta e viva com o que você usou de verdade na semana. Uma lista curta que se abre vale mais
 que uma completa que ninguém consulta.</p>
 
 </article>
-<footer class="rodape">Atualizado em 17/10/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 19/10/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="assets/search-index.js"></script>

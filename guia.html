@@ -43,20 +43,10 @@ tente explicar em voz alta a linha &quot;Em uma frase&quot; e a seção &quot;Na
 <li>🔎 <strong>Saber onde encontrar</strong> — sintaxe exata, nome de <code>using</code>, comando de CLI. Qualquer sênior
 consulta; o <code>Ctrl+.</code> e a documentação resolvem.</li>
 </ul>
-<p><strong>Última atualização:</strong> 17/10/2026 (<strong>Apêndices A e B criados</strong>, depois do fechamento da S22) · <strong>Versão:</strong> 1.14</p>
+<p><strong>Última atualização:</strong> 19/10/2026 (<strong>Apêndice B v1.1</strong>, no fechamento da S23) · <strong>Versão:</strong> 1.15</p>
 <hr />
 <h2 id="onde-estamos-atualizado-a-cada-sessão">Onde estamos (atualizado a cada sessão)</h2>
-<p><strong>Fim da S20:</strong> o <code>Catalogo</code> tem o <strong>CRUD completo</strong> e <strong>nenhuma resposta devolve a entidade</strong>: o <code>POST</code> e o
-<code>GET /{sku}</code> passaram a devolver Response (<a href="parte-7.html#71-response-no-cadastro-e-na-consulta-por-sku-e-onde-mapear">7.1</a>); o SKU da rota entra num <code>Request</code>
-com <code>[AsParameters]</code> (<a href="parte-7.html#72-o-sku-da-rota-num-request-com-asparameters">7.2</a>); o limite de 20 caracteres do SKU vale no domínio, na coluna e na
-entrada, com uma migration na chave primária (<a href="parte-7.html#73-o-limite-do-sku-em-três-camadas-e-a-migration-na-chave-primária">7.3</a>); <code>DELETE</code> com <code>ExecuteDeleteAsync</code>
-(<a href="parte-7.html#74-excluir-executedeleteasync-204-×-404">7.4</a>) e <code>PUT</code> com rastreamento e método de domínio (<a href="parte-7.html#75-alterar-rastreamento-método-de-domínio-e-put">7.5</a>); o seed de
-volume provou a paginação em várias páginas (<a href="parte-7.html#76-o-seed-de-volume-e-a-paginação-provada-em-várias-páginas">7.6</a>). O diagnóstico da sessão está em
-<a href="parte-7.html#77-diagnóstico-os-problemas-da-s20-e-como-achar-a-causa">7.7</a>. <strong>A dívida aberta da S19 (o <code>POST</code> e o <code>GET</code> por SKU devolvendo a entidade) foi resolvida;
-a Parte 6 (6.17 e 6.20) não foi reescrita e vale a correção que está no início da Parte 7.</strong> Ficou aberto: o <code>PUT</code> com SKU
-de 21+ caracteres devolve 404, e não 400 (a rota não valida o tamanho); concorrência otimista (dois <code>PUT</code>); o cancelamento por
-<code>CancellationToken</code>; a lentidão do deslocamento em página funda; o SKU com estrutura validada. Próximo passo de M1: <strong>S21</strong>
-(à tarde do mesmo dia) — tema a definir; depois, o <code>Pedidos</code>.</p>
+<p><strong>Fim da S23:</strong> o <code>Pedidos</code> saiu do zero: o <code>Pedido</code> agora <strong>nasce com itens</strong> (<code>ItemPedido</code> e <code>IReadOnlyList&lt;ItemPedido&gt;</code>), e o construtor <strong>recusa lista vazia</strong> com <code>ArgumentException</code> e <code>ParamName == &quot;itens&quot;</code>, protegido por dois testes vistos vermelhos pelo estrago mínimo (o mesmo raciocínio da <a href="parte-6.html#612-o-construtor-recusa-valor-vazio-argumentexceptionthrowifnullorwhitespace">6.12</a> e da <a href="parte-6.html#613-teste-de-unidade-que-espera-falha-assertthrows-paramname-e-a-prova-do-vermelho">6.13</a>). A seção <code>Pedidos</code> do glossário foi escrita (PR #25) e o Git do dia a dia ganhou o <code>-m</code> do <code>commit</code> × <code>-u</code> do <code>push</code>, no <a href="comandos.html">Apêndice B v1.1</a>. <strong>Nenhuma entrada numerada nova nesta sessão:</strong> o conteúdo está no material <code>ESTUDO-S23</code>. Ficou aberto: validação dos campos obrigatórios do construtor do <code>Pedido</code>, aprovação do pedido, <code>PedidoId</code> como número do banco (na persistência), ligação do <code>Pedidos</code> ao host e comunicação <code>Estoque</code> → <code>Pedidos</code>. A situação do <code>Catalogo</code> (CRUD completo, Parte 7) não mudou. Próximo passo de M1: <strong>S24</strong>.</p>
 <hr />
 <h2 id="partes">Partes</h2>
 <table>
@@ -115,13 +105,13 @@ de 21+ caracteres devolve 404, e não 400 (a rota não valida o tamanho); concor
 <td><a href="mapa.html"><code>GUIA-MAPA-NORTE.md</code></a></td>
 <td>Apêndice A — Mapa do Norte: como as ferramentas e os conceitos se ligam, em seis camadas</td>
 <td>S9–S22</td>
-<td><strong>v1.0 (novo)</strong></td>
+<td>v1.0</td>
 </tr>
 <tr>
 <td><a href="comandos.html"><code>GUIA-COMANDOS.md</code></a></td>
 <td>Apêndice B — Comandos do dia a dia: <code>dotnet</code>, Git, <code>gh</code> e PowerShell, por tarefa</td>
-<td>S21–S22</td>
-<td><strong>v1.0 (novo)</strong></td>
+<td>S21–S23</td>
+<td><strong>v1.1</strong></td>
 </tr>
 </tbody>
 </table>
@@ -310,11 +300,16 @@ da parte com a âncora.</p>
 <td>17/10/2026 (depois da S22)</td>
 <td><strong>Apêndices A e B criados</strong> (<code>GUIA-MAPA-NORTE.md</code> e <code>GUIA-COMANDOS.md</code>); sem entradas numeradas novas</td>
 </tr>
+<tr>
+<td>1.15</td>
+<td>19/10/2026 (S23)</td>
+<td>Apêndice B v1.1 (<code>-m</code> do <code>commit</code> × <code>-u</code> do <code>push</code>, <code>gh pr create</code>/<code>gh pr status</code>); sem entradas numeradas novas; &quot;onde estamos&quot; no <code>Pedido</code> com itens</td>
+</tr>
 </tbody>
 </table>
 
 </article>
-<footer class="rodape">Atualizado em 17/10/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 19/10/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="assets/search-index.js"></script>

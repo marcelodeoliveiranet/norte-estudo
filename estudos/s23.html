@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norte · S23 — Pedidos: itens e a regra de aprovação · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s23.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#norte--s23--pedidos-itens-e-a-regra-de-aprovação" data-id="norte--s23--pedidos-itens-e-a-regra-de-aprovação">Norte · S23 — Pedidos: itens e a regra de aprovação</a><a class="n2" href="#1-resultado-do-dia" data-id="1-resultado-do-dia">1. Resultado do dia</a><a class="n2" href="#2-onde-isso-está-no-mapa-dos-níveis" data-id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</a><a class="n2" href="#3-conceitos" data-id="3-conceitos">3. Conceitos</a><a class="n2" href="#4-termos-da-sessão" data-id="4-termos-da-sessão">4. Termos da sessão</a><a class="n2" href="#5-dúvidas-e-respostas" data-id="5-dúvidas-e-respostas">5. Dúvidas e respostas</a><a class="n2" href="#6-divergências" data-id="6-divergências">6. Divergências</a><a class="n2" href="#7-avaliação" data-id="7-avaliação">7. Avaliação</a><a class="n2" href="#8-pontos-a-melhorar" data-id="8-pontos-a-melhorar">8. Pontos a melhorar</a><a class="n2" href="#9-teste-se" data-id="9-teste-se">9. Teste-se</a><a class="n2" href="#10-preparação-para-o-próximo-chat-s24" data-id="10-preparação-para-o-próximo-chat-s24">10. Preparação para o próximo chat (S24)</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a></aside>
+<main class="conteudo"><article>
+<h1 id="norte--s23--pedidos-itens-e-a-regra-de-aprovação">Norte · S23 — Pedidos: itens e a regra de aprovação</h1>
+<p><strong>Segunda, 19/10/2026 · tempo líquido: 6h06 (acima do limite de 5h) · Marco M1</strong></p>
+<p>Hoje você fez duas coisas. Primeiro, escreveu a seção <code>Pedidos</code> do glossário (PR #25). Depois, deu ao <code>Pedido</code> os seus itens: criou o <code>ItemPedido</code> e fez o construtor recusar uma lista vazia (PR #26). Você escreveu os arquivos e os comandos Git; o mentor conferiu. A ideia para guardar: <strong>um teste vermelho mostra que o código está errado; o teste é o contrato.</strong> Hoje você viu isso duas vezes, uma em cada teste.</p>
+<h2 id="1-resultado-do-dia">1. Resultado do dia</h2>
+<table>
+<thead>
+<tr>
+<th>PR</th>
+<th>O que entrou</th>
+<th>Merge</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#25</td>
+<td>seção <code>Pedidos</code> no glossário (<code>Pedido</code>, <code>Origem</code>, <code>Situacao</code>)</td>
+<td><code>51201a3</code></td>
+</tr>
+<tr>
+<td>#26</td>
+<td><code>ItemPedido</code>, <code>Itens</code> no <code>Pedido</code> e recusa de lista vazia, com 2 testes</td>
+<td><code>1a60f5e</code></td>
+</tr>
+</tbody>
+</table>
+<p>Estado final: <code>main</code> em <code>1a60f5e</code> (igual a <code>origin/main</code>), árvore limpa, <strong>2 testes verdes no <code>Pedidos</code></strong> (mais os 32 do <code>Catalogo</code>). O template de PR funcionou pela primeira vez, nos dois PRs.</p>
+<h2 id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</h2>
+<p>Solution → módulos → funcionalidades → camadas. Hoje o trabalho foi na camada de <strong>domínio</strong> do módulo <code>Pedidos</code>: um tipo novo (<code>ItemPedido</code>) e uma regra nova no construtor do <code>Pedido</code>. Ainda não há banco, endpoint nem validação dos campos obrigatórios.</p>
+<h2 id="3-conceitos">3. Conceitos</h2>
+<h3 id="31-o-pedido-nasce-com-itens">3.1 O pedido nasce com itens</h3>
+<p>Na S22 o pedido podia nascer sem itens. Você mudou isso hoje, com um bom argumento: <strong>pedido sem item não faz sentido no negócio.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Como era (S22)</th>
+<th>Como é agora (S23)</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>new Pedido(origem, criadoPor, clienteId, representanteId)</code></td>
+<td><code>new Pedido(origem, criadoPor, clienteId, representanteId, itens)</code></td>
+<td>o construtor recebe a lista de itens</td>
+</tr>
+<tr>
+<td>lista vazia era aceita</td>
+<td>lista vazia lança <code>ArgumentException</code></td>
+<td>o domínio se protege</td>
+</tr>
+</tbody>
+</table>
+<p>O nome <code>Digitado</code> continua certo. Ele quer dizer <strong>&quot;ainda não foi conferido&quot;</strong>, não &quot;ainda não tem item&quot;.</p>
+<h3 id="32-itempedido-o-que-o-item-recebe-e-o-que-começa-em-zero">3.2 <code>ItemPedido</code>: o que o item recebe e o que começa em zero</h3>
+<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">ItemPedido</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="nf">ItemPedido</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">sku</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">quantidade</span><span class="p">,</span><span class="w"> </span><span class="kt">decimal</span><span class="w"> </span><span class="n">precoUnitario</span><span class="p">,</span><span class="w"> </span><span class="kt">decimal</span><span class="w"> </span><span class="n">valorDesconto</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Sku</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sku</span><span class="p">;</span>
+<span class="w">        </span><span class="n">Quantidade</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">quantidade</span><span class="p">;</span>
+<span class="w">        </span><span class="n">PrecoUnitario</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">precoUnitario</span><span class="p">;</span>
+<span class="w">        </span><span class="n">ValorDesconto</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">valorDesconto</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Sku</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Quantidade</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">decimal</span><span class="w"> </span><span class="n">PrecoUnitario</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">decimal</span><span class="w"> </span><span class="n">ValorDesconto</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">QuantidadeReservada</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">QuantidadeFaturada</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">QuantidadeCancelada</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Vem de fora (construtor)</th>
+<th>Começa em zero (muda depois)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Sku</code>, <code>Quantidade</code>, <code>PrecoUnitario</code>, <code>ValorDesconto</code></td>
+<td><code>QuantidadeReservada</code>, <code>QuantidadeFaturada</code>, <code>QuantidadeCancelada</code></td>
+</tr>
+</tbody>
+</table>
+<p>Os campos que começam em zero só mudam por regras que ainda vão nascer (reserva, faturamento, cancelamento). Por isso não entram no construtor.</p>
+<h3 id="33-o-construtor-que-recusa-lista-vazia">3.3 O construtor que recusa lista vazia</h3>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="nf">Pedido</span><span class="p">(</span><span class="n">OrigemPedido</span><span class="w"> </span><span class="n">origem</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">criadoPor</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">clienteId</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">representanteId</span><span class="p">,</span>
+<span class="w">    </span><span class="n">IReadOnlyList</span><span class="o">&lt;</span><span class="n">ItemPedido</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itens</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">itens</span><span class="p">.</span><span class="n">Any</span><span class="p">())</span>
+<span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="nf">ArgumentException</span><span class="p">(</span><span class="s">"O pedido deve ter pelo menos um item."</span><span class="p">,</span><span class="w"> </span><span class="k">nameof</span><span class="p">(</span><span class="n">itens</span><span class="p">));</span>
+
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">agora</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DateTimeOffset</span><span class="p">.</span><span class="n">UtcNow</span><span class="p">;</span>
+<span class="w">    </span><span class="n">PedidoId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Guid</span><span class="p">.</span><span class="n">NewGuid</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// ... demais campos como na S22 ...</span>
+<span class="w">    </span><span class="n">Itens</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itens</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">public</span><span class="w"> </span><span class="n">IReadOnlyList</span><span class="o">&lt;</span><span class="n">ItemPedido</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Itens</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</code></pre>
+
+<p><strong>Palavra nova: <code>IReadOnlyList&lt;T&gt;</code>.</strong> É uma lista que só se pode ler. Quem recebe o <code>Pedido</code> consegue ver os itens, mas não consegue colocar nem tirar item pela propriedade. É o mesmo cuidado do <code>private set</code>, agora para listas.</p>
+<p>Este é o mesmo raciocínio do construtor da <code>FichaProduto</code> (S18): <strong>o construtor protege o domínio.</strong> A regra está no lugar onde o objeto nasce, então nenhum <code>Pedido</code> inválido existe.</p>
+<h3 id="34-os-dois-testes">3.4 Os dois testes</h3>
+<p>O teste da S22 e o teste novo viraram um só, porque os dois respondiam à mesma pergunta: &quot;como o pedido nasce?&quot;. Dois testes ficaram:</p>
+<table>
+<thead>
+<tr>
+<th>Teste</th>
+<th>Pergunta que responde</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Pedido_novo_nasce_com_situacao_digitado_e_com_itens</code></td>
+<td>O pedido novo guarda o que recebeu, gera o que é dele e traz os itens?</td>
+</tr>
+<tr>
+<td><code>Pedido_com_itens_vazio_deve_retornar_exception</code></td>
+<td>O pedido recusa uma lista vazia, dizendo qual parâmetro está errado?</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight"><code><span class="na">[Fact]</span>
+<span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">Pedido_com_itens_vazio_deve_retornar_exception</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Arrange — quais dados eu preciso para montar o pedido?</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">origem</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OrigemPedido</span><span class="p">.</span><span class="n">App</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">criadoPor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"Marcelo"</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">clienteId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">123</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">representanteId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">23</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Act + Assert — o que acontece se a lista de itens vier vazia?</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">itens</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">ItemPedido</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">excecao</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Assert</span><span class="p">.</span><span class="n">Throws</span><span class="o">&lt;</span><span class="n">ArgumentException</span><span class="o">&gt;</span><span class="p">(</span>
+<span class="w">        </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Pedido</span><span class="p">(</span><span class="n">origem</span><span class="p">,</span><span class="w"> </span><span class="n">criadoPor</span><span class="p">,</span><span class="w"> </span><span class="n">clienteId</span><span class="p">,</span><span class="w"> </span><span class="n">representanteId</span><span class="p">,</span><span class="w"> </span><span class="n">itens</span><span class="p">));</span>
+
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="s">"itens"</span><span class="p">,</span><span class="w"> </span><span class="n">excecao</span><span class="p">.</span><span class="n">ParamName</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+
+<p>Dois pontos para guardar:</p>
+<ul>
+<li><strong><code>Assert.Throws&lt;ArgumentException&gt;</code></strong> roda o código do lambda e exige que ele lance aquela exceção. Se nada for lançado, o teste falha.</li>
+<li><strong><code>ParamName</code></strong> diz qual parâmetro está errado. Confirmar <code>&quot;itens&quot;</code> garante que a exceção veio da regra certa, e não de outro <code>if</code>.</li>
+</ul>
+<p>No primeiro teste, a lista tem um item, e o Assert usa <strong><code>Assert.Single(pedido.Itens)</code></strong> (a lista tem exatamente um) e depois compara cada campo do item com as <strong>variáveis do Arrange</strong>, nunca com um literal repetido.</p>
+<h3 id="35-a-prova-do-vermelho-nos-dois-testes">3.5 A prova do vermelho, nos dois testes</h3>
+<table>
+<thead>
+<tr>
+<th>Teste</th>
+<th>Estrago mínimo</th>
+<th>O que o teste disse</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>no construtor, <code>Itens = [];</code></td>
+<td><code>Assert.Single() Failure: The collection was empty</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>comentar o <code>if</code> da recusa</td>
+<td><code>Assert.Throws() Failure: No exception was thrown</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Em cada caso o defeito estava no código, e o teste continuava certo.</strong> Se o estrago fizesse o teste passar, o teste não protegeria nada. Depois de ver o vermelho, o estrago foi desfeito e os dois testes voltaram ao verde (<code>total: 2; succeeded: 2</code>).</p>
+<h3 id="36-decisões-de-domínio-de-hoje">3.6 Decisões de domínio de hoje</h3>
+<table>
+<thead>
+<tr>
+<th>Tema</th>
+<th>Decisão</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pedido sem item</td>
+<td><strong>não existe</strong>: nasce com itens (muda a S22)</td>
+</tr>
+<tr>
+<td><code>PedidoId</code></td>
+<td>vira o <strong>número criado pelo banco</strong>; hoje continua <code>Guid</code> e a troca fica para a sessão da persistência. Nenhum teste depende disso</td>
+</tr>
+<tr>
+<td><code>ValorDesconto</code></td>
+<td>campo simples. A regra &quot;o desconto depende da forma de pagamento&quot; fica para quando o módulo dono dela existir</td>
+</tr>
+<tr>
+<td><code>ItemPedido</code></td>
+<td>sem <code>PedidoId</code> por enquanto; o vínculo vem com o banco</td>
+</tr>
+</tbody>
+</table>
+<h3 id="37-nomes-do-glossário">3.7 Nomes do glossário</h3>
+<p>No glossário, o termo é o <strong>nome da propriedade</strong> (<code>Origem</code>, <code>Situacao</code>), e não o nome do tipo (<code>OrigemPedido</code>, <code>SituacaoPedido</code>). Quem lê o negócio pensa em &quot;origem&quot; e &quot;situação&quot;. A regra do arquivo continua valendo: um termo entra quando aparece no código, com o nome usado no código.</p>
+<h3 id="38-git-do-dia-a-dia-o--m-e-o--u">3.8 Git do dia a dia: o <code>-m</code> e o <code>-u</code></h3>
+<table>
+<thead>
+<tr>
+<th>Comando</th>
+<th>Para que serve</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>git add .</code></td>
+<td>coloca no próximo commit tudo o que mudou (confira antes com <code>git status</code>)</td>
+</tr>
+<tr>
+<td><code>git commit -m &quot;mensagem&quot;</code></td>
+<td>cria o commit com a mensagem (<code>-m</code> = mensagem)</td>
+</tr>
+<tr>
+<td><code>git push -u origin &lt;branch&gt;</code></td>
+<td>envia a branch e liga a local à remota (o <code>-u</code> é <strong>só do <code>push</code></strong>)</td>
+</tr>
+<tr>
+<td><code>gh pr create --base main --head &lt;branch&gt; --title &quot;...&quot; --web</code></td>
+<td>abre o PR no navegador, com o template</td>
+</tr>
+<tr>
+<td><code>gh pr status</code></td>
+<td>mostra o estado do seu PR e dos checks</td>
+</tr>
+</tbody>
+</table>
+<p>O erro de hoje foi usar <code>-u</code> no <code>commit</code>. O <code>-u</code> não existe ali. Outro cuidado: sem <code>git add .</code> o commit sai vazio.</p>
+<h2 id="4-termos-da-sessão">4. Termos da sessão</h2>
+<table>
+<thead>
+<tr>
+<th>Termo</th>
+<th>Em uma linha</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>IReadOnlyList&lt;T&gt;</code></td>
+<td>lista que só se lê; não deixa trocar os itens por fora</td>
+</tr>
+<tr>
+<td><code>Assert.Throws&lt;T&gt;</code></td>
+<td>exige que o código lance a exceção <code>T</code></td>
+</tr>
+<tr>
+<td><code>ParamName</code></td>
+<td>nome do parâmetro que causou a <code>ArgumentException</code></td>
+</tr>
+<tr>
+<td><code>Assert.Single</code></td>
+<td>a coleção tem exatamente um elemento</td>
+</tr>
+<tr>
+<td>Fusão de testes</td>
+<td>juntar dois testes que respondem à mesma pergunta</td>
+</tr>
+<tr>
+<td><code>Digitado</code></td>
+<td>&quot;ainda não conferido&quot;</td>
+</tr>
+<tr>
+<td>Estrago mínimo</td>
+<td>a menor mudança no código que deve deixar o teste vermelho</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-dúvidas-e-respostas">5. Dúvidas e respostas</h2>
+<p><strong>O pedido sem item não podia existir já na S22?</strong> Podia, e foi uma escolha da S22. Hoje você mostrou que, para o negócio, não faz sentido. Mudar agora é barato: ainda não há banco.</p>
+<p><strong>Por que não validar a lista vazia no <code>Request</code> da API?</strong> Ainda não existe endpoint de pedido. A regra mora no construtor, que protege o domínio de qualquer entrada.</p>
+<p><strong>Por que o teste de domínio não usa o banco?</strong> Porque a regra não depende do banco. O projeto <code>Norte.Pedidos.Tests</code> só tem o xUnit.</p>
+<h2 id="6-divergências">6. Divergências</h2>
+<table>
+<thead>
+<tr>
+<th>Tema</th>
+<th>Posição</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Texto do campo &quot;O que fica pior&quot; no template de PR</td>
+<td>o mentor entendia &quot;custo da decisão&quot;; você entendia de outro jeito</td>
+<td><strong>em aberto:</strong> reescrever os títulos do template com perguntas mais claras, fora de PR</td>
+</tr>
+<tr>
+<td>Detalhe da descrição do PR</td>
+<td>o mentor pediu a prova de cada teste; você achou que o PR já descrevia</td>
+<td><strong>decisão do aluno:</strong> ficou o que você escreveu, com a correção de &quot;vermelho&quot; para &quot;verde&quot;</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-avaliação">7. Avaliação</h2>
+<p><strong>Fez bem:</strong> mudou a regra do domínio com argumento de negócio; escreveu os dois testes e os arquivos; viu os dois vermelhos pelo estrago mínimo; usou as variáveis do Arrange no Assert; escreveu os comandos Git e corrigiu o <code>-m</code>, a mensagem e o título do PR.</p>
+<p><strong>Travou:</strong> repetiu o <code>itens[0]</code> no Assert antes de usar as variáveis do Arrange; confundiu <code>-u</code> e <code>-m</code> quatro vezes; o texto do PR saiu com erros de digitação e com o teste 2 descrito como &quot;vermelho&quot;.</p>
+<p><strong>O mentor conduziu mal:</strong> gastou cerca de 30 minutos no campo &quot;O que fica pior&quot; do template (devia ter alinhado o significado antes); errou as marcas de tempo (5h30, 5h34, 5h50 quando eram 5h57); pediu um nível de detalhe de PR que ninguém escreve no fim de uma tarefa; anunciou o fechamento sem o &quot;Pode fechar&quot;.</p>
+<h2 id="8-pontos-a-melhorar">8. Pontos a melhorar</h2>
+<ul>
+<li><strong>Aluno:</strong> no Assert, comparar com a variável do Arrange e não com o que se quer provar; reler a descrição do PR uma vez antes de enviar (digitação).</li>
+<li><strong>Mentor:</strong> alinhar o significado de um campo antes de usá-lo; calcular o tempo só pelas marcas escritas; pedir só o detalhe que ajuda quem revisa o PR.</li>
+</ul>
+<h2 id="9-teste-se">9. Teste-se</h2>
+<ol>
+<li>Por que o <code>Pedido</code> agora nasce com itens, e o que continua certo no nome <code>Digitado</code>?</li>
+<li>O que o construtor faz quando recebe uma lista de itens vazia?</li>
+<li>Para que serve o <code>ParamName</code> no segundo teste?</li>
+<li>O estrago <code>Itens = [];</code> deixou o teste 1 vermelho com &quot;The collection was empty&quot;. O defeito estava no teste ou no código?</li>
+<li>Por que <code>QuantidadeReservada</code>, <code>QuantidadeFaturada</code> e <code>QuantidadeCancelada</code> não entram no construtor do <code>ItemPedido</code>?</li>
+<li>O que acontece com um <code>git commit</code> sem o <code>git add .</code> antes?</li>
+<li>Em qual comando o <code>-u</code> existe, e para que serve?</li>
+<li>Por que o glossário usa <code>Origem</code> e <code>Situacao</code>, e não <code>OrigemPedido</code> e <code>SituacaoPedido</code>?</li>
+</ol>
+<h2 id="10-preparação-para-o-próximo-chat-s24">10. Preparação para o próximo chat (S24)</h2>
+<ol>
+<li>Apagar a branch local: <code>git branch -d test/pedido-criar-pedido-com-itens</code>.</li>
+<li>Escolher um objetivo só: <strong>validação dos campos obrigatórios do construtor</strong> (um teste por campo) ou <strong>aprovação do pedido</strong> (regra &quot;só aprova com item&quot;).</li>
+<li>Em aberto: <code>PedidoId</code> como número do banco (na persistência), <code>ValorDesconto</code> e a forma de pagamento, número curto do pedido, dono do cliente, comunicação <code>Estoque</code> → <code>Pedidos</code>.</li>
+<li>Reescrever os títulos do template de PR (decisão a tomar fora de um PR).</li>
+</ol>
+<hr />
+<h2 id="respostas">Respostas</h2><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>Porque pedido sem item não faz sentido no negócio. O nome <code>Digitado</code> continua certo porque quer dizer &quot;ainda não foi conferido&quot;, e não &quot;ainda não tem item&quot;.</li>
+<li>Lança <code>ArgumentException</code> com a mensagem &quot;O pedido deve ter pelo menos um item.&quot;, apontando o parâmetro <code>itens</code>.</li>
+<li>Mostra qual parâmetro está errado. Confirmar <code>&quot;itens&quot;</code> garante que a exceção veio dessa regra, e não de outra.</li>
+<li>No código. O teste descreve o contrato (o pedido traz o item); o estrago mostrou que, sem a atribuição de <code>Itens</code>, a coleção fica vazia e o teste avisa.</li>
+<li>Porque eles começam em zero e só mudam por regras futuras (reserva, faturamento, cancelamento). Não vêm de fora na criação do item.</li>
+<li>O commit sai vazio: o Git avisa <code>no changes added to commit</code>, porque nada foi colocado na área de preparo.</li>
+<li>No <code>git push -u origin &lt;branch&gt;</code>: liga a branch local à remota. O <code>git commit</code> usa <code>-m</code> para a mensagem.</li>
+<li>Porque o glossário usa o nome que o negócio e o código usam para o dado (a propriedade). Quem procura &quot;origem&quot; ou &quot;situação&quot; acha o termo direto.</li>
+</ol>
+</details>
+</article>
+<footer class="rodape">Atualizado em 19/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>
