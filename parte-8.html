@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parte 8 — O Pedidos recusa dado errado, junta itens e vai para o banco · Norte · Estudo</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/codigo.css">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+</head>
+<body data-chave="parte-8.html" data-prefixo="">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="index.html">Início</a><a href="guia.html" class=ativo>Guia</a><a href="estudos.html">Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#guia-dotnet--parte-8-o-pedidos-recusa-dado-errado-junta-itens-e-vai-para-o-banco" data-id="guia-dotnet--parte-8-o-pedidos-recusa-dado-errado-junta-itens-e-vai-para-o-banco">GUIA-DOTNET — Parte 8: O Pedidos recusa dado errado, junta itens e v…</a><a class="n2" href="#81-validar-no-construtor-com-os-métodos-prontos-do-net" data-id="81-validar-no-construtor-com-os-métodos-prontos-do-net">8.1 Validar no construtor com os métodos prontos do .NET</a><a class="n2" href="#82-um-teste-de-recusa-por-campo-theory-tipo-exato-e-paramname" data-id="82-um-teste-de-recusa-por-campo-theory-tipo-exato-e-paramname">8.2 Um teste de recusa por campo: Theory, tipo exato e ParamName</a><a class="n2" href="#83-itens-com-o-mesmo-sku-viram-um-item-a-regra-mora-no-pedido" data-id="83-itens-com-o-mesmo-sku-viram-um-item-a-regra-mora-no-pedido">8.3 Itens com o mesmo SKU viram um item: a regra mora no Pedido</a><a class="n2" href="#84-o-identificador-vem-do-banco-a-shadow-property-e-a-chave-composta" data-id="84-o-identificador-vem-do-banco-a-shadow-property-e-a-chave-composta">8.4 O identificador vem do banco, a shadow property e a chave composta</a><a class="n2" href="#85-o-campo-de-apoio-o-construtor-do-ef-e-a-migration-do-módulo" data-id="85-o-campo-de-apoio-o-construtor-do-ef-e-a-migration-do-módulo">8.5 O campo de apoio, o construtor do EF e a migration do módulo</a><a class="n2" href="#86-diagnóstico-os-problemas-da-s24-e-como-achar-a-causa" data-id="86-diagnóstico-os-problemas-da-s24-e-como-achar-a-causa">8.6 Diagnóstico: os problemas da S24 e como achar a causa</a><a class="n2" href="#juntando-tudo-parte-8" data-id="juntando-tudo-parte-8">Juntando tudo (Parte 8)</a><a class="n2" href="#teste-se-sem-consultar-uma-pergunta-por-vez" data-id="teste-se-sem-consultar-uma-pergunta-por-vez">Teste-se (sem consultar, uma pergunta por vez)</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a></aside>
+<main class="conteudo"><article>
+<h1 id="guia-dotnet--parte-8-o-pedidos-recusa-dado-errado-junta-itens-e-vai-para-o-banco">GUIA-DOTNET — Parte 8: O <code>Pedidos</code> recusa dado errado, junta itens e vai para o banco</h1>
+<p><strong>Sessão:</strong> S24 (20/10/2026) · <strong>Versão:</strong> 1.0 · <strong>Entradas:</strong> 8.1 a 8.6 (8.6 = diagnóstico) + juntando tudo + teste-se</p>
+<p>Até a S23 o <code>Pedido</code> nascia com itens e recusava a lista vazia, mas aceitava qualquer valor nos outros campos, nunca
+juntava itens repetidos, gerava o próprio identificador (<code>Guid</code>) e não existia no banco. Esta parte explica o que entrou
+para o módulo <code>Pedidos</code> ficar pronto para guardar dados: cada campo do construtor validado, o teste que prova cada
+recusa, a regra do SKU repetido, o identificador criado pelo banco e a configuração do EF Core para um pedido que tem
+itens. Todo exemplo vem do código do Norte.</p>
+<p><strong>Onde estamos no mapa dos níveis</strong> (<a href="parte-0-1.html#parte-0--o-mapa-dos-n%C3%ADveis">Parte 0</a>): o trabalho foi em duas
+camadas do módulo <code>Pedidos</code>, o <strong>domínio</strong> (regras no construtor e junção por SKU) e a <strong>infraestrutura</strong> (EF Core,
+configuração das tabelas, migration). Ainda <strong>não existe endpoint de criação de pedido</strong>.</p>
+<p><strong>Ordem em que as peças foram montadas:</strong></p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Peça</th>
+<th>Entrada</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>os construtores do <code>Pedido</code> e do <code>ItemPedido</code> recusam valor errado</td>
+<td><a href="#81-validar-no-construtor-com-os-métodos-prontos-do-net">8.1</a></td>
+</tr>
+<tr>
+<td>2</td>
+<td>um teste de recusa por campo</td>
+<td><a href="#82-um-teste-de-recusa-por-campo-theory-tipo-exato-e-paramname">8.2</a></td>
+</tr>
+<tr>
+<td>3</td>
+<td>a regra do SKU repetido</td>
+<td><a href="#83-itens-com-o-mesmo-sku-viram-um-item-a-regra-mora-no-pedido">8.3</a></td>
+</tr>
+<tr>
+<td>4</td>
+<td>o <code>PedidoId</code> do banco, a shadow property e a chave composta</td>
+<td><a href="#84-o-identificador-vem-do-banco-a-shadow-property-e-a-chave-composta">8.4</a></td>
+</tr>
+<tr>
+<td>5</td>
+<td>o campo de apoio, o construtor do EF e a migration</td>
+<td><a href="#85-o-campo-de-apoio-o-construtor-do-ef-e-a-migration-do-módulo">8.5</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><a id="g8-1"></a></p>
+<h2 id="81-validar-no-construtor-com-os-métodos-prontos-do-net">8.1 Validar no construtor com os métodos prontos do .NET<button class="estudada" data-id="81-validar-no-construtor-com-os-métodos-prontos-do-net" type="button">Marcar como estudada</button></h2>
+<p><strong>De → para</strong></p>
+<table>
+<thead>
+<tr>
+<th>Como aparece nas vagas</th>
+<th>Nome no laboratório</th>
+<th>O mundo do aluno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>guard clauses</em>, <em>invariants</em>, <em>fail fast</em>, <em>defensive programming</em></td>
+<td><code>ThrowIfNullOrWhiteSpace</code>, <code>ThrowIfNegativeOrZero</code>, <code>ThrowIfNegative</code>, <code>Enum.IsDefined</code></td>
+<td><code>if (x == null) throw ...</code> escrito à mão em cada método, ou validação só no controller</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Em uma frase:</strong> o construtor confere cada dado que recebe e lança exceção se ele não serve, então nenhum <code>Pedido</code> nem <code>ItemPedido</code> inválido chega a existir.</p>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Regra</th>
+<th>Código</th>
+<th>Exceção</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Pedido.origem</code></td>
+<td>valor do enum</td>
+<td><code>Enum.IsDefined(origem)</code></td>
+<td><code>ArgumentOutOfRangeException</code></td>
+</tr>
+<tr>
+<td><code>Pedido.criadoPor</code></td>
+<td>não nulo, não vazio, não só espaços</td>
+<td><code>ArgumentException.ThrowIfNullOrWhiteSpace</code></td>
+<td><code>null</code> → <code>ArgumentNullException</code>; <code>&quot;&quot;</code> ou <code>&quot;   &quot;</code> → <code>ArgumentException</code></td>
+</tr>
+<tr>
+<td><code>Pedido.clienteId</code>, <code>representanteId</code></td>
+<td>maiores que zero</td>
+<td><code>ArgumentOutOfRangeException.ThrowIfNegativeOrZero</code></td>
+<td><code>ArgumentOutOfRangeException</code></td>
+</tr>
+<tr>
+<td><code>Pedido.itens</code></td>
+<td>pelo menos um</td>
+<td><code>if (!itens.Any()) throw</code> (S23)</td>
+<td><code>ArgumentException</code></td>
+</tr>
+<tr>
+<td><code>ItemPedido.sku</code></td>
+<td>não nulo, não vazio, não só espaços</td>
+<td><code>ThrowIfNullOrWhiteSpace</code></td>
+<td>idem acima</td>
+</tr>
+<tr>
+<td><code>ItemPedido.quantidade</code>, <code>precoUnitario</code></td>
+<td>maiores que zero</td>
+<td><code>ThrowIfNegativeOrZero</code></td>
+<td><code>ArgumentOutOfRangeException</code></td>
+</tr>
+<tr>
+<td><code>ItemPedido.valorDesconto</code></td>
+<td>não negativo e <strong>menor</strong> que preço × quantidade</td>
+<td><code>ThrowIfNegative</code> + dois <code>if</code></td>
+<td><code>ArgumentOutOfRangeException</code></td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="nf">ItemPedido</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">sku</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">quantidade</span><span class="p">,</span><span class="w"> </span><span class="kt">decimal</span><span class="w"> </span><span class="n">precoUnitario</span><span class="p">,</span><span class="w"> </span><span class="kt">decimal</span><span class="w"> </span><span class="n">valorDesconto</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">ArgumentException</span><span class="p">.</span><span class="n">ThrowIfNullOrWhiteSpace</span><span class="p">(</span><span class="n">sku</span><span class="p">,</span><span class="w"> </span><span class="k">nameof</span><span class="p">(</span><span class="n">sku</span><span class="p">));</span>
+<span class="w">    </span><span class="n">ArgumentOutOfRangeException</span><span class="p">.</span><span class="n">ThrowIfNegativeOrZero</span><span class="p">(</span><span class="n">quantidade</span><span class="p">,</span><span class="w"> </span><span class="k">nameof</span><span class="p">(</span><span class="n">quantidade</span><span class="p">));</span>
+<span class="w">    </span><span class="n">ArgumentOutOfRangeException</span><span class="p">.</span><span class="n">ThrowIfNegativeOrZero</span><span class="p">(</span><span class="n">precoUnitario</span><span class="p">,</span><span class="w"> </span><span class="k">nameof</span><span class="p">(</span><span class="n">precoUnitario</span><span class="p">));</span>
+<span class="w">    </span><span class="n">ArgumentOutOfRangeException</span><span class="p">.</span><span class="n">ThrowIfNegative</span><span class="p">(</span><span class="n">valorDesconto</span><span class="p">,</span><span class="w"> </span><span class="k">nameof</span><span class="p">(</span><span class="n">valorDesconto</span><span class="p">));</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">valorDesconto</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">precoUnitario</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">quantidade</span><span class="p">)</span>
+<span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="nf">ArgumentOutOfRangeException</span><span class="p">(</span><span class="k">nameof</span><span class="p">(</span><span class="n">valorDesconto</span><span class="p">),</span><span class="w"> </span><span class="n">valorDesconto</span><span class="p">,</span>
+<span class="w">            </span><span class="s">"O valor do desconto não pode ser igual ao valor total do item."</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">valorDesconto</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">precoUnitario</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">quantidade</span><span class="p">)</span>
+<span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="nf">ArgumentOutOfRangeException</span><span class="p">(</span><span class="k">nameof</span><span class="p">(</span><span class="n">valorDesconto</span><span class="p">),</span><span class="w"> </span><span class="n">valorDesconto</span><span class="p">,</span>
+<span class="w">            </span><span class="s">"O valor do desconto não pode ser maior que o valor total do item."</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">Sku</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sku</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// ... demais atribuições</span>
+<span class="p">}</span>
+</code></pre>
+
+<p><strong>A ordem importa.</strong> O construtor para na <strong>primeira</strong> validação que falha; as atribuições vêm só depois de todas. Por isso o <code>ParamName</code> da exceção diz qual linha lançou.</p>
+<p><strong>Por que o desconto é &quot;estritamente menor&quot;:</strong> o item de R$ 100,00 (preço × quantidade) com desconto de R$ 100,00 sairia de graça. A regra é do negócio e foi dita pelo aluno; se um dia item gratuito for aceito, a regra e o teste mudam juntos.</p>
+<p><strong>Nullable reference types não impedem <code>null</code> em tempo de execução.</strong> <code>string criadoPor</code> (sem <code>?</code>) só avisa o compilador. Quem chama pode mandar <code>null</code> (outro projeto, reflexão, JSON). Por isso o domínio valida mesmo assim.</p>
+<table>
+<thead>
+<tr>
+<th>Como era (S23)</th>
+<th>Como é agora (S24)</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>só a lista vazia era recusada</td>
+<td>todo campo do construtor é validado</td>
+<td>o <code>Pedido</code> não nasce com cliente 0 nem <code>criadoPor</code> vazio</td>
+</tr>
+<tr>
+<td><code>ItemPedido</code> aceitava qualquer valor</td>
+<td>o item recusa SKU vazio, quantidade 0, preço 0 e desconto absurdo</td>
+<td>idem</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Ganho</th>
+<th><strong>Preço</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Validar no construtor</td>
+<td>vale para toda porta de entrada (API, importação, teste, outro módulo)</td>
+<td>todo código que cria o objeto precisa mandar dado válido; o teste de cada regra</td>
+</tr>
+<tr>
+<td>Métodos prontos (<code>ThrowIf...</code>)</td>
+<td>menos código e mensagem padrão</td>
+<td>a mensagem é em inglês e genérica; o tipo da exceção depende do método</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Na entrevista:</strong> &quot;Onde você valida o dado: no controller ou no domínio?&quot; — nos dois, com papéis diferentes (<a href="parte-6.html#612-o-construtor-recusa-valor-vazio-argumentexceptionthrowifnullorwhitespace">6.12</a>): a validação da entrada protege a API; o construtor protege o domínio de qualquer entrada.</p>
+<p><strong>Erros comuns:</strong> achar que <code>string</code> sem <code>?</code> garante que não vem <code>null</code>; esperar <code>ArgumentException</code> para <code>null</code> (vem <code>ArgumentNullException</code>); atribuir os campos antes de terminar as validações.</p>
+<p><strong>🧠 de cabeça:</strong> <code>null</code> → <code>ArgumentNullException</code>; vazio ou espaços → <code>ArgumentException</code>; número fora da regra → <code>ArgumentOutOfRangeException</code>. <strong>🔎 onde encontrar:</strong> <code>ArgumentException.ThrowIf...</code> e <code>ArgumentOutOfRangeException.ThrowIf...</code>.</p>
+<p><strong>Onde foi visto:</strong> S24 (PRs #27 e #28). <strong>Status:</strong> executado e provado por teste; os testes foram escritos pelo aluno, com apoio pequeno na diferença <code>null</code> × vazio.</p>
+<hr />
+<p><a id="g8-2"></a></p>
+<h2 id="82-um-teste-de-recusa-por-campo-theory-tipo-exato-e-paramname">8.2 Um teste de recusa por campo: <code>Theory</code>, tipo exato e <code>ParamName</code><button class="estudada" data-id="82-um-teste-de-recusa-por-campo-theory-tipo-exato-e-paramname" type="button">Marcar como estudada</button></h2>
+<p><strong>De → para</strong></p>
+<table>
+<thead>
+<tr>
+<th>Como aparece nas vagas</th>
+<th>Nome no laboratório</th>
+<th>O mundo do aluno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>parameterized tests</em>, <code>Theory</code>, <code>InlineData</code>, <em>negative tests</em></td>
+<td><code>Pedido_valida_criadoPor_vazio_ou_espacao_em_branco_deve_retornar_exception</code></td>
+<td>vários <code>[Test]</code> copiados com um valor diferente cada</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Em uma frase:</strong> cada regra do construtor tem um teste que manda <strong>só aquele campo ruim</strong>, com os outros válidos, e confere o tipo da exceção e o <code>ParamName</code>.</p>
+<pre class="highlight"><code><span class="na">[Theory]</span>
+<span class="na">[InlineData("")]</span>
+<span class="na">[InlineData("   ")]</span>
+<span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">Pedido_valida_criadoPor_vazio_ou_espacao_em_branco_deve_retornar_exception</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">criadoPor</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Arrange — dados válidos, menos o criadoPor</span>
+<span class="w">    </span><span class="c1">// Act + Assert — o que acontece com texto vazio ou só espaços?</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">excecao</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Assert</span><span class="p">.</span><span class="n">Throws</span><span class="o">&lt;</span><span class="n">ArgumentException</span><span class="o">&gt;</span><span class="p">(</span>
+<span class="w">        </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Pedido</span><span class="p">(</span><span class="n">OrigemPedido</span><span class="p">.</span><span class="n">App</span><span class="p">,</span><span class="w"> </span><span class="n">criadoPor</span><span class="p">,</span><span class="w"> </span><span class="mi">123</span><span class="p">,</span><span class="w"> </span><span class="mi">23</span><span class="p">,</span><span class="w"> </span><span class="n">itens</span><span class="p">));</span>
+
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="s">"criadoPor"</span><span class="p">,</span><span class="w"> </span><span class="n">excecao</span><span class="p">.</span><span class="n">ParamName</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Escolha</th>
+<th>Por quê</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Theory</code> + <code>InlineData</code></td>
+<td>o mesmo teste roda uma vez por valor ruim; cada valor aparece como um caso na saída</td>
+</tr>
+<tr>
+<td><code>Assert.Throws&lt;T&gt;</code> <strong>exato</strong></td>
+<td><code>Throws&lt;ArgumentException&gt;</code> <strong>não aceita</strong> <code>ArgumentNullException</code>, que é um tipo derivado; por isso <code>null</code> tem teste próprio</td>
+</tr>
+<tr>
+<td><code>ParamName</code></td>
+<td>prova que a exceção veio da linha certa, e não de outra validação</td>
+</tr>
+<tr>
+<td><code>null!</code></td>
+<td>manda <code>null</code> de verdade com um parâmetro <code>string</code> não nulo: o <code>!</code> cala o aviso do compilador</td>
+</tr>
+<tr>
+<td>um campo ruim por vez</td>
+<td>os outros ficam válidos para só uma regra poder falhar</td>
+</tr>
+<tr>
+<td>valores esperados à mão</td>
+<td>o teste não calcula o esperado com o código que testa</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Prova do vermelho</strong> (a mesma da <a href="parte-5.html#52-mover-um-commit-para-outra-branch-e-as-três-cópias-de-uma-branch">5.2</a> e da <a href="parte-7.html#75-alterar-rastreamento-método-de-domínio-e-put">7.5</a>): comente a validação, rode o teste e veja vermelho; restaure. Se o teste continuar verde sem a validação, ele não protege nada.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Ganho</th>
+<th><strong>Preço</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Um teste por campo</td>
+<td>a falha aponta o campo</td>
+<td>muitos testes pequenos (24 casos no <code>Pedidos</code> ao fim da S24)</td>
+</tr>
+<tr>
+<td><code>Theory</code></td>
+<td>menos repetição</td>
+<td>o nome do teste fala de vários valores; um caso a mais é uma linha</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Na entrevista:</strong> &quot;O que <code>Assert.Throws&lt;T&gt;</code> faz com um tipo derivado?&quot; — não aceita; é exato. &quot;Para que serve <code>ParamName</code>?&quot;</p>
+<p><strong>Erros comuns:</strong> esperar <code>ArgumentException</code> para <code>null</code>; testar vários campos ruins num teste só; esquecer a prova do vermelho.</p>
+<p><strong>🧠 de cabeça:</strong> um campo ruim, tipo exato, <code>ParamName</code>. <strong>🔎 onde encontrar:</strong> <code>Assert.Throws</code>, <code>InlineData</code>.</p>
+<p><strong>Onde foi visto:</strong> S24. <strong>Status:</strong> executado e provado (24 casos verdes no <code>Pedidos</code>); a prova do vermelho foi feita nas validações.</p>
+<hr />
+<p><a id="g8-3"></a></p>
+<h2 id="83-itens-com-o-mesmo-sku-viram-um-item-a-regra-mora-no-pedido">8.3 Itens com o mesmo SKU viram um item: a regra mora no <code>Pedido</code><button class="estudada" data-id="83-itens-com-o-mesmo-sku-viram-um-item-a-regra-mora-no-pedido" type="button">Marcar como estudada</button></h2>
+<p><strong>De → para</strong></p>
+<table>
+<thead>
+<tr>
+<th>Como aparece nas vagas</th>
+<th>Nome no laboratório</th>
+<th>O mundo do aluno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>aggregate invariant</em>, <em>domain rule</em>, <em>business rule</em></td>
+<td><code>JuntarItensComMesmoSku</code></td>
+<td><code>foreach</code> no endpoint ou no service, ou <code>GroupBy</code> na tela</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Em uma frase:</strong> se o mesmo SKU aparecer duas vezes, o <code>Pedido</code> soma a quantidade, mantém o preço e fica com o <strong>último</strong> desconto.</p>
+<table>
+<thead>
+<tr>
+<th>Situação</th>
+<th>Resultado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SKU novo</td>
+<td>entra como item novo</td>
+</tr>
+<tr>
+<td>SKU que já existe</td>
+<td>soma a quantidade; preço igual; o desconto do último item vale</td>
+</tr>
+<tr>
+<td><code>ABC</code> e <code>abc</code></td>
+<td>o mesmo SKU (a comparação ignora maiúscula e minúscula)</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight"><code><span class="k">private</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">ItemPedido</span><span class="o">&gt;</span><span class="w"> </span><span class="n">JuntarItensComMesmoSku</span><span class="p">(</span><span class="n">IReadOnlyList</span><span class="o">&lt;</span><span class="n">ItemPedido</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itens</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">juntados</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">ItemPedido</span><span class="o">&gt;</span><span class="p">();</span>
+
+<span class="w">    </span><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="n">item</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">itens</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">indice</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">juntados</span><span class="p">.</span><span class="n">FindIndex</span><span class="p">(</span><span class="n">j</span><span class="w"> </span><span class="o">=&gt;</span>
+<span class="w">            </span><span class="kt">string</span><span class="p">.</span><span class="n">Equals</span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">Sku</span><span class="p">,</span><span class="w"> </span><span class="n">item</span><span class="p">.</span><span class="n">Sku</span><span class="p">,</span><span class="w"> </span><span class="n">StringComparison</span><span class="p">.</span><span class="n">OrdinalIgnoreCase</span><span class="p">));</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">indice</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">            </span><span class="n">juntados</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="n">item</span><span class="p">);</span>
+<span class="w">        </span><span class="k">else</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="kt">var</span><span class="w"> </span><span class="n">existente</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">juntados</span><span class="p">[</span><span class="n">indice</span><span class="p">];</span>
+<span class="w">            </span><span class="n">juntados</span><span class="p">[</span><span class="n">indice</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ItemPedido</span><span class="p">(</span><span class="n">item</span><span class="p">.</span><span class="n">Sku</span><span class="p">,</span>
+<span class="w">                </span><span class="n">existente</span><span class="p">.</span><span class="n">Quantidade</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">item</span><span class="p">.</span><span class="n">Quantidade</span><span class="p">,</span><span class="w"> </span><span class="n">item</span><span class="p">.</span><span class="n">PrecoUnitario</span><span class="p">,</span><span class="w"> </span><span class="n">item</span><span class="p">.</span><span class="n">ValorDesconto</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">juntados</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+
+<p>O item juntado é criado com <code>new ItemPedido(...)</code>: <strong>o construtor valida de novo.</strong> A soma das quantidades continua passando pelas regras do item (por exemplo, o desconto continua menor que preço × quantidade).</p>
+<p><strong>Por que no <code>Pedido</code> e não no endpoint?</strong> É regra do negócio (&quot;um SKU aparece uma vez por pedido&quot;). Se ficasse só no endpoint, outra porta de entrada criaria pedido com SKU repetido. No Norte a classe <code>Endpoint</code> de cada funcionalidade guarda a lógica do caso de uso; a regra que protege o <code>Pedido</code> fica com o <code>Pedido</code>. O banco reforça: a chave do item é pedido + SKU (<a href="#84-o-identificador-vem-do-banco-a-shadow-property-e-a-chave-composta">8.4</a>).</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Ganho</th>
+<th><strong>Preço</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Regra no domínio</td>
+<td>vale para qualquer origem do pedido (app, vendedor, importação)</td>
+<td>o construtor do <code>Pedido</code> fica mais comprido</td>
+</tr>
+<tr>
+<td>&quot;O último desconto vale&quot;</td>
+<td>resolve sem esperar o cálculo real</td>
+<td>é uma <strong>simplificação</strong>: perde o desconto do primeiro item; reabrir quando existir o cálculo (forma de pagamento)</td>
+</tr>
+<tr>
+<td>Comparar ignorando caixa</td>
+<td><code>ABC</code> e <code>abc</code> não viram dois itens</td>
+<td>a chave do <code>Catalogo</code> diferencia maiúscula e minúscula; a normalização do SKU fica <strong>em aberto</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Na entrevista:</strong> &quot;Onde fica uma regra que envolve a lista de itens de um pedido?&quot; — no agregado (o <code>Pedido</code>), porque só ele vê todos os itens.</p>
+<p><strong>Erros comuns:</strong> somar a quantidade e esquecer de validar o item novo; comparar SKU com <code>==</code> (diferencia caixa); pôr a regra só no endpoint.</p>
+<p><strong>🧠 de cabeça:</strong> mesmo SKU = soma a quantidade; o preço é o mesmo; o último desconto vale. <strong>🔎 onde encontrar:</strong> <code>FindIndex</code>, <code>StringComparison.OrdinalIgnoreCase</code>.</p>
+<p><strong>Onde foi visto:</strong> S24 (PR #29). <strong>Status:</strong> executado e provado por 3 testes (soma e preço; último desconto; <code>ABC</code> e <code>abc</code>); a regra e a simplificação vieram do aluno.</p>
+<hr />
+<p><a id="g8-4"></a></p>
+<h2 id="84-o-identificador-vem-do-banco-a-shadow-property-e-a-chave-composta">8.4 O identificador vem do banco, a shadow property e a chave composta<button class="estudada" data-id="84-o-identificador-vem-do-banco-a-shadow-property-e-a-chave-composta" type="button">Marcar como estudada</button></h2>
+<p><strong>De → para</strong></p>
+<table>
+<thead>
+<tr>
+<th>Como aparece nas vagas</th>
+<th>Nome no laboratório</th>
+<th>O mundo do aluno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>identity column</em>, <em>shadow property</em>, <em>composite key</em>, <em>foreign key</em></td>
+<td><code>UseIdentityByDefaultColumn</code>, <code>Property&lt;int&gt;(&quot;PedidoId&quot;)</code>, <code>HasKey(&quot;PedidoId&quot;, nameof(ItemPedido.Sku))</code></td>
+<td><code>IDENTITY(1,1)</code> no script, <code>HasKey(x =&gt; new { x.A, x.B })</code>, <code>PedidoId</code> como propriedade do item</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Em uma frase:</strong> o <code>PedidoId</code> é um <code>int</code> que o <strong>banco</strong> cria, e o item se liga ao pedido por uma coluna que existe só no modelo do EF, não na classe.</p>
+<p><strong>a) <code>PedidoId</code> como <code>int</code> gerado pelo banco</strong></p>
+<table>
+<thead>
+<tr>
+<th>Como era (S23)</th>
+<th>Como é agora (S24)</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PedidoId = Guid.NewGuid()</code> no construtor</td>
+<td><code>public int PedidoId { get; }</code> sem atribuição</td>
+<td>o domínio não gera o identificador; o banco cria (identity)</td>
+</tr>
+<tr>
+<td>teste conferia <code>Assert.NotEqual(Guid.Empty, ...)</code></td>
+<td>teste removido</td>
+<td>antes do <code>INSERT</code> o id vale 0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Preço:</strong> um pedido novo só tem número depois de salvo. <strong>Não provado:</strong> nenhum teste vê o banco gerando o número; só a migration mostra <code>IdentityByDefaultColumn</code>.</p>
+<p><strong>b) Shadow property.</strong> O <code>ItemPedido</code> não tem <code>PedidoId</code> na classe, mas a tabela precisa da coluna:</p>
+<pre class="highlight"><code><span class="n">builder</span><span class="p">.</span><span class="n">Property</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"PedidoId"</span><span class="p">).</span><span class="n">HasColumnName</span><span class="p">(</span><span class="s">"pedido_id"</span><span class="p">);</span>
+</code></pre>
+
+<p><strong>c) Chave composta por nomes.</strong> O item não tem id próprio: é identificado por <strong>pedido + SKU</strong>. Como <code>PedidoId</code> é shadow, a chave é montada com nomes de propriedade:</p>
+<pre class="highlight"><code><span class="n">builder</span><span class="p">.</span><span class="n">HasKey</span><span class="p">(</span><span class="s">"PedidoId"</span><span class="p">,</span><span class="w"> </span><span class="k">nameof</span><span class="p">(</span><span class="n">ItemPedido</span><span class="p">.</span><span class="n">Sku</span><span class="p">));</span>
+</code></pre>
+
+<p><strong>d) A ligação entre as tabelas:</strong></p>
+<pre class="highlight"><code><span class="n">builder</span><span class="p">.</span><span class="n">HasOne</span><span class="o">&lt;</span><span class="n">Pedido</span><span class="o">&gt;</span><span class="p">()</span>
+<span class="w">    </span><span class="p">.</span><span class="n">WithMany</span><span class="p">(</span><span class="n">p</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">Itens</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">HasForeignKey</span><span class="p">(</span><span class="s">"PedidoId"</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">OnDelete</span><span class="p">(</span><span class="n">DeleteBehavior</span><span class="p">.</span><span class="n">Cascade</span><span class="p">);</span>
+</code></pre>
+
+<p><code>HasOne&lt;Pedido&gt;()</code> sem navegação de volta, porque o item não conhece o pedido. <code>Cascade</code> apaga os itens junto com o pedido. A chave composta também garante, no banco, que o mesmo SKU não aparece duas vezes no mesmo pedido (de acordo com <a href="#83-itens-com-o-mesmo-sku-viram-um-item-a-regra-mora-no-pedido">8.3</a>).</p>
+<table>
+<thead>
+<tr>
+<th>Tipo da coluna</th>
+<th>Resultado na migration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pedido_id</code> em <code>pedidos</code></td>
+<td><code>integer</code>, identity por padrão, chave primária</td>
+</tr>
+<tr>
+<td><code>sku</code> em <code>itens_pedido</code></td>
+<td><code>character varying(20)</code></td>
+</tr>
+<tr>
+<td><code>preco_unitario</code>, <code>valor_desconto</code></td>
+<td><code>numeric(10,2)</code></td>
+</tr>
+<tr>
+<td>chave de <code>itens_pedido</code></td>
+<td><code>PK_itens_pedido</code> em (<code>pedido_id</code>, <code>sku</code>)</td>
+</tr>
+<tr>
+<td>ligação</td>
+<td><code>FK_itens_pedido_pedidos_pedido_id</code>, <code>ON DELETE CASCADE</code></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Ganho</th>
+<th><strong>Preço</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Identificador do banco</td>
+<td>número curto, sem <code>Guid</code>; o banco garante a unicidade</td>
+<td>só existe depois de salvar; o teste de domínio não vê o número</td>
+</tr>
+<tr>
+<td>Shadow property</td>
+<td>a classe <code>ItemPedido</code> continua sem conhecer o pedido</td>
+<td>a coluna não aparece no código da classe: quem lê só a classe não a vê</td>
+</tr>
+<tr>
+<td>Chave composta (pedido + SKU)</td>
+<td>o banco recusa SKU repetido no mesmo pedido</td>
+<td>todo lugar que identifica um item precisa dos dois valores</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Na entrevista:</strong> &quot;Como o EF Core mapeia uma propriedade que não existe na classe?&quot; — shadow property. &quot;Chave composta no Fluent API?&quot; — <code>HasKey</code> com os dois nomes.</p>
+<p><strong>Erros comuns:</strong> escrever <code>HasKey(p =&gt; p.Sku)</code> e esquecer o pedido; tentar <code>HasKey(p =&gt; p.PedidoId)</code> sem a propriedade na classe (não compila); <code>Property(&quot;PedidoId&quot;)</code> sem o tipo.</p>
+<p><strong>🧠 de cabeça:</strong> shadow = existe no modelo, não na classe. <strong>🔎 onde encontrar:</strong> <code>Property&lt;T&gt;(&quot;Nome&quot;)</code>, <code>HasKey(&quot;A&quot;, &quot;B&quot;)</code>.</p>
+<p><strong>Onde foi visto:</strong> S24 (PRs #30 e #31). <strong>Status:</strong> executado e aplicado no Postgres local; a configuração do item foi feita <strong>com o mentor</strong> (&quot;Não consigo. Vamos fazer isso juntos&quot;), ainda não sozinho.</p>
+<hr />
+<p><a id="g8-5"></a></p>
+<h2 id="85-o-campo-de-apoio-o-construtor-do-ef-e-a-migration-do-módulo">8.5 O campo de apoio, o construtor do EF e a migration do módulo<button class="estudada" data-id="85-o-campo-de-apoio-o-construtor-do-ef-e-a-migration-do-módulo" type="button">Marcar como estudada</button></h2>
+<p><strong>De → para</strong></p>
+<table>
+<thead>
+<tr>
+<th>Como aparece nas vagas</th>
+<th>Nome no laboratório</th>
+<th>O mundo do aluno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>backing field</em>, <em>private constructor for ORM</em>, <em>migration</em>, <em>startup project</em></td>
+<td><code>_itens</code>, <code>HasField(&quot;_itens&quot;)</code>, <code>private Pedido()</code>, <code>CriaTabelasPedidos</code></td>
+<td><code>public virtual ICollection&lt;Item&gt; Itens</code> e construtor <code>protected</code> para o proxy</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Em uma frase:</strong> o <code>Pedido</code> expõe os itens só para leitura, guarda-os numa lista privada que o EF consegue preencher e tem um construtor privado vazio que só o EF usa.</p>
+<pre class="highlight"><code><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">ItemPedido</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_itens</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
+
+<span class="c1">// Usado apenas pelo EF Core ao ler do banco</span>
+<span class="k">private</span><span class="w"> </span><span class="nf">Pedido</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
+
+<span class="k">public</span><span class="w"> </span><span class="n">IReadOnlyList</span><span class="o">&lt;</span><span class="n">ItemPedido</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Itens</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_itens</span><span class="p">;</span>
+</code></pre>
+
+<pre class="highlight"><code><span class="c1">// PedidoConfiguration</span>
+<span class="n">builder</span><span class="p">.</span><span class="n">Navigation</span><span class="p">(</span><span class="n">p</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">Itens</span><span class="p">).</span><span class="n">HasField</span><span class="p">(</span><span class="s">"_itens"</span><span class="p">);</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Peça</th>
+<th>Para que serve</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>_itens</code></td>
+<td>a lista que o <code>Pedido</code> realmente usa; a junção por SKU escreve nela</td>
+</tr>
+<tr>
+<td><code>IReadOnlyList&lt;ItemPedido&gt; Itens =&gt; _itens</code></td>
+<td>quem usa o pedido só lê</td>
+</tr>
+<tr>
+<td><code>HasField(&quot;_itens&quot;)</code></td>
+<td>diz ao EF para preencher <code>_itens</code> quando ler do banco</td>
+</tr>
+<tr>
+<td><code>private Pedido()</code></td>
+<td>o EF precisa de um construtor sem parâmetros; ele <strong>não passa pelas validações</strong> (o dado já foi validado quando entrou)</td>
+</tr>
+<tr>
+<td><code>= null!</code> nos textos</td>
+<td>promete ao compilador que o EF preenche</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O módulo</strong> segue o <code>Catalogo</code>: um <code>DbContext</code> por módulo e um schema por módulo (<a href="parte-6.html#66-repositório-e-endpoints-assíncronos">6.6</a>, ADR-006).</p>
+<table>
+<thead>
+<tr>
+<th>Peça</th>
+<th>O que faz</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PedidoDbContext</code></td>
+<td><code>HasDefaultSchema(&quot;pedidos&quot;)</code> e <code>ApplyConfigurationsFromAssembly</code> (varre o assembly <strong>uma vez</strong> e aplica todas as configurações)</td>
+</tr>
+<tr>
+<td><code>PedidoConfiguration</code></td>
+<td>tabela <code>pedidos</code>, identity, colunas em <code>snake_case</code>, enums gravados como <code>int</code>, <code>MaxLength(50)</code></td>
+</tr>
+<tr>
+<td><code>ItemPedidoConfiguration</code></td>
+<td>tabela <code>itens_pedido</code>, shadow, chave composta, FK (<a href="#84-o-identificador-vem-do-banco-a-shadow-property-e-a-chave-composta">8.4</a>)</td>
+</tr>
+<tr>
+<td><code>AddPedidos(services, configuration)</code></td>
+<td>registra o contexto com <code>UseNpgsql</code> e a conexão <code>Norte</code>; <code>MigrationsHistoryTable(&quot;__EFMigrationsHistory&quot;, &quot;pedidos&quot;)</code> põe o histórico no schema do módulo</td>
+</tr>
+<tr>
+<td><code>Program.cs</code></td>
+<td>chama <code>AddPedidos</code> e <code>MapPedidos</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>A migration</strong> (<code>dotnet ef</code>, com um contexto por módulo, precisa dizer tudo):</p>
+<pre class="highlight"><code>dotnet ef migrations add CriaTabelasPedidos
+    --project src/Modulos/Pedidos/Norte.Pedidos
+    --startup-project src/Norte.Api
+    --context PedidoDbContext
+    -- --environment Development
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Parte</th>
+<th>Para que serve</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--project</code></td>
+<td>onde a migration é gravada (o módulo)</td>
+</tr>
+<tr>
+<td><code>--startup-project</code></td>
+<td>quem tem o <code>Program.cs</code> e a connection string (a API)</td>
+</tr>
+<tr>
+<td><code>--context</code></td>
+<td>qual <code>DbContext</code>, porque cada módulo tem o seu</td>
+</tr>
+<tr>
+<td><code>-- --environment Development</code></td>
+<td>o que vem depois do <code>--</code> vai para o host: lê o <code>appsettings.Development.json</code></td>
+</tr>
+</tbody>
+</table>
+<p>O mesmo vale para <code>dotnet ef database update</code>. Resultado no Postgres: schema <code>pedidos</code> com <code>pedidos</code>, <code>itens_pedido</code> e <code>__EFMigrationsHistory</code>; o schema <code>public</code> continua vazio.</p>
+<p><strong>IDE0161.</strong> O código gerado usa namespace em bloco e dispara o aviso IDE0161 no build (todo aviso é erro, ADR-004). Solução: um <code>.editorconfig</code> dentro de <code>Migrations/</code> com <code>dotnet_diagnostic.IDE0161.severity = none</code>. O código gerado não é seu; a regra de estilo vale para o que você escreve.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Ganho</th>
+<th><strong>Preço</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Campo de apoio</td>
+<td>o <code>Pedido</code> controla a lista (junção por SKU); o mundo de fora só lê</td>
+<td>uma configuração a mais (<code>HasField</code>)</td>
+</tr>
+<tr>
+<td>Construtor privado vazio</td>
+<td>o EF consegue criar o objeto</td>
+<td>existe um jeito de criar o objeto sem validar; só o EF o usa</td>
+</tr>
+<tr>
+<td>Migration por módulo</td>
+<td>cada módulo evolui o seu schema</td>
+<td>quatro opções em todo comando <code>dotnet ef</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Não provado:</strong> ler um <code>Pedido</code> <strong>com itens</strong> do banco. O <code>ItemPedido</code> não tem construtor vazio (o EF usaria o construtor com parâmetros, ligando pelos nomes), e <strong>nenhum teste faz o ciclo salvar → ler</strong>. É o objetivo sugerido para a S25.</p>
+<p><strong>Na entrevista:</strong> &quot;Como mapear uma coleção encapsulada no EF Core?&quot; — campo de apoio com <code>HasField</code> e propriedade só de leitura. &quot;Por que o construtor privado vazio?&quot;</p>
+<p><strong>Erros comuns:</strong> esquecer o <code>--context</code> com mais de um contexto; esquecer o <code>-- --environment Development</code> e cair em &quot;Connection string não encontrada&quot;; expor a lista como <code>List&lt;T&gt;</code> pública.</p>
+<p><strong>🧠 de cabeça:</strong> o EF precisa de construtor sem parâmetros e de um jeito de preencher a lista. <strong>🔎 onde encontrar:</strong> <code>HasField</code>, <code>UsePropertyAccessMode</code>, <code>dotnet ef migrations add --help</code>.</p>
+<p><strong>Onde foi visto:</strong> S24 (PR #31). <strong>Status:</strong> configuração e migration executadas, aplicadas e conferidas no banco; a leitura de um pedido com itens <strong>não foi provada</strong>.</p>
+<hr />
+<p><a id="g8-6"></a></p>
+<h2 id="86-diagnóstico-os-problemas-da-s24-e-como-achar-a-causa">8.6 Diagnóstico: os problemas da S24 e como achar a causa<button class="estudada" data-id="86-diagnóstico-os-problemas-da-s24-e-como-achar-a-causa" type="button">Marcar como estudada</button></h2>
+<table>
+<thead>
+<tr>
+<th>Sintoma</th>
+<th>Causa</th>
+<th>Como confirmar / o que fazer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Assert.Throws&lt;ArgumentException&gt;</code> falha com &quot;Expected ArgumentException, Actual ArgumentNullException&quot;</td>
+<td><code>null</code> lança o tipo derivado <code>ArgumentNullException</code> e <code>Throws&lt;T&gt;</code> é exato</td>
+<td>um teste para <code>null</code> (<code>ArgumentNullException</code>) e outro para vazio/espaços</td>
+</tr>
+<tr>
+<td>o teste de <code>null</code> nem compila</td>
+<td>o parâmetro é <code>string</code> não nulo</td>
+<td><code>null!</code> no teste</td>
+</tr>
+<tr>
+<td>o teste do campo passa com a validação comentada</td>
+<td>outra validação lançou a mesma exceção ou o campo errado</td>
+<td>conferir o <code>ParamName</code></td>
+</tr>
+<tr>
+<td>o <code>fail:</code> de um <code>SELECT</code> na <code>__EFMigrationsHistory</code> na primeira migration</td>
+<td>o EF verifica se a tabela de histórico existe antes de criá-la</td>
+<td>esperado; seguir</td>
+</tr>
+<tr>
+<td>IDE0161 no build das migrations</td>
+<td>namespace em bloco no código gerado</td>
+<td><code>.editorconfig</code> em <code>Migrations/</code> com a severidade <code>none</code></td>
+</tr>
+<tr>
+<td><code>Connection string 'Norte' não encontrada</code> no <code>dotnet ef</code></td>
+<td>o comando não carregou o ambiente <code>Development</code></td>
+<td>acrescentar <code>-- --environment Development</code></td>
+</tr>
+<tr>
+<td><code>dotnet ef</code> pergunta qual contexto usar, ou usa o do <code>Catalogo</code></td>
+<td>mais de um <code>DbContext</code> na solução</td>
+<td><code>--context PedidoDbContext</code></td>
+</tr>
+<tr>
+<td><code>git switch nome</code> diz que a branch não existe</td>
+<td>faltou o <code>-c</code> para criar</td>
+<td><code>git switch -c nome</code></td>
+</tr>
+<tr>
+<td><code>git commit</code> diz que não há nada no próximo commit</td>
+<td>faltou o <code>git add .</code> antes</td>
+<td><code>git status</code>, depois <code>git add .</code> e <code>git commit -m</code></td>
+</tr>
+<tr>
+<td><code>gh pr create</code> acusa branch inexistente</td>
+<td>o <code>--head</code> não é o nome exato da branch</td>
+<td><code>git branch --show-current</code> e copiar</td>
+</tr>
+<tr>
+<td>o <code>PedidoId</code> do pedido novo vale 0</td>
+<td>o identificador só é criado no <code>INSERT</code></td>
+<td>esperado; o número aparece depois de salvar</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="juntando-tudo-parte-8">Juntando tudo (Parte 8)</h2>
+<p>Do pedido recebido ao pedido guardado:</p>
+<ol>
+<li>Alguém cria o pedido: <code>new Pedido(origem, criadoPor, clienteId, representanteId, itens)</code>.</li>
+<li>O construtor valida na ordem: origem, <code>criadoPor</code>, <code>clienteId</code>, <code>representanteId</code>, lista não vazia. Falhou: exceção com o <code>ParamName</code> do campo.</li>
+<li>Cada <code>ItemPedido</code> já foi validado no seu próprio construtor (SKU, quantidade, preço, desconto).</li>
+<li>O <code>Pedido</code> junta os itens com o mesmo SKU em um item (soma a quantidade; último desconto) e guarda em <code>_itens</code>.</li>
+<li>Pelo EF: <code>PedidoDbContext</code> → tabela <code>pedidos</code> (<code>pedido_id</code> identity) e <code>itens_pedido</code> (chave <code>pedido_id</code> + <code>sku</code>, FK em cascata), no schema <code>pedidos</code>.</li>
+<li>A migration <code>CriaTabelasPedidos</code> criou as tabelas no Postgres.</li>
+</ol>
+<p><strong>Decisões desta parte (sem ADR, baratas de desfazer):</strong> validação por campo no construtor; desconto estritamente menor que o total; junção por SKU no <code>Pedido</code> com o último desconto; <code>PedidoId</code> <code>int</code> gerado pelo banco; shadow property, chave composta e campo de apoio. <em>(Candidata a nota ou ADR: shadow property e campo de apoio.)</em></p>
+<p><strong>Ainda não visto:</strong> teste com banco real que salve e leia um <code>Pedido</code> com itens; o banco gerando o <code>PedidoId</code> provado por teste; tamanho do SKU (20) e de <code>criado_por</code> (50) validados no domínio; normalização da caixa do SKU; cálculo real do desconto; endpoint de criação do pedido.</p>
+<hr />
+<h2 id="teste-se-sem-consultar-uma-pergunta-por-vez">Teste-se (sem consultar, uma pergunta por vez)</h2>
+<ol>
+<li>Por que <code>criadoPor</code> tem um teste para <code>null</code> e outro para texto vazio ou só espaços?</li>
+<li>O item de R$ 100,00 com desconto de R$ 100,00 é aceito? Por quê?</li>
+<li>Dois itens <code>ABC</code> e <code>abc</code> chegam ao <code>Pedido</code>. O que o construtor entrega em <code>Itens</code>?</li>
+<li>Por que o item juntado é criado com <code>new ItemPedido(...)</code> e não só somando a quantidade?</li>
+<li>O que é uma shadow property e por que o <code>ItemPedido</code> precisa de uma?</li>
+<li>Para que serve <code>HasField(&quot;_itens&quot;)</code>?</li>
+<li>Por que o <code>Pedido</code> tem um construtor privado vazio, e ele passa pelas validações?</li>
+<li>O que fazem <code>--project</code>, <code>--startup-project</code> e <code>--context</code> no <code>dotnet ef</code>?</li>
+<li>O <code>PedidoId</code> de um pedido recém-criado, antes de salvar, vale quanto? Já existe teste que prove que o banco gera o número?</li>
+<li>O que o <code>git switch -c</code> faz que o <code>git switch</code> sozinho não faz?</li>
+</ol>
+<hr />
+<h2 id="respostas">Respostas</h2><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li><code>ThrowIfNullOrWhiteSpace</code> lança <code>ArgumentNullException</code> para <code>null</code> e <code>ArgumentException</code> para <code>&quot;&quot;</code> ou espaços. <code>Assert.Throws&lt;T&gt;</code> exige o tipo exato, então cada caso precisa do seu teste.</li>
+<li>Não. A regra é &quot;estritamente menor&quot;: desconto igual a preço × quantidade lança <code>ArgumentOutOfRangeException</code> com <code>ParamName == &quot;valorDesconto&quot;</code>, porque o item sairia de graça.</li>
+<li>Um único item <code>ABC</code> (a comparação ignora maiúscula e minúscula), com as quantidades somadas, o preço mantido e o desconto do último.</li>
+<li>Porque o construtor valida de novo. A soma das quantidades continua passando pelas regras do item, como a do desconto menor que preço × quantidade.</li>
+<li>Uma propriedade que existe só no modelo do EF, e não na classe. O <code>ItemPedido</code> não tem <code>PedidoId</code> na classe, mas a tabela precisa da coluna <code>pedido_id</code> para a chave composta e para a FK.</li>
+<li>Diz ao EF para preencher a lista guardada em <code>_itens</code> ao ler do banco, enquanto a classe expõe <code>Itens</code> só para leitura.</li>
+<li>O EF precisa de um construtor sem parâmetros para criar o objeto ao ler do banco. Ele não passa pelas validações: o dado já foi validado quando entrou.</li>
+<li><code>--project</code>: onde a migration é gravada (o módulo). <code>--startup-project</code>: quem tem o <code>Program.cs</code> e a connection string (a API). <code>--context</code>: qual <code>DbContext</code> usar, porque cada módulo tem o seu.</li>
+<li>Vale 0, porque o identificador só é criado no <code>INSERT</code>. Ainda não existe teste que prove isso: só a migration mostra a coluna identity.</li>
+<li>Cria a branch e muda para ela. Sem o <code>-c</code>, o Git procura uma branch que já existe e dá erro.</li>
+</ol>
+</details>
+</article>
+<footer class="rodape">Atualizado em 20/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

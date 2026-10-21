@@ -43,10 +43,10 @@ tente explicar em voz alta a linha &quot;Em uma frase&quot; e a seção &quot;Na
 <li>🔎 <strong>Saber onde encontrar</strong> — sintaxe exata, nome de <code>using</code>, comando de CLI. Qualquer sênior
 consulta; o <code>Ctrl+.</code> e a documentação resolvem.</li>
 </ul>
-<p><strong>Última atualização:</strong> 19/10/2026 (<strong>Apêndice B v1.1</strong>, no fechamento da S23) · <strong>Versão:</strong> 1.15</p>
+<p><strong>Última atualização:</strong> 20/10/2026 (<strong>Parte 8 criada</strong>, no fechamento da S24) · <strong>Versão:</strong> 1.16</p>
 <hr />
 <h2 id="onde-estamos-atualizado-a-cada-sessão">Onde estamos (atualizado a cada sessão)</h2>
-<p><strong>Fim da S23:</strong> o <code>Pedidos</code> saiu do zero: o <code>Pedido</code> agora <strong>nasce com itens</strong> (<code>ItemPedido</code> e <code>IReadOnlyList&lt;ItemPedido&gt;</code>), e o construtor <strong>recusa lista vazia</strong> com <code>ArgumentException</code> e <code>ParamName == &quot;itens&quot;</code>, protegido por dois testes vistos vermelhos pelo estrago mínimo (o mesmo raciocínio da <a href="parte-6.html#612-o-construtor-recusa-valor-vazio-argumentexceptionthrowifnullorwhitespace">6.12</a> e da <a href="parte-6.html#613-teste-de-unidade-que-espera-falha-assertthrows-paramname-e-a-prova-do-vermelho">6.13</a>). A seção <code>Pedidos</code> do glossário foi escrita (PR #25) e o Git do dia a dia ganhou o <code>-m</code> do <code>commit</code> × <code>-u</code> do <code>push</code>, no <a href="comandos.html">Apêndice B v1.1</a>. <strong>Nenhuma entrada numerada nova nesta sessão:</strong> o conteúdo está no material <code>ESTUDO-S23</code>. Ficou aberto: validação dos campos obrigatórios do construtor do <code>Pedido</code>, aprovação do pedido, <code>PedidoId</code> como número do banco (na persistência), ligação do <code>Pedidos</code> ao host e comunicação <code>Estoque</code> → <code>Pedidos</code>. A situação do <code>Catalogo</code> (CRUD completo, Parte 7) não mudou. Próximo passo de M1: <strong>S24</strong>.</p>
+<p><strong>Fim da S24:</strong> o <code>Pedidos</code> passou a <strong>recusar dado errado e a ir para o banco</strong>. Cada campo do construtor do <code>Pedido</code> e do <code>ItemPedido</code> é validado com os métodos prontos do .NET e protegido por um teste de recusa por campo (<code>Theory</code>, tipo exato e <code>ParamName</code>); itens com o mesmo SKU viram um só (a regra mora no <code>Pedido</code>); o <code>PedidoId</code> passou a ser o número criado pelo banco (<code>int</code>), com shadow property e chave composta nos itens; e o módulo ganhou campo de apoio, construtor do EF e a primeira migration (schema <code>pedidos</code>). Conteúdo na <a href="parte-8.html">Parte 8</a>, entradas 8.1–8.6, e no material <code>ESTUDO-S24</code>. Ficou aberto: teste com Testcontainers para provar o <code>PedidoId</code>, limites de SKU (20) e <code>criado_por</code> (50) ainda sem validação no domínio, normalização de caixa do SKU, cálculo real do desconto, endpoint de criação de pedido, ligação do <code>Pedidos</code> ao host e comunicação <code>Estoque</code> → <code>Pedidos</code>. Próximo passo de M1: <strong>S25</strong>.</p>
 <hr />
 <h2 id="partes">Partes</h2>
 <table>
@@ -102,6 +102,12 @@ consulta; o <code>Ctrl+.</code> e a documentação resolvem.</li>
 <td>v1.0 (7.1–7.7)</td>
 </tr>
 <tr>
+<td><a href="parte-8.html"><code>GUIA-DOTNET-P8.md</code></a></td>
+<td>Parte 8 — O <code>Pedidos</code> recusa dado errado, junta itens e vai para o banco</td>
+<td>S24–</td>
+<td><strong>v1.0 (8.1–8.6)</strong></td>
+</tr>
+<tr>
 <td><a href="mapa.html"><code>GUIA-MAPA-NORTE.md</code></a></td>
 <td>Apêndice A — Mapa do Norte: como as ferramentas e os conceitos se ligam, em seis camadas</td>
 <td>S9–S22</td>
@@ -111,7 +117,7 @@ consulta; o <code>Ctrl+.</code> e a documentação resolvem.</li>
 <td><a href="comandos.html"><code>GUIA-COMANDOS.md</code></a></td>
 <td>Apêndice B — Comandos do dia a dia: <code>dotnet</code>, Git, <code>gh</code> e PowerShell, por tarefa</td>
 <td>S21–S23</td>
-<td><strong>v1.1</strong></td>
+<td>v1.1</td>
 </tr>
 </tbody>
 </table>
@@ -216,6 +222,17 @@ da parte com a âncora.</p>
 <li>Juntando tudo, Teste-se e respostas (no fim da Parte 7)</li>
 </ul>
 </li>
+<li><a href="parte-8.html">Parte 8 — O <code>Pedidos</code> recusa dado errado, junta itens e vai para o banco (S24–)</a>
+<ul>
+<li><a href="parte-8.html#81-validar-no-construtor-com-os-métodos-prontos-do-net">8.1</a> <strong>Validar no construtor com os métodos prontos do .NET</strong></li>
+<li><a href="parte-8.html#82-um-teste-de-recusa-por-campo-theory-tipo-exato-e-paramname">8.2</a> <strong>Um teste de recusa por campo: <code>Theory</code>, tipo exato e <code>ParamName</code></strong></li>
+<li><a href="parte-8.html#83-itens-com-o-mesmo-sku-viram-um-item-a-regra-mora-no-pedido">8.3</a> <strong>Itens com o mesmo SKU viram um item: a regra mora no <code>Pedido</code></strong></li>
+<li><a href="parte-8.html#84-o-identificador-vem-do-banco-a-shadow-property-e-a-chave-composta">8.4</a> <strong>O identificador vem do banco, a shadow property e a chave composta</strong></li>
+<li><a href="parte-8.html#85-o-campo-de-apoio-o-construtor-do-ef-e-a-migration-do-módulo">8.5</a> <strong>O campo de apoio, o construtor do EF e a migration do módulo</strong></li>
+<li><a href="parte-8.html#86-diagnóstico-os-problemas-da-s24-e-como-achar-a-causa">8.6</a> <strong>Diagnóstico: os problemas da S24 e como achar a causa</strong></li>
+<li>Juntando tudo, Teste-se e respostas (no fim da Parte 8)</li>
+</ul>
+</li>
 <li><a href="mapa.html">Apêndice A — Mapa do Norte</a> · fio condutor de um cadastro de ficha e seis camadas (estrutura, API, domínio, persistência, testes, qualidade e fluxo)</li>
 <li><a href="comandos.html">Apêndice B — Comandos do dia a dia</a> · build e testes, branch, ver o que mudou, commit e push, PR com o <code>gh</code>, desfazer, PowerShell</li>
 </ul>
@@ -305,11 +322,16 @@ da parte com a âncora.</p>
 <td>19/10/2026 (S23)</td>
 <td>Apêndice B v1.1 (<code>-m</code> do <code>commit</code> × <code>-u</code> do <code>push</code>, <code>gh pr create</code>/<code>gh pr status</code>); sem entradas numeradas novas; &quot;onde estamos&quot; no <code>Pedido</code> com itens</td>
 </tr>
+<tr>
+<td>1.16</td>
+<td>20/10/2026 (S24)</td>
+<td><strong>Parte 8 criada</strong> (<code>GUIA-DOTNET-P8.md</code>, entradas 8.1–8.6: validação no construtor, teste de recusa por campo, junção por SKU, <code>PedidoId</code> do banco com shadow property e chave composta, campo de apoio e migration, diagnóstico da S24); &quot;onde estamos&quot; no <code>Pedidos</code> persistido</td>
+</tr>
 </tbody>
 </table>
 
 </article>
-<footer class="rodape">Atualizado em 19/10/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 20/10/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="assets/search-index.js"></script>
