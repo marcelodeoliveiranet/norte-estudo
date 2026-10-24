@@ -43,10 +43,14 @@ tente explicar em voz alta a linha &quot;Em uma frase&quot; e a seção &quot;Na
 <li>🔎 <strong>Saber onde encontrar</strong> — sintaxe exata, nome de <code>using</code>, comando de CLI. Qualquer sênior
 consulta; o <code>Ctrl+.</code> e a documentação resolvem.</li>
 </ul>
-<p><strong>Última atualização:</strong> 20/10/2026 (<strong>Parte 8 criada</strong>, no fechamento da S24) · <strong>Versão:</strong> 1.16</p>
+<p><strong>Última atualização:</strong> 24/10/2026 (<strong>Parte 8 v1.4: entrada 8.10</strong>, no fechamento da S30) · <strong>Versão:</strong> 1.19</p>
 <hr />
 <h2 id="onde-estamos-atualizado-a-cada-sessão">Onde estamos (atualizado a cada sessão)</h2>
-<p><strong>Fim da S24:</strong> o <code>Pedidos</code> passou a <strong>recusar dado errado e a ir para o banco</strong>. Cada campo do construtor do <code>Pedido</code> e do <code>ItemPedido</code> é validado com os métodos prontos do .NET e protegido por um teste de recusa por campo (<code>Theory</code>, tipo exato e <code>ParamName</code>); itens com o mesmo SKU viram um só (a regra mora no <code>Pedido</code>); o <code>PedidoId</code> passou a ser o número criado pelo banco (<code>int</code>), com shadow property e chave composta nos itens; e o módulo ganhou campo de apoio, construtor do EF e a primeira migration (schema <code>pedidos</code>). Conteúdo na <a href="parte-8.html">Parte 8</a>, entradas 8.1–8.6, e no material <code>ESTUDO-S24</code>. Ficou aberto: teste com Testcontainers para provar o <code>PedidoId</code>, limites de SKU (20) e <code>criado_por</code> (50) ainda sem validação no domínio, normalização de caixa do SKU, cálculo real do desconto, endpoint de criação de pedido, ligação do <code>Pedidos</code> ao host e comunicação <code>Estoque</code> → <code>Pedidos</code>. Próximo passo de M1: <strong>S25</strong>.</p>
+<p><strong>Fim da S30:</strong> o módulo <code>Clientes</code> foi para o banco (schema <code>clientes</code>, índice único no CNPJ provado por <code>23505</code>) e ganhou o <code>POST /clientes</code> (201, 400, 409), com a regex do CNPJ no <code>Compartilhado</code>. Conteúdo na <a href="parte-8.html">Parte 8</a>, entrada 8.10, e no material <code>ESTUDO-S30</code>. Ficou aberto: testes de API do cadastro, corrida do mesmo CNPJ (500), <code>GET /clientes/{id}</code>, contrato do <code>Clientes</code> para o <code>Pedidos</code>. Próximo passo de M1: <strong>S31</strong>.</p>
+<p><strong>Fim da S27:</strong> o SKU passou a ter <strong>uma forma só, maiúscula, garantida pela aplicação</strong> (domínio e repositório do <code>Catalogo</code>), sem <code>CHECK</code> e sem migration (ADR-009, que supera em parte a ADR-008); o build passou a recusar <strong>código sem uso</strong> (IDE0059 e IDE0051) e <strong>interface sem <code>I</code></strong>; o pedido e seus itens no banco ficaram registrados no ADR-010. Conteúdo na <a href="parte-8.html">Parte 8</a>, entrada 8.9, e no material <code>ESTUDO-S27</code>. Ficou aberto só o que é novo: de onde nasce o cliente, o endpoint de criação do pedido (com a decisão do número do pedido) e o contrato <code>Pedidos</code>↔<code>Catalogo</code>. Próximo passo de M1: <strong>S28</strong>.</p>
+<p><strong>Fim da S26 (resumo):</strong> o <code>Pedidos</code> e o <code>Catalogo</code> passaram a dividir um projeto pequeno de constantes (<code>Norte.Compartilhado</code>, ADR-007); o domínio recusa SKU acima de 20 e <code>criadoPor</code> acima de 50; entrada 8.8.</p>
+<p><strong>Fim da S25 (resumo):</strong> teste com Postgres real do <code>Pedidos</code> (fábrica Testcontainers, salvar com um contexto e ler com outro, <code>Include</code>), entrada 8.7.</p>
+<p><strong>Fim da S24 (resumo):</strong> o <code>Pedidos</code> passou a <strong>recusar dado errado e a ir para o banco</strong>. Cada campo do construtor do <code>Pedido</code> e do <code>ItemPedido</code> é validado com os métodos prontos do .NET e protegido por um teste de recusa por campo (<code>Theory</code>, tipo exato e <code>ParamName</code>); itens com o mesmo SKU viram um só (a regra mora no <code>Pedido</code>); o <code>PedidoId</code> passou a ser o número criado pelo banco (<code>int</code>), com shadow property e chave composta nos itens; e o módulo ganhou campo de apoio, construtor do EF e a primeira migration (schema <code>pedidos</code>). Conteúdo na <a href="parte-8.html">Parte 8</a>, entradas 8.1–8.6, e no material <code>ESTUDO-S24</code>. Ficou aberto: teste com Testcontainers para provar o <code>PedidoId</code>, limites de SKU (20) e <code>criado_por</code> (50) ainda sem validação no domínio, normalização de caixa do SKU, cálculo real do desconto, endpoint de criação de pedido, ligação do <code>Pedidos</code> ao host e comunicação <code>Estoque</code> → <code>Pedidos</code>. Próximo passo de M1: <strong>S25</strong>.</p>
 <hr />
 <h2 id="partes">Partes</h2>
 <table>
@@ -105,7 +109,7 @@ consulta; o <code>Ctrl+.</code> e a documentação resolvem.</li>
 <td><a href="parte-8.html"><code>GUIA-DOTNET-P8.md</code></a></td>
 <td>Parte 8 — O <code>Pedidos</code> recusa dado errado, junta itens e vai para o banco</td>
 <td>S24–</td>
-<td><strong>v1.0 (8.1–8.6)</strong></td>
+<td><strong>v1.4 (8.1–8.10)</strong></td>
 </tr>
 <tr>
 <td><a href="mapa.html"><code>GUIA-MAPA-NORTE.md</code></a></td>
@@ -230,6 +234,10 @@ da parte com a âncora.</p>
 <li><a href="parte-8.html#84-o-identificador-vem-do-banco-a-shadow-property-e-a-chave-composta">8.4</a> <strong>O identificador vem do banco, a shadow property e a chave composta</strong></li>
 <li><a href="parte-8.html#85-o-campo-de-apoio-o-construtor-do-ef-e-a-migration-do-módulo">8.5</a> <strong>O campo de apoio, o construtor do EF e a migration do módulo</strong></li>
 <li><a href="parte-8.html#86-diagnóstico-os-problemas-da-s24-e-como-achar-a-causa">8.6</a> <strong>Diagnóstico: os problemas da S24 e como achar a causa</strong></li>
+<li><a href="parte-8.html#87-teste-com-banco-real-para-o-pedidos-salvar-ler-de-volta-e-ver-vermelho">8.7</a> <strong>Teste com banco real para o <code>Pedidos</code>: salvar, ler de volta e ver vermelho</strong> (S25)</li>
+<li><a href="parte-8.html#88-o-projeto-compartilhado-e-o-tamanho-dos-textos-no-domínio">8.8</a> <strong>O projeto compartilhado e o tamanho dos textos no domínio</strong> (S26)</li>
+<li><a href="parte-8.html#89-regras-de-build-para-código-sem-uso-e-nome-de-interface-e-o-sku-em-maiúsculas-só-pela-aplicação">8.9</a> <strong>Regras de build para código sem uso e nome de interface, e o SKU em maiúsculas só pela aplicação</strong> (S27)</li>
+<li><a href="parte-8.html#810-o-cliente-no-banco-e-o-post-clientes-índice-único-23505-e-a-regex-em-um-lugar-só">8.10</a> <strong>O <code>Cliente</code> no banco e o <code>POST /clientes</code>: índice único, <code>23505</code> e a regex em um lugar só</strong> (S30)</li>
 <li>Juntando tudo, Teste-se e respostas (no fim da Parte 8)</li>
 </ul>
 </li>
@@ -327,11 +335,26 @@ da parte com a âncora.</p>
 <td>20/10/2026 (S24)</td>
 <td><strong>Parte 8 criada</strong> (<code>GUIA-DOTNET-P8.md</code>, entradas 8.1–8.6: validação no construtor, teste de recusa por campo, junção por SKU, <code>PedidoId</code> do banco com shadow property e chave composta, campo de apoio e migration, diagnóstico da S24); &quot;onde estamos&quot; no <code>Pedidos</code> persistido</td>
 </tr>
+<tr>
+<td>1.17</td>
+<td>21/10/2026 (S26)</td>
+<td>Parte 8 v1.2: <strong>entradas 8.7 (S25, teste com banco real) e 8.8 (S26, projeto compartilhado e tamanho no domínio; ADR-007 e ADR-008)</strong>; 8.3 e 8.5 retocadas (<code>src/Api/Norte.Api</code>); Teste-se (14–18); &quot;onde estamos&quot; no <code>Pedidos</code>/<code>Catalogo</code> com o projeto compartilhado</td>
+</tr>
+<tr>
+<td>1.18</td>
+<td>22/10/2026 (S27)</td>
+<td>Parte 8 v1.3: <strong>entrada 8.9</strong> (IDE0059/IDE0051 e interface com <code>I</code> no build, SKU em maiúsculas só pela aplicação — ADR-009, testes que parecem bons e não são, ADR-010); 8.3 e 8.8 retocadas (SKU implementado); Teste-se (19–23); &quot;onde estamos&quot; no <code>Catalogo</code>/<code>Pedidos</code> com o SKU em maiúsculas</td>
+</tr>
+<tr>
+<td>1.19</td>
+<td>24/10/2026 (S30)</td>
+<td>Parte 8 v1.4: <strong>entrada 8.10</strong> (<code>Cliente</code> no banco, índice único e <code>23505</code>, <code>POST /clientes</code>, regex do CNPJ no <code>Compartilhado</code>); Teste-se (24–25); &quot;onde estamos&quot; no <code>Clientes</code> com persistência e cadastro</td>
+</tr>
 </tbody>
 </table>
 
 </article>
-<footer class="rodape">Atualizado em 20/10/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 24/10/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="assets/search-index.js"></script>

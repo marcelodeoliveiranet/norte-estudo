@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norte · S25 — Pedidos: o primeiro teste com banco real · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s25.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#norte--s25--pedidos-o-primeiro-teste-com-banco-real" data-id="norte--s25--pedidos-o-primeiro-teste-com-banco-real">Norte · S25 — Pedidos: o primeiro teste com banco real</a><a class="n2" href="#1-resultado-do-dia" data-id="1-resultado-do-dia">1. Resultado do dia</a><a class="n2" href="#2-onde-isso-está-no-mapa-dos-níveis" data-id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</a><a class="n2" href="#3-conceitos" data-id="3-conceitos">3. Conceitos</a><a class="n2" href="#4-termos-da-sessão" data-id="4-termos-da-sessão">4. Termos da sessão</a><a class="n2" href="#5-dúvidas-e-respostas" data-id="5-dúvidas-e-respostas">5. Dúvidas e respostas</a><a class="n2" href="#6-divergências" data-id="6-divergências">6. Divergências</a><a class="n2" href="#7-avaliação" data-id="7-avaliação">7. Avaliação</a><a class="n2" href="#8-pontos-a-melhorar" data-id="8-pontos-a-melhorar">8. Pontos a melhorar</a><a class="n2" href="#9-teste-se" data-id="9-teste-se">9. Teste-se</a><a class="n2" href="#10-preparação-para-o-próximo-chat-s26" data-id="10-preparação-para-o-próximo-chat-s26">10. Preparação para o próximo chat (S26)</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a></aside>
+<main class="conteudo"><article>
+<h1 id="norte--s25--pedidos-o-primeiro-teste-com-banco-real">Norte · S25 — Pedidos: o primeiro teste com banco real</h1>
+<p><strong>Quarta, 21/10/2026 · tempo líquido: 3h11 (abaixo do limite de 5h) · Marco M1</strong></p>
+<p>Hoje você fez o que a S24 deixou sem prova: <strong>guardou um <code>Pedido</code> com dois itens no Postgres de verdade e leu de volta</strong> (PRs #32 e #33). Você escreveu a fábrica do banco, os dois testes e os comandos de Git; o mentor conferiu. A ideia para guardar: <strong>um teste de persistência só prova alguma coisa quando quem grava e quem lê são contextos diferentes, e quando você já viu o teste ficar vermelho.</strong> O que antes era &quot;a migration mostra que deve funcionar&quot; agora é &quot;o teste mostra que funciona&quot;.</p>
+<h2 id="1-resultado-do-dia">1. Resultado do dia</h2>
+<table>
+<thead>
+<tr>
+<th>PR</th>
+<th>O que entrou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#32</td>
+<td>pacote <code>Testcontainers.PostgreSql</code> no projeto de teste do <code>Pedidos</code>, a fábrica <code>PostgresFabrica</code> e dois testes com banco real (<code>PedidoPersistenciaTests</code>)</td>
+</tr>
+<tr>
+<td>#33</td>
+<td>o template de PR trocou o campo &quot;Escolha&quot; por &quot;Decisões&quot; (com o campo &quot;Ganho&quot; e &quot;O que fica pior&quot; falando de &quot;essa decisão&quot;)</td>
+</tr>
+</tbody>
+</table>
+<p>Estado final: <code>main</code> em <code>c31cffe</code> (igual a <code>origin/main</code>), árvore limpa, <strong>58 testes verdes</strong> (32 do <code>Catalogo</code> + 26 do <code>Pedidos</code>: 24 de domínio e 2 de persistência). O <code>dotnet test</code> exige o <strong>Docker aberto</strong>.</p>
+<p><strong>O que a S24 deixou &quot;não provado&quot; e hoje ficou provado:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Antes (S24)</th>
+<th>Agora (S25)</th>
+<th>Como se sabe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>o banco gera o <code>PedidoId</code> (só a migration mostrava a coluna identity)</td>
+<td>o <code>PedidoId</code> vale 0 antes de salvar e é diferente de 0 depois</td>
+<td>teste 1 verde; vermelho visto com <code>SaveChangesAsync</code> comentado: <code>Expected: Not 0, Actual: 0</code></td>
+</tr>
+<tr>
+<td>o EF lê um <code>Pedido</code> com itens (construtor privado, campo <code>_itens</code>, <code>ItemPedido</code> sem construtor vazio)</td>
+<td>os dois itens voltam do banco com SKU, quantidade, preço e desconto</td>
+<td>teste 2 verde; vermelho visto sem o <code>Include</code>: <code>Expected: 2, Actual: 0</code></td>
+</tr>
+<tr>
+<td>a chave composta (pedido + SKU) funciona</td>
+<td>o <code>INSERT</code> dos dois itens com SKUs diferentes passou no banco</td>
+<td>teste 2 verde (SKUs repetidos no mesmo pedido já eram juntados pelo <code>Pedido</code>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</h2>
+<p>Solution → módulos → funcionalidades → camadas. Hoje o trabalho foi na camada de <strong>testes do módulo <code>Pedidos</code></strong>, falando com a <strong>infraestrutura</strong> (EF Core + Postgres) através do <code>PedidoDbContext</code>. Os testes não passam pela API: o endpoint de criação do pedido ainda não existe. É um teste que fala <strong>direto com o <code>DbContext</code></strong>.</p>
+<h2 id="3-conceitos">3. Conceitos</h2>
+<h3 id="31-a-fábrica-do-banco-iasynclifetime-iclassfixture-e-migrateasync">3.1 A fábrica do banco: <code>IAsyncLifetime</code>, <code>IClassFixture</code> e <code>MigrateAsync</code></h3>
+<p>No <code>Catalogo</code> (S17) a fábrica sobe a API inteira. No <code>Pedidos</code> não há API ainda, então a fábrica é menor: sobe <strong>só o banco</strong> e entrega um <code>DbContext</code> pronto.</p>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">PostgresFabrica</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">IAsyncLifetime</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="n">PostgreSqlContainer</span><span class="w"> </span><span class="n">_postgres</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">PostgreSqlBuilder</span><span class="p">(</span><span class="s">"postgres:18"</span><span class="p">).</span><span class="n">Build</span><span class="p">();</span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">InitializeAsync</span><span class="p">()</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="n">_postgres</span><span class="p">.</span><span class="n">StartAsync</span><span class="p">();</span>
+<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="nn">var</span><span class="w"> </span><span class="n">contexto</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CriarContexto</span><span class="p">();</span>
+<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="n">contexto</span><span class="p">.</span><span class="n">Database</span><span class="p">.</span><span class="n">MigrateAsync</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">internal</span><span class="w"> </span><span class="n">PedidoDbContext</span><span class="w"> </span><span class="nf">CriarContexto</span><span class="p">()</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">opcoes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">DbContextOptionsBuilder</span><span class="o">&lt;</span><span class="n">PedidoDbContext</span><span class="o">&gt;</span><span class="p">()</span>
+<span class="w">            </span><span class="p">.</span><span class="n">UseNpgsql</span><span class="p">(</span><span class="n">_postgres</span><span class="p">.</span><span class="n">GetConnectionString</span><span class="p">(),</span>
+<span class="w">                </span><span class="n">npgsql</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">npgsql</span><span class="p">.</span><span class="n">MigrationsHistoryTable</span><span class="p">(</span><span class="s">"__EFMigrationsHistory"</span><span class="p">,</span><span class="w"> </span><span class="n">PedidoDbContext</span><span class="p">.</span><span class="n">Schema</span><span class="p">))</span>
+<span class="w">            </span><span class="p">.</span><span class="n">Options</span><span class="p">;</span>
+
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="nf">PedidoDbContext</span><span class="p">(</span><span class="n">opcoes</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">DisposeAsync</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_postgres</span><span class="p">.</span><span class="n">DisposeAsync</span><span class="p">().</span><span class="n">AsTask</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Peça</th>
+<th>O que faz</th>
+<th>Por quê</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PostgreSqlBuilder(&quot;postgres:18&quot;)</code></td>
+<td>descreve o container (mesma imagem do <code>compose.yaml</code>)</td>
+<td>o teste roda no mesmo Postgres de verdade, não num substituto</td>
+</tr>
+<tr>
+<td><code>IAsyncLifetime</code></td>
+<td>o xUnit chama <code>InitializeAsync</code> antes e <code>DisposeAsync</code> depois</td>
+<td>subir e derrubar o container são operações assíncronas</td>
+</tr>
+<tr>
+<td><code>MigrateAsync()</code></td>
+<td>aplica as migrations do módulo no banco novo</td>
+<td>o teste usa <strong>as mesmas tabelas</strong> que a migration <code>CriaTabelasPedidos</code> cria; se a migration estiver errada, o teste quebra</td>
+</tr>
+<tr>
+<td><code>MigrationsHistoryTable(..., PedidoDbContext.Schema)</code></td>
+<td>põe a tabela de histórico dentro do schema <code>pedidos</code></td>
+<td>o mesmo que o <code>AddPedidos</code> faz (ADR-006); sem isso o EF procuraria o histórico no schema errado</td>
+</tr>
+<tr>
+<td><code>CriarContexto()</code></td>
+<td>entrega um <strong>contexto novo</strong> a cada chamada</td>
+<td>o teste 2 precisa de dois contextos (3.2)</td>
+</tr>
+<tr>
+<td><code>internal</code></td>
+<td>só o projeto de teste enxerga</td>
+<td><code>InternalsVisibleTo</code> (S22); a fábrica em si é <code>public sealed</code> para o xUnit</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Como o teste usa a fábrica:</strong> a classe de teste declara <code>IClassFixture&lt;PostgresFabrica&gt;</code> e recebe a fábrica no construtor primário. O xUnit cria <strong>uma fábrica por classe de teste</strong>: o container sobe uma vez, os dois testes usam o mesmo banco.</p>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nf">PedidoPersistenciaTests</span><span class="p">(</span><span class="n">PostgresFabrica</span><span class="w"> </span><span class="n">fabrica</span><span class="p">)</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">IClassFixture</span><span class="o">&lt;</span><span class="n">PostgresFabrica</span><span class="o">&gt;</span>
+</code></pre>
+
+<p><strong>Dois erros que apareceram no caminho</strong> (bons para guardar):</p>
+<ul>
+<li><code>new PostgresFabrica()</code> dentro do teste: cria uma fábrica sem o xUnit chamar o <code>InitializeAsync</code>, e o banco nunca sobe. Quem entrega a fábrica é o <code>IClassFixture</code>.</li>
+<li>Classe de teste <code>internal</code>: o xUnit não enxerga. A classe de teste é <code>public</code> (a regra da S22 continua valendo).</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Ganho</th>
+<th><strong>Preço</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fábrica com o container real</td>
+<td>o teste prova o que o banco faz (identity, chave composta, FK, tipos)</td>
+<td>precisa de <strong>Docker aberto</strong> e o teste é mais lento que o de domínio (o container sobe uma vez por classe)</td>
+</tr>
+<tr>
+<td>Uma fábrica por classe</td>
+<td>o banco sobe uma vez só</td>
+<td>os dois testes dividem o mesmo banco: os dados de um ficam para o outro (hoje sem problema, porque cada pedido tem o seu número)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-gravar-com-um-contexto-ler-com-outro-e-o-include">3.2 Gravar com um contexto, ler com outro, e o <code>Include</code></h3>
+<p>O <code>DbContext</code> <strong>lembra</strong> o que já carregou (é o <em>rastreamento</em>). Se o mesmo contexto grava e depois lê, o EF devolve o objeto que ele já tem na memória e <strong>nem vai ao banco</strong>. O teste passaria mesmo se o banco guardasse errado. Por isso:</p>
+<pre class="highlight"><code><span class="k">await</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="nn">var</span><span class="w"> </span><span class="n">contextoA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fabrica</span><span class="p">.</span><span class="n">CriarContexto</span><span class="p">();</span>
+<span class="k">await</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="nn">var</span><span class="w"> </span><span class="n">contextoB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fabrica</span><span class="p">.</span><span class="n">CriarContexto</span><span class="p">();</span>
+<span class="c1">// ...</span>
+<span class="k">await</span><span class="w"> </span><span class="n">contextoA</span><span class="p">.</span><span class="n">Pedidos</span><span class="p">.</span><span class="n">AddAsync</span><span class="p">(</span><span class="n">pedido</span><span class="p">);</span>
+<span class="k">await</span><span class="w"> </span><span class="n">contextoA</span><span class="p">.</span><span class="n">SaveChangesAsync</span><span class="p">();</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">pedidoLido</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">contextoB</span><span class="p">.</span><span class="n">Pedidos</span>
+<span class="w">                                </span><span class="p">.</span><span class="n">Include</span><span class="p">(</span><span class="n">p</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">Itens</span><span class="p">)</span>
+<span class="w">                                </span><span class="p">.</span><span class="n">FirstOrDefaultAsync</span><span class="p">(</span><span class="n">p</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">PedidoId</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">pedido</span><span class="p">.</span><span class="n">PedidoId</span><span class="p">);</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Linha</th>
+<th>Pergunta que responde</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>contextoA</code> grava</td>
+<td>os dados chegam ao banco?</td>
+</tr>
+<tr>
+<td><code>contextoB</code> (novo) lê</td>
+<td>o banco devolve o que foi gravado, sem ajuda da memória do contexto A?</td>
+</tr>
+<tr>
+<td><code>.Include(p =&gt; p.Itens)</code></td>
+<td>quero também a lista de itens junto com o pedido</td>
+</tr>
+<tr>
+<td><code>FirstOrDefaultAsync(p =&gt; p.PedidoId == pedido.PedidoId)</code></td>
+<td>o número que o banco gerou na gravação acha o pedido de volta?</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O <code>Include</code> não é enfeite.</strong> O EF <strong>não carrega itens sozinho</strong> (é o padrão do EF Core): sem <code>Include</code>, o pedido volta com <code>Itens</code> vazio. Visto no vermelho: <code>Assert.Equal(2, pedidoLido.Itens.Count)</code> falhou com <code>Expected: 2, Actual: 0</code>. A mesma consulta com o <code>Include</code> voltou os dois itens.</p>
+<p><strong>Assert por campo.</strong> O teste confere SKU, quantidade, preço e desconto de cada item, comparando com as <strong>variáveis do Arrange</strong> (não com literais copiados). Isso prova que os <code>numeric(10,2)</code> e os <code>varchar</code> voltam com o mesmo valor.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Ganho</th>
+<th><strong>Preço</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dois contextos</td>
+<td>prova a ida e a volta pelo banco</td>
+<td>o teste é mais comprido (dois <code>await using</code>)</td>
+</tr>
+<tr>
+<td><code>Include</code> explícito</td>
+<td>o teste mostra de onde vêm os itens</td>
+<td>quem esquece o <code>Include</code> na vida real recebe a lista vazia, sem erro</td>
+</tr>
+<tr>
+<td>Assert por posição (<code>Itens[0]</code>, <code>Itens[1]</code>)</td>
+<td>simples de ler</td>
+<td><strong>assume a ordem em que o banco devolve os itens</strong>; sem <code>OrderBy</code> o Postgres não promete ordem. Hoje passa; <strong>a ordem não está provada</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-a-prova-do-vermelho-em-teste-de-persistência">3.3 A prova do vermelho em teste de persistência</h3>
+<p>A mesma regra da S21 ao S24, agora com banco: <strong>o teste novo precisa ser visto vermelho</strong>, senão não se sabe se ele protege.</p>
+<table>
+<thead>
+<tr>
+<th>Passo</th>
+<th>O que se fez</th>
+<th>Resultado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>commit do teste verde antes do estrago</td>
+<td>o <code>git restore</code> não apaga o teste</td>
+</tr>
+<tr>
+<td>2</td>
+<td>estrago mínimo no teste 1: comentar <code>await contexto.SaveChangesAsync();</code></td>
+<td><code>git status</code> mostra a mudança</td>
+</tr>
+<tr>
+<td>3</td>
+<td>rodar</td>
+<td>vermelho: <code>Assert.NotEqual() Failure: Expected: Not 0, Actual: 0</code> (o pedido não foi salvo; o número continua 0)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>desfazer o estrago</td>
+<td>verde de novo</td>
+</tr>
+<tr>
+<td>5</td>
+<td>o mesmo no teste 2, tirando o <code>Include</code></td>
+<td>vermelho: <code>Expected: 2, Actual: 0</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Como ler o vermelho:</strong> o teste é o contrato; o <code>Actual</code> errado mostra que <strong>o código</strong> (ou o que foi desfeito) está errado, não o teste. Nos dois casos você leu certo.</p>
+<p><strong>Cuidado com o comando:</strong> <code>dotnet test --no-build</code> roda a <strong>DLL antiga</strong>. Depois de editar um teste, o <code>--no-build</code> não vê a edição. Foi o erro da primeira descrição do PR #32 (os passos de vermelho/verde usavam <code>--no-build</code>) e foi corrigido. Para a prova do vermelho: <code>dotnet test</code> normal (que compila).</p>
+<h2 id="4-termos-da-sessão">4. Termos da sessão</h2>
+<table>
+<thead>
+<tr>
+<th>Termo</th>
+<th>Em uma linha</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Testcontainers</td>
+<td>biblioteca que sobe um container (aqui, o Postgres) durante o teste e o derruba no fim</td>
+</tr>
+<tr>
+<td><code>IAsyncLifetime</code></td>
+<td>interface do xUnit com <code>InitializeAsync</code> e <code>DisposeAsync</code>, chamados antes e depois</td>
+</tr>
+<tr>
+<td><code>IClassFixture&lt;T&gt;</code></td>
+<td>pede ao xUnit uma instância de <code>T</code> por classe de teste, entregue no construtor</td>
+</tr>
+<tr>
+<td>Construtor primário</td>
+<td><code>class Teste(Fabrica fabrica)</code>: o parâmetro vira disponível em toda a classe</td>
+</tr>
+<tr>
+<td><code>MigrateAsync</code></td>
+<td>aplica ao banco todas as migrations ainda não aplicadas</td>
+</tr>
+<tr>
+<td>Rastreamento</td>
+<td>a memória do <code>DbContext</code> sobre o que ele já carregou</td>
+</tr>
+<tr>
+<td><code>Include</code></td>
+<td>pede ao EF para trazer junto uma coleção relacionada</td>
+</tr>
+<tr>
+<td>Identity</td>
+<td>coluna numérica que o próprio banco preenche (o <code>PedidoId</code>)</td>
+</tr>
+<tr>
+<td><code>--no-build</code></td>
+<td>roda sem compilar: usa a DLL antiga</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-dúvidas-e-respostas">5. Dúvidas e respostas</h2>
+<p><strong>Por que o teste não usa a API?</strong> Porque ainda não existe endpoint de criação do pedido, e o que queríamos provar é do <strong>banco e do EF</strong>, não da API. Quando o endpoint nascer, ele ganha o seu próprio teste.</p>
+<p><strong>Por que um container real e não o provider em memória?</strong> Decisão da S17: o provider em memória não tem chave composta de verdade, identity nem tipos do Postgres; o teste passaria com um banco que não existe. Docker aberto é o preço, e já era o preço do <code>Catalogo</code>.</p>
+<p><strong>A tabela de histórico das migrations precisa ficar no schema <code>pedidos</code>?</strong> Sim. O <code>AddPedidos</code> configura assim (ADR-006), e a fábrica faz o mesmo para o <code>MigrateAsync</code> achar o histórico no lugar certo.</p>
+<p><strong>Um teste com dois itens prova a junção por SKU?</strong> Não. A junção é regra do <code>Pedido</code> e tem os seus testes de domínio (S24). Hoje os SKUs são diferentes (<code>SKU123</code> e <code>SKU321</code>); o que o teste prova é a <strong>ida e volta</strong> pelo banco.</p>
+<p><strong>O banco já recusa SKU maior que 20 ou <code>criado_por</code> maior que 50?</strong> A coluna recusa ao salvar (erro do Postgres). O <strong>domínio ainda não valida</strong> o tamanho, e nenhum teste prova isso. É a pendência que você apontou no fim do dia.</p>
+<p><strong>Como ver as tabelas no DBeaver?</strong> A árvore mostra os schemas <code>catalogo</code>, <code>pedidos</code> e <code>public</code>. Se uma tabela não aparece, atualize a árvore (F5): ela estava desatualizada. Na migration <code>CriaTabelasPedidos</code> existem <code>pedidos</code> e <code>itens_pedido</code>, e a consulta no DBeaver mostrou as três tabelas do schema (com a <code>__EFMigrationsHistory</code>).</p>
+<h2 id="6-divergências">6. Divergências</h2>
+<table>
+<thead>
+<tr>
+<th>Tema</th>
+<th>Posição</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pedir o &quot;preço&quot; da escolha Docker/Testcontainers</td>
+<td>o mentor deu como exemplo; você respondeu que usar Testcontainers <strong>já inclui</strong> o Docker, que isso foi comparado na S17 e que hoje &quot;ninguém mais instala banco de dados como antigamente&quot;</td>
+<td><strong>você tinha razão:</strong> a comparação foi feita na S17; o mentor não pede mais o preço dessa escolha</td>
+</tr>
+<tr>
+<td>Preço no método (A6)</td>
+<td>&quot;o preço é sempre para melhor, nunca para pior&quot; porque você compara com o que tinha antes; vai fazer sentido ao comparar, por exemplo, mensageria da nuvem × outra</td>
+<td><strong>decisão sua:</strong> manter o método; frase registrada: o preço é o que passa a ser mais difícil ou mais caro depois da escolha</td>
+</tr>
+<tr>
+<td>Desconto no <code>Pedido</code></td>
+<td>não vai existir forma de pagamento no <code>Pedido</code>; o valor do desconto é <strong>digitado</strong></td>
+<td><strong>decisão sua</strong> (21/10); a regra do desconto por forma de pagamento fica para outro módulo, se um dia for preciso</td>
+</tr>
+<tr>
+<td>Curso de DDD da manhã</td>
+<td>está parado até você concluir o M1</td>
+<td><strong>decisão sua</strong>; você volta a decidir depois</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-avaliação">7. Avaliação</h2>
+<p><strong>Fez bem:</strong> escreveu a fábrica e os dois testes do banco real com apoio pequeno; viu os dois vermelhos e leu os dois certo (&quot;o teste é o contrato&quot;); corrigiu o mentor com argumento duas vezes (o preço do Docker; o <code>--no-build</code> na descrição do PR foi achado por você); decidiu o desconto digitado e a ausência de forma de pagamento no <code>Pedido</code>; apontou sozinho, no fim, as duas pendências certas (tamanho dos campos de texto e SKU em caixa alta ou baixa); conferiu no DBeaver que a tabela dos itens existe.</p>
+<p><strong>Travou:</strong> a classe de teste <code>internal</code>; <code>new PostgresFabrica()</code> no lugar do <code>IClassFixture</code>; SKUs repetidos nos dois itens do primeiro Arrange; o comentário <code>//Act</code> ficou em cima do que era Arrange; comandos do Git/<code>gh</code> com erro (<code>--tile</code>, <code>--title</code> ausente); o <code>git add</code> e o <code>git diff</code> pulados; <code>--no-build</code> na descrição do PR; ficou sobrando no arquivo de teste o campo <code>_postgres</code> e o <code>using Testcontainers.PostgreSql;</code> (restos do modelo; não são usados, porque a fábrica é que sobe o container).</p>
+<p><strong>O mentor conduziu mal:</strong> afirmou o estado do código sem ver (o <code>ValorDesconto</code> já estava no commit); fez perguntas sobre a fábrica antes de ensiná-la (&quot;Você acha que eu realmente sei essas respostas?&quot;); conferiu o repositório quando você só mostrava um comando (&quot;Você está apressado&quot;); deu um exemplo de &quot;preço&quot; que você rejeitou; mandou o SQL para o terminal errado (você colou no PowerShell em vez do DBeaver).</p>
+<h2 id="8-pontos-a-melhorar">8. Pontos a melhorar</h2>
+<ul>
+<li><strong>Aluno:</strong> antes de commitar, <code>git status</code> e <code>git diff</code> (sempre os dois); remover o que sobrou do modelo (<code>_postgres</code>, <code>using</code> não usado) antes do commit; reler o comentário <code>//Act</code> e <code>//Arrange</code> contra o que a linha faz; no Git/<code>gh</code>, conferir cada comando antes de rodar.</li>
+<li><strong>Mentor:</strong> ensinar o conceito antes de perguntar; só conferir o repositório quando o aluno pedir; ver o código antes de afirmar o estado; dizer onde cada comando roda (PowerShell, DBeaver, navegador).</li>
+<li><strong>Código (S26):</strong> apagar o campo <code>_postgres</code> e o <code>using Testcontainers.PostgreSql;</code> do arquivo de teste; decidir se os asserts de item passam a procurar o item pelo SKU em vez da posição.</li>
+</ul>
+<h2 id="9-teste-se">9. Teste-se</h2>
+<ol>
+<li>Por que o teste 2 grava com um contexto e lê com outro?</li>
+<li>O que acontece com o <code>Itens</code> do pedido lido se a consulta não tiver o <code>Include</code>?</li>
+<li>O que o <code>IClassFixture&lt;PostgresFabrica&gt;</code> faz que <code>new PostgresFabrica()</code> dentro do teste não faz?</li>
+<li>Para que serve o <code>MigrateAsync()</code> dentro da fábrica?</li>
+<li>Por que a fábrica configura <code>MigrationsHistoryTable(..., PedidoDbContext.Schema)</code>?</li>
+<li>O teste 1 ficou vermelho com <code>Expected: Not 0, Actual: 0</code>. Onde está o defeito, e o que o estrago tinha feito?</li>
+<li>Por que <code>dotnet test --no-build</code> não serve para a prova do vermelho?</li>
+<li>O teste confere <code>Itens[0]</code> e <code>Itens[1]</code>. O que isso assume que o banco não prometeu?</li>
+<li>Qual a diferença entre o que o teste de persistência prova e o que o teste de domínio prova?</li>
+</ol>
+<h2 id="10-preparação-para-o-próximo-chat-s26">10. Preparação para o próximo chat (S26)</h2>
+<ol>
+<li>Abrir o chat pelo app desktop com a pasta <code>D:\Projetos\C#\Monolito_Modular</code> ligada.</li>
+<li>Escolher um objetivo só. Candidatos que <strong>você</strong> apontou: <strong>(a) testes do tamanho do SKU (20) e dos outros campos de texto</strong> (<code>criado_por</code> com 50, <code>ultima_atualizacao_por</code>), no <code>Pedido</code> e no <code>ItemPedido</code>; <strong>(b) o banco tratar <code>ABC</code> e <code>abc</code> como o mesmo SKU</strong>. Outros: endpoint de criação do pedido; contrato entre <code>Pedidos</code> e <code>Catalogo</code>.</li>
+<li>Para (b), a decisão vem antes do código: onde fica a regra (domínio, coluna, índice) e o que muda no <code>Catalogo</code>, cuja chave hoje diferencia maiúscula de minúscula.</li>
+<li>Remover o <code>_postgres</code> e o <code>using</code> sobrando em <code>PedidoPersistenciaTests.cs</code>.</li>
+<li>A S26 é à tarde, no mesmo dia. O site de estudo é gerado no fechamento dela e inclui a S24 e a S25.</li>
+</ol>
+<hr />
+<h2 id="respostas">Respostas</h2><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>Porque o <code>DbContext</code> lembra o que carregou. Se o mesmo contexto gravasse e lesse, o EF devolveria o objeto da memória sem ir ao banco, e o teste passaria mesmo com a gravação errada. O contexto B, novo, só tem o que o banco devolve.</li>
+<li>Vem vazio (o EF não carrega a coleção sozinho). O teste viu isso: <code>Expected: 2, Actual: 0</code>.</li>
+<li>O <code>IClassFixture</code> faz o xUnit criar a fábrica, chamar o <code>InitializeAsync</code> (sobe o container e aplica as migrations) e o <code>DisposeAsync</code> no fim, uma vez por classe. Com <code>new</code>, ninguém chama o <code>InitializeAsync</code> e o banco não existe.</li>
+<li>Aplica as migrations no banco novo do container, para o teste usar as mesmas tabelas que a migration <code>CriaTabelasPedidos</code> cria.</li>
+<li>Para o EF guardar e procurar a tabela de histórico no schema <code>pedidos</code>, como o <code>AddPedidos</code> faz (ADR-006). Sem isso o <code>MigrateAsync</code> olharia o lugar errado.</li>
+<li>O defeito estava no código: sem o <code>SaveChangesAsync</code>, o pedido não foi salvo e o número continuou 0. O teste é o contrato; o <code>Actual</code> errado mostra que o que está sendo testado está errado, não o teste.</li>
+<li>Porque o <code>--no-build</code> roda a DLL antiga: a edição do teste (o estrago) não entra, e o resultado não mostra o vermelho.</li>
+<li>Assume que o banco devolve os itens na ordem em que foram gravados. Sem <code>OrderBy</code>, o Postgres não promete ordem; hoje passa, mas a ordem não está provada.</li>
+<li>O teste de domínio prova as regras do objeto na memória (validações, junção por SKU). O de persistência prova que o banco e o EF guardam e devolvem o que o domínio aceitou: o número gerado, a chave composta, a FK, os tipos e a lista de itens.</li>
+</ol>
+</details>
+</article>
+<footer class="rodape">Atualizado em 24/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

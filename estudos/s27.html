@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norte · S27 — SKU em maiúsculas pela aplicação e regras de build (ADR-009) · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s27.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#norte--s27--sku-em-maiúsculas-pela-aplicação-e-regras-de-build-adr-009" data-id="norte--s27--sku-em-maiúsculas-pela-aplicação-e-regras-de-build-adr-009">Norte · S27 — SKU em maiúsculas pela aplicação e regras de build (AD…</a><a class="n2" href="#1-resultado-do-dia" data-id="1-resultado-do-dia">1. Resultado do dia</a><a class="n2" href="#2-onde-isso-está-no-mapa-dos-níveis" data-id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</a><a class="n2" href="#3-conceitos" data-id="3-conceitos">3. Conceitos</a><a class="n2" href="#4-termos-da-sessão" data-id="4-termos-da-sessão">4. Termos da sessão</a><a class="n2" href="#5-divergências-e-decisões-do-aluno" data-id="5-divergências-e-decisões-do-aluno">5. Divergências e decisões do aluno</a><a class="n2" href="#6-avaliação" data-id="6-avaliação">6. Avaliação</a><a class="n2" href="#7-pontos-a-melhorar" data-id="7-pontos-a-melhorar">7. Pontos a melhorar</a><a class="n2" href="#8-teste-se" data-id="8-teste-se">8. Teste-se</a><a class="n2" href="#9-preparação-para-o-próximo-chat-s28--só-trabalho-novo" data-id="9-preparação-para-o-próximo-chat-s28--só-trabalho-novo">9. Preparação para o próximo chat (S28) — só trabalho novo</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a></aside>
+<main class="conteudo"><article>
+<h1 id="norte--s27--sku-em-maiúsculas-pela-aplicação-e-regras-de-build-adr-009">Norte · S27 — SKU em maiúsculas pela aplicação e regras de build (ADR-009)</h1>
+<p><strong>Quinta, 22/10/2026 · tempo líquido: 5h59 (acima do limite de 5h) · Marco M1</strong></p>
+<p>Hoje o SKU passou a ter <strong>uma forma só</strong>: maiúscula. Quem garante isso é a <strong>aplicação</strong> (o domínio e o repositório), sem mexer no banco. Antes disso, o build ganhou três regras novas (código sem uso e nome de interface) e o <code>CLAUDE.md</code> foi revisado. No fim do dia você limpou a lista de pendências: <strong>nada velho sobrou para trás</strong>.</p>
+<p>A ideia para guardar: <strong>uma regra só vale se todo caminho passa por ela.</strong> O domínio converte o SKU quando cria o objeto, mas a busca no repositório também precisa converter. Se uma das quatro buscas esquece, <code>luv-001</code> não acha <code>LUV-001</code>, tenta inserir de novo e o banco responde com um erro 500 em vez de um 409.</p>
+<h2 id="1-resultado-do-dia">1. Resultado do dia</h2>
+<table>
+<thead>
+<tr>
+<th>PR</th>
+<th>Merge</th>
+<th>O que entrou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#39</td>
+<td><code>4997ff4</code></td>
+<td><code>.editorconfig</code>: IDE0059 e IDE0051 como <code>warning</code> (viram erro no build)</td>
+</tr>
+<tr>
+<td>#40</td>
+<td><code>124d7c8</code></td>
+<td>SKU em maiúsculas pela aplicação: domínio, repositório e testes</td>
+</tr>
+<tr>
+<td>#41</td>
+<td><code>744f100</code></td>
+<td>revisão do <code>CLAUDE.md</code> para o estado da S27</td>
+</tr>
+<tr>
+<td>#42</td>
+<td><code>4d99f04</code></td>
+<td>ADR-004 atualizado com as regras de código sem uso</td>
+</tr>
+<tr>
+<td>#43</td>
+<td><code>15ec101</code></td>
+<td><code>CLAUDE.md</code>: tirada a pendência da ordem dos itens</td>
+</tr>
+<tr>
+<td>#44</td>
+<td><code>1e906d1</code></td>
+<td>nomes: <code>PedidosDbContext</code>, <code>ItensPedido</code>, <code>TamanhoMaximoUltimaAtualizacaoPor</code></td>
+</tr>
+<tr>
+<td>#45</td>
+<td><code>74bbaa6</code></td>
+<td><code>.editorconfig</code>: interface precisa começar com <code>I</code></td>
+</tr>
+<tr>
+<td>#46</td>
+<td><code>4834606</code></td>
+<td><code>CLAUDE.md</code>: comportamento da rota da coleção sem SKU (405)</td>
+</tr>
+<tr>
+<td>#47</td>
+<td><code>6d35eb9</code></td>
+<td>ADR-010 (o pedido e seus itens no banco); ADR-007 confirma o limite de 50</td>
+</tr>
+</tbody>
+</table>
+<p>As ADRs do dia (ADR-009 nova, ADR-008 &quot;superada em parte&quot;, ADR-004, ADR-007 e ADR-010) estão todas na <code>main</code>.</p>
+<p>Estado final: <code>main</code> em <code>6d35eb9</code>, árvore limpa, <strong>67 testes verdes</strong> (eram 60), CI verde em todos os PRs.</p>
+<h2 id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</h2>
+<p>Três camadas foram tocadas: o <strong>build</strong> (o <code>.editorconfig</code> cobra regras de toda a solution), o <strong>domínio</strong> (<code>FichaProduto</code> e <code>ItemPedido</code> convertem o SKU) e a <strong>persistência</strong> (o repositório do <code>Catalogo</code> converte antes de consultar). O banco <strong>não</strong> mudou: nenhuma migration nova.</p>
+<h2 id="3-conceitos">3. Conceitos</h2>
+<h3 id="31-código-sem-uso-vira-erro-no-build">3.1 Código sem uso vira erro no build</h3>
+<p><strong>Palavra nova — analisador (<em>analyzer</em>):</strong> uma regra que o compilador roda sobre o código e que pode dar aviso ou erro.</p>
+<table>
+<thead>
+<tr>
+<th>Código</th>
+<th>O que pega</th>
+<th>Exemplo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IDE0059</td>
+<td>valor atribuído a uma variável que nunca é lido depois</td>
+<td><code>var x = 5;</code> e <code>x</code> nunca usado</td>
+</tr>
+<tr>
+<td>IDE0051</td>
+<td>membro <code>private</code> que ninguém usa</td>
+<td>método <code>private</code> sem chamada</td>
+</tr>
+<tr>
+<td>IDE0005</td>
+<td><code>using</code> desnecessário</td>
+<td><strong>ficou de fora</strong> (veja abaixo)</td>
+</tr>
+</tbody>
+</table>
+<p>Como entra no <code>.editorconfig</code>:</p>
+<pre class="highlight"><code><span class="na">dotnet_diagnostic.IDE0059.severity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">warning</span>
+<span class="na">dotnet_diagnostic.IDE0051.severity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">warning</span>
+</code></pre>
+
+<p>Por que <code>warning</code> já quebra o build: o Norte tem <code>EnforceCodeStyleInBuild</code> (as regras de estilo rodam no <code>dotnet build</code>) e <code>TreatWarningsAsErrors</code> (todo aviso vira erro; ADR-004). Foi provado com uma sobra proposital de cada tipo: o build parou; com a sobra removida, voltou ao verde.</p>
+<p><strong>Dois limites que você viu:</strong></p>
+<ol>
+<li>A IDE0051 só enxerga membro <code>private</code>. Um membro <code>internal</code> ou <code>public</code> sem uso passa, porque outro projeto poderia usá-lo.</li>
+<li>A IDE0005 <strong>não entrou</strong>. No build, ela só roda com <code>GenerateDocumentationFile</code> ligado, e isso faz a CS1591 exigir comentário XML em todo tipo público (testado: o <code>Norte.Compartilhado</code> quebrou no <code>Constantes.cs</code>). Comentar tudo agora seria perfume sobre código que já existe. <code>using</code> sobrando continua sendo apontado na revisão e pelo editor.</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Ganho</th>
+<th><strong>Preço</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IDE0059 e IDE0051 como erro</td>
+<td>sobra de código não chega mais ao PR</td>
+<td>um membro <code>private</code> escrito antes do código que o usa não compila</td>
+</tr>
+<tr>
+<td>IDE0005 de fora</td>
+<td>sem comentário XML obrigatório</td>
+<td><code>using</code> sobrando depende de revisão</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-interface-começa-com-i">3.2 Interface começa com <code>I</code></h3>
+<p>Mais uma regra do <code>.editorconfig</code>, agora de <strong>nome</strong>:</p>
+<pre class="highlight"><code><span class="na">dotnet_naming_rule.interfaces_comecam_com_i.symbols</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">interfaces</span>
+<span class="na">dotnet_naming_rule.interfaces_comecam_com_i.style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">prefixo_i</span>
+<span class="na">dotnet_naming_rule.interfaces_comecam_com_i.severity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">warning</span>
+<span class="na">dotnet_naming_symbols.interfaces.applicable_kinds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">interface</span>
+<span class="na">dotnet_naming_style.prefixo_i.required_prefix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">I</span>
+<span class="na">dotnet_naming_style.prefixo_i.capitalization</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">pascal_case</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Parte</th>
+<th>Para que serve</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>symbols</code></td>
+<td>quais símbolos a regra olha (aqui: interfaces)</td>
+</tr>
+<tr>
+<td><code>style</code></td>
+<td>como o nome deve ser (prefixo <code>I</code>, PascalCase)</td>
+</tr>
+<tr>
+<td><code>severity</code></td>
+<td><code>warning</code> → vira erro no build</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Prova do vermelho:</strong> você criou um arquivo temporário <code>internal interface Prova { void Executar(); }</code>. O build parou com <code>error IDE1006: Naming rule violation: Missing prefix: 'I'</code>. Depois de apagar o arquivo, voltou ao verde. Regra que nunca foi vista quebrando é regra que ninguém sabe se funciona.</p>
+<h3 id="33-sku-em-maiúsculas-só-pela-aplicação-adr-009">3.3 SKU em maiúsculas só pela aplicação (ADR-009)</h3>
+<p>A ADR-008 (21/10) tinha escolhido: o domínio converte <strong>e</strong> o banco recusa minúsculas (<code>CHECK</code>). Hoje você reduziu o escopo para focar em programação: <strong>sem mexer no banco</strong>. A ADR-009 registra isso e marca a ADR-008 como &quot;superada em parte&quot; (ela não é apagada).</p>
+<p>Onde a conversão acontece:</p>
+<pre class="highlight"><code><span class="c1">// FichaProduto e ItemPedido: depois das validações</span>
+<span class="n">Sku</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sku</span><span class="p">.</span><span class="n">ToUpperInvariant</span><span class="p">();</span>
+</code></pre>
+
+<pre class="highlight"><code><span class="c1">// FichaProdutoRepository: primeira linha de cada método que busca por SKU</span>
+<span class="n">sku</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sku</span><span class="p">.</span><span class="n">ToUpperInvariant</span><span class="p">();</span>
+<span class="c1">// ...só depois vem a consulta</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Lugar</th>
+<th>Por que converte</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>construtor de <code>FichaProduto</code></td>
+<td>qualquer caminho que cria a ficha grava em maiúsculas</td>
+</tr>
+<tr>
+<td>construtor de <code>ItemPedido</code></td>
+<td>idem no pedido</td>
+</tr>
+<tr>
+<td><code>ObterPorSkuAsync</code></td>
+<td>a checagem do 409 precisa achar a ficha existente</td>
+</tr>
+<tr>
+<td><code>ObterUmaFichaProdutoAsync</code></td>
+<td><code>GET /{sku}</code> em minúsculas acha a ficha</td>
+</tr>
+<tr>
+<td><code>AtualizarAsync</code> e <code>ExcluirAsync</code></td>
+<td><code>PUT</code> e <code>DELETE</code> em minúsculas acham a ficha</td>
+</tr>
+<tr>
+<td>filtro da listagem</td>
+<td>o <code>Contains</code> do Postgres <strong>diferencia</strong> maiúscula de minúscula</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O defeito que isso evita:</strong> sem converter na busca, cadastrar <code>luv-001</code> com <code>LUV-001</code> já existente não acha a ficha, tenta inserir e o Postgres lança o erro <code>23505</code> (chave duplicada). O usuário recebe <strong>500</strong>, e o certo é <strong>409</strong>. O teste <code>CadastrarFichaProduto_com_sku_existente_deve_retornar_erro_409</code> (POST em minúsculo) protege isso.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Ganho</th>
+<th><strong>Preço</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Só a aplicação</td>
+<td>sem migration, sem <code>CHECK</code>, sem tratar dados antigos com colisão</td>
+<td>o banco aceita minúsculas se alguém escrever nele <strong>por fora</strong> da aplicação</td>
+</tr>
+<tr>
+<td>Conversão em cada método</td>
+<td>cada ponto tem um teste que nasceu vermelho</td>
+<td><strong>um método novo que esqueça de converter reabre o defeito</strong>; o teste vermelho do método novo é a defesa</td>
+</tr>
+</tbody>
+</table>
+<p>O <code>OrdinalIgnoreCase</code> da junção de itens do <code>Pedido</code> ficou: é redundante com o SKU sempre em maiúsculas, mas não faz mal.</p>
+<p><strong>Reavaliar a restrição no banco</strong> quando existir um segundo ponto de escrita (importação, integração).</p>
+<h3 id="34-testes-que-parecem-bons-e-não-são">3.4 Testes que parecem bons e não são</h3>
+<p>Três armadilhas apareceram hoje. Todas foram pegas <strong>por você</strong>, ao ler o teste.</p>
+<table>
+<thead>
+<tr>
+<th>Armadilha</th>
+<th>O que acontecia</th>
+<th>Como corrigir</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Assert sempre verdadeiro</td>
+<td>a listagem devolve 200 <strong>mesmo vazia</strong>; conferir só o 200 passa com o filtro quebrado</td>
+<td>conferir o conteúdo (as fichas que o filtro deve achar)</td>
+</tr>
+<tr>
+<td>Teste que afirma o defeito</td>
+<td>o GET esperava 404 para o SKU em minúsculo, ou seja, tratava o defeito como regra</td>
+<td>o teste descreve o que o negócio quer (200 e a ficha)</td>
+</tr>
+<tr>
+<td><code>T?</code> sem <code>Assert.NotNull</code></td>
+<td><code>ReadFromJsonAsync&lt;T&gt;()</code> devolve <code>T?</code>; usar o resultado direto dá CS8602</td>
+<td><code>Assert.NotNull(retorno)</code> antes de usar</td>
+</tr>
+</tbody>
+</table>
+<p>Uma pergunta boa que você fez: <strong>qual a diferença entre checar com <code>ProblemDetails</code> e <code>HttpValidationProblemDetails</code>?</strong> <code>HttpValidationProblemDetails</code> herda de <code>ProblemDetails</code> e acrescenta o dicionário <code>Errors</code> (campo → mensagens). Serve para o 400 de validação, onde você quer conferir qual campo falhou. O 409 e o 404 do Norte usam <code>ProblemDetails</code> simples (título e detalhe).</p>
+<h3 id="35-prova-do-vermelho-de-novo-com-o-ritmo-certo">3.5 Prova do vermelho (de novo, com o ritmo certo)</h3>
+<p>Sequência usada nos testes de hoje:</p>
+<ol>
+<li>escreva o teste e rode: ele precisa ficar <strong>vermelho</strong> e você lê o <code>Expected</code> e o <code>Actual</code>;</li>
+<li>só então escreva (ou restaure) o código e veja <strong>verde</strong>;</li>
+<li>se o código já estava pronto, prove depois: <code>git stash push -- &lt;arquivo&gt;</code>, <code>dotnet test</code> <strong>sem</strong> <code>--no-build</code>, veja o vermelho, <code>git stash pop</code>.</li>
+</ol>
+<p>Hoje o <code>ItemPedido.cs</code> foi alterado antes da fase vermelha. Você provou depois com o <code>stash</code>. Funciona, mas a ordem certa é o teste primeiro.</p>
+<h3 id="36-renomear-sem-mexer-no-banco">3.6 Renomear sem mexer no banco</h3>
+<p>Em #44 você renomeou <code>PedidoDbContext</code> para <code>PedidosDbContext</code>, <code>ItensPedidos</code> para <code>ItensPedido</code> e <code>TamanhoMaximoAtualizadoPor</code> para <code>TamanhoMaximoUltimaAtualizacaoPor</code>. O arquivo do <code>ModelSnapshot</code> mudou de nome e o <code>[DbContext(typeof(...))]</code> do Designer também.</p>
+<p>Como saber que o renome <strong>não mudou o modelo</strong>:</p>
+<pre class="highlight"><code>dotnet ef migrations has-pending-model-changes --project ... --startup-project ... --context PedidosDbContext -- --environment Development
+</code></pre>
+
+<p>Resposta: <code>No changes have been made to the model since the last migration.</code> Sem migration nova, sem risco para o banco.</p>
+<h3 id="37-o-pedido-e-seus-itens-no-banco-adr-010">3.7 O pedido e seus itens no banco (ADR-010)</h3>
+<p>O que a S24 construiu ficou registrado em ADR: o <code>ItemPedido</code> não tem <code>PedidoId</code> na classe (<strong>shadow property</strong>), a chave do item é <strong>pedido + SKU</strong>, a lista fica num <strong>campo de apoio</strong> <code>_itens</code> ligado com <code>HasField</code>, e o <code>Pedido</code> tem um construtor privado vazio só para o EF.</p>
+<table>
+<thead>
+<tr>
+<th>Opção</th>
+<th>Preço</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A (escolhida)</strong> shadow property + chave composta + <code>_itens</code></td>
+<td>os nomes <code>&quot;PedidoId&quot;</code> e <code>&quot;_itens&quot;</code> são texto na configuração; o compilador não avisa se alguém renomear</td>
+</tr>
+<tr>
+<td>B <code>PedidoId</code> comum e lista pública com <code>set</code></td>
+<td>o domínio conhece o banco; qualquer um troca a lista e quebra a junção por SKU</td>
+</tr>
+<tr>
+<td>C <code>OwnsMany</code></td>
+<td>o item perde a identidade própria; mais mudança para o mesmo ganho</td>
+</tr>
+</tbody>
+</table>
+<p>O teste de persistência do <code>Pedidos</code> é quem protege essa escolha.</p>
+<h3 id="38-git-e-gh-que-apareceram">3.8 Git e <code>gh</code> que apareceram</h3>
+<table>
+<thead>
+<tr>
+<th>Comando</th>
+<th>O que faz</th>
+<th>Lembrete</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>git switch -c nome</code></td>
+<td>cria a branch e muda para ela</td>
+<td><code>-d</code> (detach) <strong>não</strong> cria branch</td>
+</tr>
+<tr>
+<td><code>git branch -d nome</code></td>
+<td>apaga a branch local já mesclada</td>
+<td></td>
+</tr>
+<tr>
+<td><code>gh pr checks &lt;n&gt;</code></td>
+<td>mostra os checks do PR</td>
+<td>pode ficar <code>pending</code> com o CI já terminado</td>
+</tr>
+<tr>
+<td><code>gh run view &lt;id&gt; --json status,conclusion</code></td>
+<td>mostra o resultado real da execução</td>
+<td><code>conclusion: success</code> confirma</td>
+</tr>
+<tr>
+<td><code>git diff --ignore-space-at-eol</code></td>
+<td>ignora diferença só de fim de linha</td>
+<td>pela ponte, arquivos só com CRLF aparecem como <code>M</code></td>
+</tr>
+<tr>
+<td><code>git stash push -- &lt;arquivo&gt;</code></td>
+<td>guarda só as mudanças daquele arquivo</td>
+<td><code>git stash pop</code> devolve</td>
+</tr>
+</tbody>
+</table>
+<p>Regra de ouro que vale: <strong>nunca <code>git add .</code></strong> num repositório com arquivos soltos; sempre <code>git status</code> e <code>git add &lt;caminhos&gt;</code>.</p>
+<h2 id="4-termos-da-sessão">4. Termos da sessão</h2>
+<table>
+<thead>
+<tr>
+<th>Termo</th>
+<th>Em uma linha</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Analisador</td>
+<td>regra que o compilador roda sobre o código</td>
+</tr>
+<tr>
+<td>IDE0059</td>
+<td>valor atribuído e nunca lido</td>
+</tr>
+<tr>
+<td>IDE0051</td>
+<td>membro <code>private</code> não usado</td>
+</tr>
+<tr>
+<td>IDE1006</td>
+<td>regra de nome violada (aqui: interface sem <code>I</code>)</td>
+</tr>
+<tr>
+<td><code>ToUpperInvariant</code></td>
+<td>maiúsculo sem depender da cultura do computador</td>
+</tr>
+<tr>
+<td><code>23505</code></td>
+<td>código do Postgres para chave duplicada</td>
+</tr>
+<tr>
+<td><code>HttpValidationProblemDetails</code></td>
+<td><code>ProblemDetails</code> com o dicionário <code>Errors</code></td>
+</tr>
+<tr>
+<td><code>has-pending-model-changes</code></td>
+<td>pergunta ao EF se o modelo mudou desde a última migration</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-divergências-e-decisões-do-aluno">5. Divergências e decisões do aluno</h2>
+<table>
+<thead>
+<tr>
+<th>Tema</th>
+<th>Posição</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SKU no banco</td>
+<td>&quot;só maiúsculas pela aplicação; sem mexer no banco&quot;</td>
+<td><strong>ADR-009</strong> (supera em parte a ADR-008)</td>
+</tr>
+<tr>
+<td>Campos de auditoria no <code>Catalogo</code></td>
+<td>&quot;não precisa&quot;</td>
+<td><strong>fora do escopo</strong>; registrado na ADR-007</td>
+</tr>
+<tr>
+<td>Espaços no fim de linha</td>
+<td>o mentor apontou como higiene; você perguntou qual era o ganho</td>
+<td><strong>o mentor concedeu</strong>: ninguém vê, e o editor já cuida; saiu da lista</td>
+</tr>
+<tr>
+<td>Pendências antigas</td>
+<td>&quot;Não quero que sobre nada de velho para trás&quot;</td>
+<td>todas encerradas por decisão sua (veja o <code>HIST-S27</code>)</td>
+</tr>
+<tr>
+<td>Perfeição</td>
+<td>&quot;Vamos simplificar, não vamos criar um sistema perfeito. O foco é aprender a programar&quot;</td>
+<td>vale como regra de corte do M1</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-avaliação">6. Avaliação</h2>
+<p><strong>Fez bem:</strong> reduziu o escopo do SKU com argumento (foco em programação); pegou sozinho dois testes ruins (o que afirmava o defeito e o que passava sempre); perguntou o ganho antes de aceitar uma exigência de higiene; leu todos os vermelhos do jeito certo (o código está errado, o teste é o contrato); investigou o CI &quot;que não termina&quot; com <code>gh run view</code> em vez de supor; apagou os dados em minúsculas do banco e deixou o seed repor.</p>
+<p><strong>Recursos novos que apareceram:</strong> a expressão <code>=&gt;</code> num método com instrução (o método virou bloco com <code>return</code>); o <code>T?</code> do <code>ReadFromJsonAsync&lt;T&gt;()</code> e o CS8602 (resolvido com <code>Assert.NotNull</code>). Nos dois casos você perguntou o motivo da mensagem do compilador, que é o caminho certo. <strong>Um erro de digitação:</strong> <code>git switch -d</code> no lugar de <code>-c</code> (a mensagem mostrou na hora). <strong>Uma ordem a observar:</strong> no <code>ItemPedido</code>, o código ficou pronto antes do teste; o vermelho foi provado depois com <code>git stash</code>.</p>
+<p><strong>O mentor conduziu mal:</strong> listou pendências sem conferir (quatro já estavam resolvidas); disse horas diferentes em duas mensagens (5h40, 5h32, 5h35); passou comandos Git prontos (você pediu, para ganhar tempo); deixou arquivos <code>.fuse_hidden*</code> no seu disco pela ponte; não identificou dois dos três testes que falharam numa rodada.</p>
+<h2 id="7-pontos-a-melhorar">7. Pontos a melhorar</h2>
+<ul>
+<li><strong>Aluno:</strong> teste primeiro, código depois; <code>git switch -c</code> para criar; ler o tipo de retorno (<code>T?</code>) antes de usar.</li>
+<li><strong>Mentor:</strong> conferir o código antes de listar uma pendência; calcular o tempo das marcas escritas.</li>
+<li><strong>Código (S28):</strong> o endpoint de criação do pedido, a origem do cliente e o contrato <code>Pedidos</code>↔<code>Catalogo</code> (veja a seção 9).</li>
+</ul>
+<h2 id="8-teste-se">8. Teste-se</h2>
+<ol>
+<li>Por que IDE0059 e IDE0051 como <code>warning</code> já quebram o build do Norte?</li>
+<li>Por que a IDE0051 não pega um método <code>internal</code> sem uso?</li>
+<li>Por que a IDE0005 ficou de fora do build?</li>
+<li>O que a regra <code>interfaces_comecam_com_i</code> faz, e como se sabe que ela funciona?</li>
+<li>Onde a conversão do SKU para maiúsculas acontece, e por que não basta converter no construtor?</li>
+<li>O que o usuário recebe se a busca do repositório <strong>não</strong> converter o SKU e já existir <code>LUV-001</code>? E o que ele deveria receber?</li>
+<li>Por que a listagem converte o <strong>filtro</strong> também?</li>
+<li>O que perde a aplicação ao deixar o banco sem o <code>CHECK</code>, e quando reavaliar?</li>
+<li>Um teste da listagem confere só <code>200</code>. Por que é um Assert sempre verdadeiro?</li>
+<li>Como o EF mostra que um renome não mudou o modelo?</li>
+<li>No ADR-010, qual é o preço da opção A (shadow property)?</li>
+<li>Qual a diferença entre <code>git switch -c</code> e <code>git switch -d</code>?</li>
+</ol>
+<h2 id="9-preparação-para-o-próximo-chat-s28--só-trabalho-novo">9. Preparação para o próximo chat (S28) — só trabalho novo</h2>
+<ol>
+<li>Abrir o chat pelo app desktop com a pasta <code>D:\Projetos\C#\Monolito_Modular</code> ligada.</li>
+<li><strong>Lacuna 1 — de onde nasce o cliente:</strong> decidir (e, se couber, registrar em ADR) antes do endpoint.</li>
+<li><strong>Endpoint de criação do pedido</strong>, com FluentValidation em 3 passos. Aqui entra a decisão do <strong>formato do número do pedido</strong> (<code>PedidoId</code> direto ou número separado).</li>
+<li><strong>Contrato <code>Pedidos</code>↔<code>Catalogo</code></strong> (ADR): o que passa por contrato e o que fica no compartilhado.</li>
+</ol>
+<hr />
+<h2 id="respostas">Respostas</h2><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>Porque o Norte liga <code>EnforceCodeStyleInBuild</code> (as regras de estilo rodam no <code>dotnet build</code>) e <code>TreatWarningsAsErrors</code> (todo aviso vira erro; ADR-004).</li>
+<li>Porque a IDE0051 só enxerga membros <code>private</code>. Um membro <code>internal</code> ou <code>public</code> poderia ser usado por outro projeto, então ela não pode afirmar que está sem uso.</li>
+<li>Porque no build ela só roda com <code>GenerateDocumentationFile</code> ligado, e isso faz a CS1591 exigir comentário XML em todo tipo público. Comentar tudo agora não compensa.</li>
+<li>Exige que todo nome de interface comece com <code>I</code> (severidade <code>warning</code>, que vira erro no build). Foi provada com uma interface temporária chamada <code>Prova</code>: o build parou com <code>IDE1006: Missing prefix: 'I'</code>, e voltou ao verde ao apagar o arquivo.</li>
+<li>No construtor de <code>FichaProduto</code> e de <code>ItemPedido</code> (toda criação) <strong>e</strong> nos métodos do repositório que buscam por SKU (<code>ObterPorSkuAsync</code>, <code>ObterUmaFichaProdutoAsync</code>, <code>AtualizarAsync</code>, <code>ExcluirAsync</code>) e no filtro da listagem. Só o construtor não basta porque a busca recebe o texto de fora, sem passar pelo construtor.</li>
+<li>Recebe <strong>500</strong>: a busca não acha a ficha, o cadastro tenta inserir e o Postgres lança <code>23505</code>. O certo é <strong>409</strong>.</li>
+<li>Porque o <code>Contains</code> do Postgres diferencia maiúscula de minúscula. Sem converter o filtro, <code>luv</code> não acha <code>LUV-001</code>.</li>
+<li>Perde a rede de segurança: SQL à mão, importação ou outro serviço podem gravar <code>luv-001</code>, e a aplicação não acharia essa linha. Reavaliar quando existir um segundo ponto de escrita ou quando um método novo de busca escapar da conversão.</li>
+<li>Porque a listagem devolve 200 mesmo vazia. Com o filtro quebrado, o status continua 200 e o teste passa. É preciso conferir as fichas que voltaram.</li>
+<li>Com <code>dotnet ef migrations has-pending-model-changes</code>: a resposta &quot;No changes have been made to the model since the last migration&quot; prova que não há migration a criar.</li>
+<li>Os nomes <code>&quot;PedidoId&quot;</code> e <code>&quot;_itens&quot;</code> são texto na configuração; o compilador não avisa se alguém renomear o campo. O teste de persistência é a defesa.</li>
+<li><code>-c</code> cria a branch e muda para ela. <code>-d</code> (detach) só solta o <code>HEAD</code> num commit, sem criar branch.</li>
+</ol>
+</details>
+</article>
+<footer class="rodape">Atualizado em 24/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

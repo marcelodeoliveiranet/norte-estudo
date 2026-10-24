@@ -22,10 +22,11 @@
 <aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#guia-net-moderno--apêndice-b-comandos-do-dia-a-dia-dotnet-git-github-e-powershell" data-id="guia-net-moderno--apêndice-b-comandos-do-dia-a-dia-dotnet-git-github-e-powershell">GUIA .NET MODERNO — Apêndice B: Comandos do dia a dia (dotnet, Git, …</a><a class="n2" href="#como-ler" data-id="como-ler">Como ler</a><a class="n2" href="#preciso-rodar-build-testes-e-a-api" data-id="preciso-rodar-build-testes-e-a-api">Preciso rodar build, testes e a API</a><a class="n2" href="#preciso-começar-um-trabalho-novo" data-id="preciso-começar-um-trabalho-novo">Preciso começar um trabalho novo</a><a class="n2" href="#preciso-ver-o-que-mudou" data-id="preciso-ver-o-que-mudou">Preciso ver o que mudou</a><a class="n2" href="#preciso-guardar-e-enviar-o-trabalho" data-id="preciso-guardar-e-enviar-o-trabalho">Preciso guardar e enviar o trabalho</a><a class="n2" href="#preciso-abrir-acompanhar-e-fechar-um-pr" data-id="preciso-abrir-acompanhar-e-fechar-um-pr">Preciso abrir, acompanhar e fechar um PR</a><a class="n2" href="#preciso-desfazer-algo" data-id="preciso-desfazer-algo">Preciso desfazer algo</a><a class="n2" href="#preciso-olhar-arquivos-e-criar-pastas" data-id="preciso-olhar-arquivos-e-criar-pastas">Preciso olhar arquivos e criar pastas</a><a class="n2" href="#o-que-decorar-primeiro-e-o-que-só-reconhecer" data-id="o-que-decorar-primeiro-e-o-que-só-reconhecer">O que decorar primeiro e o que só reconhecer</a></aside>
 <main class="conteudo"><article>
 <h1 id="guia-net-moderno--apêndice-b-comandos-do-dia-a-dia-dotnet-git-github-e-powershell">GUIA .NET MODERNO — Apêndice B: Comandos do dia a dia (dotnet, Git, GitHub e PowerShell)</h1>
-<p><strong>v1.1 · 19/10/2026 (depois da S23)</strong> · Apêndice do guia. Não tem entradas numeradas: é um guia de consulta,
+<p><strong>v1.2 · 21/10/2026 (depois da S25)</strong> · Apêndice do guia. Não tem entradas numeradas: é um guia de consulta,
 organizado pelo que você precisa fazer.</p>
 <p><strong>O que mudou na v1.1 (S23):</strong> <code>git add .</code> (e quando usar), o <code>git commit -m</code> com duas mensagens (título e corpo), o erro
 de usar <code>-u</code> no <code>commit</code> (o <code>-u</code> é só do <code>push</code>), <code>git log -n --oneline</code> e <code>gh pr status</code>.</p>
+<p><strong>O que mudou na v1.2 (S25):</strong> o aviso de que o <code>dotnet test --no-build</code> <strong>roda a DLL antiga</strong> (depois de editar um teste ele não vê a edição; na prova do vermelho use <code>dotnet test</code> normal) e de que o <code>dotnet test</code> dos testes com Testcontainers exige o Docker aberto.</p>
 <p><strong>Para que serve.</strong> Reunir os comandos usados nas sessões do laboratório, dizer o que cada um faz, por que usá-lo, dar um
 exemplo do Norte e separar o que um desenvolvedor usa todo dia do que serve só para inspecionar.</p>
 <p><strong>Como se mantém.</strong> Uma linha nova quando um comando novo entra numa sessão. Nada é apagado: o comando que deixar de
@@ -134,6 +135,7 @@ ser usado é marcado, não removido.</p>
 
 <p><strong>Cuidado que já custou tempo:</strong> com a API rodando, o <code>build</code> e o <code>test</code> falham com <code>MSB3026</code> (arquivo bloqueado por
 <code>Norte.Api</code>). Feche a API (Ctrl+C no terminal dela) antes de compilar.</p>
+<p><strong>Atenção ao <code>--no-build</code> (S25):</strong> ele roda a DLL que já existe. Se você editou um teste (ou estragou o código para ver o vermelho) e rodou com <code>--no-build</code>, o resultado é o do código antigo. Na prova do vermelho, use <code>dotnet test</code> sem o <code>--no-build</code>.</p>
 <p><strong>Atenção ao <code>total: 0</code>:</strong> se o resumo do <code>dotnet test</code> mostra <code>total: 0</code>, nenhum teste rodou. Isso quase sempre é
 nome errado no filtro, e não é sucesso.</p>
 <h2 id="preciso-começar-um-trabalho-novo">Preciso começar um trabalho novo</h2>
@@ -531,7 +533,7 @@ inspeção, e a IDE costuma fazer o mesmo com um clique.</p>
 que uma completa que ninguém consulta.</p>
 
 </article>
-<footer class="rodape">Atualizado em 20/10/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 24/10/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="assets/search-index.js"></script>

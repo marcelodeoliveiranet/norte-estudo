@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norte · S30 — O Cliente vai para o banco e ganha POST /clientes · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s30.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#norte--s30--o-cliente-vai-para-o-banco-e-ganha-post-clientes" data-id="norte--s30--o-cliente-vai-para-o-banco-e-ganha-post-clientes">Norte · S30 — O Cliente vai para o banco e ganha POST /clientes</a><a class="n2" href="#1-resultado-do-dia" data-id="1-resultado-do-dia">1. Resultado do dia</a><a class="n2" href="#2-onde-isso-está-no-mapa-dos-níveis" data-id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</a><a class="n2" href="#3-conceitos" data-id="3-conceitos">3. Conceitos</a><a class="n2" href="#4-termos" data-id="4-termos">4. Termos</a><a class="n2" href="#5-divergências-e-decisões-do-aluno" data-id="5-divergências-e-decisões-do-aluno">5. Divergências e decisões do aluno</a><a class="n2" href="#6-avaliação" data-id="6-avaliação">6. Avaliação</a><a class="n2" href="#7-pontos-a-melhorar" data-id="7-pontos-a-melhorar">7. Pontos a melhorar</a><a class="n2" href="#8-teste-se" data-id="8-teste-se">8. Teste-se</a><a class="n2" href="#9-preparação-para-a-s31" data-id="9-preparação-para-a-s31">9. Preparação para a S31</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a></aside>
+<main class="conteudo"><article>
+<h1 id="norte--s30--o-cliente-vai-para-o-banco-e-ganha-post-clientes">Norte · S30 — O <code>Cliente</code> vai para o banco e ganha <code>POST /clientes</code></h1>
+<p><strong>Sexta 23/10 e sábado 24/10/2026 · tempo líquido: 5h36 (3h02 + 0h26 + 2h08) · Marco M1</strong></p>
+<p>Hoje o <code>Clientes</code> saiu do domínio e chegou ao mundo real: <strong>tabela no Postgres, teste com banco de verdade e um endpoint que cadastra</strong>. Três PRs mergeados na <code>main</code>, CI verde, <strong>88 testes</strong>.</p>
+<p>A ideia para guardar: <strong>cada regra tem um dono e cada garantia tem um teste que já foi visto vermelho.</strong> O formato do CNPJ é garantido pela expressão regular (uma fonte só), a unicidade pelo índice do banco, e o 409 pela consulta antes de gravar.</p>
+<h2 id="1-resultado-do-dia">1. Resultado do dia</h2>
+<table>
+<thead>
+<tr>
+<th>PR</th>
+<th>O quê</th>
+<th>Merge</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#50</td>
+<td>persistência do <code>Cliente</code>: <code>ClienteId</code> do banco, schema <code>clientes</code>, índice único <code>ix_clientes_cnpj</code>, migration <code>CriaTabelaClientes</code>, 3 testes com Postgres real</td>
+<td><code>1aa47ee</code></td>
+</tr>
+<tr>
+<td>#51</td>
+<td>refactor: sai o <code>if (Length != 18)</code> do <code>Cliente</code> (a regex já garante)</td>
+<td><code>6ca782e</code></td>
+</tr>
+<tr>
+<td>#52</td>
+<td><code>POST /clientes</code> (201, 400, 409) e a regex do CNPJ no <code>Compartilhado</code></td>
+<td><code>8e65b8c</code></td>
+</tr>
+</tbody>
+</table>
+<p>Tempo: 5h36, <strong>0h36 acima</strong> do limite de 5h por sessão (alerta A4): a sessão atravessou o fim de semana.</p>
+<h2 id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</h2>
+<p>Duas camadas do módulo <code>Clientes</code>: <strong>infraestrutura</strong> (EF Core, migration, teste com banco) e <strong>borda da API</strong> (endpoint, validação do Request, resposta). Mesmo desenho do <code>Catalogo</code> e do <code>Pedidos</code>.</p>
+<h2 id="3-conceitos">3. Conceitos</h2>
+<h3 id="31-persistir-o-cliente-guia-810">3.1 Persistir o <code>Cliente</code> (guia <a href="../parte-8.html#810-o-cliente-no-banco-e-o-post-clientes-índice-único-23505-e-a-regex-em-um-lugar-só">8.10</a>)</h3>
+<table>
+<thead>
+<tr>
+<th>Como era (<code>Pedidos</code>, S24)</th>
+<th>Como é agora (<code>Clientes</code>, S30)</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PedidoDbContext</code>, schema <code>pedidos</code></td>
+<td><code>ClientesDbContext</code>, schema <code>clientes</code></td>
+<td>um contexto e um schema por módulo (ADR-006)</td>
+</tr>
+<tr>
+<td>chave composta com shadow property</td>
+<td>chave simples <code>ClienteId</code>, <code>UseIdentityByDefaultColumn</code></td>
+<td>o banco cria o número</td>
+</tr>
+<tr>
+<td>sem restrição de unicidade além da chave</td>
+<td>índice único <code>ix_clientes_cnpj</code></td>
+<td>o banco recusa o CNPJ repetido</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-provar-o-índice-único-23505-e-constraintname">3.2 Provar o índice único: <code>23505</code> e <code>ConstraintName</code></h3>
+<p>O teste grava dois clientes com o mesmo CNPJ. O EF lança <code>DbUpdateException</code>; dentro dela (<code>InnerException</code>) vem a <code>PostgresException</code> do Npgsql, com <code>SqlState == &quot;23505&quot;</code> (violação de unicidade) e <code>ConstraintName == &quot;ix_clientes_cnpj&quot;</code>. Conferir o <strong>nome da restrição</strong> prova que foi <em>aquele</em> índice que barrou, e não outro erro qualquer.</p>
+<table>
+<thead>
+<tr>
+<th>Assert</th>
+<th>O que prova</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Assert.Throws&lt;DbUpdateException&gt;</code></td>
+<td>o banco recusou na gravação</td>
+</tr>
+<tr>
+<td><code>SqlState == &quot;23505&quot;</code></td>
+<td>a causa foi unicidade</td>
+</tr>
+<tr>
+<td><code>ConstraintName == &quot;ix_clientes_cnpj&quot;</code></td>
+<td>foi o índice do CNPJ</td>
+</tr>
+</tbody>
+</table>
+<p>Prova do vermelho: remover o índice da configuração faz o teste falhar com <em>No exception was thrown</em>.</p>
+<h3 id="33-banco-compartilhado-pela-classe-um-cnpj-por-teste">3.3 Banco compartilhado pela classe: um CNPJ por teste</h3>
+<p>O <code>IClassFixture</code> sobe <strong>um</strong> container por classe. Os testes da classe dividem o banco; dois testes com o mesmo CNPJ colidem no índice único. Cada teste usa um CNPJ diferente.</p>
+<h3 id="34-post-clientes-como-fatia-vertical">3.4 <code>POST /clientes</code> como fatia vertical</h3>
+<table>
+<thead>
+<tr>
+<th>Peça</th>
+<th>Papel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CadastrarClienteRequest</code> (<code>public</code>)</td>
+<td>forma da entrada, validada por DataAnnotations (<code>[Required]</code>, <code>[RegularExpression]</code>, <code>[StringLength]</code>, <code>[Range]</code>)</td>
+</tr>
+<tr>
+<td><code>AddValidation()</code></td>
+<td>liga a validação nativa do .NET 10 nos endpoints</td>
+</tr>
+<tr>
+<td><code>CadastrarClienteEndpoint</code></td>
+<td>consulta o CNPJ; existe → 409; senão cria o <code>Cliente</code> e grava</td>
+</tr>
+<tr>
+<td><code>ClientesRepository</code></td>
+<td>acesso ao banco (<code>AddScoped</code>)</td>
+</tr>
+<tr>
+<td><code>CadastrarClienteResponse</code> (<code>internal</code>)</td>
+<td>o que volta no 201, com <code>Location</code></td>
+</tr>
+</tbody>
+</table>
+<p>O <code>Request</code> é <code>public</code> por uma exceção ao ADR-002: a validação nativa precisa enxergá-lo (ADR-003). O <code>Response</code> continua <code>internal</code>.</p>
+<h3 id="35-por-que-o-required-continua">3.5 Por que o <code>[Required]</code> continua</h3>
+<p><code>[RegularExpression]</code> e <code>[StringLength]</code> <strong>ignoram <code>null</code> e vazio</strong>. Sem <code>[Required]</code>, um CNPJ ausente passaria pela validação. Placeholders da mensagem do <code>[StringLength]</code>: <code>{0}</code> é o nome do campo e <code>{1}</code> é o máximo.</p>
+<h3 id="36-409-consultar-antes-de-gravar">3.6 409: consultar antes de gravar</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Ganho</th>
+<th><strong>Preço</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Consulta antes de gravar</td>
+<td>resposta 409 clara, sem exceção no caminho normal</td>
+<td>duas requisições simultâneas com o mesmo CNPJ passam as duas na consulta; a segunda bate no índice e vira <strong>500</strong> (<code>23505</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>A correção (traduzir <code>23505</code> em 409) ficou para a S31.</p>
+<h3 id="37-uma-regex-duas-portas-o-critério-do-compartilhado">3.7 Uma regex, duas portas: o critério do <code>Compartilhado</code></h3>
+<p>A expressão do CNPJ é usada pelo domínio (<code>[GeneratedRegex]</code>) e pelo Request. Ela mora em <code>Compartilhado.Constantes.RegexPadraoCnpj</code>. Critério: <strong>vai para o <code>Compartilhado</code> o que é o mesmo fato do mundo real em mais de um módulo</strong> (como o SKU). Uma regra que só parece parecida fica no módulo.</p>
+<p>Efeito colateral bom: com a regex garantindo 18 caracteres, o <code>if (Length != 18)</code> virou redundante e saiu (PR #51). A busca por CNPJ não precisa de <code>ToUpperInvariant</code>: a regex já exige maiúsculas.</p>
+<h3 id="38-depurar-com-o-http">3.8 Depurar com o <code>.http</code></h3>
+<p>O <code>Clientes.http</code> ganhou 16 cenários (CNPJ ausente, sem máscara, 18 caracteres errados, representante ausente, razão acima de 120...). Dois achados: um breakpoint parado estoura o timeout de 20 s do cliente HTTP; e a tabela ausente (<code>42P01</code>) era migration não aplicada.</p>
+<h2 id="4-termos">4. Termos</h2>
+<table>
+<thead>
+<tr>
+<th>Termo</th>
+<th>Em uma linha</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>23505</code></td>
+<td>código do Postgres para violação de unicidade</td>
+</tr>
+<tr>
+<td><code>ConstraintName</code></td>
+<td>nome do índice ou restrição que barrou</td>
+</tr>
+<tr>
+<td><code>DbUpdateException</code></td>
+<td>exceção do EF ao gravar; a causa fica em <code>InnerException</code></td>
+</tr>
+<tr>
+<td>Check-then-insert</td>
+<td>consultar e depois inserir; tem janela de corrida</td>
+</tr>
+<tr>
+<td>Fatia vertical</td>
+<td>tudo de um caso de uso na mesma pasta</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-divergências-e-decisões-do-aluno">5. Divergências e decisões do aluno</h2>
+<table>
+<thead>
+<tr>
+<th>Tema</th>
+<th>Posição</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sem Bogus</td>
+<td>um CNPJ distinto por teste</td>
+<td>adotado</td>
+</tr>
+<tr>
+<td>Guard <code>Length != 18</code></td>
+<td>&quot;traz sim&quot;, já existia</td>
+<td>removido (#51)</td>
+</tr>
+<tr>
+<td>Request <code>public</code></td>
+<td>precisa, por causa da validação nativa</td>
+<td>decidido</td>
+</tr>
+<tr>
+<td>Constantes no <code>Compartilhado</code></td>
+<td>só para o mesmo fato do mundo real</td>
+<td>critério</td>
+</tr>
+<tr>
+<td><code>ToUpperInvariant</code> na busca</td>
+<td>desnecessário com a regex</td>
+<td>removido por você</td>
+</tr>
+<tr>
+<td><code>PROMPT-NORTE-ESTADO-ATUAL.md</code></td>
+<td>suspenso até você pedir</td>
+<td>decidido</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-avaliação">6. Avaliação</h2>
+<p><strong>Fez bem:</strong> questionou a sabotagem do mentor; leu certo os vermelhos; propôs mover a regex para o <code>Compartilhado</code>; tirou o <code>ToUpperInvariant</code> sozinho; levantou a dúvida do <code>[Required]</code>; escreveu os 16 cenários do <code>.http</code>.</p>
+<p><strong>Com ajuda:</strong> o padrão do teste de unicidade (<code>InnerException</code> → <code>PostgresException</code>): &quot;eu nunca iria conseguir fazer esse teste&quot;. Foi o ponto de ajuda 3 do dia.</p>
+<p><strong>O mentor conduziu mal:</strong> chamou o <code>+ 1</code> deliberado de bug; disse que não havia padrão de endpoint (o <code>Catalogo</code> tem); contou 15 arquivos (eram 14); falou de <code>GET</code> quando o foco era o <code>POST</code>; passou código quando você pediu só o passo a passo; afirmou estado do Git sem conferir.</p>
+<h2 id="7-pontos-a-melhorar">7. Pontos a melhorar</h2>
+<ul>
+<li><strong>Você:</strong> tirar o hábito do <code>git add .</code> (stage por caminho); criar a branch <strong>antes</strong> de editar; conferir o nome da branch ao digitar.</li>
+<li><strong>Mentor:</strong> conferir antes de afirmar; seguir o formato pedido (detalhe, passo a passo).</li>
+<li><strong>Código (S31):</strong> testes de API do cadastro; <code>23505</code> → 409; <code>ArgumentException</code> → 400; <code>GET /clientes/{id:int}</code>.</li>
+</ul>
+<h2 id="8-teste-se">8. Teste-se</h2>
+<ol>
+<li>Por que o teste de CNPJ duplicado confere o <code>ConstraintName</code> além do <code>SqlState</code>?</li>
+<li>Onde fica a <code>PostgresException</code> quando o EF lança <code>DbUpdateException</code>?</li>
+<li>Por que cada teste da classe usa um CNPJ diferente?</li>
+<li>Por que o <code>[Required]</code> continua ao lado do <code>[RegularExpression]</code>?</li>
+<li>O que o usuário recebe se duas requisições com o mesmo CNPJ chegam ao mesmo tempo? Por quê?</li>
+<li>Por que o <code>Request</code> é <code>public</code> e o <code>Response</code> <code>internal</code>?</li>
+<li>Qual o critério para uma constante ir para o <code>Compartilhado</code>?</li>
+<li>Por que o <code>if (Length != 18)</code> pôde sair do <code>Cliente</code>?</li>
+</ol>
+<h2 id="9-preparação-para-a-s31">9. Preparação para a S31</h2>
+<ol>
+<li>Abrir um chat novo com a pasta <code>D:\Projetos\C#\Monolito_Modular</code> ligada; trazer <code>git status</code> e <code>git log -3</code>.</li>
+<li>Rever o guia 8.10 e o <code>Clientes.http</code>.</li>
+<li>Pensar: como o teste de API prepara um banco com um cliente já cadastrado (para o 409)?</li>
+</ol>
+<hr />
+<h2 id="respostas">Respostas</h2><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>Porque <code>23505</code> serve para qualquer índice único. O <code>ConstraintName</code> prova que foi o <code>ix_clientes_cnpj</code> que barrou.</li>
+<li>Em <code>InnerException</code> da <code>DbUpdateException</code>; é preciso converter (<code>as PostgresException</code>) para ler <code>SqlState</code> e <code>ConstraintName</code>.</li>
+<li>Porque a classe divide um só banco (um container por classe); o mesmo CNPJ em dois testes violaria o índice único.</li>
+<li>Porque <code>[RegularExpression]</code> ignora <code>null</code> e vazio; sem o <code>[Required]</code>, o CNPJ ausente passaria.</li>
+<li>Possivelmente um 500: as duas passam pela consulta, a segunda bate no índice (<code>23505</code>). O certo seria 409; fica para a S31.</li>
+<li>O <code>Request</code> é lido pela validação nativa, que precisa enxergá-lo (ADR-003, exceção ao ADR-002). O <code>Response</code> só é usado dentro do módulo.</li>
+<li>Ser o mesmo fato do mundo real usado por mais de um módulo.</li>
+<li>Porque a regex já exige exatamente 18 caracteres; o guard era redundante.</li>
+</ol>
+</details>
+</article>
+<footer class="rodape">Atualizado em 24/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

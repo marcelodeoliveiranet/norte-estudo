@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norte · S28 — O dono do cliente: o módulo Clientes e a ficha mínima (ADR-011) · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s28.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#norte--s28--o-dono-do-cliente-o-módulo-clientes-e-a-ficha-mínima-adr-011" data-id="norte--s28--o-dono-do-cliente-o-módulo-clientes-e-a-ficha-mínima-adr-011">Norte · S28 — O dono do cliente: o módulo Clientes e a ficha mínima …</a><a class="n2" href="#1-resultado-do-dia" data-id="1-resultado-do-dia">1. Resultado do dia</a><a class="n2" href="#2-onde-isso-está-no-mapa-dos-níveis" data-id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</a><a class="n2" href="#3-conceitos" data-id="3-conceitos">3. Conceitos</a><a class="n2" href="#4-termos-da-sessão" data-id="4-termos-da-sessão">4. Termos da sessão</a><a class="n2" href="#5-divergências-e-decisões-do-aluno" data-id="5-divergências-e-decisões-do-aluno">5. Divergências e decisões do aluno</a><a class="n2" href="#6-avaliação" data-id="6-avaliação">6. Avaliação</a><a class="n2" href="#7-pontos-a-melhorar" data-id="7-pontos-a-melhorar">7. Pontos a melhorar</a><a class="n2" href="#8-teste-se" data-id="8-teste-se">8. Teste-se</a><a class="n2" href="#9-preparação-para-o-próximo-chat-s29" data-id="9-preparação-para-o-próximo-chat-s29">9. Preparação para o próximo chat (S29)</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a></aside>
+<main class="conteudo"><article>
+<h1 id="norte--s28--o-dono-do-cliente-o-módulo-clientes-e-a-ficha-mínima-adr-011">Norte · S28 — O dono do cliente: o módulo <code>Clientes</code> e a ficha mínima (ADR-011)</h1>
+<p><strong>Quinta à noite, 22/10/2026 · tempo líquido: 1h53 (sessão extra da noite; o dia somou 7h52) · Marco M1</strong></p>
+<p>Hoje não houve código. Houve uma <strong>decisão</strong>: quem é o dono do cadastro do cliente e o que a ficha precisa ter para o cliente existir. O resultado está no ADR-011 (escrito, ainda não commitado) e numa mudança de escopo: <strong>o módulo <code>Crm</code> saiu do Norte</strong>.</p>
+<p>A ideia para guardar: <strong>o dono de um dado é o módulo que cria e altera. Os outros guardam só o número.</strong> E um módulo se chama pelo <strong>assunto</strong> (<code>Clientes</code>), nunca pelo departamento (<code>Comercial</code>).</p>
+<h2 id="1-resultado-do-dia">1. Resultado do dia</h2>
+<table>
+<thead>
+<tr>
+<th>Decisão</th>
+<th>Resultado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dono do cadastro do cliente</td>
+<td>módulo <strong><code>Clientes</code></strong> (opção A do ADR-011)</td>
+</tr>
+<tr>
+<td>Ficha mínima</td>
+<td>5 campos (veja a seção 3.2)</td>
+</tr>
+<tr>
+<td>Módulo <code>Crm</code></td>
+<td><strong>cortado do Norte</strong> (decisão sua)</td>
+</tr>
+<tr>
+<td>CNPJ</td>
+<td>com máscara, alfanumérico, único no banco; só o <strong>padrão</strong> é validado</td>
+</tr>
+<tr>
+<td>Ordem do trabalho</td>
+<td>contrato do <code>Clientes</code> <strong>antes</strong> do endpoint de criação do pedido (a confirmar)</td>
+</tr>
+<tr>
+<td>Git</td>
+<td>comandos básicos não são mais mostrados antes de rodar</td>
+</tr>
+</tbody>
+</table>
+<p>Arquivo novo no repositório, <strong>ainda não commitado</strong>: <code>docs/adr/ADR-011-dono-do-cadastro-do-cliente.md</code>, na branch <code>docs/adr-011-dono-do-cliente</code> (criada a partir da <code>main</code>, <code>6d35eb9</code>). Status do ADR: <em>Proposto</em>; passa a <em>Aceito</em> quando você revisar.</p>
+<h2 id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</h2>
+<p>É a camada de <strong>domínio estratégico</strong>: fronteira entre módulos. Nenhum projeto foi criado e nenhum teste mudou. O <code>Pedido</code> continua validando só <code>ClienteId &gt; 0</code>.</p>
+<h2 id="3-conceitos">3. Conceitos</h2>
+<h3 id="31-dono-do-dado-e-a-palavra-que-divide">3.1 Dono do dado e a palavra que divide</h3>
+<p>Em <code>DOMINIO.md</code>, &quot;cliente&quot; tinha quatro sentidos (<code>Crm</code>, <code>Ordering</code>, <code>Billing</code>, <code>Shipping</code>). Sem o <code>Crm</code>, sobram <strong>três</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Contexto</th>
+<th>O que &quot;cliente&quot; é ali</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Ordering</code> (módulo <code>Pedidos</code>)</td>
+<td>quem recebe o pedido; guarda só o <code>ClienteId</code></td>
+</tr>
+<tr>
+<td><code>Billing</code></td>
+<td>sacado com dados fiscais e títulos em aberto</td>
+</tr>
+<tr>
+<td><code>Shipping</code></td>
+<td>endereço com janela de entrega</td>
+</tr>
+</tbody>
+</table>
+<p>O cadastro (quem é o cliente) é uma quarta coisa, que vive <strong>antes</strong> do pedido. Por isso ele não pode morar dentro de <code>Pedidos</code>: o <code>Billing</code> e o <code>Shipping</code> passariam a depender de <code>Pedidos</code> só para saber quem é o cliente.</p>
+<p><strong>Palavra nova — dono do dado:</strong> o módulo que cria e altera aquele dado. Os outros módulos guardam só o identificador.</p>
+<h3 id="32-a-ficha-mínima">3.2 A ficha mínima</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Tipo</th>
+<th>Regra</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ClienteId</code></td>
+<td><code>int</code>, gerado pelo banco</td>
+<td>código curto que o pessoal decora</td>
+</tr>
+<tr>
+<td><code>Cnpj</code></td>
+<td>texto (18)</td>
+<td>com máscara, letras em maiúscula; obrigatório e único</td>
+</tr>
+<tr>
+<td><code>RazaoSocial</code></td>
+<td>texto (120)</td>
+<td>obrigatória; nome legal (fiscal)</td>
+</tr>
+<tr>
+<td><code>NomeFantasia</code></td>
+<td>texto (120)</td>
+<td>obrigatório; nome do dia a dia</td>
+</tr>
+<tr>
+<td><code>RepresentanteId</code></td>
+<td><code>int</code></td>
+<td>obrigatório, maior que zero, <strong>provisório</strong> (carteira, R9)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Portão:</strong> só um cliente com a ficha completa pode receber um pedido.</p>
+<h3 id="33-duas-vezes-representanteid-dois-significados">3.3 Duas vezes <code>RepresentanteId</code>, dois significados</h3>
+<table>
+<thead>
+<tr>
+<th>Onde</th>
+<th>Significa</th>
+<th>Muda?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Cliente.RepresentanteId</code></td>
+<td>de quem é a <strong>carteira</strong></td>
+<td>quando a carteira é transferida (R9)</td>
+</tr>
+<tr>
+<td><code>Pedido.RepresentanteId</code></td>
+<td>quem <strong>vende este pedido</strong></td>
+<td>até o faturamento; a venda congela</td>
+</tr>
+</tbody>
+</table>
+<p>Os dois são <code>int &gt; 0</code> e nenhum é conferido até o <code>Partners</code> existir (M3). O vínculo cliente↔representante (hotspot 6) passa para o <code>Partners</code> nessa data. Quando o código tiver os dois campos, o glossário precisa distinguir os dois.</p>
+<p>Um erro de raciocínio que aconteceu na sessão e vale guardar: os argumentos a favor de pôr o representante no cliente valiam <strong>igualmente</strong> para o pedido. Foi você quem mostrou. Um argumento que serve para dois lugares não decide entre os dois.</p>
+<h3 id="34-cnpj-um-formato-só">3.4 CNPJ: um formato só</h3>
+<p>O CNPJ agora pode ter letras (CNPJ alfanumérico). Como o banco compara texto, <strong>duas escritas do mesmo CNPJ viram duas linhas</strong>. É a mesma lição do SKU (ADR-008 e ADR-009).</p>
+<table>
+<thead>
+<tr>
+<th>Parte</th>
+<th>Decisão</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Guardar</td>
+<td>com máscara: <code>XX.XXX.XXX/XXXX-DD</code> (18 caracteres)</td>
+</tr>
+<tr>
+<td>Letras</td>
+<td>em maiúscula</td>
+</tr>
+<tr>
+<td>Domínio</td>
+<td>aceita <strong>um padrão exato</strong>; entrada fora dele é recusada</td>
+</tr>
+<tr>
+<td>Banco</td>
+<td>índice <strong>único</strong> (a garantia final)</td>
+</tr>
+<tr>
+<td>Aplicação</td>
+<td>consulta antes de gravar e responde <strong>409</strong> (como o SKU)</td>
+</tr>
+<tr>
+<td>Dígitos verificadores</td>
+<td><strong>não</strong> validados</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Ganho</th>
+<th><strong>Preço</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Só o padrão</td>
+<td>sem cálculo; foco no que o mercado pede de .NET</td>
+<td>um CNPJ com padrão certo e dígitos errados é aceito</td>
+</tr>
+<tr>
+<td>Índice único</td>
+<td>o banco impede a duplicata mesmo se a aplicação falhar</td>
+<td>uma corrida ainda pode dar 500 (<code>23505</code>), como no SKU</td>
+</tr>
+</tbody>
+</table>
+<p>Se algum dia importar, o cálculo entra como <strong>função pura do domínio</strong>, com testes, conferida na documentação oficial da Receita.</p>
+<h3 id="35-cortar-o-crm-custo-×-valor">3.5 Cortar o <code>Crm</code>: custo × valor</h3>
+<p>Você pediu para ser convencido do contrário, com algo que gerasse valor. O que se avaliou:</p>
+<table>
+<thead>
+<tr>
+<th>Pergunta</th>
+<th>Resposta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>O <code>Crm</code> ensinava ferramenta que os outros módulos não ensinam?</td>
+<td>não</td>
+</tr>
+<tr>
+<td>O <code>Crm</code> tinha horas planejadas no orçamento?</td>
+<td>não: o M2 não depende dele</td>
+</tr>
+<tr>
+<td>Cortar economiza tempo?</td>
+<td>só se você <strong>reduzir o teto do M2</strong>; sem isso, as horas apenas ficam para outro assunto</td>
+</tr>
+<tr>
+<td>O que se perde?</td>
+<td>lead, oportunidade, proposta e funil (R10 e os eventos da Fase 1)</td>
+</tr>
+</tbody>
+</table>
+<p>Regra de corte usada: <strong>só entra no código o que tem regra e teste.</strong> O <code>DOMINIO.md</code> e o <code>EVENT-STORMING.md</code> registram o corte.</p>
+<h3 id="36-ordem-contrato-antes-do-endpoint">3.6 Ordem: contrato antes do endpoint</h3>
+<p>O <code>Pedido</code> não confere se o cliente existe. Quem confere é o <strong>endpoint</strong>, por um contrato do <code>Clientes</code> (&quot;o cliente existe e tem a ficha completa?&quot;). Por isso o contrato nasce <strong>antes</strong> do endpoint de criação do pedido: os testes do endpoint já nascem preparando um cliente real (ou um dublê) e os testes de domínio existentes não mudam. Esta ordem ainda precisa da sua confirmação.</p>
+<h3 id="37-git-o-que-mudou-no-método">3.7 Git: o que mudou no método</h3>
+<p>Comandos do dia a dia (<code>status</code>, <code>diff</code>, <code>add</code>, <code>commit</code>, <code>push</code>, <code>switch -c</code>, <code>dotnet build/test</code>) não são mais mostrados antes de rodar: se errar, o comando falha e você corrige. Os que <strong>destroem ou reescrevem</strong> (<code>reset --hard</code>, <code>push --force</code>, <code>branch -D</code>, <code>clean</code>, <code>rebase</code>, <code>checkout --</code>, <code>restore</code> sobre trabalho não salvo) continuam sendo mostrados antes.</p>
+<h2 id="4-termos-da-sessão">4. Termos da sessão</h2>
+<table>
+<thead>
+<tr>
+<th>Termo</th>
+<th>Em uma linha</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dono do dado</td>
+<td>módulo que cria e altera; os outros guardam o número</td>
+</tr>
+<tr>
+<td>Ficha mínima</td>
+<td>o que o cliente precisa ter para existir</td>
+</tr>
+<tr>
+<td>Portão</td>
+<td>só cliente completo recebe pedido</td>
+</tr>
+<tr>
+<td>Carteira</td>
+<td>os clientes de um representante (R9)</td>
+</tr>
+<tr>
+<td>Índice único</td>
+<td>o banco recusa o valor repetido</td>
+</tr>
+<tr>
+<td>CNPJ alfanumérico</td>
+<td>CNPJ novo, com letras e números</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-divergências-e-decisões-do-aluno">5. Divergências e decisões do aluno</h2>
+<table>
+<thead>
+<tr>
+<th>Tema</th>
+<th>Posição</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cadastro dentro do <code>Crm</code></td>
+<td>não: cria funil só para ter cadastro</td>
+<td>opção B recusada</td>
+</tr>
+<tr>
+<td>Módulo <code>Comercial</code></td>
+<td>não: nome de departamento</td>
+<td>opção C recusada</td>
+</tr>
+<tr>
+<td><code>RepresentanteId</code> no <code>Cliente</code></td>
+<td>obrigatório (proposta sua)</td>
+<td>adotado, provisório</td>
+</tr>
+<tr>
+<td>Mesmos argumentos para o <code>Pedido</code></td>
+<td>você mostrou que valiam igual</td>
+<td>mentor retirou a recomendação B</td>
+</tr>
+<tr>
+<td><code>Crm</code></td>
+<td>cortar</td>
+<td><strong>decidido</strong></td>
+</tr>
+<tr>
+<td>Texto das razões</td>
+<td>120 caracteres</td>
+<td>decidido</td>
+</tr>
+<tr>
+<td>CNPJ</td>
+<td>único no banco, com máscara, alfanumérico, só o padrão</td>
+<td>decidido</td>
+</tr>
+<tr>
+<td>Git</td>
+<td>comandos básicos sem mostrar antes</td>
+<td>decidido</td>
+</tr>
+<tr>
+<td>Perfeição</td>
+<td>&quot;foco é empregabilidade em 2027, não um sistema perfeito&quot;</td>
+<td>regra de corte</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-avaliação">6. Avaliação</h2>
+<p><strong>Fez bem:</strong> pediu a lista dos campos decididos antes de aceitar; mostrou que os argumentos do mentor valiam para o <code>Pedido</code> também; corrigiu o mentor no CNPJ alfanumérico; cortou o <code>Crm</code> com argumento de custo e valor; escolheu não validar os dígitos do CNPJ sabendo o preço.</p>
+<p><strong>O mentor conduziu mal:</strong> pôs a ficha no <code>Crm</code> na primeira hipótese; deu argumentos assimétricos para o representante; propôs &quot;CNPJ só com 14 dígitos&quot; sem considerar o alfanumérico; disse &quot;faz todo sentido&quot; sem o preço; anunciou o alerta A1 (M1 passou de 80h) com atraso.</p>
+<h2 id="7-pontos-a-melhorar">7. Pontos a melhorar</h2>
+<ul>
+<li><strong>Mentor:</strong> dar o preço junto com a recomendação; checar se um argumento vale também para o caso vizinho; avisar o A1 na hora.</li>
+<li><strong>Código (próximas sessões):</strong> commitar o ADR-011; criar <code>Norte.Clientes</code>; <code>Cliente</code> e testes escritos por você; persistência e endpoint; contrato; só então o endpoint do pedido.</li>
+</ul>
+<h2 id="8-teste-se">8. Teste-se</h2>
+<ol>
+<li>O que é o &quot;dono do dado&quot;? Por que o cadastro do cliente não fica em <code>Pedidos</code>?</li>
+<li>Por que o módulo se chama <code>Clientes</code> e não <code>Comercial</code>?</li>
+<li>Quais são os cinco campos da ficha mínima?</li>
+<li>Qual a diferença entre <code>Cliente.RepresentanteId</code> e <code>Pedido.RepresentanteId</code>?</li>
+<li>Por que o CNPJ é guardado com máscara e com letras em maiúscula?</li>
+<li>Quem garante que não existam dois clientes com o mesmo CNPJ? E o que o usuário recebe?</li>
+<li>Qual o preço de não validar os dígitos do CNPJ? Como seria resolvido depois?</li>
+<li>Por que o contrato do <code>Clientes</code> nasce antes do endpoint de criação do pedido?</li>
+<li>Por que o argumento &quot;o representante é obrigatório no cliente&quot; não decidiu entre cliente e pedido?</li>
+<li>Cortar o <code>Crm</code> economiza tempo no laboratório? Em que condição?</li>
+</ol>
+<h2 id="9-preparação-para-o-próximo-chat-s29">9. Preparação para o próximo chat (S29)</h2>
+<ol>
+<li>Abrir pelo app desktop com a pasta <code>D:\Projetos\C#\Monolito_Modular</code> ligada.</li>
+<li>Commitar o ADR-011 (add, commit, push, PR); trazer <code>git status</code> e <code>git log -3</code>.</li>
+<li>Revisar e aceitar o ADR-011.</li>
+<li>Confirmar a ordem: contrato antes do endpoint.</li>
+<li>Criar <code>Norte.Clientes</code> e o projeto de testes; você escreve o <code>Cliente</code> e os testes.</li>
+</ol>
+<hr />
+<h2 id="respostas">Respostas</h2><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>É o módulo que cria e altera o dado; os outros guardam só o número. Se o cadastro ficasse em <code>Pedidos</code>, o <code>Billing</code> e o <code>Shipping</code> dependeriam de <code>Pedidos</code> só para saber quem é o cliente, e o cadastro existe antes do pedido.</li>
+<li>Módulo se chama pelo <strong>assunto</strong> (ADR-001). <code>Comercial</code> é departamento: mistura cadastro, pedido e venda sob uma pessoa e não sob um assunto.</li>
+<li><code>ClienteId</code> (int, banco), <code>Cnpj</code> (texto 18, com máscara, único), <code>RazaoSocial</code> (120), <code>NomeFantasia</code> (120), <code>RepresentanteId</code> (int &gt; 0, provisório).</li>
+<li>No cliente é &quot;de quem é a carteira&quot; (muda na transferência, R9). No pedido é &quot;quem vende este pedido&quot; (muda até o faturamento; a venda congela).</li>
+<li>O banco compara texto: <code>ab.123...</code> e <code>AB.123...</code> seriam dois valores. Com <strong>um formato só</strong> (máscara fixa, maiúsculas), o índice único funciona. É a mesma lição do SKU.</li>
+<li>O <strong>índice único do banco</strong> (garantia final). A aplicação consulta antes e responde <strong>409</strong>. Em corrida, o banco pode devolver 500 (<code>23505</code>).</li>
+<li>Um CNPJ com padrão certo e dígitos errados é aceito. Se importar, entra uma função pura no domínio, com testes, conferida na documentação da Receita.</li>
+<li>Para os testes do endpoint já nascerem preparando um cliente real (ou dublê) e os testes de domínio do <code>Pedido</code> não mudarem: a existência do cliente é checada no endpoint, não no domínio.</li>
+<li>Porque o mesmo argumento servia também para o <code>Pedido</code>. Um argumento que vale para os dois lados não decide entre eles; o que decide é o significado de cada campo.</li>
+<li>Só se o teto do M2 for reduzido: o <code>Crm</code> não tinha horas planejadas e o conteúdo do M2 não depende dele. Sem reduzir o teto, as horas apenas ficam para outro assunto.</li>
+</ol>
+</details>
+</article>
+<footer class="rodape">Atualizado em 24/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norte · S26 — Pedidos: o projeto compartilhado e os limites de tamanho · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s26.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#norte--s26--pedidos-o-projeto-compartilhado-e-os-limites-de-tamanho" data-id="norte--s26--pedidos-o-projeto-compartilhado-e-os-limites-de-tamanho">Norte · S26 — Pedidos: o projeto compartilhado e os limites de tamanho</a><a class="n2" href="#1-resultado-do-dia" data-id="1-resultado-do-dia">1. Resultado do dia</a><a class="n2" href="#2-onde-isso-está-no-mapa-dos-níveis" data-id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</a><a class="n2" href="#3-conceitos" data-id="3-conceitos">3. Conceitos</a><a class="n2" href="#4-termos-da-sessão" data-id="4-termos-da-sessão">4. Termos da sessão</a><a class="n2" href="#5-dúvidas-e-respostas" data-id="5-dúvidas-e-respostas">5. Dúvidas e respostas</a><a class="n2" href="#6-divergências" data-id="6-divergências">6. Divergências</a><a class="n2" href="#7-avaliação" data-id="7-avaliação">7. Avaliação</a><a class="n2" href="#8-pontos-a-melhorar" data-id="8-pontos-a-melhorar">8. Pontos a melhorar</a><a class="n2" href="#9-teste-se" data-id="9-teste-se">9. Teste-se</a><a class="n2" href="#10-preparação-para-o-próximo-chat-s27" data-id="10-preparação-para-o-próximo-chat-s27">10. Preparação para o próximo chat (S27)</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a></aside>
+<main class="conteudo"><article>
+<h1 id="norte--s26--pedidos-o-projeto-compartilhado-e-os-limites-de-tamanho">Norte · S26 — Pedidos: o projeto compartilhado e os limites de tamanho</h1>
+<p><strong>Quarta, 21/10/2026 (tarde) · tempo líquido: 3h42 (abaixo do limite de 5h) · Marco M1</strong></p>
+<p>Hoje você fez duas coisas. Primeiro, o <code>Pedidos</code> passou a <strong>recusar no domínio</strong> o SKU com mais de 20 caracteres e o <code>criadoPor</code> com mais de 50 (PR #36). Para o número não ficar escrito em três lugares, você criou o <strong>projeto compartilhado</strong> <code>Norte.Compartilhado</code>, com uma classe <code>Constantes</code>. Depois você moveu o <code>Norte.Api</code> para a pasta <code>src/Api</code> (PR #37) e decidiu, no ADR-008, que o <strong>SKU vira sempre maiúsculo</strong> (PR #38). A implementação do ADR-008 fica para a S27.</p>
+<p>A ideia para guardar: <strong>o mesmo fato pode ser ganho e preço ao mesmo tempo.</strong> O projeto compartilhado dá uma fonte única do número (ganho). Mas &quot;uma mudança chega a todos os módulos&quot; é exatamente o acoplamento (preço). É o mesmo fato visto de dois lados.</p>
+<h2 id="1-resultado-do-dia">1. Resultado do dia</h2>
+<table>
+<thead>
+<tr>
+<th>PR</th>
+<th>O que entrou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#36 (merge <code>3930ba2</code>)</td>
+<td>projeto <code>Norte.Compartilhado</code> + ADR-007; classe <code>Constantes</code>; <code>Catalogo</code> e <code>Pedidos</code> usam as constantes; o domínio do <code>Pedido</code> e do <code>ItemPedido</code> recusa tamanho acima do limite; 2 testes novos</td>
+</tr>
+<tr>
+<td>#37 (merge <code>1a8bcfb</code>)</td>
+<td><code>Norte.Api</code> movido de <code>src/Norte.Api</code> para <code>src/Api/Norte.Api</code>; <code>.slnx</code>, <code>.csproj</code> e <code>CLAUDE.md</code> ajustados</td>
+</tr>
+<tr>
+<td>#38 (merge <code>9f071a2</code>)</td>
+<td>ADR-008: SKU em forma única, maiúscula (opção A). Só o documento; código na S27</td>
+</tr>
+</tbody>
+</table>
+<p>Antes disso, os dois PRs da S25 que ficaram abertos foram mesclados: #34 (limpeza do teste de persistência) e #35 (teste procura o item por SKU, não por posição).</p>
+<p>Estado final: <code>main</code> em <code>9f071a2</code>, árvore limpa, <strong>60 testes verdes</strong> (32 do <code>Catalogo</code> + 28 do <code>Pedidos</code>).</p>
+<h2 id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</h2>
+<p>Solution → módulos → funcionalidades → camadas. Hoje apareceu uma peça nova no <strong>nível da solution</strong>: um projeto que <strong>não é módulo</strong> e que todos os módulos podem usar (<code>src/Compartilhado/Norte.Compartilhado</code>). Dentro do <code>Pedidos</code>, o trabalho foi na camada de <strong>domínio</strong> (as validações) e na <strong>infraestrutura</strong> (o <code>HasMaxLength</code> das colunas).</p>
+<h2 id="3-conceitos">3. Conceitos</h2>
+<h3 id="31-projeto-compartilhado-shared-kernel">3.1 Projeto compartilhado (<em>shared kernel</em>)</h3>
+<p><strong>Palavra nova — <em>shared kernel</em>:</strong> um conjunto <strong>pequeno e explícito</strong> de tipos que vários módulos usam juntos. Quem usa concorda com o que está lá.</p>
+<p>O problema era este: o limite de 20 do SKU morava em <code>FichaProduto</code> (<code>Catalogo</code>). O <code>Pedidos</code> também precisava do 20. Copiar o número cria dois lugares para lembrar; se o <code>Catalogo</code> subir o limite e o <code>Pedidos</code> não, o pedido recusa um produto que existe.</p>
+<pre class="highlight"><code><span class="k">namespace</span><span class="w"> </span><span class="nn">Norte.Compartilhado</span><span class="p">;</span>
+
+<span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Constantes</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">TamanhoMaximoSku</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">20</span><span class="p">;</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">TamanhoMaximoCriadoPor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">50</span><span class="p">;</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">TamanhoMaximoAtualizadoPor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">50</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Peça</th>
+<th>Para que serve</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Norte.Compartilhado.csproj</code></td>
+<td>só <code>&lt;Project Sdk=&quot;Microsoft.NET.Sdk&quot;&gt;</code>; o resto vem do <code>Directory.Build.props</code></td>
+</tr>
+<tr>
+<td><code>ProjectReference</code> no <code>Norte.Catalogo</code>, no <code>Norte.Pedidos</code> e no projeto de teste do <code>Pedidos</code></td>
+<td>quem usa a constante referencia o projeto</td>
+</tr>
+<tr>
+<td><code>public static class</code></td>
+<td><code>public</code>, porque <code>internal</code> não atravessa projetos; <code>static</code>, porque só tem membros estáticos (regra CA1052)</td>
+</tr>
+<tr>
+<td><code>public const int</code></td>
+<td>o valor é gravado no código de quem usa (veja 3.2)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Os quatro cuidados do ADR-007 (regra de entrada):</strong></p>
+<ol>
+<li>entra só o que <strong>dois ou mais módulos</strong> usam (ou vão usar por decisão já tomada) e com o <strong>mesmo significado</strong>;</li>
+<li>sem referência a módulo e sem pacote além do .NET;</li>
+<li>o que só um módulo usa <strong>fica no módulo</strong>;</li>
+<li>mudar um valor exige <strong>olhar todos os consumidores</strong>.</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Ganho</th>
+<th><strong>Preço</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Projeto compartilhado</td>
+<td>uma fonte única do número; o <code>Catalogo</code> e o <code>Pedidos</code> não se desencontram</td>
+<td><strong>todo módulo passa a depender dele</strong>: uma mudança afeta todos; vira depósito de qualquer coisa se ninguém cuidar</td>
+</tr>
+<tr>
+<td>Constante só de tamanho</td>
+<td>pequeno e fácil de revisar</td>
+<td>a regra de &quot;o que entra&quot; precisa ser lembrada em cada PR</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Você respondeu na retenção:</strong> o ganho é concentrar as constantes; o preço é ter um projeto novo para administrar e não deixar virar um repositório genérico. Faltou ligar as duas pontas. Você mesmo percebeu depois: &quot;qualquer mudança é refletida nos módulos e nos testes — isso não é acoplamento?&quot; <strong>Sim.</strong> É o mesmo fato: o que dá a fonte única também é o que acopla.</p>
+</blockquote>
+<p><strong>Por que a decisão ficou assim (ADR-007, opções):</strong> (A) uma constante em cada módulo — simples, mas duplica; (B) projeto compartilhado — <strong>escolhida</strong>; (C) contrato entre <code>Pedidos</code> e <code>Catalogo</code> — o certo para dado de verdade (o SKU existe?), mas pesado demais para um número. O ADR-002 <strong>não proíbe</strong> projeto compartilhado; a frase &quot;entre módulos nada é compartilhado&quot; do guia era uma descrição do estado de então, não uma regra.</p>
+<h3 id="32-const-é-gravada-no-código-de-quem-usa">3.2 <code>const</code> é gravada no código de quem usa</h3>
+<p>Uma <code>public const</code> não é lida em tempo de execução. O compilador <strong>copia o valor</strong> para dentro do código de quem a usa. Se alguém mudar o 20 no <code>Compartilhado</code> e <strong>não recompilar</strong> os outros projetos, eles continuam com o 20 antigo.</p>
+<p>Hoje isso não machuca: o Norte é um deploy só e tudo é compilado junto. Passa a importar se um dia os módulos forem publicados em separado (M7). Por isso o ADR-007 diz: &quot;mudar valor exige olhar todos os consumidores&quot;.</p>
+<h3 id="33-os-analisadores-do-build-apareceram-de-novo">3.3 Os analisadores do build apareceram de novo</h3>
+<p>Você quis escrever as constantes em maiúsculo com sublinhado (<code>TAMANHO_MAXIMO_SKU</code>), para se diferenciar de variável. O build recusou:</p>
+<table>
+<thead>
+<tr>
+<th>Aviso</th>
+<th>O que diz</th>
+<th>Resultado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CA1707</td>
+<td>nome com sublinhado</td>
+<td>vira <strong>erro</strong> (ADR-004: todo aviso é erro)</td>
+</tr>
+<tr>
+<td>CA1052</td>
+<td>classe só com membros estáticos deve ser <code>static</code></td>
+<td>corrigido com <code>public static class</code></td>
+</tr>
+</tbody>
+</table>
+<p>Você voltou para <strong>PascalCase</strong>, que é o padrão do .NET para constantes (<code>TamanhoMaximoSku</code>). A lição: eu afirmei que nenhum analisador reclamaria <strong>sem conferir</strong>; o build mostrou o contrário. (Falha do mentor, registrada.)</p>
+<h3 id="34-a-validação-de-tamanho-no-domínio">3.4 A validação de tamanho no domínio</h3>
+<p>O banco já recusava SKU acima de 20 (a coluna <code>varchar(20)</code>), mas só <strong>ao salvar</strong>, com um erro do Postgres. Agora o construtor recusa antes:</p>
+<pre class="highlight"><code><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sku</span><span class="p">.</span><span class="n">Length</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">Constantes</span><span class="p">.</span><span class="n">TamanhoMaximoSku</span><span class="p">)</span>
+<span class="w">    </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="nf">ArgumentException</span><span class="p">(</span>
+<span class="w">        </span><span class="s">$"O sku deve ter no máximo {Constantes.TamanhoMaximoSku} caracteres"</span><span class="p">,</span><span class="w"> </span><span class="k">nameof</span><span class="p">(</span><span class="n">sku</span><span class="p">));</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Onde</th>
+<th>Regra</th>
+<th>Exceção</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ItemPedido.sku</code></td>
+<td>no máximo 20</td>
+<td><code>ArgumentException</code>, <code>ParamName</code> <code>&quot;sku&quot;</code></td>
+</tr>
+<tr>
+<td><code>Pedido.criadoPor</code></td>
+<td>no máximo 50</td>
+<td><code>ArgumentException</code>, <code>ParamName</code> <code>&quot;criadoPor&quot;</code></td>
+</tr>
+</tbody>
+</table>
+<p>Sua razão: <strong>&quot;nunca confie só no banco&quot;</strong>. A regra existe nas duas camadas. O <code>HasMaxLength(Constantes.TamanhoMaximoSku)</code> das configurações usa a <strong>mesma constante</strong>, então o domínio e a coluna não se desencontram.</p>
+<p><strong>Os testes</strong> usam o limite, não um número solto:</p>
+<pre class="highlight"><code><span class="kt">var</span><span class="w"> </span><span class="n">limite</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Constantes</span><span class="p">.</span><span class="n">TamanhoMaximoSku</span><span class="p">;</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">sku</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">string</span><span class="p">(</span><span class="sc">'A'</span><span class="p">,</span><span class="w"> </span><span class="n">limite</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+</code></pre>
+
+<p>Se o limite mudar, o teste muda junto. Os dois testes foram vistos <strong>vermelhos</strong> com a prova de <code>git stash push -- &lt;arquivos de domínio&gt;</code> e <code>dotnet test</code> sem <code>--no-build</code>, e depois <code>git stash pop</code>.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Ganho</th>
+<th><strong>Preço</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Validar no domínio e na coluna</td>
+<td>erro claro antes de ir ao banco; vale para qualquer porta de entrada</td>
+<td>a regra existe em dois lugares (domínio e coluna); a constante mantém os dois iguais</td>
+</tr>
+<tr>
+<td>O limite de 50 do <code>criadoPor</code></td>
+<td>decidido agora</td>
+<td><strong>provisório</strong> até o módulo <code>Identidade</code> existir: lá o tamanho real pode ser outro</td>
+</tr>
+</tbody>
+</table>
+<h3 id="35-mover-o-projeto-da-api">3.5 Mover o projeto da API</h3>
+<p>O <code>Norte.Api</code> estava sozinho em <code>src/Norte.Api</code>, ao lado das pastas <code>Modulos/</code> e <code>Compartilhado/</code>. Você pediu uma pasta <code>Api</code> e moveu o projeto para <code>src/Api/Norte.Api</code> (PR #37). Com o <code>git mv</code> o Git registra <strong>renomeação</strong>, não &quot;apagou e criou&quot;: <code>git diff --cached --stat -M</code> mostra <code>R</code>.</p>
+<p>Ao mover, três arquivos tinham caminho antigo: o <code>.slnx</code>, o <code>Norte.Api.csproj</code> (<code>..\..\Modulos\...</code>) e o projeto de teste do <code>Catalogo</code>. O CI só usa <code>dotnet build Norte.slnx</code> e <code>dotnet test Norte.slnx</code>, por isso não mudou. A pasta velha <code>src\Norte.Api</code> ficou só com <code>obj</code> e você apagou depois.</p>
+<h3 id="36-adr-008-sku-em-forma-única-decisão-sem-código-ainda">3.6 ADR-008: SKU em forma única (decisão, sem código ainda)</h3>
+<p>Hoje <code>ABC</code> e <code>abc</code> são SKUs <strong>diferentes</strong> no <code>Catalogo</code> (a chave diferencia a caixa) e <strong>iguais</strong> na junção do <code>Pedido</code> (<code>OrdinalIgnoreCase</code>). Isso se desencontra. Sua escolha, <strong>opção A</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Peça</th>
+<th>Mudança</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FichaProduto</code> e <code>ItemPedido</code></td>
+<td>o construtor converte o SKU com <code>ToUpperInvariant()</code></td>
+</tr>
+<tr>
+<td><code>GET /catalogo/fichas-produto/{sku}</code></td>
+<td>converte antes de buscar</td>
+</tr>
+<tr>
+<td>banco</td>
+<td><code>CHECK (sku = upper(sku))</code> nas duas tabelas</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Por que <code>ToUpperInvariant</code> e não <code>ToUpper</code>:</strong> o <code>ToUpper</code> depende da cultura do computador (em turco, <code>i</code> vira <code>İ</code>). O invariante dá sempre o mesmo resultado.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Ganho</th>
+<th><strong>Preço</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Opção A (domínio converte + <code>CHECK</code>)</td>
+<td>uma forma só em todo lugar; o banco recusa a forma errada mesmo se alguém escapar do domínio</td>
+<td>o valor devolvido muda (o <code>Location</code> também); testes e seed com minúsculas mudam; <strong>dados que já existem precisam ser convertidos antes</strong> (dois SKUs que só diferem na caixa viram colisão de chave); a regra se repete em cada módulo (tensão com o ADR-007)</td>
+</tr>
+</tbody>
+</table>
+<p>A opção B (índice único em <code>upper(sku)</code>) exigiria SQL escrito à mão na migration. Fica como alternativa registrada no ADR.</p>
+<h2 id="4-termos-da-sessão">4. Termos da sessão</h2>
+<table>
+<thead>
+<tr>
+<th>Termo</th>
+<th>Em uma linha</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>Shared kernel</em></td>
+<td>pequeno conjunto de tipos que vários módulos usam juntos</td>
+</tr>
+<tr>
+<td><code>public const</code></td>
+<td>valor gravado no código de quem usa, na compilação</td>
+</tr>
+<tr>
+<td><code>ProjectReference</code></td>
+<td>um projeto usa outro; é transitivo, mas é boa prática referenciar direto o que se usa</td>
+</tr>
+<tr>
+<td>CA1707</td>
+<td>analisador: sublinhado em nome de membro</td>
+</tr>
+<tr>
+<td>CA1052</td>
+<td>analisador: classe só com estáticos deve ser <code>static</code></td>
+</tr>
+<tr>
+<td><code>ToUpperInvariant</code></td>
+<td>maiúsculo sem depender da cultura do computador</td>
+</tr>
+<tr>
+<td><code>CHECK</code></td>
+<td>regra do banco que recusa linha que não passa na condição</td>
+</tr>
+<tr>
+<td><code>git mv</code></td>
+<td>move arquivo e o Git registra como renomeação</td>
+</tr>
+<tr>
+<td><code>git stash push -- &lt;caminho&gt;</code></td>
+<td>guarda só as mudanças dos arquivos citados e limpa o resto</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-dúvidas-e-respostas">5. Dúvidas e respostas</h2>
+<p><strong>Por que <code>public</code> na classe <code>Constantes</code> se tudo era <code>internal</code>?</strong> Porque <code>internal</code> só vale dentro do mesmo projeto. Como o <code>Catalogo</code> e o <code>Pedidos</code> são outros projetos, a classe precisa ser <code>public</code>. É a exceção de projeto compartilhado.</p>
+<p><strong>Por que o projeto de teste do <code>Pedidos</code> referencia o <code>Compartilhado</code> direto, se já chega por transitividade?</strong> Porque o teste usa a constante. Referenciar direto o que se usa evita que o teste quebre quando alguém mexer na referência do módulo.</p>
+<p><strong>Uma classe <code>Constantes</code> só para tudo, ou uma por assunto?</strong> Sua razão: é como arquivos de idioma, um lugar só para o que todo o monolito usa. Ficou uma classe. A regra de entrada do ADR-007 é o que impede o inchaço.</p>
+<p><strong>E se o limite de 20 do SKU mudar?</strong> Muda em um lugar, mas você precisa olhar o <code>Catalogo</code>, o <code>Pedidos</code> e os dados que já existem. O exemplo concreto do preço: o <code>Catalogo</code> sobe para 30 e o <code>Pedidos</code> continua recusando um produto que existe. Se um dia o dado for de verdade (o SKU existe?), o caminho certo é o contrato (opção C do ADR-007).</p>
+<h2 id="6-divergências">6. Divergências</h2>
+<table>
+<thead>
+<tr>
+<th>Tema</th>
+<th>Posição</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Projeto compartilhado</td>
+<td>o mentor afirmou que o ADR-002 o proibia; você pediu para verificar e a intuição era criar</td>
+<td><strong>você tinha razão:</strong> o ADR-002 não proíbe; o mentor corrigiu</td>
+</tr>
+<tr>
+<td>Nome das constantes</td>
+<td>você quis maiúsculo com sublinhado; o analisador recusou</td>
+<td><strong>PascalCase</strong>, por decisão sua, para seguir em frente</td>
+</tr>
+<tr>
+<td>Lixo no <code>Compartilhado</code></td>
+<td>&quot;na vida real esse problema é algo que vamos viver para sempre; não há como controlar&quot;</td>
+<td>registrado: a regra de entrada, a revisão no PR e o teste de arquitetura do M3 reduzem, não eliminam</td>
+</tr>
+<tr>
+<td>Classe <code>Constantes</code> única</td>
+<td>o mentor questionou o nome; você respondeu com a analogia dos arquivos de idioma</td>
+<td><strong>você tinha razão:</strong> é um lugar só para o que o monolito inteiro usa</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-avaliação">7. Avaliação</h2>
+<p><strong>Fez bem:</strong> decidiu criar o projeto compartilhado por intuição e a justificou depois (fonte única); delimitou o escopo (&quot;só constantes&quot;); incluiu sozinho <code>criado_por</code>, <code>ultima_atualizacao_por</code> e a ficha, vendo que o padrão se repetiria; escreveu o código, os testes e a configuração; pediu a pasta <code>Api</code> por organização e acompanhou a mudança; escolheu a opção A do SKU (&quot;regras no banco e no app&quot;); corrigiu o mentor duas vezes (o ADR-002 não proíbe; o nome da classe); na retenção, percebeu sozinho que o ganho e o preço são o mesmo fato; corrigiu as sobras dos testes (<code>Guid...Substring</code> frágil, variáveis e <code>using</code> sem uso).</p>
+<p><strong>Travou:</strong> o caminho do <code>git add</code> e as aspas do <code>-m</code> no commit; o <code>HasMaxLength</code> do SKU no <code>ItemPedidoConfiguration</code> e a referência do projeto no <code>Norte.Pedidos.csproj</code> ficaram para trás na primeira versão; o commit juntou o projeto e o ADR (eram dois); a mensagem de um commit tinha fatos errados; o <code>if (!Enum.IsDefined...)</code> ficou colapsado em uma linha.</p>
+<p><strong>O mentor conduziu mal:</strong> afirmou que o ADR-002 proibia o projeto compartilhado; supôs que o <code>git add .</code> já tinha sido rodado quando você só mostrava o comando; afirmou que nenhum analisador reclamaria das maiúsculas, sem conferir; diagnosticou &quot;faltou nomear o acoplamento&quot; na retenção, mas você já tinha dito.</p>
+<h2 id="8-pontos-a-melhorar">8. Pontos a melhorar</h2>
+<ul>
+<li><strong>Aluno:</strong> antes do <code>git add</code>, ler o caminho; antes do <code>git commit -m</code>, conferir as aspas; ao pedir um item novo na configuração (<code>HasMaxLength</code>, referência), fazer a lista de &quot;onde mais?&quot; antes do commit.</li>
+<li><strong>Mentor:</strong> conferir antes de afirmar (analisador, ADR); distinguir &quot;comando mostrado&quot; de &quot;comando executado&quot;.</li>
+<li><strong>Código (S27):</strong> ver o item &quot;Preparação&quot; abaixo.</li>
+</ul>
+<h2 id="9-teste-se">9. Teste-se</h2>
+<ol>
+<li>Por que o projeto compartilhado resolve o problema do limite de 20 do SKU, e qual é o preço?</li>
+<li>Por que a classe <code>Constantes</code> é <code>public</code> se o resto do módulo é <code>internal</code>?</li>
+<li>O que acontece com uma <code>public const</code> do <code>Compartilhado</code> se alguém muda o valor e não recompila o <code>Catalogo</code>?</li>
+<li>Qual analisador recusou <code>TAMANHO_MAXIMO_SKU</code>, e por que o build parou?</li>
+<li>Qual é a regra de entrada do ADR-007 em uma frase?</li>
+<li>Por que os testes usam <code>limite + 1</code> em vez de <code>21</code>?</li>
+<li>Por que o <code>Pedido</code> valida o tamanho se a coluna do banco já recusa?</li>
+<li>Por que <code>ToUpperInvariant</code> e não <code>ToUpper</code>?</li>
+<li>O que muda no <code>Catalogo</code> quando o ADR-008 for implementado, e por que os dados que já existem preocupam?</li>
+<li>O que o <code>git mv</code> faz de diferente de mover o arquivo pelo Explorer?</li>
+</ol>
+<h2 id="10-preparação-para-o-próximo-chat-s27">10. Preparação para o próximo chat (S27)</h2>
+<ol>
+<li>Abrir o chat pelo app desktop com a pasta <code>D:\Projetos\C#\Monolito_Modular</code> ligada.</li>
+<li>Escolher um objetivo só. O candidato natural: <strong>implementar o ADR-008</strong> (construtores do <code>FichaProduto</code> e do <code>ItemPedido</code> com <code>ToUpperInvariant</code>; busca convertendo antes; duas migrations com <code>CHECK</code>; testes com minúsculas mudam; converter os dados que já existem antes da restrição; decidir se o <code>OrdinalIgnoreCase</code> da junção sai).</li>
+<li>Outros: campos de auditoria (<code>criado_por</code>, <code>ultima_atualizacao_por</code>) no <code>Catalogo</code>, com migration; revisar o <code>CLAUDE.md</code> (cabeçalho &quot;S16&quot;, &quot;Pedidos sem banco&quot;, &quot;ADR-000 a ADR-007&quot; → 008); endpoint de criação do pedido; contrato <code>Pedidos</code>↔<code>Catalogo</code>.</li>
+<li>Para o contrato, o ADR deve dizer <strong>o que passa por contrato e o que fica no compartilhado</strong>.</li>
+<li>Anotado: o 50 do <code>criadoPor</code> é provisório até o <code>Identidade</code>; o nome <code>TamanhoMaximoAtualizadoPor</code> e a propriedade <code>UltimaAtualizacaoPor</code> não batem; avisar o CI <code>ubuntu-26.04</code> antes de 19/11.</li>
+</ol>
+<hr />
+<h2 id="respostas">Respostas</h2><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>Porque o número fica escrito em um lugar só, e o <code>Catalogo</code> e o <code>Pedidos</code> não se desencontram. O preço: todo módulo passa a depender do projeto, então uma mudança chega a todos (acoplamento), e ele pode virar depósito. É o mesmo fato visto dos dois lados.</li>
+<li>Porque <code>internal</code> só vale dentro do mesmo projeto. O <code>Catalogo</code> e o <code>Pedidos</code> são outros projetos e precisam enxergar a classe.</li>
+<li>O outro projeto continua com o valor antigo, porque o compilador copiou o valor para dentro dele. Só recompilando.</li>
+<li>O CA1707 (sublinhado em nome). O build parou porque, no Norte, todo aviso é erro (ADR-004).</li>
+<li>Entra só o que dois ou mais módulos usam, com o mesmo significado; sem referência a módulo nem pacote além do .NET; o que só um módulo usa fica nele; mudar valor exige olhar todos os consumidores.</li>
+<li>Porque o teste acompanha o limite: se o 20 mudar, o teste muda junto, sem número solto.</li>
+<li>Porque o erro do domínio é claro e vem antes de ir ao banco; o banco recusa só ao salvar, com erro do Postgres. A regra vale nas duas camadas, e a mesma constante mantém as duas iguais.</li>
+<li>Porque o <code>ToUpper</code> depende da cultura do computador (em turco, <code>i</code> vira <code>İ</code>); o invariante dá sempre o mesmo resultado.</li>
+<li>O SKU passa a ser convertido para maiúsculo no construtor e na busca, e o banco ganha <code>CHECK (sku = upper(sku))</code>. Os dados que já existem preocupam porque dois SKUs que só diferem na caixa viram a mesma chave e colidem; é preciso convertê-los antes da restrição.</li>
+<li>O Git registra como renomeação (histórico preservado, <code>R</code> no <code>--stat</code>), e não como &quot;apagou um arquivo e criou outro&quot;.</li>
+</ol>
+</details>
+</article>
+<footer class="rodape">Atualizado em 24/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

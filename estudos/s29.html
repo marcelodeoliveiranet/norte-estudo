@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norte · S29 — O módulo Clientes: o primeiro Cliente e o CNPJ validado · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s29.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#norte--s29--o-módulo-clientes-o-primeiro-cliente-e-o-cnpj-validado" data-id="norte--s29--o-módulo-clientes-o-primeiro-cliente-e-o-cnpj-validado">Norte · S29 — O módulo Clientes: o primeiro Cliente e o CNPJ validado</a><a class="n2" href="#1-resultado-do-dia" data-id="1-resultado-do-dia">1. Resultado do dia</a><a class="n2" href="#2-onde-isso-está-no-mapa-dos-níveis" data-id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</a><a class="n2" href="#3-conceitos" data-id="3-conceitos">3. Conceitos</a><a class="n2" href="#4-termos" data-id="4-termos">4. Termos</a><a class="n2" href="#5-divergências-e-decisões-do-aluno" data-id="5-divergências-e-decisões-do-aluno">5. Divergências e decisões do aluno</a><a class="n2" href="#6-avaliação" data-id="6-avaliação">6. Avaliação</a><a class="n2" href="#7-pontos-a-melhorar" data-id="7-pontos-a-melhorar">7. Pontos a melhorar</a><a class="n2" href="#8-teste-se" data-id="8-teste-se">8. Teste-se</a><a class="n2" href="#9-preparação-para-a-s30" data-id="9-preparação-para-a-s30">9. Preparação para a S30</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a></aside>
+<main class="conteudo"><article>
+<h1 id="norte--s29--o-módulo-clientes-o-primeiro-cliente-e-o-cnpj-validado">Norte · S29 — O módulo <code>Clientes</code>: o primeiro <code>Cliente</code> e o CNPJ validado</h1>
+<p><strong>Sexta, 23/10/2026 · tempo líquido: 3h51 (abaixo do limite de 5h) · Marco M1</strong></p>
+<p>Hoje o ADR-011 foi aceito e entrou na <code>main</code> (PR #48). Depois nasceu o módulo <code>Clientes</code>: os projetos, o glossário e a classe <code>Cliente</code>, que <strong>recusa dado errado no construtor</strong>. Foram 12 commits e 18 testes, todos vistos vermelhos antes do código que os satisfaz. O ponto novo do dia foi a <strong>regex do CNPJ</strong>.</p>
+<p>A ideia para guardar: <strong>um teste só protege o que você já o viu falhar.</strong> E o jeito de ver é sabotar o <strong>código</strong> (a menor mudança possível), nunca mexer no Assert.</p>
+<h2 id="1-resultado-do-dia">1. Resultado do dia</h2>
+<table>
+<thead>
+<tr>
+<th>Entrega</th>
+<th>Resultado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ADR-011</td>
+<td><strong>Aceito</strong> e mergeado (PR #48, <code>main</code> em <code>04f392e</code>)</td>
+</tr>
+<tr>
+<td>Projetos do módulo</td>
+<td><code>Norte.Clientes</code> e <code>Norte.Clientes.Tests</code>, na solution</td>
+</tr>
+<tr>
+<td>Glossário</td>
+<td>seção <code>Clientes</code> em <code>docs/domain/ubiquitous-language.md</code></td>
+</tr>
+<tr>
+<td><code>Cliente</code></td>
+<td>nasce com os dados e recusa valor inválido no construtor</td>
+</tr>
+<tr>
+<td>Testes</td>
+<td>18 no <code>Norte.Clientes.Tests</code> (67 + 18 = 85 no total esperado)</td>
+</tr>
+<tr>
+<td>Constantes novas</td>
+<td><code>TamanhoMaximoRazaoSocial = 120</code>, <code>TamanhoMaximoNomeFantasia = 120</code>, <code>TamanhoMaximoCnpj = 18</code></td>
+</tr>
+</tbody>
+</table>
+<p>A branch <code>feat/modulo-clientes</code> ficou com 12 commits, enviada ao <code>origin</code>, com o PR ainda por abrir.</p>
+<h2 id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</h2>
+<p>Solution → módulos → funcionalidades → camadas. Hoje nasceu um <strong>módulo novo</strong> (nível 2) e, dentro dele, só a camada de <strong>domínio</strong>: a classe <code>Cliente</code> e as suas regras. Ainda não há banco, endpoint nem contrato com o <code>Pedidos</code>.</p>
+<h2 id="3-conceitos">3. Conceitos</h2>
+<h3 id="31-projeto-de-módulo-novo-o-que-dotnet-new-não-faz-por-você">3.1 Projeto de módulo novo: o que <code>dotnet new</code> não faz por você</h3>
+<p>Os projetos foram criados com <code>dotnet new</code>, e vieram com três problemas:</p>
+<table>
+<thead>
+<tr>
+<th>Problema</th>
+<th>Por que é problema</th>
+<th>Correção</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TargetFramework</code>, <code>Nullable</code> e <code>ImplicitUsings</code> repetidos no <code>.csproj</code></td>
+<td>já estão no <code>Directory.Build.props</code> (ADR-004)</td>
+<td>apagar do <code>.csproj</code></td>
+</tr>
+<tr>
+<td><code>Version</code> dentro do <code>PackageReference</code> (projeto de teste)</td>
+<td>com Central Package Management dá <code>NU1008</code></td>
+<td>tirar a versão; ela mora no <code>Directory.Packages.props</code></td>
+</tr>
+<tr>
+<td>faltou o <code>InternalsVisibleTo</code></td>
+<td>o teste não enxerga o <code>Cliente</code> (<code>internal</code>)</td>
+<td><code>&lt;InternalsVisibleTo Include=&quot;Norte.Clientes.Tests&quot; /&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<p>Também a pasta saiu aninhada e o <code>.slnx</code> precisou de ajuste. A lição: <strong>projeto novo se compara com um projeto que já existe</strong> (o <code>Pedidos</code> serve de modelo) antes do primeiro commit.</p>
+<h3 id="32-guard-clauses-de-novo-agora-no-cliente">3.2 Guard clauses, de novo, agora no <code>Cliente</code></h3>
+<p>Mesmo padrão do <code>FichaProduto</code> (S18) e do <code>Pedido</code> (S24): o construtor lança exceção, e nenhum <code>Cliente</code> inválido existe.</p>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Regra</th>
+<th>Exceção no <code>Assert.Throws</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Cnpj</code>, <code>RazaoSocial</code>, <code>NomeFantasia</code></td>
+<td>não vazio, não só espaços</td>
+<td><code>ArgumentException</code> (<code>ThrowIfNullOrWhiteSpace</code>)</td>
+</tr>
+<tr>
+<td><code>RepresentanteId</code></td>
+<td>maior que zero</td>
+<td><code>ArgumentOutOfRangeException</code> (<code>ThrowIfNegativeOrZero</code>)</td>
+</tr>
+<tr>
+<td><code>RazaoSocial</code>, <code>NomeFantasia</code></td>
+<td>no máximo 120</td>
+<td><code>ArgumentException</code></td>
+</tr>
+<tr>
+<td><code>Cnpj</code></td>
+<td>padrão com máscara</td>
+<td><code>ArgumentException</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>ArgumentOutOfRangeException</code> × <code>ArgumentException</code>.</strong> <code>Assert.Throws&lt;T&gt;</code> exige o tipo <strong>exato</strong>. O <code>ThrowIfNegativeOrZero</code> lança <code>ArgumentOutOfRangeException</code>; se o teste espera <code>ArgumentException</code>, ele falha com <code>Exception type was not an exact match</code>. Quem escolhe o <code>T</code> do teste é o método de guarda que você usa.</p>
+<h3 id="33-por-que-o-teste-vermelho-vem-antes-do-guard">3.3 Por que o teste vermelho vem antes do guard</h3>
+<p>A ordem de cada regra do dia:</p>
+<ol>
+<li>escreva o teste e rode: ele precisa ficar <strong>vermelho</strong>, e você lê o motivo (<code>CS0246</code> se o tipo não existe; depois <code>No exception was thrown</code>);</li>
+<li>escreva o guard mínimo;</li>
+<li>rode: <strong>verde</strong>.</li>
+</ol>
+<p>Se o guard já existe quando o teste nasce, o teste nasce verde e não prova nada. Aí vale a <strong>sabotagem mínima</strong>: comente ou altere o código e veja o teste ficar vermelho.</p>
+<blockquote>
+<p><strong>Dúvida do dia:</strong> &quot;preciso forçar o erro?&quot;. Forçar o erro <strong>no Assert</strong> (um literal diferente do Arrange) é o caminho errado. O vermelho vem de sabotar o <strong>código</strong>; o Assert final compara com as variáveis do Arrange.</p>
+</blockquote>
+<h3 id="34-limite-de-tamanho-testar-120-e-121">3.4 Limite de tamanho: testar 120 <strong>e</strong> 121</h3>
+<p>O guard escrito foi <code>if (razaoSocial.Length &gt; Constantes.TamanhoMaximoRazaoSocial) throw ...</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Teste</th>
+<th>O que protege</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>121 caracteres lança</td>
+<td>o limite existe</td>
+</tr>
+<tr>
+<td>exatamente 120 <strong>não</strong> lança</td>
+<td>o limite não está um caractere apertado demais (<code>&gt;=</code> no lugar de <code>&gt;</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>Dois erros do dia, pegos na revisão: o operador escrito como <code>!=</code> (recusaria qualquer tamanho diferente de 120) e o <code>nameof(razaoSocial)</code> copiado para o campo do nome fantasia (o <code>ParamName</code> do teste acusaria o campo errado). O teste de exatamente 120 <strong>não foi escrito</strong> — ficou opcional.</p>
+<p>Onde mora o 120: no <code>Compartilhado</code>, seguindo o precedente do SKU (ADR-007).</p>
+<h3 id="35-o-cnpj-máscara-18-caracteres-e-a-regex">3.5 O CNPJ: máscara, 18 caracteres e a regex</h3>
+<p>O ADR-011 fixa o CNPJ <strong>com máscara</strong>, alfanumérico, em maiúsculas: <code>40.7DK.4BT/0001-47</code> (18 caracteres). Primeiro veio o guard de tamanho; depois a regex, que <strong>substitui</strong> o guard de 18.</p>
+<pre class="highlight"><code><span class="na">[GeneratedRegex(@"^[0-9A-Z]</span><span class="p">{</span><span class="mi">2</span><span class="p">}</span><span class="err">\</span><span class="p">.[</span><span class="mi">0</span><span class="o">-</span><span class="mi">9</span><span class="n">A</span><span class="o">-</span><span class="n">Z</span><span class="p">]{</span><span class="mi">3</span><span class="p">}</span><span class="err">\</span><span class="p">.[</span><span class="mi">0</span><span class="o">-</span><span class="mi">9</span><span class="n">A</span><span class="o">-</span><span class="n">Z</span><span class="p">]{</span><span class="mi">3</span><span class="p">}</span><span class="o">/</span><span class="p">[</span><span class="mi">0</span><span class="o">-</span><span class="mi">9</span><span class="n">A</span><span class="o">-</span><span class="n">Z</span><span class="p">]{</span><span class="mi">4</span><span class="p">}</span><span class="o">-</span><span class="p">[</span><span class="mi">0</span><span class="o">-</span><span class="mi">9</span><span class="p">]{</span><span class="mi">2</span><span class="p">}</span><span class="err">\</span><span class="n">z</span><span class="s">")]</span>
+<span class="k">private</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">partial</span><span class="w"> </span><span class="n">Regex</span><span class="w"> </span><span class="nf">PadraoCnpj</span><span class="p">();</span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Pedaço</th>
+<th>O que faz</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>^</code> e <code>\z</code></td>
+<td>o texto <strong>inteiro</strong> tem que casar (começo e fim; sem lixo antes ou depois)</td>
+</tr>
+<tr>
+<td><code>[0-9A-Z]{2}</code></td>
+<td>exatamente 2 caracteres, cada um dígito ou letra <strong>maiúscula</strong></td>
+</tr>
+<tr>
+<td><code>\.</code></td>
+<td>o ponto literal (sem a barra, <code>.</code> casaria qualquer caractere)</td>
+</tr>
+<tr>
+<td><code>/</code> e <code>-</code></td>
+<td>a barra e o hífen da máscara</td>
+</tr>
+<tr>
+<td><code>[0-9]{2}</code> (final)</td>
+<td>os 2 últimos são <strong>só dígitos</strong> (os dígitos verificadores continuam numéricos)</td>
+</tr>
+</tbody>
+</table>
+<p>Por que a regex substitui o guard de 18: o padrão já impõe os 18 caracteres. Manter os dois seria regra duplicada.</p>
+<p><strong><code>[GeneratedRegex]</code>:</strong> o compilador gera o código da regex no build, em vez de montá-la na primeira execução. O método é <code>partial</code>, e a classe também precisa ser <code>partial</code>.</p>
+<p><strong>Cinco CNPJs inválidos testados</strong> (vermelho 5 de 5 antes do guard): cada um quebra um pedaço diferente do padrão.</p>
+<h3 id="36-a-prova-do-vermelho-na-regex">3.6 A prova do vermelho na regex</h3>
+<p>A sabotagem mínima: no guard, trocar o segundo bloco <code>[0-9A-Z]{3}</code> por <code>[0-9]{3}</code>. Resultado: <strong>só</strong> o teste do CNPJ <code>40.7DK.4BT/0001-47</code> ficou vermelho (as letras <code>DK</code> não casam mais). Isso mostra que o teste protege exatamente o trecho que aceita letras nesse bloco.</p>
+<h3 id="37-por-que-o-teste-do-cnpj-válido-nasce-verde">3.7 Por que o teste do CNPJ válido nasce verde</h3>
+<p>O teste de CNPJ válido foi escrito <strong>depois</strong> da regex, então não tem vermelho natural. Primeira tentativa: copiou-se o corpo do teste de inválidos (<code>Assert.Throws</code>), e o teste <strong>falhou porque o código estava certo</strong> (nada foi lançado). A correção: construir o <code>Cliente</code> e comparar o <code>Cnpj</code> guardado com o valor do Arrange.</p>
+<p>Para que serve: ele impede que a regex fique <strong>apertada demais</strong>. Os testes de inválidos garantem que o ruim é recusado; o teste de válido garante que o bom passa.</p>
+<h3 id="38-decisões-de-domínio-do-dia">3.8 Decisões de domínio do dia</h3>
+<table>
+<thead>
+<tr>
+<th>Tema</th>
+<th>Decisão</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Quem o Norte vende</td>
+<td><strong>só para pessoa jurídica</strong> (sem CPF, sem campo &quot;tipo de pessoa&quot;)</td>
+</tr>
+<tr>
+<td>Onde fica o portão &quot;pedido só nasce com cliente existente&quot;</td>
+<td>regra do <code>Pedidos</code>, quando houver endpoint ou contrato; o <code>Pedido</code> segue validando só <code>ClienteId &gt; 0</code></td>
+</tr>
+<tr>
+<td>Glossário</td>
+<td>descreve só o que o nome do campo <strong>não explica</strong></td>
+</tr>
+<tr>
+<td>Dados de teste aleatórios (Bogus)</td>
+<td>fora do domínio; reavaliar na persistência com semente fixa</td>
+</tr>
+<tr>
+<td>Dígitos verificadores do CNPJ</td>
+<td><strong>não calculados</strong> (ADR-011 valida só o padrão); decisão de calcular fica aberta</td>
+</tr>
+</tbody>
+</table>
+<h3 id="39-git-do-dia">3.9 Git do dia</h3>
+<table>
+<thead>
+<tr>
+<th>Situação</th>
+<th>O que fazer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>commit feito <strong>antes</strong> do verde (teste sem o guard)</td>
+<td><code>git commit --amend</code>, e conferir o <code>--stat</code> (teste + código = 2 arquivos)</td>
+</tr>
+<tr>
+<td><code>--head</code> do <code>gh pr create</code> com o nome da branch errado (underscore no lugar de hífen)</td>
+<td>conferir o nome com <code>git branch</code> antes</td>
+</tr>
+<tr>
+<td>escopo do commit</td>
+<td>o escopo é o módulo que mudou (<code>clientes</code>), não o que serviu de modelo (<code>pedidos</code>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-termos">4. Termos</h2>
+<table>
+<thead>
+<tr>
+<th>Termo</th>
+<th>Em uma linha</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sabotagem mínima</td>
+<td>a menor mudança no código que deve deixar o teste vermelho</td>
+</tr>
+<tr>
+<td><code>Theory</code> / <code>InlineData</code></td>
+<td>o mesmo teste roda uma vez por valor listado</td>
+</tr>
+<tr>
+<td><code>ArgumentOutOfRangeException</code></td>
+<td>valor fora da faixa (lançada por <code>ThrowIfNegativeOrZero</code>)</td>
+</tr>
+<tr>
+<td><code>[GeneratedRegex]</code></td>
+<td>regex compilada no build; exige <code>partial</code></td>
+</tr>
+<tr>
+<td><code>\z</code></td>
+<td>fim exato do texto (sem aceitar quebra de linha final)</td>
+</tr>
+<tr>
+<td>Máscara</td>
+<td>formato com pontuação: <code>00.000.000/0000-00</code></td>
+</tr>
+<tr>
+<td>CNPJ alfanumérico</td>
+<td>letras maiúsculas nas posições da raiz e da ordem; os 2 dígitos finais seguem numéricos</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-divergências-e-decisões-do-aluno">5. Divergências e decisões do aluno</h2>
+<table>
+<thead>
+<tr>
+<th>Tema</th>
+<th>Posição</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Critério do glossário</td>
+<td>o aluno: &quot;descrever algo que o campo não carrega&quot;; o mentor tinha apertado pontos que eram só preferência</td>
+<td><strong>o aluno tinha razão</strong>; o mentor retratou</td>
+</tr>
+<tr>
+<td>CNPJ &quot;&lt; 14&quot;</td>
+<td>o aluno pediu menor que 14; o mentor mostrou que o ADR fixa 18 com máscara</td>
+<td>o aluno aceitou (&quot;precisa ser conferido em algo sólido como a Receita&quot;)</td>
+</tr>
+<tr>
+<td>CNPJ e CPF</td>
+<td>o aluno propôs <code>CNPJ_CPF</code> / campo pessoa</td>
+<td>decisão: <strong>só PJ</strong></td>
+</tr>
+<tr>
+<td>Regra do mentor</td>
+<td>&quot;se você não encontrar argumento, diz que o meu vale&quot;</td>
+<td>regra nova: argumento verificável ou &quot;o seu vale&quot;</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-avaliação">6. Avaliação</h2>
+<p><strong>Fez bem:</strong> decidiu o escopo (só PJ) e o lugar da regra do portão com argumento; escreveu sozinho os três <code>Theory</code> dos campos obrigatórios; escreveu a <code>Theory</code> dos 5 CNPJs inválidos, o guard e o teste de válidos; fez a prova do vermelho da regex; aceitou o ADR quando o mentor mostrou o 18.</p>
+<p><strong>Travou:</strong> a configuração dos projetos novos (<code>dotnet new</code> com propriedades repetidas, <code>Version</code> e sem <code>InternalsVisibleTo</code>); o operador <code>!=</code> e o <code>nameof</code> copiado no limite de 120; o teste de CNPJ válido copiado do de inválidos; commit antes do verde (três vezes); <code>--head</code> com underscore.</p>
+<p><strong>O mentor conduziu mal:</strong> apertou pontos do glossário que eram preferência; aprovou mensagem de commit que não descrevia o guard; explicou a sabotagem da regex em três versões até acertar; afirmou o estado do <code>Cliente.cs</code> lendo o arquivo no meio da edição.</p>
+<h2 id="7-pontos-a-melhorar">7. Pontos a melhorar</h2>
+<ul>
+<li><strong>Aluno:</strong> commit só depois do verde, conferindo o <code>--stat</code>; ao copiar um teste, perguntar &quot;esta linha ainda vale para o caso novo?&quot;; comparar projeto novo com um existente.</li>
+<li><strong>Mentor:</strong> não afirmar o estado de um arquivo lido no meio da edição; dar a sabotagem certa de primeira.</li>
+</ul>
+<h2 id="8-teste-se">8. Teste-se</h2>
+<ol>
+<li>Por que o teste vermelho vem antes do guard, e como a sabotagem mínima prova que o teste protege?</li>
+<li>Por que o <code>ThrowIfNegativeOrZero</code> pede <code>ArgumentOutOfRangeException</code> no <code>Assert.Throws</code>?</li>
+<li>O que cada pedaço da regex do CNPJ faz (<code>^</code>, <code>\z</code>, <code>[0-9A-Z]{2}</code>, <code>\.</code>, <code>[0-9]{2}</code>)?</li>
+<li>Por que o teste de CNPJ válido nasce verde, e para que serve?</li>
+<li>Por que testar 120 e 121, e não só 121?</li>
+<li>O que o CNPJ alfanumérico muda e o que não muda?</li>
+<li>Por que a regex substituiu o guard de 18 caracteres?</li>
+<li>Por que <code>dotnet new</code> não basta para criar o projeto de um módulo do Norte?</li>
+</ol>
+<h2 id="9-preparação-para-a-s30">9. Preparação para a S30</h2>
+<ol>
+<li>Abrir o PR da <code>feat/modulo-clientes</code>.</li>
+<li>Objetivo natural: persistir o <code>Cliente</code> (EF Core, schema <code>clientes</code>, índice único no CNPJ).</li>
+<li>Em aberto: calcular os dígitos verificadores do CNPJ (atualizar o ADR-011 antes); <code>DOMINIO.md</code> com &quot;só PJ&quot;.</li>
+</ol>
+<hr />
+<h2 id="respostas">Respostas</h2><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>O teste vermelho mostra que ele <strong>consegue</strong> falhar; um teste escrito depois do guard nasce verde e não prova nada. Quando o código já existe, sabota-se o código (a menor mudança) e confere-se que o teste fica vermelho com o <code>Expected</code>/<code>Actual</code> esperado; depois desfaz-se.</li>
+<li>Porque <code>Assert.Throws&lt;T&gt;</code> exige o tipo exato e o <code>ThrowIfNegativeOrZero</code> lança <code>ArgumentOutOfRangeException</code>, não <code>ArgumentException</code>.</li>
+<li><code>^</code> e <code>\z</code>: o texto inteiro casa, sem sobra. <code>[0-9A-Z]{2}</code>: exatamente 2 caracteres, dígito ou letra maiúscula. <code>\.</code>: ponto literal. <code>[0-9]{2}</code> no fim: os 2 últimos são só dígitos.</li>
+<li>Porque a regex já existia quando ele foi escrito, e o código está certo. Serve para garantir que a regex não ficou apertada demais: o válido precisa passar.</li>
+<li>O 121 prova que o limite existe; o 120 prova que ele não está um caractere apertado demais (<code>&gt;=</code> no lugar de <code>&gt;</code>).</li>
+<li>Muda: letras maiúsculas passam a ser aceitas na raiz e na ordem. Não muda: a máscara, os 18 caracteres e os 2 dígitos verificadores finais, que continuam numéricos.</li>
+<li>Porque o padrão já impõe os 18 caracteres; manter os dois seria a mesma regra em dois lugares.</li>
+<li>Porque o template traz propriedades que o <code>Directory.Build.props</code> já define, <code>Version</code> que o Central Package Management recusa (<code>NU1008</code>) e não traz o <code>InternalsVisibleTo</code>; é preciso compará-lo com um projeto existente.</li>
+</ol>
+</details>
+</article>
+<footer class="rodape">Atualizado em 24/10/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>
