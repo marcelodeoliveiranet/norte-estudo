@@ -326,19 +326,19 @@ avisa que o EF Core não atualiza entidades imutáveis. Hoje (só cadastrar e co
 </tbody>
 </table>
 <p><strong>A forma final da classe</strong></p>
-<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">FichaProduto</span>
-<span class="p">{</span>
-<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="nf">FichaProduto</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">sku</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">descricao</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">ncm</span><span class="p">)</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="n">Sku</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sku</span><span class="p">;</span>
-<span class="w">        </span><span class="n">Descricao</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">descricao</span><span class="p">;</span>
-<span class="w">        </span><span class="n">Ncm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ncm</span><span class="p">;</span>
-<span class="w">    </span><span class="p">}</span>
+<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">FichaProduto</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="nf">FichaProduto</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">sku</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">descricao</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">ncm</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">Sku</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sku</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="n">Descricao</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">descricao</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="n">Ncm</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ncm</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
 
-<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Sku</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Descricao</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Ncm</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="p">}</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Sku</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Descricao</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Ncm</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre>
 
 <p><strong>Por que assim, ponto a ponto</strong></p>
@@ -454,22 +454,22 @@ existem (os <code>DbSet</code>) e é quem grava e lê os objetos nelas; o mapeam
 </tbody>
 </table>
 <p><strong>O <code>CatalogoDbContext</code></strong></p>
-<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">CatalogoDbContext</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">DbContext</span>
-<span class="p">{</span>
-<span class="w">    </span><span class="k">internal</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Schema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"catalogo"</span><span class="p">;</span>
+<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">CatalogoDbContext</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">DbContext</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">internal</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Schema</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;catalogo&quot;</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="nf">CatalogoDbContext</span><span class="p">(</span><span class="n">DbContextOptions</span><span class="o">&lt;</span><span class="n">CatalogoDbContext</span><span class="o">&gt;</span><span class="w"> </span><span class="n">options</span><span class="p">)</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="k">base</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="nf">CatalogoDbContext</span><span class="p">(</span><span class="n">DbContextOptions</span><span class="p">&lt;</span><span class="n">CatalogoDbContext</span><span class="p">&gt;</span><span class="w"> </span><span class="n">options</span><span class="p">)</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="k">base</span><span class="p">(</span><span class="n">options</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
 
-<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">DbSet</span><span class="o">&lt;</span><span class="n">FichaProduto</span><span class="o">&gt;</span><span class="w"> </span><span class="n">FichasProduto</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Set</span><span class="o">&lt;</span><span class="n">FichaProduto</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">DbSet</span><span class="p">&lt;</span><span class="n">FichaProduto</span><span class="p">&gt;</span><span class="w"> </span><span class="n">FichasProduto</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">Set</span><span class="p">&lt;</span><span class="n">FichaProduto</span><span class="p">&gt;();</span><span class="w"></span>
 
-<span class="w">    </span><span class="k">protected</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">OnModelCreating</span><span class="p">(</span><span class="n">ModelBuilder</span><span class="w"> </span><span class="n">modelBuilder</span><span class="p">)</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="n">modelBuilder</span><span class="p">.</span><span class="n">HasDefaultSchema</span><span class="p">(</span><span class="n">Schema</span><span class="p">);</span>
-<span class="w">        </span><span class="n">modelBuilder</span><span class="p">.</span><span class="n">ApplyConfigurationsFromAssembly</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">FichaProdutoConfiguration</span><span class="p">).</span><span class="n">Assembly</span><span class="p">);</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="p">}</span>
+<span class="w">    </span><span class="k">protected</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">OnModelCreating</span><span class="p">(</span><span class="n">ModelBuilder</span><span class="w"> </span><span class="n">modelBuilder</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">modelBuilder</span><span class="p">.</span><span class="n">HasDefaultSchema</span><span class="p">(</span><span class="n">Schema</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">modelBuilder</span><span class="p">.</span><span class="n">ApplyConfigurationsFromAssembly</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">FichaProdutoConfiguration</span><span class="p">).</span><span class="n">Assembly</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre>
 
 <table>
@@ -748,19 +748,19 @@ decisão <strong>evita</strong> a situação.</p>
 <p>Se faltar a primeira, a tabela vai para <code>public</code>. Se faltar a segunda, <strong>só o histórico</strong> vai para <code>public</code> — a
 divisão que não se quer com dois módulos. A documentação do EF avisa que <code>HasDefaultSchema</code> vale também para outros
 objetos, como sequências.</p>
-<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">IServiceCollection</span><span class="w"> </span><span class="nf">AddCatalogo</span><span class="p">(</span><span class="k">this</span><span class="w"> </span><span class="n">IServiceCollection</span><span class="w"> </span><span class="n">services</span><span class="p">,</span><span class="w"> </span><span class="n">IConfiguration</span><span class="w"> </span><span class="n">configuration</span><span class="p">)</span>
-<span class="p">{</span>
-<span class="w">    </span><span class="n">services</span><span class="p">.</span><span class="n">AddValidation</span><span class="p">();</span>
-<span class="w">    </span><span class="n">services</span><span class="p">.</span><span class="n">AddScoped</span><span class="o">&lt;</span><span class="n">FichaProdutoRepository</span><span class="o">&gt;</span><span class="p">();</span>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">IServiceCollection</span><span class="w"> </span><span class="nf">AddCatalogo</span><span class="p">(</span><span class="k">this</span><span class="w"> </span><span class="n">IServiceCollection</span><span class="w"> </span><span class="n">services</span><span class="p">,</span><span class="w"> </span><span class="n">IConfiguration</span><span class="w"> </span><span class="n">configuration</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">services</span><span class="p">.</span><span class="n">AddValidation</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">services</span><span class="p">.</span><span class="n">AddScoped</span><span class="p">&lt;</span><span class="n">FichaProdutoRepository</span><span class="p">&gt;();</span><span class="w"></span>
 
-<span class="w">    </span><span class="n">services</span><span class="p">.</span><span class="n">AddDbContext</span><span class="o">&lt;</span><span class="n">CatalogoDbContext</span><span class="o">&gt;</span><span class="p">(</span><span class="n">opcoes</span><span class="w"> </span><span class="o">=&gt;</span>
-<span class="w">        </span><span class="n">opcoes</span><span class="p">.</span><span class="n">UseNpgsql</span><span class="p">(</span>
-<span class="w">            </span><span class="n">configuration</span><span class="p">.</span><span class="n">GetConnectionString</span><span class="p">(</span><span class="s">"Norte"</span><span class="p">)</span>
-<span class="w">            </span><span class="o">??</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">InvalidOperationException</span><span class="p">(</span><span class="s">"Connection string 'Norte' não encontrada."</span><span class="p">),</span>
-<span class="w">            </span><span class="n">npgsql</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">npgsql</span><span class="p">.</span><span class="n">MigrationsHistoryTable</span><span class="p">(</span><span class="s">"__EFMigrationsHistory"</span><span class="p">,</span><span class="w"> </span><span class="n">CatalogoDbContext</span><span class="p">.</span><span class="n">Schema</span><span class="p">)));</span>
+<span class="w">    </span><span class="n">services</span><span class="p">.</span><span class="n">AddDbContext</span><span class="p">&lt;</span><span class="n">CatalogoDbContext</span><span class="p">&gt;(</span><span class="n">opcoes</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"></span>
+<span class="w">        </span><span class="n">opcoes</span><span class="p">.</span><span class="n">UseNpgsql</span><span class="p">(</span><span class="w"></span>
+<span class="w">            </span><span class="n">configuration</span><span class="p">.</span><span class="n">GetConnectionString</span><span class="p">(</span><span class="s">&quot;Norte&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">            </span><span class="p">??</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">InvalidOperationException</span><span class="p">(</span><span class="s">&quot;Connection string &#39;Norte&#39; não encontrada.&quot;</span><span class="p">),</span><span class="w"></span>
+<span class="w">            </span><span class="n">npgsql</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">npgsql</span><span class="p">.</span><span class="n">MigrationsHistoryTable</span><span class="p">(</span><span class="s">&quot;__EFMigrationsHistory&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">CatalogoDbContext</span><span class="p">.</span><span class="n">Schema</span><span class="p">)));</span><span class="w"></span>
 
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">services</span><span class="p">;</span>
-<span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">services</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre>
 
 <table>
@@ -886,14 +886,14 @@ nome exato do método do histórico para o provider.</p>
 </tr>
 </tbody>
 </table>
-<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">AdicionarAsync</span><span class="p">(</span><span class="n">FichaProduto</span><span class="w"> </span><span class="n">ficha</span><span class="p">)</span>
-<span class="p">{</span>
-<span class="w">    </span><span class="n">contexto</span><span class="p">.</span><span class="n">FichasProduto</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="n">ficha</span><span class="p">);</span>
-<span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="n">contexto</span><span class="p">.</span><span class="n">SaveChangesAsync</span><span class="p">();</span>
-<span class="p">}</span>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">AdicionarAsync</span><span class="p">(</span><span class="n">FichaProduto</span><span class="w"> </span><span class="n">ficha</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">contexto</span><span class="p">.</span><span class="n">FichasProduto</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="n">ficha</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="n">contexto</span><span class="p">.</span><span class="n">SaveChangesAsync</span><span class="p">();</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 
-<span class="k">public</span><span class="w"> </span><span class="n">Task</span><span class="o">&lt;</span><span class="n">FichaProduto</span><span class="o">?&gt;</span><span class="w"> </span><span class="n">ObterPorSkuAsync</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">sku</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span>
-<span class="w">    </span><span class="n">contexto</span><span class="p">.</span><span class="n">FichasProduto</span><span class="p">.</span><span class="n">AsNoTracking</span><span class="p">().</span><span class="n">FirstOrDefaultAsync</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">sku</span><span class="p">);</span>
+<span class="k">public</span><span class="w"> </span><span class="n">Task</span><span class="p">&lt;</span><span class="n">FichaProduto</span><span class="p">?&gt;</span><span class="w"> </span><span class="n">ObterPorSkuAsync</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">sku</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"></span>
+<span class="w">    </span><span class="n">contexto</span><span class="p">.</span><span class="n">FichasProduto</span><span class="p">.</span><span class="n">AsNoTracking</span><span class="p">().</span><span class="n">FirstOrDefaultAsync</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="n">sku</span><span class="p">);</span><span class="w"></span>
 </code></pre>
 
 <p><em>(Forma do repositório; os nomes do campo e do parâmetro no arquivo real podem diferir.)</em></p>
@@ -1361,14 +1361,14 @@ mensagem legível, não um 500.</p>
 </tr>
 </tbody>
 </table>
-<pre class="highlight"><code><span class="kt">var</span><span class="w"> </span><span class="n">fichaExistente</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">fichas</span><span class="p">.</span><span class="n">ObterPorSkuAsync</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Sku</span><span class="o">!</span><span class="p">);</span>
-<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">fichaExistente</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">null</span><span class="p">)</span>
-<span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">Problem</span><span class="p">(</span>
-<span class="w">        </span><span class="n">statusCode</span><span class="p">:</span><span class="w"> </span><span class="n">StatusCodes</span><span class="p">.</span><span class="n">Status409Conflict</span><span class="p">,</span>
-<span class="w">        </span><span class="n">title</span><span class="p">:</span><span class="w"> </span><span class="s">"Sku já cadastrado"</span><span class="p">,</span>
-<span class="w">        </span><span class="n">detail</span><span class="p">:</span><span class="w"> </span><span class="s">$"O sku {request.Sku} já está cadastrado"</span><span class="p">);</span>
-<span class="p">}</span>
+<pre class="highlight"><code><span class="kt">var</span><span class="w"> </span><span class="n">fichaExistente</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">fichas</span><span class="p">.</span><span class="n">ObterPorSkuAsync</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Sku</span><span class="p">!);</span><span class="w"></span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">fichaExistente</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">not</span><span class="w"> </span><span class="k">null</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">Problem</span><span class="p">(</span><span class="w"></span>
+<span class="w">        </span><span class="n">statusCode</span><span class="p">:</span><span class="w"> </span><span class="n">StatusCodes</span><span class="p">.</span><span class="n">Status409Conflict</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="n">title</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Sku já cadastrado&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="n">detail</span><span class="p">:</span><span class="w"> </span><span class="s">$&quot;O sku {request.Sku} já está cadastrado&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre>
 
 <p><strong>Duas opções e o preço de cada</strong></p>
@@ -1530,16 +1530,16 @@ caminho que crie uma ficha (a API, o seed, um teste), não só para o que passa 
 </tr>
 </tbody>
 </table>
-<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="nf">FichaProduto</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">sku</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">descricao</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">ncm</span><span class="p">)</span>
-<span class="p">{</span>
-<span class="w">    </span><span class="n">ArgumentException</span><span class="p">.</span><span class="n">ThrowIfNullOrWhiteSpace</span><span class="p">(</span><span class="n">sku</span><span class="p">);</span>
-<span class="w">    </span><span class="n">ArgumentException</span><span class="p">.</span><span class="n">ThrowIfNullOrWhiteSpace</span><span class="p">(</span><span class="n">descricao</span><span class="p">);</span>
-<span class="w">    </span><span class="n">ArgumentException</span><span class="p">.</span><span class="n">ThrowIfNullOrWhiteSpace</span><span class="p">(</span><span class="n">ncm</span><span class="p">);</span>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="nf">FichaProduto</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">sku</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">descricao</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">ncm</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">ArgumentException</span><span class="p">.</span><span class="n">ThrowIfNullOrWhiteSpace</span><span class="p">(</span><span class="n">sku</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">ArgumentException</span><span class="p">.</span><span class="n">ThrowIfNullOrWhiteSpace</span><span class="p">(</span><span class="n">descricao</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">ArgumentException</span><span class="p">.</span><span class="n">ThrowIfNullOrWhiteSpace</span><span class="p">(</span><span class="n">ncm</span><span class="p">);</span><span class="w"></span>
 
-<span class="w">    </span><span class="n">Sku</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sku</span><span class="p">;</span>
-<span class="w">    </span><span class="n">Descricao</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">descricao</span><span class="p">;</span>
-<span class="w">    </span><span class="n">Ncm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ncm</span><span class="p">;</span>
-<span class="p">}</span>
+<span class="w">    </span><span class="n">Sku</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sku</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">Descricao</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">descricao</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">Ncm</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ncm</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre>
 
 <p><strong>O que o método faz (documentação net-10.0)</strong></p>
@@ -1650,19 +1650,19 @@ métodos <code>ThrowIf*</code> (<code>ThrowIfNull</code>, <code>ThrowIfNullOrEmp
 </tr>
 </tbody>
 </table>
-<pre class="highlight"><code><span class="na">[Fact]</span>
-<span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">FichaProduto_Com_Sku_Vazio_Lanca_Excecao</span><span class="p">()</span>
-<span class="p">{</span>
+<pre class="highlight"><code><span class="na">[Fact]</span><span class="w"></span>
+<span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">FichaProduto_Com_Sku_Vazio_Lanca_Excecao</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="c1">// Arrange</span>
-<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">skuInvalido</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">""</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">skuInvalido</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">    </span><span class="c1">// Act</span>
-<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">excecao</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Assert</span><span class="p">.</span><span class="n">Throws</span><span class="o">&lt;</span><span class="n">ArgumentException</span><span class="o">&gt;</span><span class="p">(</span>
-<span class="w">        </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FichaProduto</span><span class="p">(</span><span class="n">skuInvalido</span><span class="p">,</span><span class="w"> </span><span class="s">"Luva nitrilica"</span><span class="p">,</span><span class="w"> </span><span class="s">"40151900"</span><span class="p">));</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">excecao</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Assert</span><span class="p">.</span><span class="n">Throws</span><span class="p">&lt;</span><span class="n">ArgumentException</span><span class="p">&gt;(</span><span class="w"></span>
+<span class="w">        </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FichaProduto</span><span class="p">(</span><span class="n">skuInvalido</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Luva nitrilica&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;40151900&quot;</span><span class="p">));</span><span class="w"></span>
 
 <span class="w">    </span><span class="c1">// Assert</span>
-<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="s">"sku"</span><span class="p">,</span><span class="w"> </span><span class="n">excecao</span><span class="p">.</span><span class="n">ParamName</span><span class="p">);</span>
-<span class="p">}</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="s">&quot;sku&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">excecao</span><span class="p">.</span><span class="n">ParamName</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre>
 
 <p><em>(Forma do teste; os nomes exatos das variáveis no arquivo real podem diferir.)</em></p>
@@ -1763,15 +1763,15 @@ cadastrou.</p>
 </tr>
 </tbody>
 </table>
-<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">SemearCatalogoAsync</span><span class="p">(</span><span class="k">this</span><span class="w"> </span><span class="n">WebApplication</span><span class="w"> </span><span class="n">app</span><span class="p">)</span>
-<span class="p">{</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">app</span><span class="p">.</span><span class="n">Environment</span><span class="p">.</span><span class="n">IsDevelopment</span><span class="p">())</span>
-<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">SemearCatalogoAsync</span><span class="p">(</span><span class="k">this</span><span class="w"> </span><span class="n">WebApplication</span><span class="w"> </span><span class="n">app</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(!</span><span class="n">app</span><span class="p">.</span><span class="n">Environment</span><span class="p">.</span><span class="n">IsDevelopment</span><span class="p">())</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="nn">var</span><span class="w"> </span><span class="n">escopo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="n">Services</span><span class="p">.</span><span class="n">CreateScope</span><span class="p">();</span>
-<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">seed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">escopo</span><span class="p">.</span><span class="n">ServiceProvider</span><span class="p">.</span><span class="n">GetRequiredService</span><span class="o">&lt;</span><span class="n">CatalogoSeed</span><span class="o">&gt;</span><span class="p">();</span>
-<span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="n">seed</span><span class="p">.</span><span class="n">ExecutarAsync</span><span class="p">();</span>
-<span class="p">}</span>
+<span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="nn">var</span><span class="w"> </span><span class="n">escopo</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="n">Services</span><span class="p">.</span><span class="n">CreateScope</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">seed</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">escopo</span><span class="p">.</span><span class="n">ServiceProvider</span><span class="p">.</span><span class="n">GetRequiredService</span><span class="p">&lt;</span><span class="n">CatalogoSeed</span><span class="p">&gt;();</span><span class="w"></span>
+<span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="n">seed</span><span class="p">.</span><span class="n">ExecutarAsync</span><span class="p">();</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre>
 
 <p><strong>Por que <code>CreateScope()</code> à mão.</strong> O <code>DbContext</code> é <em>scoped</em> (6.6): uma instância por <strong>requisição</strong>. Na subida não há requisição; sem criar um escopo,
@@ -1936,9 +1936,9 @@ contra o ambiente em que ele roda no CI, não só na máquina de quem escreve.</
 </tr>
 </tbody>
 </table>
-<pre class="highlight"><code><span class="kt">var</span><span class="w"> </span><span class="n">query</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_contexto</span><span class="p">.</span><span class="n">FichasProduto</span><span class="p">.</span><span class="n">AsNoTracking</span><span class="p">();</span>
-<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="kt">string</span><span class="p">.</span><span class="n">IsNullOrWhiteSpace</span><span class="p">(</span><span class="n">filtro</span><span class="p">))</span>
-<span class="w">    </span><span class="n">query</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">query</span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="p">.</span><span class="n">Contains</span><span class="p">(</span><span class="n">filtro</span><span class="p">));</span>
+<pre class="highlight"><code><span class="kt">var</span><span class="w"> </span><span class="n">query</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">_contexto</span><span class="p">.</span><span class="n">FichasProduto</span><span class="p">.</span><span class="n">AsNoTracking</span><span class="p">();</span><span class="w"></span>
+<span class="k">if</span><span class="w"> </span><span class="p">(!</span><span class="kt">string</span><span class="p">.</span><span class="n">IsNullOrWhiteSpace</span><span class="p">(</span><span class="n">filtro</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="n">query</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">query</span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="p">.</span><span class="n">Contains</span><span class="p">(</span><span class="n">filtro</span><span class="p">));</span><span class="w"></span>
 </code></pre>
 
 <table>
@@ -2027,14 +2027,14 @@ ainda não recebem o token. O cancelamento em si <strong>não foi provado</stron
 </table>
 <p><strong>Em uma frase:</strong> a API devolve um <strong>Response</strong> (um <code>record</code> feito para a resposta), nunca a entidade; e a consulta busca no banco só as colunas que o Response usa.</p>
 <p><strong>Pergunta que responde:</strong> posso devolver a <code>FichaProduto</code> na resposta da listagem?</p>
-<pre class="highlight"><code><span class="p">.</span><span class="n">Select</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ListarFichasProdutoItemResponse</span><span class="p">(</span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="p">,</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Descricao</span><span class="p">,</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Ncm</span><span class="p">))</span>
+<pre class="highlight"><code><span class="p">.</span><span class="n">Select</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ListarFichasProdutoItemResponse</span><span class="p">(</span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="p">,</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Descricao</span><span class="p">,</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Ncm</span><span class="p">))</span><span class="w"></span>
 </code></pre>
 
-<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">record</span><span class="w"> </span><span class="nf">ListarFichasProdutoItemResponse</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">Sku</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Descricao</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Ncm</span><span class="p">);</span>
+<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="n">record</span><span class="w"> </span><span class="nf">ListarFichasProdutoItemResponse</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">Sku</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Descricao</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Ncm</span><span class="p">);</span><span class="w"></span>
 
-<span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">record</span><span class="w"> </span><span class="nf">ListarFichasProdutoResponse</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">Pagina</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">TamanhoPagina</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">TotalItens</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">TotalPaginas</span><span class="p">,</span>
-<span class="w">    </span><span class="n">IReadOnlyList</span><span class="o">&lt;</span><span class="n">ListarFichasProdutoItemResponse</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Itens</span><span class="p">);</span>
+<span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="n">record</span><span class="w"> </span><span class="nf">ListarFichasProdutoResponse</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">Pagina</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">TamanhoPagina</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">TotalItens</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">TotalPaginas</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">IReadOnlyList</span><span class="p">&lt;</span><span class="n">ListarFichasProdutoItemResponse</span><span class="p">&gt;</span><span class="w"> </span><span class="n">Itens</span><span class="p">);</span><span class="w"></span>
 </code></pre>
 
 <p><em>(Forma dos tipos; o tipo exato da coleção no arquivo real pode diferir.)</em></p>
@@ -2130,14 +2130,14 @@ sempre acelera.</p>
 </table>
 <p><strong>Em uma frase:</strong> a listagem devolve <strong>um pedaço</strong> das fichas por vez (a página), numa ordem fixa, junto com o total para o cliente saber quantas páginas existem.</p>
 <p><strong>Pergunta que responde:</strong> como devolvo as fichas aos poucos, sem repetir nem perder nenhuma entre uma página e outra?</p>
-<pre class="highlight"><code><span class="kt">var</span><span class="w"> </span><span class="n">totalItens</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">query</span><span class="p">.</span><span class="n">CountAsync</span><span class="p">(</span><span class="n">ct</span><span class="p">);</span>
-<span class="kt">var</span><span class="w"> </span><span class="n">itens</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">query</span>
-<span class="w">    </span><span class="p">.</span><span class="n">OrderBy</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="n">Skip</span><span class="p">((</span><span class="n">pagina</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">tamanhoPagina</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="n">Take</span><span class="p">(</span><span class="n">tamanhoPagina</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="n">Select</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ListarFichasProdutoItemResponse</span><span class="p">(</span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="p">,</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Descricao</span><span class="p">,</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Ncm</span><span class="p">))</span>
-<span class="w">    </span><span class="p">.</span><span class="n">ToListAsync</span><span class="p">(</span><span class="n">ct</span><span class="p">);</span>
-<span class="kt">var</span><span class="w"> </span><span class="n">totalPaginas</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">Math</span><span class="p">.</span><span class="n">Ceiling</span><span class="p">(</span><span class="n">totalItens</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="kt">double</span><span class="p">)</span><span class="n">tamanhoPagina</span><span class="p">);</span>
+<pre class="highlight"><code><span class="kt">var</span><span class="w"> </span><span class="n">totalItens</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">query</span><span class="p">.</span><span class="n">CountAsync</span><span class="p">(</span><span class="n">ct</span><span class="p">);</span><span class="w"></span>
+<span class="kt">var</span><span class="w"> </span><span class="n">itens</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">query</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="n">OrderBy</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="n">Skip</span><span class="p">((</span><span class="n">pagina</span><span class="w"> </span><span class="p">-</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="p">*</span><span class="w"> </span><span class="n">tamanhoPagina</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="n">Take</span><span class="p">(</span><span class="n">tamanhoPagina</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="n">Select</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ListarFichasProdutoItemResponse</span><span class="p">(</span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="p">,</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Descricao</span><span class="p">,</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Ncm</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="n">ToListAsync</span><span class="p">(</span><span class="n">ct</span><span class="p">);</span><span class="w"></span>
+<span class="kt">var</span><span class="w"> </span><span class="n">totalPaginas</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">Math</span><span class="p">.</span><span class="n">Ceiling</span><span class="p">(</span><span class="n">totalItens</span><span class="w"> </span><span class="p">/</span><span class="w"> </span><span class="p">(</span><span class="kt">double</span><span class="p">)</span><span class="n">tamanhoPagina</span><span class="p">);</span><span class="w"></span>
 </code></pre>
 
 <p>No log de SQL: um <code>COUNT(*)::int</code> sem <code>ORDER BY</code>; a página com <code>ORDER BY f.sku LIMIT ... OFFSET ...</code>. <strong>Os valores de <code>LIMIT</code>/<code>OFFSET</code> apareceram como <code>'?'</code>: não foram vistos.</strong></p>
@@ -2208,7 +2208,7 @@ sempre acelera.</p>
 </tbody>
 </table>
 <pre class="highlight"><code><span class="c1">// por chave (conceito; não implementado no Norte)</span>
-<span class="n">query</span><span class="p">.</span><span class="n">OrderBy</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="p">).</span><span class="n">Where</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="p">.</span><span class="n">CompareTo</span><span class="p">(</span><span class="n">ultimoSku</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">).</span><span class="n">Take</span><span class="p">(</span><span class="n">tamanho</span><span class="p">);</span>
+<span class="n">query</span><span class="p">.</span><span class="n">OrderBy</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="p">).</span><span class="n">Where</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="p">.</span><span class="n">CompareTo</span><span class="p">(</span><span class="n">ultimoSku</span><span class="p">)</span><span class="w"> </span><span class="p">&gt;</span><span class="w"> </span><span class="m">0</span><span class="p">).</span><span class="n">Take</span><span class="p">(</span><span class="n">tamanho</span><span class="p">);</span><span class="w"></span>
 </code></pre>
 
 <p>A documentação do EF Core diz que o deslocamento tem &quot;severe shortcomings&quot;: o banco &quot;ainda precisa processar as primeiras N entradas, mesmo que não as devolva&quot;, e, com atualizações
@@ -2267,23 +2267,23 @@ a primeira página).</p>
 <p><strong>Em uma frase:</strong> os parâmetros da query string (<code>filtro</code>, <code>pagina</code>, <code>tamanhoPagina</code>) chegam agrupados num <strong>record</strong>, validados pelos atributos dele; o 400 sai antes do endpoint, e o
 <strong>valor padrão</strong> de quem não mandou é decidido <strong>no endpoint</strong>.</p>
 <p><strong>Pergunta que responde:</strong> como valido parâmetros de um <code>GET</code> sem escrever o <code>if</code> à mão, e onde fica o &quot;se não mandou, use 10&quot;?</p>
-<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">record</span><span class="w"> </span><span class="nf">ListarFichasProdutoRequest</span><span class="p">(</span>
-<span class="w">    </span><span class="na">[FromQuery(Name = "filtro")]</span>
-<span class="w">    </span><span class="na">[StringLength(15, ErrorMessage = "O filtro deve ter no máximo 15 caracteres")]</span>
-<span class="w">    </span><span class="kt">string?</span><span class="w"> </span><span class="n">Filtro</span><span class="p">,</span>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="n">record</span><span class="w"> </span><span class="nf">ListarFichasProdutoRequest</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="na">[FromQuery(Name = &quot;filtro&quot;)]</span><span class="w"></span>
+<span class="w">    </span><span class="na">[StringLength(15, ErrorMessage = &quot;O filtro deve ter no máximo 15 caracteres&quot;)]</span><span class="w"></span>
+<span class="w">    </span><span class="kt">string?</span><span class="w"> </span><span class="n">Filtro</span><span class="p">,</span><span class="w"></span>
 
-<span class="w">    </span><span class="na">[FromQuery(Name = "pagina")]</span>
-<span class="w">    </span><span class="na">[Range(1, 1_000_000, ErrorMessage = "A página deve estar entre 1 e 1.000.000.")]</span>
-<span class="w">    </span><span class="kt">int?</span><span class="w"> </span><span class="n">Pagina</span><span class="p">,</span>
+<span class="w">    </span><span class="na">[FromQuery(Name = &quot;pagina&quot;)]</span><span class="w"></span>
+<span class="w">    </span><span class="na">[Range(1, 1_000_000, ErrorMessage = &quot;A página deve estar entre 1 e 1.000.000.&quot;)]</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int?</span><span class="w"> </span><span class="n">Pagina</span><span class="p">,</span><span class="w"></span>
 
-<span class="w">    </span><span class="na">[FromQuery(Name = "tamanhoPagina")]</span>
-<span class="w">    </span><span class="na">[Range(1, 100, ErrorMessage = "O tamanho da página deve estar entre 1 e 100.")]</span>
-<span class="w">    </span><span class="kt">int?</span><span class="w"> </span><span class="n">TamanhoPagina</span>
-<span class="w">    </span><span class="p">);</span>
+<span class="w">    </span><span class="na">[FromQuery(Name = &quot;tamanhoPagina&quot;)]</span><span class="w"></span>
+<span class="w">    </span><span class="na">[Range(1, 100, ErrorMessage = &quot;O tamanho da página deve estar entre 1 e 100.&quot;)]</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int?</span><span class="w"> </span><span class="n">TamanhoPagina</span><span class="w"></span>
+<span class="w">    </span><span class="p">);</span><span class="w"></span>
 </code></pre>
 
 <pre class="highlight"><code><span class="c1">// ListarFichasProdutoEndpoint (constantes PaginaPadrao = 1, TamanhoPaginaPadrao = 10)</span>
-<span class="n">ExecutarAsync</span><span class="p">([</span><span class="n">AsParameters</span><span class="p">]</span><span class="w"> </span><span class="n">ListarFichasProdutoRequest</span><span class="w"> </span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">FichaProdutoRepository</span><span class="w"> </span><span class="n">fichas</span><span class="p">,</span><span class="w"> </span><span class="n">CancellationToken</span><span class="w"> </span><span class="n">ct</span><span class="p">)</span>
+<span class="n">ExecutarAsync</span><span class="p">([</span><span class="n">AsParameters</span><span class="p">]</span><span class="w"> </span><span class="n">ListarFichasProdutoRequest</span><span class="w"> </span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">FichaProdutoRepository</span><span class="w"> </span><span class="n">fichas</span><span class="p">,</span><span class="w"> </span><span class="n">CancellationToken</span><span class="w"> </span><span class="n">ct</span><span class="p">)</span><span class="w"></span>
 <span class="c1">// ... var pagina = request.Pagina ?? PaginaPadrao;  var tamanho = request.TamanhoPagina ?? TamanhoPaginaPadrao;</span>
 </code></pre>
 
@@ -2539,7 +2539,7 @@ campos internos. O ganho real da projeção hoje é ≈ nulo (3 colunas, todas u
 </ol>
 </details>
 </article>
-<footer class="rodape">Atualizado em 24/10/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="assets/search-index.js"></script>

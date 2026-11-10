@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norte · S35 — FluentValidation no Representantes, 400 em vez de 500 e o contrato Clientes ↔ Representantes · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s35.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#norte--s35--fluentvalidation-no-representantes-400-em-vez-de-500-e-o-contrato-clientes-↔-representantes" data-id="norte--s35--fluentvalidation-no-representantes-400-em-vez-de-500-e-o-contrato-clientes-↔-representantes">Norte · S35 — FluentValidation no Representantes, 400 em vez de 500 …</a><a class="n2" href="#1-resultado-do-dia" data-id="1-resultado-do-dia">1. Resultado do dia</a><a class="n2" href="#2-onde-isso-está-no-mapa-dos-níveis" data-id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</a><a class="n2" href="#3-conceitos" data-id="3-conceitos">3. Conceitos</a><a class="n2" href="#4-termos" data-id="4-termos">4. Termos</a><a class="n2" href="#5-dúvidas-e-respostas" data-id="5-dúvidas-e-respostas">5. Dúvidas e respostas</a><a class="n2" href="#6-divergências-e-decisões-do-aluno" data-id="6-divergências-e-decisões-do-aluno">6. Divergências e decisões do aluno</a><a class="n2" href="#7-avaliação" data-id="7-avaliação">7. Avaliação</a><a class="n2" href="#8-pontos-a-melhorar" data-id="8-pontos-a-melhorar">8. Pontos a melhorar</a><a class="n2" href="#9-teste-se" data-id="9-teste-se">9. Teste-se</a><a class="n2" href="#10-preparação-para-a-próxima-sessão-s36" data-id="10-preparação-para-a-próxima-sessão-s36">10. Preparação para a próxima sessão (S36)</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a></aside>
+<main class="conteudo"><article>
+<h1 id="norte--s35--fluentvalidation-no-representantes-400-em-vez-de-500-e-o-contrato-clientes-↔-representantes">Norte · S35 — FluentValidation no Representantes, 400 em vez de 500 e o contrato Clientes ↔ Representantes</h1>
+<p><strong>Quinta, 29/10/2026 · tempo líquido: 8h23 (07:52–19:17, pausa 12:37–15:39; blocos de 4h45 e 3h38) · Marco M1</strong></p>
+<p>Hoje o <code>Representantes</code> virou o módulo que ensina o <strong>FluentValidation</strong> (e a regra de uso ficou escrita no ADR-013), ganhou <strong>todos os endpoints</strong>, e passou a conversar com o <code>Clientes</code> e o <code>Pedidos</code> pelos <strong>contratos</strong>: um representante com clientes ou pedidos <strong>não é excluído</strong>. No caminho, um <code>?pagina=abc</code> que dava <strong>500</strong> passou a dar <strong>400</strong> (ADR-014), o item do pedido ganhou <strong>limites de preço e quantidade</strong> presos à coluna do banco, e a suíte foi de <strong>157 para 183 testes</strong>. Treze PRs na <code>main</code> (#71 a #83), CI verde, nenhuma pendência.</p>
+<p>A ideia para guardar: <strong>cada regra mora no lugar que a conhece, e cada lugar tem o seu teste.</strong> A forma da entrada é do validador; &quot;tem cliente?&quot; e &quot;tem pedido?&quot; são perguntas aos outros módulos, pelo contrato; o limite do número é da coluna. E, de passagem: <strong>um erro de entrada não pode virar 500</strong> — 500 é &quot;erro do servidor&quot;, e quem mandou <code>abc</code> foi o cliente.</p>
+<blockquote>
+<p><strong>Antes de ler:</strong> a explicação completa está na entrada <strong>8.14 da Parte 8 do guia</strong> (<a href="../parte-8.html#814-fluentvalidation-num-módulo-só-400-para-requisição-malformada-e-o-contrato-do-representantes">GUIA-DOTNET-P8.md</a>). Esta página é o roteiro de estudo da sessão.</p>
+<p><strong>Limite deste registro:</strong> a sessão foi compactada no meio. A primeira metade (#71 a #75) foi reconstituída pelo resumo e pelo histórico do Git; os detalhes finos dela podem ter perdido nuances. A ajuda por exercício não foi medida.</p>
+</blockquote>
+<hr />
+<h2 id="1-resultado-do-dia">1. Resultado do dia</h2>
+<table>
+<thead>
+<tr>
+<th>PR</th>
+<th>O que entrou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#71 e #72</td>
+<td>FluentValidation no <code>Representantes</code> (pacote <code>FluentValidation</code> 12.2.0 e validadores dos requests)</td>
+</tr>
+<tr>
+<td>#73</td>
+<td>todos os endpoints do <code>Representantes</code></td>
+</tr>
+<tr>
+<td>#74</td>
+<td>a regra &quot;morta&quot; do <code>Cpf</code> (uma verificação que nunca podia disparar) foi removida</td>
+</tr>
+<tr>
+<td>#75</td>
+<td><code>?pagina=abc</code> deixa de dar 500 e passa a dar 400, por um tratador de exceção</td>
+</tr>
+<tr>
+<td>#76</td>
+<td>limites do item do pedido: preço máximo e quantidade máxima por item</td>
+</tr>
+<tr>
+<td>#77, #78, #79</td>
+<td>contrato <code>Clientes</code> ↔ <code>Representantes</code> (nos dois sentidos)</td>
+</tr>
+<tr>
+<td>#80</td>
+<td>não excluir representante que tem pedidos</td>
+</tr>
+<tr>
+<td>#81</td>
+<td>sobra de <code>using</code> de <code>BouncyCastle</code> removida</td>
+</tr>
+<tr>
+<td>#82</td>
+<td>testes que prendem os limites de preço e quantidade <strong>à coluna do banco</strong></td>
+</tr>
+<tr>
+<td>#83</td>
+<td><strong>ADR-013</strong>, <strong>ADR-014</strong> e o teste do tratador de exceção</td>
+</tr>
+</tbody>
+</table>
+<p>Estado final: <code>main</code> em <code>94a98c2</code>, <strong>183 testes verdes</strong> (eram 157), CI verde, árvore limpa. <strong>Pendências: nenhuma.</strong></p>
+<h2 id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</h2>
+<p>Solution → módulos → funcionalidades → camadas. Hoje mexemos em três pontos:</p>
+<ul>
+<li><strong>Dentro de um módulo</strong> (<code>Representantes</code>): a camada de validação da entrada trocou de ferramenta (FluentValidation).</li>
+<li><strong>Na fronteira entre módulos</strong>: mais contratos (<code>IConsultaRepresentantes</code>, <code>IConsultaClientes.ExistemClientesParaRepresentanteAsync</code>, <code>IConsultaPedidos.ExistemPedidosParaRepresentanteAsync</code>).</li>
+<li><strong>No host</strong> (<code>Norte.Api</code>): um tratador de exceção novo, <code>RequisicaoInvalidaExceptionHandler</code>, que vale para todos os módulos.</li>
+</ul>
+<h2 id="3-conceitos">3. Conceitos</h2>
+<h3 id="31-fluentvalidation-o-que-muda-em-relação-à-validação-nativa-guia-814">3.1 FluentValidation: o que muda em relação à validação nativa (guia <a href="../parte-8.html#814-fluentvalidation-num-módulo-só-400-para-requisição-malformada-e-o-contrato-do-representantes">8.14</a>)</h3>
+<p>A validação nativa (S12, ADR-003) lê <strong>atributos</strong> (<code>[Required]</code>, <code>[Range]</code>) no <code>Request</code>. O FluentValidation tira a regra do atributo e a põe numa classe à parte, o <strong>validador</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Como era (DataAnnotations)</th>
+<th>Como é agora (FluentValidation)</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>atributos no <code>Request</code></td>
+<td>uma classe <code>AbstractValidator&lt;Request&gt;</code> com as regras</td>
+<td>a regra sai do tipo da entrada e vira código comum</td>
+</tr>
+<tr>
+<td><code>AddValidation()</code> no módulo liga a validação</td>
+<td>o módulo <strong>não</strong> chama <code>AddValidation()</code>; registra os validadores</td>
+<td>os dois mecanismos não convivem no mesmo módulo</td>
+</tr>
+<tr>
+<td>o .NET valida sozinho antes do endpoint</td>
+<td>o endpoint (ou um filtro) chama o validador</td>
+<td>quem valida passa a ser uma chamada explícita</td>
+</tr>
+</tbody>
+</table>
+<pre class="highlight"><code><span class="c1">// forma do validador (os nomes exatos no arquivo real podem diferir)</span>
+<span class="k">public</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">CadastrarRepresentanteRequestValidator</span><span class="w"></span>
+<span class="w">    </span><span class="p">:</span><span class="w"> </span><span class="n">AbstractValidator</span><span class="p">&lt;</span><span class="n">CadastrarRepresentanteRequest</span><span class="p">&gt;</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="nf">CadastrarRepresentanteRequestValidator</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">RuleFor</span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">Nome</span><span class="p">).</span><span class="n">NotEmpty</span><span class="p">().</span><span class="n">MaximumLength</span><span class="p">(</span><span class="m">120</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">RuleFor</span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">Email</span><span class="p">).</span><span class="n">NotEmpty</span><span class="p">().</span><span class="n">EmailAddress</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre>
+
+<p><strong>A regra que o ADR-013 deixou escrita:</strong> <em>módulo com FluentValidation não chama <code>AddValidation()</code>, e <strong>todo request tem um validador e um teste do caso inválido</strong>.</em> A segunda metade existe porque o erro é fácil de cometer em silêncio: um request <strong>sem</strong> validador passa direto, sem aviso.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Ganho</th>
+<th><strong>Preço</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FluentValidation só no <code>Representantes</code></td>
+<td>aprendizado num código novo, sem mexer no <code>Pedidos</code>, <code>Clientes</code> e <code>Catalogo</code> já testados</td>
+<td>dois estilos de validação no mesmo repositório (aceito de propósito; o aluno quer comparar)</td>
+</tr>
+<tr>
+<td>Regra num validador, não em atributo</td>
+<td>regra condicional e composta fica legível; testa-se o validador sozinho</td>
+<td>uma dependência a mais (<code>FluentValidation</code> 12.2.0) e um arquivo por request</td>
+</tr>
+<tr>
+<td>&quot;Todo request tem validador + teste do inválido&quot;</td>
+<td>o esquecimento vira falha de teste</td>
+<td>mais um teste por request, mesmo os simples</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-uma-regra-morta-no-cpf-pr-74">3.2 Uma regra &quot;morta&quot; no <code>Cpf</code> (PR #74)</h3>
+<p>Uma verificação que <strong>nunca pode ser verdadeira</strong> é código morto: parece proteger, mas não protege. No <code>Cpf</code>, a regra já era coberta por outra mais acima. Foi removida. A lição não é sobre CPF: <strong>toda regra precisa ter um teste que a faça disparar</strong> — se nenhum teste consegue fazê-la falhar, ou ela não serve ou o teste está errado.</p>
+<h3 id="33-dos-endpoints-do-representantes-ao-contrato-com-o-clientes-e-o-pedidos">3.3 Dos endpoints do <code>Representantes</code> ao contrato com o <code>Clientes</code> e o <code>Pedidos</code></h3>
+<p>O representante é o elo da carteira: cada cliente aponta para um representante, e cada pedido também. Por isso excluir um representante exige <strong>perguntar aos outros dois módulos</strong>, e cadastrar um cliente ou pedido pode exigir perguntar ao <code>Representantes</code> se ele existe.</p>
+<table>
+<thead>
+<tr>
+<th>Pergunta</th>
+<th>Interface</th>
+<th>Quem responde</th>
+<th>Onde mora</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>o representante existe?</td>
+<td><code>IConsultaRepresentantes.RepresentanteExisteAsync</code></td>
+<td><code>Representantes</code></td>
+<td><code>Norte.Representantes.Contratos</code></td>
+</tr>
+<tr>
+<td>existem clientes deste representante?</td>
+<td><code>IConsultaClientes.ExistemClientesParaRepresentanteAsync</code></td>
+<td><code>Clientes</code></td>
+<td><code>Norte.Clientes.Contratos</code></td>
+</tr>
+<tr>
+<td>existem pedidos deste representante?</td>
+<td><code>IConsultaPedidos.ExistemPedidosParaRepresentanteAsync</code></td>
+<td><code>Pedidos</code></td>
+<td><code>Norte.Pedidos.Contratos</code></td>
+</tr>
+</tbody>
+</table>
+<p>A resposta do <code>Pedidos</code> é uma consulta <code>EXISTS</code> (<code>AnyAsync</code>), como a do <code>Clientes</code> (S34):</p>
+<pre class="highlight"><code><span class="c1">// forma da implementação (internal, no módulo Pedidos)</span>
+<span class="k">return</span><span class="w"> </span><span class="n">contexto</span><span class="p">.</span><span class="n">Pedidos</span><span class="p">.</span><span class="n">AsNoTracking</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="n">AnyAsync</span><span class="p">(</span><span class="n">p</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">RepresentanteId</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="n">representanteId</span><span class="p">,</span><span class="w"> </span><span class="n">ct</span><span class="p">);</span><span class="w"></span>
+</code></pre>
+
+<p>O <code>DELETE /representantes/{id}</code> agora segue esta ordem, e <strong>a ordem importa</strong> (cada recusa tem a sua mensagem):</p>
+<table>
+<thead>
+<tr>
+<th>Ordem</th>
+<th>Pergunta</th>
+<th>Se sim</th>
+<th>Se não</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>existem clientes?</td>
+<td>400 &quot;Existem clientes cadastrados&quot;</td>
+<td>segue</td>
+</tr>
+<tr>
+<td>2</td>
+<td>existem pedidos?</td>
+<td>400 &quot;Existem pedidos cadastrados&quot; (<code>detail</code>: <code>Existem pedidos cadastrados para o representante {id}</code>)</td>
+<td>segue</td>
+</tr>
+<tr>
+<td>3</td>
+<td>apaga</td>
+<td>204 se apagou, <strong>404</strong> &quot;Representante não encontrado&quot; se não existia</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>Mesma decisão da S34: <strong>400</strong> para recusa de regra de exclusão; <strong>409</strong> fica para duplicidade.</p>
+<p><strong>Teste do contrato.</strong> Os testes do <code>Representantes</code> precisam de um <strong>fake do <code>Pedidos</code></strong> (<code>ConsultaPedidosFake</code>): sem ele o <code>DELETE</code> chamaria a implementação real, que tenta ler uma tabela que não existe no banco daquele teste. O registro do fake vence porque o <strong>último registro de um serviço no contêiner ganha</strong> (<code>WithWebHostBuilder(... ConfigureServices ...)</code>). O helper <code>CriarFabrica(bool existemClientes, bool existemPedidos = false)</code> concentra isso. Os testes do contrato do <code>Pedidos</code> conferem os dois lados: representante <code>7771</code> com pedido → <code>true</code>; <code>int.MaxValue</code> → <code>false</code>.</p>
+<h3 id="34-paginaabc-de-500-para-400-adr-014-pr-75-e-83">3.4 <code>?pagina=abc</code>: de 500 para 400 (ADR-014, PR #75 e #83)</h3>
+<p><code>GET /catalogo/fichas-produto?pagina=abc</code> devolvia <strong>500</strong>. Pelo conceito da S14: o servidor não conseguiu <strong>ligar</strong> o texto <code>abc</code> a um <code>int</code>, e o ASP.NET Core lança <code>BadHttpRequestException</code>. Em <code>Development</code> o framework já converte isso em 400 (a opção <code>RouteHandlerOptions.ThrowOnBadRequest</code> fica <strong>ligada</strong> só lá); nos outros ambientes ela fica <strong>desligada</strong> e a exceção sobe até o <code>UseExceptionHandler()</code>, que a trata como &quot;erro inesperado&quot; → 500.</p>
+<p>A solução do ADR-014 é um tratador de exceção do host:</p>
+<pre class="highlight"><code><span class="c1">// forma do tipo (os nomes exatos no arquivo real podem diferir)</span>
+<span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">RequisicaoInvalidaExceptionHandler</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">IExceptionHandler</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">ValueTask</span><span class="p">&lt;</span><span class="kt">bool</span><span class="p">&gt;</span><span class="w"> </span><span class="n">TryHandleAsync</span><span class="p">(</span><span class="w"></span>
+<span class="w">        </span><span class="n">HttpContext</span><span class="w"> </span><span class="n">http</span><span class="p">,</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="n">excecao</span><span class="p">,</span><span class="w"> </span><span class="n">CancellationToken</span><span class="w"> </span><span class="n">ct</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">excecao</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">not</span><span class="w"> </span><span class="n">BadHttpRequestException</span><span class="p">)</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">false</span><span class="p">;</span><span class="w">                       </span><span class="c1">// não é comigo: passa para o próximo</span>
+
+<span class="w">        </span><span class="n">http</span><span class="p">.</span><span class="n">Response</span><span class="p">.</span><span class="n">StatusCode</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">StatusCodes</span><span class="p">.</span><span class="n">Status400BadRequest</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="n">http</span><span class="p">.</span><span class="n">Response</span><span class="p">.</span><span class="n">WriteAsJsonAsync</span><span class="p">(</span><span class="w"></span>
+<span class="w">            </span><span class="k">new</span><span class="w"> </span><span class="n">ProblemDetails</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Status</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">400</span><span class="p">,</span><span class="w"> </span><span class="n">Title</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;Requisição inválida&quot;</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="n">ct</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">true</span><span class="p">;</span><span class="w">                            </span><span class="c1">// tratei: pode parar</span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Parte</th>
+<th>Significado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>IExceptionHandler</code></td>
+<td>peça que o <code>UseExceptionHandler()</code> consulta, em ordem, para cada exceção não tratada</td>
+</tr>
+<tr>
+<td><code>return false</code></td>
+<td>&quot;essa exceção não é minha&quot;: quem trata as outras (o 500 genérico) continua valendo</td>
+</tr>
+<tr>
+<td><code>return true</code></td>
+<td>&quot;já respondi&quot;: o middleware para</td>
+</tr>
+<tr>
+<td>título <code>&quot;Requisição inválida&quot;</code></td>
+<td>é contrato do teste, como o título do 409 (S17)</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Ganho</th>
+<th><strong>Preço</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tratador no host</td>
+<td>todo módulo ganha o 400 de graça; nenhum endpoint muda</td>
+<td><code>BadHttpRequestException</code> cobre <strong>vários</strong> tipos de requisição malformada (não só <code>pagina=abc</code>); todos viram o mesmo 400 genérico</td>
+</tr>
+<tr>
+<td>Não ligar <code>ThrowOnBadRequest</code> em produção</td>
+<td>o comportamento do framework fica como está</td>
+<td>o 400 depende do tratador estar registrado; sem ele, volta o 500</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Como o teste pôde ver o erro.</strong> Em <code>Testing</code> a opção <code>ThrowOnBadRequest</code> é <code>false</code>: o framework nem lança, e o teste nunca veria o defeito. O teste liga a opção <strong>só nele</strong> e <strong>mantém o ambiente <code>Testing</code></strong>:</p>
+<pre class="highlight"><code><span class="n">services</span><span class="p">.</span><span class="n">Configure</span><span class="p">&lt;</span><span class="n">RouteHandlerOptions</span><span class="p">&gt;(</span><span class="n">o</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">o</span><span class="p">.</span><span class="n">ThrowOnBadRequest</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">true</span><span class="p">);</span><span class="w"></span>
+</code></pre>
+
+<p>Duas armadilhas que apareceram até chegar nessa linha (vale guardar):</p>
+<ul>
+<li>O namespace de <code>RouteHandlerOptions</code> é <code>Microsoft.AspNetCore.Routing</code> (<code>CS0246</code> até acertar o <code>using</code>).</li>
+<li>Subir a fábrica em <code>Development</code> para &quot;ganhar&quot; o <code>ThrowOnBadRequest</code> de graça <strong>quebra</strong>: o seed do catálogo roda e procura <code>catalogo.fichas_produto</code>, que o banco descartável ainda não tem (<code>relation &quot;catalogo.fichas_produto&quot; does not exist</code>). Por isso o ambiente fica <code>Testing</code> e a opção é ligada à mão.</li>
+</ul>
+<p>O teste é um <code>[Theory]</code> com dois casos (<code>?pagina=abc</code> e <code>?tamanhoPagina=abc</code>) e confere <strong>400</strong> e o título <code>&quot;Requisição inválida&quot;</code>.</p>
+<blockquote>
+<p><strong>O que o ADR-014 prometia e não existia.</strong> A primeira versão do texto dizia que havia teste do tratador. <strong>Não havia.</strong> O teste foi escrito depois, no PR #83. Registro honesto: documentação que descreve teste inexistente é pior que documentação sem teste.</p>
+</blockquote>
+<h3 id="35-limites-do-item-do-pedido-presos-à-coluna-pr-76-e-82">3.5 Limites do item do pedido, presos à coluna (PR #76 e #82)</h3>
+<p>Dívida antiga (S33/S34): preço × quantidade podia estourar o <code>decimal</code> e dar 500. Agora:</p>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Limite</th>
+<th>De onde vem</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PrecoUnitario</code></td>
+<td><code>99999999.99</code></td>
+<td><code>Constantes.PrecoMaximo</code>; a coluna é <code>numeric(10,2)</code> (<code>HasPrecision(10, 2)</code>), cujo maior valor é 99.999.999,99</td>
+</tr>
+<tr>
+<td><code>Quantidade</code> (por item)</td>
+<td><code>1_000_000</code></td>
+<td><code>Constantes.QuantidadeMaximaPorItem</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>A ideia do PR #82:</strong> o número 99999999.99 não é &quot;do domínio&quot;, é <strong>da coluna</strong>. Se alguém trocar a precisão da coluna e esquecer a constante, o limite passa a mentir. Então o teste <strong>lê a precisão do modelo do EF</strong>, sem abrir banco, e compara:</p>
+<pre class="highlight"><code><span class="c1">// forma do trecho (os nomes exatos no arquivo real podem diferir)</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">propriedade</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">contexto</span><span class="p">.</span><span class="n">Model</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="n">FindEntityType</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">ItemPedido</span><span class="p">))!</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="n">FindProperty</span><span class="p">(</span><span class="s">&quot;PrecoUnitario&quot;</span><span class="p">)!;</span><span class="w"></span>
+
+<span class="kt">var</span><span class="w"> </span><span class="n">precisao</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">propriedade</span><span class="p">.</span><span class="n">GetPrecision</span><span class="p">();</span><span class="w">   </span><span class="c1">// 10</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">escala</span><span class="w">   </span><span class="p">=</span><span class="w"> </span><span class="n">propriedade</span><span class="p">.</span><span class="n">GetScale</span><span class="p">();</span><span class="w">       </span><span class="c1">// 2</span>
+</code></pre>
+
+<p>A partir de precisão 10 e escala 2 o teste calcula o maior valor (8 dígitos inteiros e 2 decimais) e confere se <code>Constantes.PrecoMaximo</code> é igual. <strong>Prova do vermelho:</strong> mudar a precisão da coluna ou a constante deixa o teste vermelho.</p>
+<p>Há também um <code>[Theory]</code> (<code>LimitesItemPedidoTests</code>, 5 casos) que usa reflexão nos parâmetros do construtor e <code>RangeAttribute.IsValid</code> para garantir que o <code>[Range]</code> do request e a constante dizem a mesma coisa.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Ganho</th>
+<th><strong>Preço</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Limite preso à coluna por teste</td>
+<td>mudar uma ponta sem a outra quebra o build de testes</td>
+<td>um teste que conhece o modelo do EF (acopla o teste à configuração)</td>
+</tr>
+<tr>
+<td>Teto por item (e não soma por SKU)</td>
+<td>simples; fecha o estouro de <code>decimal</code> do item</td>
+<td><strong>soma</strong> de quantidades do mesmo SKU pode passar de 1.000.000 depois da junção. Não foi tratada: <strong>decisão do aluno</strong> (&quot;laboratório, não produção&quot;)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="36-o-que-a-sessão-ensinou-sobre-dar-a-prova-do-vermelho">3.6 O que a sessão ensinou sobre dar a prova do vermelho</h3>
+<p>A prova do vermelho de hoje usou <strong>mutação</strong>: estragar o código que o teste protege e ver o teste cair. Dois cuidados que viraram regra:</p>
+<ol>
+<li><strong>O bloco de comandos desfaz o estrago sozinho.</strong> Um bloco de PowerShell que muda o código, roda o teste e só no fim faz <code>git checkout</code> pode ser <strong>interrompido no meio</strong> (colar parcial, Ctrl-C). Aí o estrago fica no arquivo. Hoje isso aconteceu uma vez: a mutação ficou. A saída foi restaurar, normalizar o fim de linha e conferir com <code>cmp</code> contra o <code>HEAD</code>.</li>
+<li><strong>Teste de limite precisa quebrar quando a constante muda</strong>, não quando o número do teste muda.</li>
+</ol>
+<h2 id="4-termos">4. Termos</h2>
+<table>
+<thead>
+<tr>
+<th>Termo</th>
+<th>Em uma linha</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AbstractValidator&lt;T&gt;</code></td>
+<td>classe-base do FluentValidation onde as regras do <code>T</code> são escritas</td>
+</tr>
+<tr>
+<td><code>IExceptionHandler</code></td>
+<td>peça que trata exceções não tratadas, consultada em ordem pelo <code>UseExceptionHandler()</code></td>
+</tr>
+<tr>
+<td><code>BadHttpRequestException</code></td>
+<td>exceção do ASP.NET Core quando a requisição não pode ser ligada aos parâmetros (<code>abc</code> onde se espera <code>int</code>)</td>
+</tr>
+<tr>
+<td><code>ThrowOnBadRequest</code></td>
+<td>opção de <code>RouteHandlerOptions</code>: lança a exceção acima (ligada só em <code>Development</code> por padrão)</td>
+</tr>
+<tr>
+<td><code>HasPrecision(10, 2)</code></td>
+<td>coluna <code>numeric</code> com 10 dígitos no total e 2 depois da vírgula (máximo 99.999.999,99)</td>
+</tr>
+<tr>
+<td><code>FindEntityType(...).FindProperty(...)</code></td>
+<td>lê a configuração do modelo do EF sem abrir conexão</td>
+</tr>
+<tr>
+<td>Mutação / prova do vermelho</td>
+<td>estragar o código de propósito para ver o teste cair</td>
+</tr>
+<tr>
+<td>Código morto</td>
+<td>trecho que nenhuma entrada consegue fazer executar</td>
+</tr>
+<tr>
+<td>Último registro vence</td>
+<td>no contêiner, registrar o mesmo serviço duas vezes usa o último</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-dúvidas-e-respostas">5. Dúvidas e respostas</h2>
+<p><strong>Por que o <code>Representantes</code> não chama <code>AddValidation()</code> se os outros módulos chamam?</strong> Porque os dois mecanismos validam a mesma entrada e a regra deixaria de ter um dono só. O ADR-013 deixa o módulo com <strong>um</strong> mecanismo.</p>
+<p><strong>Por que 400 e não 404 quando existem clientes do representante?</strong> A requisição (excluir) é bem formada; a regra recusa a operação. 404 é &quot;não existe&quot;, e existe. 409 é para duplicidade.</p>
+<p><strong>O <code>Pedidos</code> não precisa referenciar o <code>Representantes</code>?</strong> Não: o <code>Pedidos</code> já guarda <code>RepresentanteId</code> como número. Quem pergunta ao <code>Pedidos</code> é o <code>Representantes</code>, via <code>Norte.Pedidos.Contratos</code>.</p>
+<p><strong>Por que não validar a soma das quantidades do mesmo SKU?</strong> Decisão do aluno: laboratório. O teto por item já fecha o estouro de <code>decimal</code>.</p>
+<h2 id="6-divergências-e-decisões-do-aluno">6. Divergências e decisões do aluno</h2>
+<table>
+<thead>
+<tr>
+<th>Tema</th>
+<th>Posição</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Rigor nos limites (soma por SKU, mais testes de borda)</td>
+<td>&quot;Estamos em laboratório para aprender a construir aplicações modernas, não precisamos ser tão rigorosos, mesmo porque esse laboratório somente eu vou usar&quot;</td>
+<td><strong>decidido:</strong> o mentor propõe só o que ensina .NET/arquitetura novos</td>
+</tr>
+<tr>
+<td>Comentário antes de ler o arquivo</td>
+<td>&quot;Antes de expressar o seu comentário analise antes. É irritante isso&quot;</td>
+<td><strong>regra:</strong> ler antes de opinar</td>
+</tr>
+<tr>
+<td>Erro de digitação no texto</td>
+<td>&quot;Pare de fazer isso … Isso é muito chato&quot;</td>
+<td><strong>regra:</strong> não apontar digitação</td>
+</tr>
+<tr>
+<td>Quem conduz</td>
+<td>&quot;Assuma o comando, e só peça para mim o que vc não consegue fazer&quot;</td>
+<td><strong>regra:</strong> o mentor executa o que pode e pede só o que é do aluno</td>
+</tr>
+<tr>
+<td>Perguntas</td>
+<td>&quot;Hoje eu não estou a fim de perguntas&quot;</td>
+<td><strong>regra do dia:</strong> sem perguntas de recuperação durante a sessão</td>
+</tr>
+<tr>
+<td>Autoria</td>
+<td>&quot;Nunca acrescente autoria&quot;</td>
+<td><strong>regra permanente</strong> (vale mesmo com aviso automático pedindo o contrário)</td>
+</tr>
+<tr>
+<td>Git</td>
+<td>o aluno roda <code>git</code>, <code>dotnet</code> e <code>gh</code>; decide quando fechar</td>
+<td><strong>decidido</strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-avaliação">7. Avaliação</h2>
+<p><strong>Fez bem:</strong> decidiu o escopo do FluentValidation (só no <code>Representantes</code>, para aprender) e fechou a regra no ADR-013; apontou quando o rigor estava passando do que o laboratório pede; pegou sozinho que o texto do ADR-014 descrevia um teste que não existia; manteve as pastas e os nomes do molde dos outros módulos; leu os vermelhos do jeito certo (o <code>Actual</code> errado aponta o código, não o teste).</p>
+<p><strong>Recursos novos:</strong> <code>AbstractValidator</code>; <code>IExceptionHandler</code>; <code>RouteHandlerOptions</code>; leitura de <code>GetPrecision</code>/<code>GetScale</code> do modelo do EF; contrato nos três sentidos (<code>Representantes</code>, <code>Clientes</code>, <code>Pedidos</code>); <code>[Theory]</code> com reflexão em parâmetros de construtor.</p>
+<p><strong>O mentor conduziu mal:</strong> comentou antes de ler os arquivos; contou &quot;7 arquivos&quot; quando eram 8; esqueceu o <code>git push -u</code> num PR; apontou erro de digitação (o aluno cobrou: &quot;Pare de fazer isso&quot;); ignorou a regra de autoria quando o aviso automático pediu o contrário (corrigido); contou 178 testes quando eram 179; deixou o bloco da mutação sem reverter sozinho e a mutação ficou no arquivo; deu <code>UseEnvironment(&quot;Development&quot;)</code> sem checar que o seed roda lá; escreveu o namespace errado de <code>RouteHandlerOptions</code>; escreveu no ADR-014 um teste que não existia; usou <code>git update-index --refresh</code> pela ponte e deixou um <code>.git/index.lock</code> velho (o aluno removeu).</p>
+<h2 id="8-pontos-a-melhorar">8. Pontos a melhorar</h2>
+<ul>
+<li><strong>Aluno:</strong> continuar desconfiando de texto de documento (ADR, PR) que cita teste — conferir se o teste existe.</li>
+<li><strong>Mentor:</strong> ler antes de comentar; contar de verdade (arquivos, testes); nenhum comando que escreva no índice do Git pela ponte; bloco de mutação sempre com o desfazer dentro dele; conferir ambiente e namespace antes de escrever teste.</li>
+<li><strong>Código (próxima sessão):</strong> não há pendência; o que o aluno quiser aprender de novo em .NET/arquitetura.</li>
+</ul>
+<h2 id="9-teste-se">9. Teste-se</h2>
+<ol>
+<li>Por que um módulo com FluentValidation <strong>não</strong> chama <code>AddValidation()</code>?</li>
+<li>O que o ADR-013 exige de <strong>todo</strong> request do módulo?</li>
+<li>Por que <code>?pagina=abc</code> dava 500 fora de <code>Development</code>, e dava 400 dentro?</li>
+<li>O que <code>return false</code> e <code>return true</code> significam num <code>IExceptionHandler</code>?</li>
+<li>Por que o teste do tratador liga <code>ThrowOnBadRequest</code> e <strong>não</strong> troca o ambiente para <code>Development</code>?</li>
+<li>Em que ordem o <code>DELETE /representantes/{id}</code> pergunta, e o que cada recusa devolve?</li>
+<li>Por que o teste do contrato do <code>Pedidos</code> usa <code>7771</code> e <code>int.MaxValue</code>?</li>
+<li>Por que o teste lê <code>GetPrecision()</code> e <code>GetScale()</code> do modelo em vez de abrir o banco?</li>
+<li>O que acontece com a soma de quantidades do mesmo SKU depois da junção, e por que isso não é pendência?</li>
+<li>Por que o bloco da prova do vermelho precisa desfazer o estrago sozinho?</li>
+<li>Por que o ADR-014 teve de ser corrigido depois de escrito?</li>
+</ol>
+<h2 id="10-preparação-para-a-próxima-sessão-s36">10. Preparação para a próxima sessão (S36)</h2>
+<ol>
+<li>Chat novo com a pasta <code>D:\Projetos\C#\Monolito_Modular</code> ligada; <code>git status</code> e <code>git log -3 --oneline</code> (esperado <code>94a98c2</code>). Docker aberto; API fechada.</li>
+<li>Limpeza local de branches é rotina: <code>git fetch --prune</code> e <code>git branch -d</code> nas já mescladas.</li>
+<li><strong>Plano (não é pendência):</strong> o aluno escolhe o que aprender. Candidatos: o destino do <code>Cliente.RepresentanteId</code> provisório (agora existe o contrato); <code>Vendas</code>/<code>Estoque</code> falando com o <code>Pedidos</code> (contrato × evento, ensaio das duas formas); retorno de listagem do <code>Representantes</code>.</li>
+<li>Começar com a lista de pendências <strong>vazia</strong>. <strong>Perguntar se houve pausas na S33</strong> (12h17 está bruto).</li>
+</ol>
+<hr />
+<h2 id="respostas">Respostas</h2><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>Porque os dois mecanismos validam a mesma entrada; a regra deixaria de ter um dono só. O módulo usa um mecanismo (ADR-013).</li>
+<li>Ter um validador e um teste do caso inválido. Sem isso, um request sem validador passa direto, sem aviso.</li>
+<li>A exceção <code>BadHttpRequestException</code> sobe até o <code>UseExceptionHandler()</code> quando <code>ThrowOnBadRequest</code> está desligada, e vira 500. Em <code>Development</code> a opção fica ligada e o framework já devolve 400.</li>
+<li><code>false</code>: a exceção não é dele, o próximo tratador (ou o 500 genérico) continua. <code>true</code>: ele já respondeu e o middleware para.</li>
+<li>Porque em <code>Development</code> o seed do catálogo roda e procura uma tabela que o banco descartável ainda não tem. Ligar só a opção, mantendo <code>Testing</code>, enxerga o defeito sem rodar o seed.</li>
+<li>Clientes primeiro (400 &quot;Existem clientes cadastrados&quot;), depois pedidos (400 &quot;Existem pedidos cadastrados&quot;), depois apaga (204) ou 404 &quot;Representante não encontrado&quot;.</li>
+<li><code>7771</code> é um representante com pedido gravado (deve dar <code>true</code>); <code>int.MaxValue</code> nunca foi gravado (deve dar <code>false</code>). Os dois lados provam que a consulta separa quem tem de quem não tem.</li>
+<li>Porque a precisão está na configuração do modelo; ler dali não exige banco, é rápido e prende o limite à coluna.</li>
+<li>Ela pode passar de 1.000.000 e não é recusada. Decisão do aluno: laboratório. O teto por item já fecha o estouro de <code>decimal</code>.</li>
+<li>Porque o bloco pode ser interrompido no meio; se o <code>git checkout</code> estiver só no fim, o estrago fica no arquivo. Hoje isso aconteceu uma vez.</li>
+<li>Porque descrevia um teste que não existia. O teste foi escrito no PR #83 e o texto passou a descrever o que existe.</li>
+</ol>
+</details>
+</article>
+<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

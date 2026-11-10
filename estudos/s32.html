@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norte · S32 — Demais endpoints do Cliente e requisições simultâneas no FichaProduto · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s32.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#norte--s32--demais-endpoints-do-cliente-e-requisições-simultâneas-no-fichaproduto" data-id="norte--s32--demais-endpoints-do-cliente-e-requisições-simultâneas-no-fichaproduto">Norte · S32 — Demais endpoints do Cliente e requisições simultâneas …</a><a class="n2" href="#1-objetivo-e-resultado" data-id="1-objetivo-e-resultado">1. Objetivo e resultado</a><a class="n2" href="#2-onde-isso-está-no-mapa-dos-níveis" data-id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</a><a class="n2" href="#3-conceitos" data-id="3-conceitos">3. Conceitos</a><a class="n2" href="#4-termos-técnicos-da-sessão" data-id="4-termos-técnicos-da-sessão">4. Termos técnicos da sessão</a><a class="n2" href="#5-dúvidas-do-aluno-e-as-respostas" data-id="5-dúvidas-do-aluno-e-as-respostas">5. Dúvidas do aluno e as respostas</a><a class="n2" href="#6-divergências" data-id="6-divergências">6. Divergências</a><a class="n2" href="#7-avaliação" data-id="7-avaliação">7. Avaliação</a><a class="n2" href="#8-pontos-a-melhorar" data-id="8-pontos-a-melhorar">8. Pontos a melhorar</a><a class="n2" href="#9-perguntas-de-recuperação-respostas-separadas-no-fim" data-id="9-perguntas-de-recuperação-respostas-separadas-no-fim">9. Perguntas de recuperação (respostas separadas no fim)</a><a class="n2" href="#10-preparação-para-o-próximo-chat" data-id="10-preparação-para-o-próximo-chat">10. Preparação para o próximo chat</a></aside>
+<main class="conteudo"><article>
+<h1 id="norte--s32--demais-endpoints-do-cliente-e-requisições-simultâneas-no-fichaproduto">Norte · S32 — Demais endpoints do Cliente e requisições simultâneas no FichaProduto</h1>
+<h2 id="1-objetivo-e-resultado">1. Objetivo e resultado</h2>
+<p><strong>Objetivo:</strong> (1) fazer o cadastro de <code>FichaProduto</code> responder 409, e não 500, quando várias requisições chegam ao mesmo tempo com o mesmo SKU; (2) criar o <code>GET /clientes/{clienteId:int}</code>, a rota que o <code>Location</code> do <code>POST /clientes</code> já prometia.
+<strong>Resultado:</strong> os dois fechados e mergeados (PR #56 e PR #57, CI verde). <strong>107 testes verdes</strong> (eram 104). <strong>Tempo líquido da sessão: 3h57</strong> (20:02 a 23:59; o dia somou 10h11). Ficaram de fora os outros endpoints do <code>Cliente</code> e o contrato &quot;o cliente existe e tem a ficha completa?&quot;.</p>
+<h2 id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</h2>
+<p>Nível <strong>funcionalidade</strong> dentro dos módulos <code>Catalogo</code> e <code>Clientes</code>: o caminho de uma requisição (endpoint → repositório → banco). Guia: <code>GUIA-DOTNET-P8.md#g8-11</code> (requisições simultâneas e <code>23505</code>) e <code>GUIA-DOTNET-P8.md#g8-10</code> (<code>POST /clientes</code>).</p>
+<h2 id="3-conceitos">3. Conceitos</h2>
+<h3 id="31-consultar-antes-de-gravar-não-basta-de-novo-agora-no-catalogo">3.1 Consultar antes de gravar não basta (de novo, agora no <code>Catalogo</code>)</h3>
+<p>O endpoint consulta &quot;esse SKU existe?&quot; e depois grava. Com 20 requisições ao mesmo tempo, várias passam pela consulta antes de qualquer uma gravar, e todas acham o SKU livre. O banco recusa as repetidas (chave primária, erro <code>23505</code>). Quem decide quem chegou primeiro é o banco; o código só precisa <strong>tratar o erro</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Como era</th>
+<th>Como é agora</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AdicionarAsync</code> era <code>Task</code>: o erro do banco subia e virava 500</td>
+<td><code>AdicionarAsync</code> devolve <code>Task&lt;bool&gt;</code>; o <code>catch ... when</code> pega só a violação de unicidade e devolve <code>false</code></td>
+<td>quem chama passa a saber se gravou</td>
+</tr>
+<tr>
+<td>o endpoint montava o 409 só depois da consulta</td>
+<td>a função <code>SkuJaCadastrado</code> monta o 409 e é usada na consulta <strong>e</strong> quando <code>gravou</code> é <code>false</code></td>
+<td>um 409 só, com a mesma mensagem</td>
+</tr>
+</tbody>
+</table>
+<p>Link: <code>GUIA-DOTNET-P8.md#g8-11</code>.</p>
+<h3 id="32-get-por-id-o-que-cada-resposta-diz">3.2 <code>GET</code> por id: o que cada resposta diz</h3>
+<table>
+<thead>
+<tr>
+<th>Situação</th>
+<th>Status</th>
+<th>Tipo de retorno no endpoint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>achou o cliente</td>
+<td><strong>200</strong></td>
+<td><code>Ok&lt;ObterUmClienteResponse&gt;</code></td>
+</tr>
+<tr>
+<td>não existe</td>
+<td><strong>404</strong> com <code>Problem</code> (&quot;Cliente não encontrado&quot;)</td>
+<td><code>ProblemHttpResult</code></td>
+</tr>
+<tr>
+<td>o <code>POST</code> criou o cliente</td>
+<td><strong>201</strong> (<code>Created</code>)</td>
+<td>só no <code>POST</code>, nunca no <code>GET</code></td>
+</tr>
+<tr>
+<td>já existe (cadastro repetido)</td>
+<td><strong>409</strong></td>
+<td>só no <code>POST</code>; no <code>GET</code>, &quot;não existe&quot; é 404</td>
+</tr>
+</tbody>
+</table>
+<p>A primeira versão do endpoint tinha a condição invertida, o 409 e o <code>Created</code>: eram as respostas do <code>POST</code> copiadas para o <code>GET</code>. É o que o teste do 200 mostrou.</p>
+<h3 id="33-rota-com-int-e-o-id-direto-no-método">3.3 Rota com <code>:int</code> e o id direto no método</h3>
+<p><code>MapGet(&quot;/{clienteId:int}&quot;, ...)</code>: a rota só casa com número, então <code>/clientes/abc</code> cai em 404 do roteador sem chegar no seu código. Por isso o <code>GET</code> <strong>não tem <code>Request</code></strong>: o <code>Request</code> do <code>Catalogo</code> existe para validar o tamanho de um texto (o SKU); aqui o único valor é um número que a rota já valida. Custo: foge do molde do <code>Catalogo</code>.</p>
+<h3 id="34-o-repositório-devolve-o-response-direto">3.4 O repositório devolve o <code>Response</code> direto</h3>
+<p><code>ObterClientePeloIdAsync</code> usa <code>Where</code> + <code>Select(... new ObterUmClienteResponse(...))</code> + <code>AsNoTracking()</code>. O banco devolve só os campos da resposta, e a entidade <code>Cliente</code> nem é carregada (mesmo molde do <code>ObterUmaFichaProdutoAsync</code>).</p>
+<h3 id="35-o-que-cada-teste-prova">3.5 O que cada teste prova</h3>
+<ul>
+<li><strong>Teste do 200:</strong> cadastra um cliente, lê o <code>clienteId</code> do corpo do <code>POST</code>, faz o <code>GET</code> e confere <strong>200</strong> e que o <code>clienteId</code> devolvido é o mesmo. Se o endpoint achasse qualquer cliente, o teste falharia.</li>
+<li><strong>Teste do 404:</strong> cadastra um cliente e pede <code>id + 1</code>, que não existe. Confere 404 e o título. <strong>Cuidado:</strong> funciona porque nenhum outro teste da classe cadastra clientes ao mesmo tempo.</li>
+<li><strong>Prova do vermelho:</strong> estragar <strong>o código que o teste protege</strong>. Estragamos o <code>is null</code> do endpoint e o teste do 200 ficou vermelho (<code>KeyNotFoundException</code>: o JSON de erro não tem o campo <code>clienteId</code>).</li>
+</ul>
+<h2 id="4-termos-técnicos-da-sessão">4. Termos técnicos da sessão</h2>
+<ul>
+<li><strong>Sombra de variável (CS0841):</strong> <code>var fabrica = fabrica.CreateClient();</code> cria uma variável com o mesmo nome do parâmetro do construtor; o compilador entende o <code>fabrica</code> da direita como a variável nova, ainda não declarada.</li>
+<li><strong><code>await</code> ausente:</strong> <code>var x = metodoAsync();</code> guarda uma <code>Task</code>, não o resultado; o erro aparece só quando você usa <code>x</code>.</li>
+<li><strong><code>.git/info/exclude</code>:</strong> como o <code>.gitignore</code>, mas só na sua máquina e fora do histórico.</li>
+<li><strong><code>git diff --cached --stat</code>:</strong> mostra o que está no stage; ajuda a ver se um arquivo foi reescrito por inteiro (fim de linha).</li>
+</ul>
+<h2 id="5-dúvidas-do-aluno-e-as-respostas">5. Dúvidas do aluno e as respostas</h2>
+<ul>
+<li><strong>&quot;Por que eu tenho que fazer um commit agora?&quot;</strong> Dois commits (teste vermelho, depois correção) deixam no histórico a prova de que o teste falhava antes. Um commit só não distingue um teste que protege de um que passaria de qualquer jeito. A decisão é do aluno; ele manteve os dois.</li>
+<li><strong>&quot;Não tem como configurar algo para parar de aparecer esses arquivos?&quot;</strong> Tem: <code>.git/info/exclude</code>, com uma linha por arquivo. Não gera commit.</li>
+<li><strong>&quot;Preciso que o teste nasça vermelho. Só isso.&quot;</strong> O método é: o teste está certo e fica vermelho <strong>por causa do código</strong> (errado ou ausente). Se o vermelho vem de pedir o dado errado, ele só mostra que o <code>Assert</code> consegue falhar; com o endpoint invertido, o teste do 404 pedindo um id que existe até passou (dois erros se cancelando).</li>
+</ul>
+<h2 id="6-divergências">6. Divergências</h2>
+<table>
+<thead>
+<tr>
+<th>Ponto</th>
+<th>Posição do mentor</th>
+<th>Posição do aluno</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sabotar o endpoint para ver o teste do 404 vermelho</td>
+<td>cobrir o ramo <code>404</code> com vermelho pelo código</td>
+<td>o teste do 200 já cobre o mesmo <code>if</code>; &quot;você está sendo muito meticuloso&quot;</td>
+<td><strong>vale a do aluno</strong> (o mentor não tinha argumento forte); ramo do 404 sem vermelho pelo código</td>
+</tr>
+<tr>
+<td>Branch <code>test/</code> × <code>feat/</code>/<code>fix/</code></td>
+<td><code>fix/</code> (a branch traz a correção)</td>
+<td><code>test/</code> (começou pelo teste)</td>
+<td>vale a do aluno</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-avaliação">7. Avaliação</h2>
+<p><strong>O que o aluno fez bem</strong></p>
+<ul>
+<li>Escreveu o teste e a correção do SKU simultâneo com o molde da S31, e resolveu sozinho a duplicação do 409 com a função <code>SkuJaCadastrado</code>.</li>
+<li>Corrigiu os três defeitos do endpoint do <code>GET</code> depois da leitura, sem ajuda do mentor no código.</li>
+<li>Escreveu o teste do 200 com o Assert certo (o mesmo id) e fez a prova do vermelho no código.</li>
+<li>Pediu um acordo para não perder tempo discutindo e questionou o que não agregava.</li>
+</ul>
+<p><strong>Onde travou e por quê</strong></p>
+<ul>
+<li>O endpoint do <code>GET</code> nasceu copiando o <code>POST</code> (condição, 409 e <code>Created</code>): sobra de modelo.</li>
+<li>O vermelho do teste do 404 veio do dado do teste, não do código; com o endpoint ainda invertido o teste passou.</li>
+<li>Erros de compilação: <code>fabrica</code> sombreada e <code>await</code> esquecido.</li>
+</ul>
+<p><strong>O que o mentor conduziu mal</strong></p>
+<ul>
+<li>Perguntou o que os arquivos já mostravam e se o aluno tinha executado um comando que ele só mostrava para conferência.</li>
+<li>Afirmou um erro de tipo que não existia (arquivo já alterado).</li>
+<li>Explicou a prova do vermelho de forma abstrata; o aluno disse &quot;Eu estou ficando nervoso com as suas explicações&quot;.</li>
+<li>Tentou commitar pela ponte: reescreveu o fim de linha e não tinha identidade do Git; foi desfeito.</li>
+</ul>
+<h2 id="8-pontos-a-melhorar">8. Pontos a melhorar</h2>
+<ul>
+<li><strong>Aluno:</strong> depois de copiar um molde, perguntar &quot;cada resposta deste endpoint serve para um GET?&quot; (200, 404 e <code>Ok</code>, não 201 nem 409); ao provar o vermelho, estragar o código que o teste protege.</li>
+<li><strong>Mentor:</strong> ler antes de perguntar; veredito em uma linha; explicar com o arquivo do aluno; não prever o que vai aparecer; comandos que gravam no Git ficam com o aluno.</li>
+</ul>
+<h2 id="9-perguntas-de-recuperação-respostas-separadas-no-fim">9. Perguntas de recuperação (respostas separadas no fim)</h2>
+<ol>
+<li>Por que consultar o SKU antes de gravar não basta quando 20 requisições chegam ao mesmo tempo, e o que a correção faz?</li>
+<li>Num <code>GET</code> por id, qual status volta quando o cliente existe e qual quando não existe? Por que não 409 nem 201?</li>
+<li>O que o <code>:int</code> na rota <code>/{clienteId:int}</code> faz com <code>/clientes/abc</code>?</li>
+<li>Por que o repositório do <code>GET</code> devolve o <code>Response</code> direto, e não a entidade <code>Cliente</code>?</li>
+<li>Como o teste do 200 prova que o <code>GET</code> achou <strong>aquele</strong> cliente e não qualquer um?</li>
+<li>Um teste do 404 que pede o id de um cliente que existe fica vermelho com o endpoint certo. O que esse vermelho mostra, e o que ele não mostra?</li>
+<li>Qual a diferença entre o <code>.gitignore</code> e o <code>.git/info/exclude</code>?</li>
+</ol>
+<h3 id="respostas">Respostas</h3><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>Várias requisições passam pela consulta antes de qualquer uma gravar; o banco recusa as repetidas com <code>23505</code> (chave primária). A correção captura essa exceção no repositório, devolve <code>false</code> e o endpoint responde o mesmo 409.</li>
+<li>200 quando existe (<code>Ok</code>); 404 quando não existe. 201 é de quem <strong>cria</strong> algo (<code>POST</code>); 409 é conflito de cadastro repetido (<code>POST</code>).</li>
+<li>A rota só casa com número, então <code>/clientes/abc</code> dá 404 do roteador e não chega ao endpoint.</li>
+<li>A consulta traz só os campos da resposta (<code>Select</code>), com <code>AsNoTracking</code>; a entidade do domínio não vaza para a API.</li>
+<li>Ele lê o <code>clienteId</code> que o <code>POST</code> gerou e confere que o <code>GET</code> devolve o mesmo <code>clienteId</code>.</li>
+<li>Mostra que o <code>Assert</code> consegue falhar. <strong>Não mostra</strong> que o endpoint protege o <code>404</code>, porque o código estava certo; o vermelho veio do dado do teste.</li>
+<li>O <code>.gitignore</code> vai para o repositório (todos veem a regra); o <code>.git/info/exclude</code> vale só na sua máquina e não é versionado.</li>
+</ol>
+</details><h2 id="10-preparação-para-o-próximo-chat">10. Preparação para o próximo chat</h2>
+<ul>
+<li>Primeira coisa: <code>git status</code> e <code>git log -3 --oneline</code> (esperado <code>main</code> em <code>68a8005</code>); aplicar no <code>HORAS.md</code> e no <code>PROGRESSO.md</code> as linhas da Seção 9 do <code>HIST-S32</code>.</li>
+<li><strong>Avisar:</strong> o M1 passou do teto de ≈ 100h (≈ 100,4h); o aluno decide o que fazer.</li>
+<li>Escolher o próximo endpoint do <code>Cliente</code> (<code>PUT</code>, listagem ou <code>DELETE</code>; o <code>DELETE</code> é pergunta de negócio) ou o contrato &quot;o cliente existe e tem a ficha completa?&quot;.</li>
+<li>Título sugerido: <code>Norte · S33 — Próximo endpoint do Cliente</code> (ele escolhe).</li>
+</ul>
+
+</article>
+<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

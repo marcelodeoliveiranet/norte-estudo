@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ESTUDO-S38 — fundação de observabilidade: painel, traces, métricas e a lentidão achada pelo trace · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s38.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#estudo-s38--fundação-de-observabilidade-painel-traces-métricas-e-a-lentidão-achada-pelo-trace" data-id="estudo-s38--fundação-de-observabilidade-painel-traces-métricas-e-a-lentidão-achada-pelo-trace">ESTUDO-S38 — fundação de observabilidade: painel, traces, métricas e…</a><a class="n2" href="#1-o-mapa-das-três-camadas-agora-com-o-norte-dentro" data-id="1-o-mapa-das-três-camadas-agora-com-o-norte-dentro">1. O mapa das três camadas, agora com o Norte dentro</a><a class="n2" href="#2-a-decisão-adr-016-em-poucas-linhas" data-id="2-a-decisão-adr-016-em-poucas-linhas">2. A decisão (ADR-016) em poucas linhas</a><a class="n2" href="#3-as-peças-o-que-mudou-no-repositório-pr-91" data-id="3-as-peças-o-que-mudou-no-repositório-pr-91">3. As peças (o que mudou no repositório, PR #91)</a><a class="n2" href="#4-ler-um-trace" data-id="4-ler-um-trace">4. Ler um trace</a><a class="n2" href="#5-achar-uma-requisição--e-o-que-não-aparece" data-id="5-achar-uma-requisição--e-o-que-não-aparece">5. Achar uma requisição — e o que NÃO aparece</a><a class="n2" href="#6-lentidão-provocada-nº-1--o-atraso-no-código-taskdelay" data-id="6-lentidão-provocada-nº-1--o-atraso-no-código-taskdelay">6. Lentidão provocada nº 1 — o atraso no código (Task.Delay)</a><a class="n2" href="#7-lentidão-provocada-nº-2--o-índice-removido-achado-de-métrica-→-trace-→-explain" data-id="7-lentidão-provocada-nº-2--o-índice-removido-achado-de-métrica-→-trace-→-explain">7. Lentidão provocada nº 2 — o índice removido (achado de métrica → …</a><a class="n2" href="#8-métrica-de-latência-e-o-alerta-só-descrito" data-id="8-métrica-de-latência-e-o-alerta-só-descrito">8. Métrica de latência e o alerta (só descrito)</a><a class="n2" href="#9-o-painel-e-a-api-o-que-foi-medido-sobre-reinício" data-id="9-o-painel-e-a-api-o-que-foi-medido-sobre-reinício">9. O painel e a API: o que foi medido sobre reinício</a><a class="n2" href="#10-o-que-levar-para-a-entrevista" data-id="10-o-que-levar-para-a-entrevista">10. O que levar para a entrevista</a><a class="n2" href="#11-hipóteses-e-limites-não-afirme-sem-conferir" data-id="11-hipóteses-e-limites-não-afirme-sem-conferir">11. Hipóteses e limites (não afirme sem conferir)</a><a class="n2" href="#12-teste-se-sem-consultar" data-id="12-teste-se-sem-consultar">12. Teste-se (sem consultar)</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a></aside>
+<main class="conteudo"><article>
+<h1 id="estudo-s38--fundação-de-observabilidade-painel-traces-métricas-e-a-lentidão-achada-pelo-trace">ESTUDO-S38 — fundação de observabilidade: painel, traces, métricas e a lentidão achada pelo trace</h1>
+<p><strong>Sessão:</strong> terça 03/11/2026, 17:51 a 22:38 (pausa 19:44–21:02) · <strong>3h29 líquidas</strong> (blocos de 1h53 e 1h36) · PRs #90 (ADR-016), #91 (painel e OpenTelemetry), #92 e #93 (notas de implementação na ADR-016) · <code>main</code> em <code>17f247a</code> · nenhum teste novo (a sessão não mexeu em regra de negócio).</p>
+<blockquote>
+<p>Como usar: leia na ordem; no fim, responda a Seção 10 sem consultar. As respostas estão logo depois.</p>
+<p><strong>Legenda de confiança.</strong> ✅ feito e visto no Norte · 🟡 hipótese: parece certo, <strong>não foi confirmado</strong> · 📖 só conhecido em conceito (não foi montado).</p>
+</blockquote>
+<hr />
+<h2 id="1-o-mapa-das-três-camadas-agora-com-o-norte-dentro">1. O mapa das três camadas, agora com o Norte dentro</h2>
+<p>Na S37 o mapa estava só no papel. Agora cada camada tem uma peça de verdade:</p>
+<table>
+<thead>
+<tr>
+<th>Camada</th>
+<th>Pergunta</th>
+<th>Peça no Norte</th>
+<th>Estado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. <strong>Produzir</strong></td>
+<td>quem gera o dado?</td>
+<td><code>ILogger</code> e <code>[LoggerMessage]</code> (S37), <code>Activity</code> do ASP.NET Core e do Npgsql, <code>Meter</code> do ASP.NET Core</td>
+<td>✅ já vinham no .NET</td>
+</tr>
+<tr>
+<td>2. <strong>Transportar</strong></td>
+<td>como o dado sai da aplicação?</td>
+<td><strong>OpenTelemetry</strong> (SDK) + exportador <strong>OTLP</strong></td>
+<td>✅ ligado no <code>Program.cs</code></td>
+</tr>
+<tr>
+<td>3. <strong>Guardar e buscar</strong></td>
+<td>onde eu olho?</td>
+<td><strong>Aspire dashboard</strong> em contêiner, ao lado do Postgres</td>
+<td>✅ no <code>compose.yaml</code></td>
+</tr>
+</tbody>
+</table>
+<p>Três sinais passam pelas três camadas: <strong>logs</strong> (o que foi dito), <strong>traces</strong> (por onde a requisição passou e quanto demorou em cada etapa) e <strong>métricas</strong> (números ao longo do tempo).</p>
+<p><strong>OTLP é o contrato entre as camadas 2 e 3</strong>, como a interface do ADR-012 é o contrato entre dois módulos: a aplicação fala OTLP e o destino pode ser trocado por configuração (Aspire hoje; Seq, Grafana, Datadog ou um serviço de nuvem amanhã) sem mexer no código da aplicação.</p>
+<hr />
+<h2 id="2-a-decisão-adr-016-em-poucas-linhas">2. A decisão (ADR-016) em poucas linhas</h2>
+<table>
+<thead>
+<tr>
+<th>Alternativa</th>
+<th>O que dá</th>
+<th>O que falta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A. Ficar como estava</strong> (console + <code>EXPLAIN</code> + <code>TraceId</code> nos escopos)</td>
+<td>funciona, custo zero</td>
+<td>não mostra o <strong>tempo de cada etapa</strong> nem <strong>busca por campo</strong>; nada reúne as linhas de uma requisição numa tela</td>
+</tr>
+<tr>
+<td><strong>B. Serilog + Seq</strong></td>
+<td>busca de logs muito boa</td>
+<td>traces e métricas não vêm de graça; amarra o formato ao Serilog</td>
+</tr>
+<tr>
+<td><strong>C. OpenTelemetry + painel Aspire</strong> (escolhida)</td>
+<td>logs, traces e métricas num lugar só; destino trocável por OTLP</td>
+<td>veja o preço abaixo</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O que fica pior com a C (🧠 saber de cabeça):</strong></p>
+<ul>
+<li>o painel <strong>não guarda histórico</strong>: reiniciar o contêiner apaga tudo (✅ medido);</li>
+<li>o painel roda <strong>sem senha</strong> (<code>ASPIRE_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS=true</code>) — aceitável só em laboratório local;</li>
+<li>três pacotes novos para manter atualizados;</li>
+<li>o que não foi testado fica <strong>sem afirmação</strong> (seção 11).</li>
+</ul>
+<p>O texto completo, com as notas de implementação, está em <code>docs/adr/ADR-016-fundacao-de-observabilidade.md</code> no repositório.</p>
+<hr />
+<h2 id="3-as-peças-o-que-mudou-no-repositório-pr-91">3. As peças (o que mudou no repositório, PR #91)</h2>
+<h3 id="31-o-painel-no-composeyaml">3.1 O painel no <code>compose.yaml</code></h3>
+<pre class="highlight"><code><span class="nt">painel</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mcr.microsoft.com/aspire/dashboard:13.6.2</span><span class="w"></span>
+<span class="w">  </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">norte-painel</span><span class="w"></span>
+<span class="w">  </span><span class="nt">environment</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ASPIRE_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">ports</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;18888:18888&quot;</span><span class="w">   </span><span class="c1"># a tela (navegador)</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;4317:18889&quot;</span><span class="w">    </span><span class="c1"># OTLP por gRPC (a API envia por aqui)</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;4318:18890&quot;</span><span class="w">    </span><span class="c1"># OTLP por HTTP</span><span class="w"></span>
+</code></pre>
+
+<p>A porta <strong>4317</strong> é a porta padrão do OTLP por gRPC; por isso a API não precisa de endereço no <code>appsettings</code>: o exportador já olha <code>localhost:4317</code>.</p>
+<h3 id="32-os-pacotes-directorypackagesprops-grupo-observabilidade">3.2 Os pacotes (<code>Directory.Packages.props</code>, grupo &quot;Observabilidade&quot;)</h3>
+<table>
+<thead>
+<tr>
+<th>Pacote</th>
+<th>Versão</th>
+<th>Para que serve</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OpenTelemetry.Extensions.Hosting</code></td>
+<td>1.20.1</td>
+<td>liga o OpenTelemetry ao host (<code>AddOpenTelemetry()</code>)</td>
+</tr>
+<tr>
+<td><code>OpenTelemetry.Exporter.OpenTelemetryProtocol</code></td>
+<td>1.20.1</td>
+<td>envia pelo OTLP</td>
+</tr>
+<tr>
+<td><code>OpenTelemetry.Instrumentation.AspNetCore</code></td>
+<td>1.20.1</td>
+<td>spans e métricas da requisição</td>
+</tr>
+<tr>
+<td><code>Npgsql.OpenTelemetry</code></td>
+<td>10.0.3</td>
+<td>spans das chamadas ao Postgres</td>
+</tr>
+</tbody>
+</table>
+<p>Instrumentações <strong>dispensadas de propósito</strong>: a do EF Core (o span do Npgsql já mostra a consulta) e a do <code>HttpClient</code> (o Norte não faz chamada HTTP de saída).</p>
+<h3 id="33-o-programcs">3.3 O <code>Program.cs</code></h3>
+<pre class="highlight"><code><span class="n">builder</span><span class="p">.</span><span class="n">Services</span><span class="p">.</span><span class="n">AddOpenTelemetry</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="n">ConfigureResource</span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">AddService</span><span class="p">(</span><span class="s">&quot;norte-api&quot;</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="n">WithLogging</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="n">WithTracing</span><span class="p">(</span><span class="n">t</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">t</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="n">AddAspNetCoreInstrumentation</span><span class="p">()</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="n">AddNpgsql</span><span class="p">())</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="n">WithMetrics</span><span class="p">(</span><span class="n">m</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">m</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="n">AddAspNetCoreInstrumentation</span><span class="p">())</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="n">UseOtlpExporter</span><span class="p">();</span><span class="w"></span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Linha</th>
+<th>O que faz</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AddOpenTelemetry()</code></td>
+<td>liga o SDK ao contêiner de DI</td>
+</tr>
+<tr>
+<td><code>ConfigureResource(... AddService(&quot;norte-api&quot;))</code></td>
+<td>dá <strong>nome</strong> ao serviço. Sem isso o painel mostrava <code>unknown_service:Norte.Api</code> ✅</td>
+</tr>
+<tr>
+<td><code>WithLogging()</code></td>
+<td>manda os logs do <code>ILogger</code> (os <code>[LoggerMessage]</code> da S37 continuam iguais)</td>
+</tr>
+<tr>
+<td><code>WithTracing(... AddAspNetCoreInstrumentation, AddNpgsql)</code></td>
+<td>spans da requisição e das chamadas ao banco</td>
+</tr>
+<tr>
+<td><code>WithMetrics(... AddAspNetCoreInstrumentation)</code></td>
+<td>métricas da requisição, entre elas <code>http.server.request.duration</code></td>
+</tr>
+<tr>
+<td><code>UseOtlpExporter()</code></td>
+<td>um destino só para <strong>os três sinais</strong> (padrão: gRPC em <code>localhost:4317</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Por que o <code>ConfigureResource</code> foi preciso (🟡):</strong> o README do pacote só garante o nome padrão para quem usa <code>IHostApplicationBuilder</code>; aqui a ligação é por <code>builder.Services.AddOpenTelemetry()</code>, e o nome saiu <code>unknown_service:Norte.Api</code>. O mentor <strong>previu</strong> <code>Norte.Api</code> e errou — por isso a regra: não prever, ver.</p>
+<hr />
+<h2 id="4-ler-um-trace">4. Ler um trace</h2>
+<p>Um <strong>trace</strong> é a história de uma requisição. Cada etapa é um <strong>span</strong> (uma barra com início e duração). O <strong>span raiz</strong> é a requisição inteira; os <strong>spans filhos</strong> são as etapas de dentro.</p>
+<pre class="highlight"><code>GET /catalogo/fichas-produto/{sku}                      47 ms   ← raiz
+ ├─ CONNECT norte                                        3 ms   ← abrir conexão
+ └─ postgresql  SELECT ... WHERE f.sku = @sku            2 ms   ← a consulta
+</code></pre>
+
+<p>(Esquema de leitura; os números exatos variam.)</p>
+<p>Três leituras que apareceram na prática:</p>
+<table>
+<thead>
+<tr>
+<th>O que se vê</th>
+<th>O que significa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>buraco</strong> entre a raiz e os filhos (a raiz dura mais que a soma dos filhos)</td>
+<td>o tempo foi gasto <strong>no código da aplicação</strong>, onde ninguém criou span ✅</td>
+</tr>
+<tr>
+<td>um span <strong><code>CONNECT norte</code></strong> no início</td>
+<td>a conexão com o banco foi <strong>reaberta</strong>. Aconteceu depois de a API ficar ociosa. 🟡 <em>Hipótese:</em> o pool do Npgsql descarta conexões ociosas em ~5 min (casos de 9 min e de 5m46s sem requisição são coerentes; <strong>não confirmado</strong>)</td>
+</tr>
+<tr>
+<td>a <strong>primeira</strong> requisição mais lenta que as seguintes</td>
+<td>aquecimento: 47 ms → 3,6 a 5,6 ms no <code>GET</code> por SKU; a listagem foi de 0,17 s para ~10 ms ✅</td>
+</tr>
+</tbody>
+</table>
+<p>O <code>db.query.text</code> do span do banco mostra a consulta <strong>com parâmetros</strong> (<code>WHERE f.sku = @sku</code>): o valor não aparece ✅.</p>
+<hr />
+<h2 id="5-achar-uma-requisição--e-o-que-não-aparece">5. Achar uma requisição — e o que NÃO aparece</h2>
+<table>
+<thead>
+<tr>
+<th>Quero achar...</th>
+<th>Como</th>
+<th>Resultado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>todas as linhas de uma requisição</td>
+<td><code>TraceId</code> (filtro nos logs / abrir o trace)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>requisições de um SKU <strong>no caminho</strong> (<code>GET /catalogo/fichas-produto/SKU-TESTE</code>)</td>
+<td>na lista de <strong>Traces</strong>, filtro avançado <code>url.path contains SKU-TESTE</code></td>
+<td>✅</td>
+</tr>
+<tr>
+<td>a mesma coisa digitando no <strong>campo de texto</strong> da lista</td>
+<td>procura só no <strong>nome</strong> do trace (<code>GET /catalogo/...</code>), não nos atributos: <code>SKU-TESTE</code> → &quot;No traces found&quot;; <code>SKU</code> → 9 traces ✅</td>
+<td></td>
+</tr>
+<tr>
+<td>requisições de um SKU que foi no <strong>corpo</strong> do <code>POST</code></td>
+<td><strong>não aparece</strong>: o corpo não é capturado ✅</td>
+<td></td>
+</tr>
+<tr>
+<td>o texto do filtro da listagem (<code>?filtro=...</code>)</td>
+<td><code>url.query</code> vem como <code>?filtro=Redacted</code> por padrão ✅</td>
+<td></td>
+</tr>
+<tr>
+<td>o valor do parâmetro no SQL do EF</td>
+<td>mascarado (<code>@filtro_contains='?'</code>) enquanto não existir <code>EnableSensitiveDataLogging</code> (não existe no código) ✅</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Regra (dd), verificada nas rotas:</strong> dado pessoal (CPF, e-mail) <strong>nunca entra em telemetria</strong>. As rotas do Norte só têm <code>{sku}</code> e ids numéricos no caminho (<code>clienteId</code>, <code>pedidoId</code>, <code>representanteId</code>); a query string só tem <code>filtro</code>, <code>pagina</code> e <code>tamanhoPagina</code>; CPF e e-mail ficam no <strong>corpo</strong> do <code>POST</code>, que não é capturado. Por isso é seguro mandar o <code>url.path</code> ao painel. Se um dia uma rota ganhar CPF no caminho, essa conclusão cai.</p>
+<hr />
+<h2 id="6-lentidão-provocada-nº-1--o-atraso-no-código-taskdelay">6. Lentidão provocada nº 1 — o atraso no código (<code>Task.Delay</code>)</h2>
+<p><strong>Por que fazer:</strong> saber se o trace separa &quot;o banco está lento&quot; de &quot;o meu código está lento&quot;.</p>
+<p><strong>O que foi feito:</strong> um <code>await Task.Delay(TimeSpan.FromSeconds(2))</code> temporário no endpoint da listagem (revertido com <code>git restore</code>, nunca commitado). Ideia do aluno: <em>&quot;não é mais fácil adicionar algo no código que espera x segundos?&quot;</em> — foi mesmo a forma mais simples.</p>
+<table>
+<thead>
+<tr>
+<th>Sinal</th>
+<th>O que mostrou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>trace</td>
+<td>a raiz com <strong>2,02 s</strong> e os spans de banco com <strong>~2 ms</strong> cada ✅</td>
+</tr>
+<tr>
+<td>logs</td>
+<td><strong>nenhum aviso</strong>: o código esperou, não falhou ✅</td>
+</tr>
+<tr>
+<td>métrica</td>
+<td>a requisição aparece na faixa de <strong>2,5 s</strong> (🟡 provável efeito dos limites do histograma; não conferido)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Leitura:</strong> raiz enorme + filhos minúsculos = <strong>o tempo está no código da aplicação</strong>, não no banco. Sem trace, &quot;está lento&quot; não diz <strong>onde</strong>.</p>
+<hr />
+<h2 id="7-lentidão-provocada-nº-2--o-índice-removido-achado-de-métrica-→-trace-→-explain">7. Lentidão provocada nº 2 — o índice removido (achado de métrica → trace → <code>EXPLAIN</code>)</h2>
+<p><strong>Cenário:</strong> 1.000.044 fichas (as 44 do seed + 1 milhão de linhas sintéticas; a 44ª é a <code>SKU-TESTE</code>). Filtro <code>LAB-0123456</code> (acha 1 linha). O índice é o <code>ix_fichas_produto_sku_trgm</code> (GIN, <code>pg_trgm</code>) da S37.</p>
+<table>
+<thead>
+<tr>
+<th>Situação</th>
+<th>Tempo na API</th>
+<th><code>EXPLAIN (ANALYZE)</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>com índice</strong></td>
+<td><strong>46 a 68 ms</strong></td>
+<td>contagem 18,75 ms + página 19,24 ms; <code>Bitmap Index Scan</code> (924 páginas para 1 linha)</td>
+</tr>
+<tr>
+<td><strong>sem índice</strong> (<code>DROP INDEX</code>)</td>
+<td><strong>260 a 310 ms</strong></td>
+<td>contagem <strong>121,31 ms</strong> (<code>Parallel Seq Scan</code>); página <strong>262,30 ms</strong> (<code>Index Scan</code> na PK descartando 1.000.043 linhas)</td>
+</tr>
+<tr>
+<td><strong>índice recriado</strong> (<code>CREATE INDEX</code>)</td>
+<td>volta a ~7–17 ms nos traces seguintes</td>
+<td>contagem 18,32 ms</td>
+</tr>
+</tbody>
+</table>
+<p>A listagem faz <strong>dois comandos</strong> (<code>COUNT</code> e a página com <code>LIMIT/OFFSET</code>); por isso o trace mostra <strong>dois spans</strong> <code>postgresql</code>.</p>
+<p><strong>O caminho da investigação (o que se pratica na entrevista):</strong></p>
+<ol>
+<li><strong>Métrica:</strong> <code>http.server.request.duration</code> da rota subiu (P99).</li>
+<li><strong>Trace</strong> de uma requisição lenta: o tempo está nos spans <code>postgresql</code>, não num buraco.</li>
+<li><strong><code>db.query.text</code>:</strong> a consulta é o <code>LIKE '%...%'</code>.</li>
+<li><strong><code>EXPLAIN (ANALYZE)</code>:</strong> <code>Seq Scan</code> onde antes havia <code>Bitmap Index Scan</code>.</li>
+<li><strong>Correção:</strong> recriar o índice; o P99 volta.</li>
+</ol>
+<p><strong>Ressalvas honestas:</strong></p>
+<ul>
+<li>O mentor <strong>previu</strong> &quot;poucos milissegundos&quot; com índice e 1 milhão de linhas; o real foi 46–68 ms na API (cerca de 19 ms por comando). A previsão estava errada: <strong>meça, não preveja</strong>.</li>
+<li>Os SKU sintéticos são parecidos entre si, o que <strong>piora a seletividade do trigram</strong>; com dados reais o ganho pode ser diferente.</li>
+<li>Aparece <code>read=</code> nos planos: parte da leitura veio do disco (<strong>cache frio</strong>), o que também infla o primeiro tempo.</li>
+<li>O <code>EXPLAIN</code> mostra o custo no banco; a diferença entre ele (~38 ms somados) e o trace (46–68 ms) é o resto do caminho (conexão, mapeamento, HTTP).</li>
+</ul>
+<hr />
+<h2 id="8-métrica-de-latência-e-o-alerta-só-descrito">8. Métrica de latência e o alerta (só descrito)</h2>
+<p><strong>Onde:</strong> aba <strong>Metrics</strong> do painel → <code>http.server.request.duration</code> → filtrar por <code>http.route</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Coisa</th>
+<th>Como ler</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>P50 / P90 / P99</strong></td>
+<td>metade / 90% / 99% das requisições foram mais rápidas que isso. O <strong>P99</strong> mostra a cauda lenta; a <strong>média</strong> esconde os casos ruins</td>
+</tr>
+<tr>
+<td>barras em <strong>faixas</strong></td>
+<td>o histograma agrupa em faixas: 2,02 s aparece como 2,5 s (🟡 provavelmente os limites padrão do histograma; não conferido)</td>
+</tr>
+<tr>
+<td><strong>janela de tempo</strong></td>
+<td>&quot;Last 5 minutes&quot; mostra <strong>0</strong> quando não houve tráfego: é <strong>ausência de dado</strong>, não latência zero</td>
+</tr>
+<tr>
+<td>filtro por rota</td>
+<td><code>http.route = /catalogo/fichas-produto</code> separa a listagem do resto</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Alerta — descrito, não criado (📖):</strong></p>
+<blockquote>
+<p><em>Se o P99 da rota <code>/catalogo/fichas-produto</code> ficar acima de 1 segundo por 5 minutos seguidos, avisar.</em></p>
+</blockquote>
+<p>Três partes que todo alerta precisa: <strong>o que medir</strong> (P99 da rota), <strong>o limite</strong> (1 s) e <strong>por quanto tempo</strong> (5 min seguidos, para não disparar por um pico isolado). O Aspire dashboard <strong>não</strong> envia alerta; quem alerta é uma ferramenta da camada 3 (Grafana, Datadog, Azure Monitor...). No Norte não existe nenhum alerta ativo.</p>
+<hr />
+<h2 id="9-o-painel-e-a-api-o-que-foi-medido-sobre-reinício">9. O painel e a API: o que foi medido sobre reinício</h2>
+<table>
+<thead>
+<tr>
+<th>Pergunta</th>
+<th>Resultado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>reiniciar o painel apaga o histórico?</td>
+<td><strong>sim</strong> — traces, logs e métricas somem (✅ medido)</td>
+</tr>
+<tr>
+<td>a API volta a enviar sozinha quando o painel volta?</td>
+<td><strong>sim</strong>, com a API <strong>rodando</strong> o tempo todo (✅ medido, depois de refazer o teste direito)</td>
+</tr>
+<tr>
+<td>o que acontece com a telemetria gerada <strong>enquanto</strong> o painel está fora?</td>
+<td><strong>não testado</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Lição de método:</strong> a primeira versão do teste &quot;funcionou&quot; porque o aluno <strong>parou a API</strong>, reiniciou o Docker e fez uma consulta nova — isso prova que o painel sobe vazio, não que a API reconecta. O aluno descreveu exatamente o que fez, o mentor corrigiu a conclusão e o teste foi refeito com a API rodando.</p>
+<hr />
+<h2 id="10-o-que-levar-para-a-entrevista">10. O que levar para a entrevista</h2>
+<h3 id="101-as-três-perguntas-mais-a-nuvem">10.1 As três perguntas (mais a nuvem)</h3>
+<table>
+<thead>
+<tr>
+<th>Pergunta</th>
+<th>Resposta com história <strong>verdadeira</strong> do Norte</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Onde vejo logs, tempos e fluxo?</strong></td>
+<td>Os logs estruturados, os traces e as métricas vão por OTLP para um painel (Aspire dashboard, em contêiner). Pelo <code>TraceId</code> abro a requisição inteira: os logs dela e o tempo de cada etapa, inclusive a consulta ao banco.</td>
+</tr>
+<tr>
+<td><strong>Como sei que está lento?</strong></td>
+<td>Pela métrica de latência da rota (P99, não a média). Provoquei duas lentidões de propósito: um atraso de 2 s no código e a remoção de um índice com 1 milhão de linhas (de ~50 ms para ~300 ms).</td>
+</tr>
+<tr>
+<td><strong>Deu problema: onde eu vejo?</strong></td>
+<td>Métrica → trace → logs do <code>TraceId</code> → causa. No caso do índice, o trace apontou o banco e o <code>EXPLAIN</code> mostrou <code>Seq Scan</code>; recriei o índice e o tempo voltou. No caso do atraso, a raiz tinha 2,02 s e os spans de banco ~2 ms: o tempo estava no código.</td>
+</tr>
+<tr>
+<td><strong>E nas nuvens?</strong></td>
+<td><strong>Só em conceito.</strong> A lógica é a mesma (métrica → trace → log); os nomes mudam (Azure: Application Insights/Log Analytics; AWS: CloudWatch/X-Ray). Esses nomes <strong>não foram conferidos na S38</strong>.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Resposta de 30 segundos (rascunho para o aluno reescrever com as próprias palavras):</strong></p>
+<blockquote>
+<p>&quot;No meu projeto de estudo montei a observabilidade em três camadas: o código produz logs, traces e métricas com o que já vem no .NET; o OpenTelemetry envia por OTLP; e um painel guarda e mostra. Para lentidão eu olho a latência da rota, abro o trace de uma requisição lenta, vejo em qual etapa está o tempo e leio os logs do mesmo TraceId. Provoquei isso de propósito: tirei um índice de uma tabela com um milhão de linhas, vi no trace que o tempo estava no banco e confirmei com EXPLAIN. Alerta eu só descrevi, não configurei.&quot;</p>
+</blockquote>
+<h3 id="102-o-que-é-verdade-×-o-que-só-se-conhece">10.2 O que é verdade × o que só se conhece</h3>
+<table>
+<thead>
+<tr>
+<th>✅ <strong>Já é verdade no Norte</strong> (feito e visto)</th>
+<th>📖 <strong>Só em conceito</strong> (não foi feito)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>logs, traces e métricas chegando a um painel por OTLP</td>
+<td>alerta de verdade (regra que dispara)</td>
+</tr>
+<tr>
+<td>busca de uma requisição por <code>TraceId</code> e por <code>url.path</code></td>
+<td><strong>persistência</strong> do painel e retenção de dados</td>
+</tr>
+<tr>
+<td>trace com spans de requisição e de banco; ler &quot;buraco&quot; = código</td>
+<td><strong>ELK</strong>, <strong>Grafana + Prometheus</strong>, <strong>Seq</strong> (nenhum foi montado)</td>
+</tr>
+<tr>
+<td>lentidão fora do banco e dentro do banco, diferenciadas pelo trace</td>
+<td><strong>nuvem</strong> (Application Insights, CloudWatch, X-Ray, KQL)</td>
+</tr>
+<tr>
+<td>causa no banco achada por métrica → trace → <code>EXPLAIN</code></td>
+<td><strong>amostragem</strong> (<em>sampling</em>) e <strong>coletor</strong> (OpenTelemetry Collector) em volume</td>
+</tr>
+<tr>
+<td>P50/P90/P99 por rota; janela vazia = sem dado</td>
+<td>propagação do <code>traceparent</code> <strong>entre serviços</strong> de verdade</td>
+</tr>
+<tr>
+<td>histórico some ao reiniciar o painel; API reconecta sozinha (com ela rodando)</td>
+<td>span <strong>próprio</strong> (<code>ActivitySource</code>)</td>
+</tr>
+<tr>
+<td>rotas verificadas contra dado pessoal na telemetria</td>
+<td>captura do <strong>corpo</strong> da requisição (decisão própria, ainda não conversada)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Sobre &quot;pronto para volume&quot;:</strong> o que o Norte tem é o <strong>destino trocável</strong> (OTLP). Amostragem, coletor e armazenamento de longo prazo são o que se faz em volume — <strong>você os conhece em conceito, não os praticou</strong>.</p>
+<hr />
+<h2 id="11-hipóteses-e-limites-não-afirme-sem-conferir">11. Hipóteses e limites (não afirme sem conferir)</h2>
+<table>
+<thead>
+<tr>
+<th>🟡 Hipótese</th>
+<th>Por que ainda é hipótese</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>o pool do Npgsql fecha conexões ociosas em ~5 min (explica o <code>CONNECT</code>)</td>
+<td>só vimos casos coerentes; nunca mudamos o tempo nem lemos a documentação do pool para confirmar</td>
+</tr>
+<tr>
+<td>os limites padrão do histograma explicam 2,02 s virar &quot;2,5 s&quot;</td>
+<td>não conferimos os limites</td>
+</tr>
+<tr>
+<td><code>AddService</code> gera o <code>service.instance.id</code></td>
+<td>o atributo aparece; não conferimos de onde vem</td>
+</tr>
+<tr>
+<td>o painel mostra o sufixo <code>norte-api-&lt;fim do id&gt;</code> quando há mais de uma instância</td>
+<td>visto, causa não verificada</td>
+</tr>
+<tr>
+<td>opções de <strong>persistência</strong> do Aspire dashboard</td>
+<td>não testadas</td>
+</tr>
+<tr>
+<td>telemetria gerada <strong>durante</strong> a queda do painel</td>
+<td>não testada</td>
+</tr>
+<tr>
+<td>comparação de latência com dados reais</td>
+<td>os dados do teste do índice são sintéticos</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="12-teste-se-sem-consultar">12. Teste-se (sem consultar)</h2>
+<ol>
+<li>Cite as três camadas e diga onde cai cada peça do Norte (<code>ILogger</code>, OpenTelemetry, Aspire dashboard).</li>
+<li>Por que o painel mostrava <code>unknown_service:Norte.Api</code> e o que corrigiu?</li>
+<li>O que o <code>UseOtlpExporter()</code> faz e por que a API não precisa de endereço configurado?</li>
+<li>No trace, o que significa a raiz durar muito mais que a soma dos spans filhos?</li>
+<li>No experimento do <code>Task.Delay</code>, que sinais mostraram que a lentidão não estava no banco?</li>
+<li>Descreva, em ordem, como se achou que a segunda lentidão estava no banco.</li>
+<li>O que o <code>EXPLAIN</code> mostrou com e sem o índice?</li>
+<li>Por que digitar <code>SKU-TESTE</code> no campo de texto da lista de Traces não achou nada, e como achar?</li>
+<li>Por que o SKU enviado no corpo de um <code>POST</code> não aparece no painel?</li>
+<li>Por que usar o P99 e não a média?</li>
+<li>O que significa &quot;Last 5 minutes&quot; mostrar zero?</li>
+<li>Escreva em três partes o alerta que você criaria e diga o que foi (e o que não foi) feito no Norte.</li>
+<li>O que acontece com o histórico quando o painel reinicia? E com a API?</li>
+<li>Por que as rotas do Norte são seguras para mandar <code>url.path</code> ao painel (regra do dado pessoal)?</li>
+<li>O que é OTLP e o que ele permite trocar?</li>
+<li>Dê duas coisas que você <strong>não</strong> pode dizer em entrevista sobre este laboratório.</li>
+</ol>
+<h2 id="respostas">Respostas</h2><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>Produzir (<code>ILogger</code>, <code>Activity</code>, <code>Meter</code>: já vêm no .NET), transportar (OpenTelemetry/OTLP), guardar e buscar (Aspire dashboard).</li>
+<li>O nome padrão do serviço não foi aplicado com <code>builder.Services.AddOpenTelemetry()</code>; <code>ConfigureResource(r =&gt; r.AddService(&quot;norte-api&quot;))</code> deu o nome.</li>
+<li>Manda logs, traces e métricas para um destino OTLP; o padrão é gRPC em <code>localhost:4317</code>, que é onde o painel escuta (porta publicada no compose).</li>
+<li>Que o tempo foi gasto no código da aplicação, onde não existe span (o &quot;buraco&quot;).</li>
+<li>A raiz com 2,02 s, os spans de banco com ~2 ms e nenhum aviso nos logs.</li>
+<li>Métrica da rota subiu (P99) → trace mostrou o tempo nos spans <code>postgresql</code> → <code>db.query.text</code> é o <code>LIKE '%...%'</code> → <code>EXPLAIN</code> mostrou <code>Seq Scan</code> → recriar o índice.</li>
+<li>Com índice: <code>Bitmap Index Scan</code> (~19 ms por comando). Sem índice: <code>Parallel Seq Scan</code> na contagem (121 ms) e <code>Index Scan</code> na PK descartando ~1 milhão de linhas na página (262 ms).</li>
+<li>O campo de texto procura no nome do trace, não nos atributos. Achar: filtro avançado <code>url.path contains SKU-TESTE</code>.</li>
+<li>O corpo da requisição não é capturado; só caminho, query string e cabeçalhos escolhidos viram atributos.</li>
+<li>A média esconde a cauda lenta; o P99 mostra o que os piores 1% enfrentam.</li>
+<li>Não houve requisição naquela janela: é ausência de dado, não latência zero.</li>
+<li>Medir: P99 da rota <code>/catalogo/fichas-produto</code>; limite: acima de 1 s; duração: 5 minutos seguidos. No Norte só foi <strong>descrito</strong>; nenhum alerta foi criado.</li>
+<li>O painel perde tudo (traces, logs, métricas). A API volta a enviar sozinha, desde que esteja rodando; o que se gera durante a queda não foi testado.</li>
+<li>Porque o caminho só tem <code>{sku}</code> e ids numéricos; CPF e e-mail vão no corpo do <code>POST</code>, que não é capturado. Se uma rota passar a ter CPF no caminho, deixa de valer.</li>
+<li>É o protocolo do OpenTelemetry para enviar os sinais; permite trocar o destino (painel, Seq, Grafana, nuvem) por configuração, sem mudar o código.</li>
+<li>Por exemplo: que configurei um alerta de verdade; que operei ELK, Grafana/Prometheus, Seq ou serviços de nuvem; que o painel guarda histórico; que testei volume real.</li>
+</ol>
+</details>
+</article>
+<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

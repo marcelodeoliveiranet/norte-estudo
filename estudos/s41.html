@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ESTUDO-S41 — provar o log de conflito com teste e abrir um span próprio · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s41.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#estudo-s41--provar-o-log-de-conflito-com-teste-e-abrir-um-span-próprio" data-id="estudo-s41--provar-o-log-de-conflito-com-teste-e-abrir-um-span-próprio">ESTUDO-S41 — provar o log de conflito com teste e abrir um span próp…</a><a class="n2" href="#1-a-pergunta-da-sessão-e-a-resposta" data-id="1-a-pergunta-da-sessão-e-a-resposta">1. A pergunta da sessão e a resposta</a><a class="n2" href="#2-como-testar-um-log" data-id="2-como-testar-um-log">2. Como testar um log</a><a class="n2" href="#3-a-corrida-real-×-o-teste-determinístico" data-id="3-a-corrida-real-×-o-teste-determinístico">3. A corrida real × o teste determinístico</a><a class="n2" href="#4-o-span-próprio" data-id="4-o-span-próprio">4. O span próprio</a><a class="n2" href="#5-log-com-a-mensagem-pronta-e-o-traceparent" data-id="5-log-com-a-mensagem-pronta-e-o-traceparent">5. Log com a mensagem pronta e o traceparent</a><a class="n2" href="#6-de-para" data-id="6-de-para">6. De-para</a><a class="n2" href="#7-o-que-foi-decidido-não-fazer-e-por-quê" data-id="7-o-que-foi-decidido-não-fazer-e-por-quê">7. O que foi decidido não fazer (e por quê)</a><a class="n2" href="#8-erros-e-tropeços-que-valem-guardar" data-id="8-erros-e-tropeços-que-valem-guardar">8. Erros e tropeços que valem guardar</a><a class="n2" href="#9-teste-se-sem-consultar" data-id="9-teste-se-sem-consultar">9. Teste-se (sem consultar)</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a><a class="n2" href="#10-provado-×-não-provado" data-id="10-provado-×-não-provado">10. Provado × não provado</a><a class="n2" href="#11-para-a-próxima-conversa" data-id="11-para-a-próxima-conversa">11. Para a próxima conversa</a></aside>
+<main class="conteudo"><article>
+<h1 id="estudo-s41--provar-o-log-de-conflito-com-teste-e-abrir-um-span-próprio">ESTUDO-S41 — provar o log de conflito com teste e abrir um span próprio</h1>
+<p><strong>Sessão:</strong> sábado 07/11/2026 · início 11:46 · pausa 11:56 a 13:25 · fim 15:03 · <strong>1h48 líquidas</strong> · PRs #101 a #106 · <code>main</code> em <code>a92cb29</code> · <strong>309 testes</strong> no CI (2 + 69 + 81 + 92 + 65), 0 falhas.</p>
+<blockquote>
+<p>Como usar: leia na ordem; no fim, responda a Seção 9 sem consultar. As respostas estão logo depois.</p>
+<p><strong>Legenda de confiança.</strong> ✅ feito e visto no Norte (código, teste ou CI verde) · 🟡 hipótese ou limite: <strong>não foi confirmado</strong> · 📖 só conhecido em conceito.</p>
+</blockquote>
+<hr />
+<h2 id="1-a-pergunta-da-sessão-e-a-resposta">1. A pergunta da sessão e a resposta</h2>
+<p><strong>Pergunta:</strong> o que ficou por fazer no Norte e que ainda ensina algo, de modo a começar a próxima semana com tudo limpo?</p>
+<p><strong>Resposta (✅):</strong> quatro coisas pequenas, cada uma em um PR:</p>
+<table>
+<thead>
+<tr>
+<th>O que</th>
+<th>Para que serve</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.gitattributes</code>, nota na ADR-015 e resumos do OpenAPI (<code>WithSummary</code>) nas 21 rotas (PRs #101 a #103)</td>
+<td>fim de linha fixo; a ADR diz que o padrão vale nos três CRUDs; a tela do Scalar passa a mostrar um título por rota</td>
+</tr>
+<tr>
+<td><strong>Teste que prova o log de conflito</strong> do Catálogo (PR #104)</td>
+<td>o <code>Warning</code> de &quot;violação de unicidade&quot; deixa de ser promessa e vira fato testado</td>
+</tr>
+<tr>
+<td><strong>Span próprio</strong> <code>catalogo.adicionar-ficha</code> (PR #105)</td>
+<td>o trace mostra um bloco com o nome do nosso código, não só o que o framework gerou</td>
+</tr>
+<tr>
+<td>Notas de implementação na ADR-016 (PR #106)</td>
+<td>fecha os pontos que a S38 e a S39 tinham deixado abertos</td>
+</tr>
+</tbody>
+</table>
+<p>Nada novo foi criado só por criar: a sessão fechou o que estava aberto e <strong>decidiu não fazer</strong> o resto (Seção 7).</p>
+<hr />
+<h2 id="2-como-testar-um-log">2. Como testar um log</h2>
+<p><strong>Em uma frase:</strong> o teste troca o destino do log por uma lista em memória e depois confere o que caiu nela.</p>
+<p><strong>O que não é:</strong> não é ler o console. O console some; a lista fica e o <code>Assert</code> consegue falhar.</p>
+<table>
+<thead>
+<tr>
+<th>Peça</th>
+<th>O que faz</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>LogCapturado</code></td>
+<td>um <code>record</code> com o que importa conferir: categoria, nível, <code>EventId</code> e mensagem</td>
+</tr>
+<tr>
+<td><code>CapturaDeLogs</code></td>
+<td>implementa <code>ILoggerProvider</code>; cada <code>ILogger</code> que ele cria joga o que recebe numa fila (<code>ConcurrentQueue</code>, porque vários testes e requisições escrevem ao mesmo tempo)</td>
+</tr>
+<tr>
+<td>Fábrica da API de teste</td>
+<td>registra o provedor com <code>builder.ConfigureLogging(logging =&gt; logging.AddProvider(Logs))</code> e expõe <code>Logs</code></td>
+</tr>
+<tr>
+<td>Teste</td>
+<td>lê <code>fabrica.Logs.Logs</code> e confere</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Erro de build que apareceu (CA1725):</strong> o analisador exige que os nomes dos parâmetros do método sejam <strong>os mesmos da interface</strong> (<code>logLevel</code>, <code>eventId</code>, <code>state</code>, <code>exception</code>, <code>formatter</code>). Renomear resolveu. O build tratou como erro porque o Norte compila avisos como erro.</p>
+<hr />
+<h2 id="3-a-corrida-real-×-o-teste-determinístico">3. A corrida real × o teste determinístico</h2>
+<p>O log de conflito está no <code>catch</code> do <code>FichaProdutoRepository.AdicionarAsync</code>, no ponto em que o banco recusa o SKU repetido (violação de índice único). Para provar que ele é emitido, havia dois caminhos:</p>
+<table>
+<thead>
+<tr>
+<th>Caminho</th>
+<th>Como seria</th>
+<th>Problema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Corrida por HTTP</td>
+<td>duas requisições ao mesmo tempo com o mesmo SKU</td>
+<td>o endpoint <strong>consulta antes de gravar</strong>; quase todas as requisições são recusadas por essa consulta e nunca chegam ao <code>INSERT</code>. O teste passaria ou falharia ao acaso (<strong>instável</strong>)</td>
+</tr>
+<tr>
+<td><strong>Duas chamadas diretas ao repositório</strong> (escolhido)</td>
+<td>dois escopos de DI, cada um chama <code>AdicionarAsync</code> com o mesmo SKU, um depois do outro</td>
+<td>sem acaso: a primeira devolve <code>true</code>, a segunda cai no <code>catch</code> e devolve <code>false</code></td>
+</tr>
+</tbody>
+</table>
+<p>O teste confere, nesta ordem: primeira chamada <code>true</code>; segunda <code>false</code>; <strong>exatamente um</strong> log com <code>EventId</code> 1; nível <code>Warning</code>; categoria <code>FichaProdutoRepository</code>; mensagem com o SKU e o texto &quot;Violação de unicidade&quot;.</p>
+<p><strong>Prova do vermelho (✅):</strong> o teste foi commitado primeiro; depois a chamada do log foi <strong>comentada</strong> (estrago mínimo); o <code>Assert.Single</code> falhou; <code>git restore</code> desfez; a árvore voltou limpa. Isso mostra que o teste <strong>consegue falhar</strong> quando o log some.</p>
+<p><strong>Quando usar cada um:</strong> a corrida por HTTP prova que a API se comporta bem sob concorrência (S31/S32); o teste direto prova que <strong>um caminho específico do código</strong> faz o que promete. São perguntas diferentes.</p>
+<hr />
+<h2 id="4-o-span-próprio">4. O span próprio</h2>
+<p><strong>Palavras novas.</strong></p>
+<ul>
+<li><strong>Span:</strong> um bloco de tempo dentro de um trace, com nome. O trace é a árvore de spans de uma requisição.</li>
+<li><strong><code>ActivitySource</code>:</strong> no .NET, a &quot;fábrica&quot; de spans de um componente. O nome dela é o nome da fonte.</li>
+<li><strong><code>AddSource</code>:</strong> diz ao OpenTelemetry quais fontes ele deve escutar. <strong>Sem isso, o span existe no código mas ninguém o recebe.</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Peça</th>
+<th>Onde</th>
+<th>O que faz</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CatalogoTelemetria</code></td>
+<td><code>src/Modulos/Catalogo/Norte.Catalogo</code></td>
+<td>guarda <code>NomeDaFonte = &quot;Norte.Catalogo&quot;</code> (pública, para o host) e a <code>ActivitySource</code> (interna)</td>
+</tr>
+<tr>
+<td><code>StartActivity(&quot;catalogo.adicionar-ficha&quot;)</code></td>
+<td>início do <code>AdicionarAsync</code></td>
+<td>abre o span; <code>using var</code> o fecha no fim do método</td>
+</tr>
+<tr>
+<td><code>atividade?.SetTag(&quot;catalogo.sku&quot;, ...)</code></td>
+<td>idem</td>
+<td>acrescenta um dado ao span</td>
+</tr>
+<tr>
+<td><code>atividade?.SetTag(&quot;catalogo.conflito&quot;, true)</code></td>
+<td>dentro do <code>catch</code> de unicidade</td>
+<td>marca no trace que houve conflito</td>
+</tr>
+<tr>
+<td><code>.AddSource(CatalogoTelemetria.NomeDaFonte)</code></td>
+<td><code>Program.cs</code>, em <code>WithTracing</code></td>
+<td>liga o OpenTelemetry à fonte</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Por que <code>atividade?.</code>:</strong> <code>StartActivity</code> devolve <code>null</code> quando nenhum ouvinte está registrado. O <code>?.</code> evita quebrar nesse caso.</p>
+<p><strong>O que se viu no Aspire (✅):</strong> o span <code>catalogo.adicionar-ficha</code> aparece <strong>dentro</strong> do <code>POST</code> e, dentro dele, o <code>INSERT</code> do Npgsql. O &quot;buraco&quot; entre os dois deixa de ser mistério: é o nosso código.</p>
+<p><strong>Dado pessoal:</strong> o SKU pode ir em tag (ids e SKU podem; regra (dd) da S37). CPF e e-mail não.</p>
+<hr />
+<h2 id="5-log-com-a-mensagem-pronta-e-o-traceparent">5. Log com a mensagem pronta e o <code>traceparent</code></h2>
+<table>
+<thead>
+<tr>
+<th>Ajuste</th>
+<th>Efeito</th>
+<th>Observação</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>IncludeFormattedMessage = true</code> no exportador de logs</td>
+<td>o log exportado leva o <strong>texto já montado</strong> (&quot;Violação de unicidade … SKU X&quot;), não só o modelo com <code>{Sku}</code></td>
+<td>visto no Aspire (✅)</td>
+</tr>
+<tr>
+<td><code>traceparent</code> enviado por <code>curl</code></td>
+<td>o cabeçalho carrega o <code>TraceId</code>; com um id escolhido por você, <strong>achar o trace no painel é imediato</strong></td>
+<td>funcionou depois de corrigir o envio do corpo (Seção 8)</td>
+</tr>
+<tr>
+<td><code>service.instance.id</code></td>
+<td>o OpenTelemetry cria um identificador diferente <strong>a cada processo</strong> da API</td>
+<td>hipótese da S38, agora ✅: cada subida aparece como uma instância nova</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-de-para">6. De-para</h2>
+<table>
+<thead>
+<tr>
+<th>Como era</th>
+<th>Como é no Norte</th>
+<th>Observação</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>log só no console, conferido a olho</td>
+<td>log capturado em memória e conferido por <code>Assert</code></td>
+<td>o log vira contrato testável</td>
+</tr>
+<tr>
+<td><code>Activity</code> criada à mão sem fonte registrada</td>
+<td><code>ActivitySource</code> + <code>AddSource</code></td>
+<td>sem <code>AddSource</code>, o span é descartado em silêncio</td>
+</tr>
+<tr>
+<td><code>.gitattributes</code> ausente: o editor decide o fim de linha</td>
+<td><code>* text=auto eol=lf</code></td>
+<td>o repositório inteiro fica em LF; o <code>git status</code> para de mostrar &quot;modificado&quot; só por CRLF</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="7-o-que-foi-decidido-não-fazer-e-por-quê">7. O que foi decidido <strong>não</strong> fazer (e por quê)</h2>
+<table>
+<thead>
+<tr>
+<th>Tema</th>
+<th>Decisão</th>
+<th>Motivo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Persistência do painel Aspire</td>
+<td><strong>não</strong></td>
+<td>é ferramenta de desenvolvimento, as tarefas são curtas e o histórico fica a cargo do ELK/Grafana, que já têm volume</td>
+</tr>
+<tr>
+<td>Limites do histograma; vida das conexões do pool</td>
+<td><strong>não conferido, sem impacto no Norte</strong></td>
+<td>só importariam em produção, que o laboratório não tem</td>
+</tr>
+<tr>
+<td>Captura do corpo da requisição</td>
+<td><strong>sessão própria</strong>, com decisão própria</td>
+<td>pode conter dado pessoal; não é um ajuste, é uma política</td>
+</tr>
+</tbody>
+</table>
+<p>Regra que a sessão fixou: <strong>só entra na lista o que tem valor de aprendizagem.</strong> Listar um extra como &quot;importante&quot; sem esse valor é falha de condução.</p>
+<hr />
+<h2 id="8-erros-e-tropeços-que-valem-guardar">8. Erros e tropeços que valem guardar</h2>
+<table>
+<thead>
+<tr>
+<th>Sintoma</th>
+<th>Causa</th>
+<th>O que fazer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>curl</code> devolve <strong>400</strong> com JSON</td>
+<td>o Windows PowerShell 5.1 <strong>remove as aspas internas</strong> do texto passado a <code>curl.exe</code></td>
+<td>gravar o corpo em arquivo e enviar com <code>--data-binary &quot;@arquivo.json&quot;</code></td>
+</tr>
+<tr>
+<td><code>MSB1008</code> ao colar texto do PR</td>
+<td>texto de PR colado no terminal virou argumento do <code>dotnet</code></td>
+<td>inofensivo; não cole descrição no terminal</td>
+</tr>
+<tr>
+<td>Contagem de <code>&quot;summary&quot;</code> deu 20; a listagem em JSON deu 21</td>
+<td>a busca por texto conta linhas, o JSON conta rotas</td>
+<td>confie na listagem estruturada (21/21); a diferença <strong>não foi explicada</strong></td>
+</tr>
+<tr>
+<td><code>gh</code> indisponível na ponte do mentor</td>
+<td>a ponte não tem o <code>gh</code></td>
+<td>o aluno roda <code>gh pr list</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="9-teste-se-sem-consultar">9. Teste-se (sem consultar)</h2>
+<ol>
+<li>Por que o teste do log de conflito chama o repositório direto em vez de disparar duas requisições HTTP?</li>
+<li>O que a <code>CapturaDeLogs</code> faz e por que a fila é uma <code>ConcurrentQueue</code>?</li>
+<li>Como a prova do vermelho mostrou que o teste protege o log?</li>
+<li>Qual a diferença entre <code>ActivitySource</code> e <code>AddSource</code>? O que acontece se faltar o segundo?</li>
+<li>Por que o código usa <code>atividade?.SetTag</code> com <code>?.</code>?</li>
+<li>O que <code>IncludeFormattedMessage = true</code> muda no log exportado?</li>
+<li>Por que <code>curl.exe</code> deu 400 no PowerShell 5.1 e qual o contorno?</li>
+<li>Por que a persistência do Aspire foi dispensada?</li>
+</ol>
+<h2 id="respostas">Respostas</h2><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>Porque o endpoint <strong>consulta antes de gravar</strong> e recusa quase tudo antes do <code>INSERT</code>; a corrida por HTTP só acerta o <code>catch</code> por sorte (teste instável). Duas chamadas diretas, uma após a outra, caem no <code>catch</code> sempre.</li>
+<li>Recebe cada log que o <code>ILogger</code> emite e o guarda numa lista com categoria, nível, <code>EventId</code> e mensagem. A fila é concorrente porque vários testes e requisições podem escrever ao mesmo tempo.</li>
+<li>O teste foi commitado; a chamada do log foi comentada; o <code>Assert.Single</code> falhou; o <code>git restore</code> desfez. Se o teste não fosse capaz de falhar sem o log, ele não provaria nada.</li>
+<li><code>ActivitySource</code> cria os spans do nosso código; <code>AddSource</code> diz ao OpenTelemetry para escutar essa fonte. Sem o <code>AddSource</code> o span é criado e descartado: nada aparece no painel.</li>
+<li><code>StartActivity</code> devolve <code>null</code> quando ninguém escuta; o <code>?.</code> evita falhar nesse caso.</li>
+<li>O log exportado traz o texto já montado (&quot;Violação de unicidade … SKU X&quot;), e não só o modelo da mensagem.</li>
+<li>O PowerShell 5.1 tira as aspas internas do argumento, e o JSON chega quebrado. Contorno: gravar em arquivo e enviar com <code>--data-binary &quot;@arquivo&quot;</code>.</li>
+<li>É ferramenta de desenvolvimento, com tarefas curtas; histórico longo é papel do ELK/Grafana, que já têm volume. Persistir o painel ensinaria pouco e custaria manutenção.</li>
+</ol>
+<hr />
+</details><h2 id="10-provado-×-não-provado">10. Provado × não provado</h2>
+<table>
+<thead>
+<tr>
+<th>✅ Provado (CI verde nos seis PRs; 309 testes)</th>
+<th>🟡 Não provado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>log de conflito emitido com <code>EventId</code> 1, <code>Warning</code>, categoria e mensagem certos</td>
+<td>a <strong>corrida real por HTTP</strong> (decidido não fazer; o teste direto cobre o caminho)</td>
+</tr>
+<tr>
+<td>teste vermelho quando o log é comentado</td>
+<td>por que a contagem textual de <code>&quot;summary&quot;</code> deu 20 e a listagem deu 21</td>
+</tr>
+<tr>
+<td>span próprio dentro do <code>POST</code>, com o <code>INSERT</code> como filho</td>
+<td>limites do histograma e vida das conexões do pool (sem impacto no Norte)</td>
+</tr>
+<tr>
+<td><code>service.instance.id</code> novo a cada processo</td>
+<td>captura do corpo da requisição (sessão própria)</td>
+</tr>
+<tr>
+<td>21 rotas com resumo no OpenAPI</td>
+<td>retenção desta sessão (não medida; regra (ap))</td>
+</tr>
+</tbody>
+</table>
+<h2 id="11-para-a-próxima-conversa">11. Para a próxima conversa</h2>
+<p>Título sugerido: <code>Norte · S42 — &lt;tema&gt;</code> (o aluno escolhe). Caminho natural: <strong>voltar ao roteiro de M1</strong> (resultados tipados, spikes restantes da Trilha B, regras de negócio do <code>Pedidos</code> quando ele quiser abri-las). A semana de 09/11 começa limpa: sem PR aberto, só a <code>main</code>, sem pendências.</p>
+
+</article>
+<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

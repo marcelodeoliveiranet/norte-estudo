@@ -100,27 +100,27 @@ cada um está no <strong>sufixo do nome</strong>, não na pasta.</p>
 </tbody>
 </table>
 <p><strong>O código do Norte (S11, com um <code>if</code>; na S12 viraram três e depois saíram):</strong></p>
-<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">CadastrarFichaProdutoEndpoint</span>
-<span class="p">{</span>
-<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">Results</span><span class="o">&lt;</span><span class="n">Created</span><span class="o">&lt;</span><span class="n">FichaProduto</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">ValidationProblem</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Executar</span><span class="p">(</span>
+<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">CadastrarFichaProdutoEndpoint</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">Results</span><span class="p">&lt;</span><span class="n">Created</span><span class="p">&lt;</span><span class="n">FichaProduto</span><span class="p">&gt;,</span><span class="w"> </span><span class="n">ValidationProblem</span><span class="p">&gt;</span><span class="w"> </span><span class="n">Executar</span><span class="p">(</span><span class="w"></span>
 <span class="w">        </span><span class="n">CadastrarFichaProdutoRequest</span><span class="w"> </span><span class="n">request</span><span class="p">,</span><span class="w">   </span><span class="c1">// vem do CORPO da requisição (JSON), pelo tipo</span>
 <span class="w">        </span><span class="n">FichaProdutoRepository</span><span class="w"> </span><span class="n">fichas</span><span class="p">)</span><span class="w">          </span><span class="c1">// vem da DI, pelo tipo</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kt">string</span><span class="p">.</span><span class="n">IsNullOrWhiteSpace</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Sku</span><span class="p">))</span>
-<span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="kt">var</span><span class="w"> </span><span class="n">erros</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="p">[]</span><span class="o">&gt;</span>
-<span class="w">            </span><span class="p">{</span>
-<span class="w">                </span><span class="p">{</span><span class="w"> </span><span class="s">"sku"</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s">"O SKU é obrigatório."</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
-<span class="w">            </span><span class="p">};</span>
-<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">ValidationProblem</span><span class="p">(</span><span class="n">erros</span><span class="p">);</span>
-<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kt">string</span><span class="p">.</span><span class="n">IsNullOrWhiteSpace</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Sku</span><span class="p">))</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="kt">var</span><span class="w"> </span><span class="n">erros</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="p">[]&gt;</span><span class="w"></span>
+<span class="w">            </span><span class="p">{</span><span class="w"></span>
+<span class="w">                </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;sku&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;O SKU é obrigatório.&quot;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">            </span><span class="p">};</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">ValidationProblem</span><span class="p">(</span><span class="n">erros</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
 
-<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">ficha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FichaProduto</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Sku</span><span class="p">,</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="n">Descricao</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s">""</span><span class="p">,</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="n">Ncm</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s">""</span><span class="p">);</span>
-<span class="w">        </span><span class="n">fichas</span><span class="p">.</span><span class="n">Adicionar</span><span class="p">(</span><span class="n">ficha</span><span class="p">);</span>
+<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">ficha</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FichaProduto</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Sku</span><span class="p">,</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="n">Descricao</span><span class="w"> </span><span class="p">??</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="n">Ncm</span><span class="w"> </span><span class="p">??</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">fichas</span><span class="p">.</span><span class="n">Adicionar</span><span class="p">(</span><span class="n">ficha</span><span class="p">);</span><span class="w"></span>
 
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">Created</span><span class="p">(</span><span class="s">$"/catalogo/fichas-produto/{ficha.Sku}"</span><span class="p">,</span><span class="w"> </span><span class="n">ficha</span><span class="p">);</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="p">}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">Created</span><span class="p">(</span><span class="s">$&quot;/catalogo/fichas-produto/{ficha.Sku}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ficha</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre>
 
 <blockquote>
@@ -195,7 +195,7 @@ pelo valor</strong>.</p>
 </tbody>
 </table>
 <p><strong>Onde isso apareceu no teste:</strong></p>
-<pre class="highlight"><code><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">FichaProduto</span><span class="p">(</span><span class="s">"LUV-001"</span><span class="p">,</span><span class="w"> </span><span class="s">"Luva nitrilica"</span><span class="p">,</span><span class="w"> </span><span class="s">"40151900"</span><span class="p">),</span><span class="w"> </span><span class="n">criado</span><span class="p">.</span><span class="n">Value</span><span class="p">);</span>
+<pre class="highlight"><code><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">FichaProduto</span><span class="p">(</span><span class="s">&quot;LUV-001&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Luva nitrilica&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;40151900&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">criado</span><span class="p">.</span><span class="n">Value</span><span class="p">);</span><span class="w"></span>
 <span class="c1">// funciona porque FichaProduto é record: compara Sku, Descricao e Ncm.</span>
 <span class="c1">// com uma class comum, compararia a referência e falharia.</span>
 </code></pre>
@@ -254,10 +254,10 @@ que o endpoint devolve <strong>ou</strong> 201 com uma ficha <strong>ou</strong>
 <pre class="highlight"><code>HTTP/1.1 400 Bad Request
 Content-Type: application/problem+json
 
-{"type":"https://tools.ietf.org/html/rfc9110#section-15.5.1",
- "title":"One or more validation errors occurred.",
- "status":400,
- "errors":{"sku":["O SKU é obrigatório."]}}
+{&quot;type&quot;:&quot;https://tools.ietf.org/html/rfc9110#section-15.5.1&quot;,
+ &quot;title&quot;:&quot;One or more validation errors occurred.&quot;,
+ &quot;status&quot;:400,
+ &quot;errors&quot;:{&quot;sku&quot;:[&quot;O SKU é obrigatório.&quot;]}}
 </code></pre>
 
 <p><strong>Por que usamos · alternativa · custo.</strong> O formato <code>ProblemDetails</code> é um padrão (RFC): todo
@@ -327,13 +327,13 @@ clique em &quot;Send request&quot;.</p>
 <span class="err">POST {{HostAddress}}/catalogo/fichas-produto</span>
 <span class="err">Content-Type: application/json</span>
 
-<span class="err">{ "sku": "LUV-001", "descricao": "Luva nitrilica", "ncm": "40151900" }</span>
+<span class="err">{ &quot;sku&quot;: &quot;LUV-001&quot;, &quot;descricao&quot;: &quot;Luva nitrilica&quot;, &quot;ncm&quot;: &quot;40151900&quot; }</span>
 
 <span class="err">### Cadastrar ficha sem NCM (esperado: 400, erro em ncm)</span>
 <span class="err">POST {{HostAddress}}/catalogo/fichas-produto</span>
 <span class="err">Content-Type: application/json</span>
 
-<span class="err">{ "sku": "LUV-003", "descricao": "Luva nitrilica", "ncm": "" }</span>
+<span class="err">{ &quot;sku&quot;: &quot;LUV-003&quot;, &quot;descricao&quot;: &quot;Luva nitrilica&quot;, &quot;ncm&quot;: &quot;&quot; }</span>
 </code></pre>
 
 <p><code>@HostAddress</code> declara uma variável (cada arquivo declara a sua); <code>{{HostAddress}}</code> usa; <code>###</code>
@@ -374,7 +374,7 @@ referencia o módulo e enxerga o que é <code>internal</code> nele.</p>
 (<a href="parte-0-1.html#13-public-%C3%97-internal-a-fronteira-garantida-pelo-compilador">1.3</a>), então o projeto de testes não veria o endpoint. No
 <code>Norte.Catalogo.csproj</code>:</p>
 <pre class="highlight"><code><span class="nt">&lt;ItemGroup&gt;</span>
-<span class="w">  </span><span class="nt">&lt;InternalsVisibleTo</span><span class="w"> </span><span class="na">Include=</span><span class="s">"Norte.Catalogo.Tests"</span><span class="w"> </span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;InternalsVisibleTo</span> <span class="na">Include=</span><span class="s">&quot;Norte.Catalogo.Tests&quot;</span> <span class="nt">/&gt;</span>
 <span class="nt">&lt;/ItemGroup&gt;</span>
 </code></pre>
 
@@ -419,19 +419,19 @@ dos <code>*Request</code> — <a href="#311-valida%C3%A7%C3%A3o-nativa-do-net-10
 <p><strong>O teste do Norte, linha por linha (S11):</strong></p>
 <pre class="highlight"><code><span class="na">[Fact]</span><span class="w">                                            </span><span class="c1">// marca o método como teste para o xUnit</span>
 <span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">Recusa_ficha_sem_sku_e_devolve_400</span><span class="p">()</span><span class="w">  </span><span class="c1">// o nome diz a REGRA e o resultado esperado</span>
-<span class="p">{</span>
+<span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="c1">// Arrange: o que o endpoint receberia da DI e do corpo da requisição</span>
-<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">repositorio</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FichaProdutoRepository</span><span class="p">();</span>
-<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CadastrarFichaProdutoRequest</span><span class="p">(</span><span class="k">null</span><span class="p">,</span><span class="w"> </span><span class="s">"Luva nitrilica"</span><span class="p">,</span><span class="w"> </span><span class="s">"40151900"</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">repositorio</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FichaProdutoRepository</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CadastrarFichaProdutoRequest</span><span class="p">(</span><span class="k">null</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Luva nitrilica&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;40151900&quot;</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">    </span><span class="c1">// Act: chama o método direto, sem HTTP e sem subir a API</span>
-<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">resultado</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CadastrarFichaProdutoEndpoint</span><span class="p">.</span><span class="n">Executar</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">repositorio</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">resultado</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">CadastrarFichaProdutoEndpoint</span><span class="p">.</span><span class="n">Executar</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">repositorio</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">    </span><span class="c1">// Assert: o resultado é o 400, com erro no campo sku</span>
-<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">problema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Assert</span><span class="p">.</span><span class="n">IsType</span><span class="o">&lt;</span><span class="n">ValidationProblem</span><span class="o">&gt;</span><span class="p">(</span><span class="n">resultado</span><span class="p">.</span><span class="n">Result</span><span class="p">);</span>
-<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span><span class="w"> </span><span class="n">problema</span><span class="p">.</span><span class="n">StatusCode</span><span class="p">);</span>
-<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Contains</span><span class="p">(</span><span class="s">"sku"</span><span class="p">,</span><span class="w"> </span><span class="n">problema</span><span class="p">.</span><span class="n">ProblemDetails</span><span class="p">.</span><span class="n">Errors</span><span class="p">.</span><span class="n">Keys</span><span class="p">);</span>
-<span class="p">}</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">problema</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Assert</span><span class="p">.</span><span class="n">IsType</span><span class="p">&lt;</span><span class="n">ValidationProblem</span><span class="p">&gt;(</span><span class="n">resultado</span><span class="p">.</span><span class="n">Result</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="m">400</span><span class="p">,</span><span class="w"> </span><span class="n">problema</span><span class="p">.</span><span class="n">StatusCode</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Contains</span><span class="p">(</span><span class="s">&quot;sku&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">problema</span><span class="p">.</span><span class="n">ProblemDetails</span><span class="p">.</span><span class="n">Errors</span><span class="p">.</span><span class="n">Keys</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre>
 
 <blockquote>
@@ -819,14 +819,14 @@ pedia mais 7 linhas iguais.</p>
 </table>
 <p><strong>O código do Norte (S12):</strong></p>
 <pre class="highlight"><code><span class="c1">// CadastrarFichaProduto/CadastrarFichaProdutoRequest.cs</span>
-<span class="k">using</span><span class="w"> </span><span class="nn">System.ComponentModel.DataAnnotations</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">System.ComponentModel.DataAnnotations</span><span class="p">;</span><span class="w"></span>
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">Norte.Catalogo.CadastrarFichaProduto</span><span class="p">;</span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">Norte.Catalogo.CadastrarFichaProduto</span><span class="p">;</span><span class="w"></span>
 
-<span class="k">public</span><span class="w"> </span><span class="k">record</span><span class="w"> </span><span class="nf">CadastrarFichaProdutoRequest</span><span class="p">(</span><span class="w">              </span><span class="c1">// public: exigência do gerador (ADR-003)</span>
-<span class="w">    </span><span class="na">[Required(ErrorMessage = "O SKU é obrigatório.")]</span><span class="w"> </span><span class="kt">string?</span><span class="w"> </span><span class="n">Sku</span><span class="p">,</span>
-<span class="w">    </span><span class="na">[Required(ErrorMessage = "A descrição é obrigatória.")]</span><span class="w"> </span><span class="kt">string?</span><span class="w"> </span><span class="n">Descricao</span><span class="p">,</span>
-<span class="w">    </span><span class="na">[Required(ErrorMessage = "O NCM é obrigatório.")]</span><span class="w"> </span><span class="kt">string?</span><span class="w"> </span><span class="n">Ncm</span><span class="p">);</span>
+<span class="k">public</span><span class="w"> </span><span class="n">record</span><span class="w"> </span><span class="nf">CadastrarFichaProdutoRequest</span><span class="p">(</span><span class="w">              </span><span class="c1">// public: exigência do gerador (ADR-003)</span>
+<span class="w">    </span><span class="na">[Required(ErrorMessage = &quot;O SKU é obrigatório.&quot;)]</span><span class="w"> </span><span class="kt">string?</span><span class="w"> </span><span class="n">Sku</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="na">[Required(ErrorMessage = &quot;A descrição é obrigatória.&quot;)]</span><span class="w"> </span><span class="kt">string?</span><span class="w"> </span><span class="n">Descricao</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="na">[Required(ErrorMessage = &quot;O NCM é obrigatório.&quot;)]</span><span class="w"> </span><span class="kt">string?</span><span class="w"> </span><span class="n">Ncm</span><span class="p">);</span><span class="w"></span>
 </code></pre>
 
 <pre class="highlight"><code><span class="c1">// CatalogoModulo.cs, dentro do AddCatalogo</span>
@@ -834,13 +834,13 @@ pedia mais 7 linhas iguais.</p>
 </code></pre>
 
 <pre class="highlight"><code><span class="c1">// CadastrarFichaProdutoEndpoint.Executar — os três if saíram</span>
-<span class="kt">var</span><span class="w"> </span><span class="n">ficha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FichaProduto</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Sku</span><span class="o">!</span><span class="p">,</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="n">Descricao</span><span class="o">!</span><span class="p">,</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="n">Ncm</span><span class="o">!</span><span class="p">);</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">ficha</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FichaProduto</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Sku</span><span class="p">!,</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="n">Descricao</span><span class="p">!,</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="n">Ncm</span><span class="p">!);</span><span class="w"></span>
 </code></pre>
 
 <p><strong>Resposta ao POST com os três campos vazios:</strong></p>
 <pre class="highlight"><code>HTTP/1.1 400 Bad Request
-{"title":"One or more validation errors occurred.",
- "errors":{"Sku":["O SKU é obrigatório"],"Descricao":["A descrição é obrigatória"],"Ncm":["O NCM é obrigatório"]}}
+{&quot;title&quot;:&quot;One or more validation errors occurred.&quot;,
+ &quot;errors&quot;:{&quot;Sku&quot;:[&quot;O SKU é obrigatório&quot;],&quot;Descricao&quot;:[&quot;A descrição é obrigatória&quot;],&quot;Ncm&quot;:[&quot;O NCM é obrigatório&quot;]}}
 </code></pre>
 
 <p><strong>Como funciona por baixo.</strong> Um <strong>gerador de código</strong> (<em>source generator</em>, que roda no build)
@@ -1083,34 +1083,34 @@ faz requisições HTTP de verdade — por isso ele cobre tudo o que acontece <st
 <span class="n">dotnet</span> <span class="n">add</span> <span class="n">tests</span><span class="p">/</span><span class="n">Modulos</span><span class="p">/</span><span class="n">Catalogo</span><span class="p">/</span><span class="n">Norte</span><span class="p">.</span><span class="n">Catalogo</span><span class="p">.</span><span class="n">Tests</span> <span class="n">reference</span> <span class="n">src</span><span class="p">/</span><span class="n">Norte</span><span class="p">.</span><span class="n">Api</span>
 </code></pre>
 
-<pre class="highlight"><code><span class="k">using</span><span class="w"> </span><span class="nn">System.Net</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="nn">System.Net.Http.Json</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="nn">Microsoft.AspNetCore.Http</span><span class="p">;</span>
-<span class="k">using</span><span class="w"> </span><span class="nn">Microsoft.AspNetCore.Mvc.Testing</span><span class="p">;</span>
+<pre class="highlight"><code><span class="k">using</span><span class="w"> </span><span class="nn">System.Net</span><span class="p">;</span><span class="w"></span>
+<span class="k">using</span><span class="w"> </span><span class="nn">System.Net.Http.Json</span><span class="p">;</span><span class="w"></span>
+<span class="k">using</span><span class="w"> </span><span class="nn">Microsoft.AspNetCore.Http</span><span class="p">;</span><span class="w"></span>
+<span class="k">using</span><span class="w"> </span><span class="nn">Microsoft.AspNetCore.Mvc.Testing</span><span class="p">;</span><span class="w"></span>
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">Norte.Catalogo.Tests.CadastrarFichaProduto</span><span class="p">;</span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">Norte.Catalogo.Tests.CadastrarFichaProduto</span><span class="p">;</span><span class="w"></span>
 
 <span class="c1">// IClassFixture: o xUnit cria UMA fábrica (uma API em memória) para todos os testes desta classe.</span>
-<span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nf">CadastrarFichaProdutoApiTests</span><span class="p">(</span><span class="n">WebApplicationFactory</span><span class="o">&lt;</span><span class="n">Program</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fabrica</span><span class="p">)</span>
-<span class="w">    </span><span class="p">:</span><span class="w"> </span><span class="n">IClassFixture</span><span class="o">&lt;</span><span class="n">WebApplicationFactory</span><span class="o">&lt;</span><span class="n">Program</span><span class="o">&gt;&gt;</span>
-<span class="p">{</span>
-<span class="w">    </span><span class="na">[Fact]</span>
-<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">Recusa_ficha_sem_sku_e_devolve_400</span><span class="p">()</span>
-<span class="w">    </span><span class="p">{</span>
+<span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nf">CadastrarFichaProdutoApiTests</span><span class="p">(</span><span class="n">WebApplicationFactory</span><span class="p">&lt;</span><span class="n">Program</span><span class="p">&gt;</span><span class="w"> </span><span class="n">fabrica</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">:</span><span class="w"> </span><span class="n">IClassFixture</span><span class="p">&lt;</span><span class="n">WebApplicationFactory</span><span class="p">&lt;</span><span class="n">Program</span><span class="p">&gt;&gt;</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="na">[Fact]</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">Recusa_ficha_sem_sku_e_devolve_400</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="c1">// Arrange: um cliente HTTP falando com a API em memória, e o corpo da requisição</span>
-<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">cliente</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fabrica</span><span class="p">.</span><span class="n">CreateClient</span><span class="p">();</span>
-<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">corpo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">sku</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">""</span><span class="p">,</span><span class="w"> </span><span class="n">descricao</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"Luva nitrilica"</span><span class="p">,</span><span class="w"> </span><span class="n">ncm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"40151900"</span><span class="w"> </span><span class="p">};</span>
+<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">cliente</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">fabrica</span><span class="p">.</span><span class="n">CreateClient</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">corpo</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">sku</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">descricao</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;Luva nitrilica&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ncm</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;40151900&quot;</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
 
 <span class="w">        </span><span class="c1">// Act: requisição de verdade — passa pela validação nativa antes do Executar</span>
-<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">resposta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">cliente</span><span class="p">.</span><span class="n">PostAsJsonAsync</span><span class="p">(</span><span class="s">"/catalogo/fichas-produto"</span><span class="p">,</span><span class="w"> </span><span class="n">corpo</span><span class="p">);</span>
+<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">resposta</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">cliente</span><span class="p">.</span><span class="n">PostAsJsonAsync</span><span class="p">(</span><span class="s">&quot;/catalogo/fichas-produto&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">corpo</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">        </span><span class="c1">// Assert: 400, com erro no campo Sku (e só a falta do SKU explica o erro)</span>
-<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">HttpStatusCode</span><span class="p">.</span><span class="n">BadRequest</span><span class="p">,</span><span class="w"> </span><span class="n">resposta</span><span class="p">.</span><span class="n">StatusCode</span><span class="p">);</span>
-<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">problema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">resposta</span><span class="p">.</span><span class="n">Content</span><span class="p">.</span><span class="n">ReadFromJsonAsync</span><span class="o">&lt;</span><span class="n">HttpValidationProblemDetails</span><span class="o">&gt;</span><span class="p">();</span>
-<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="n">NotNull</span><span class="p">(</span><span class="n">problema</span><span class="p">);</span>
-<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="n">Contains</span><span class="p">(</span><span class="s">"Sku"</span><span class="p">,</span><span class="w"> </span><span class="n">problema</span><span class="p">.</span><span class="n">Errors</span><span class="p">.</span><span class="n">Keys</span><span class="p">);</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="p">}</span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">HttpStatusCode</span><span class="p">.</span><span class="n">BadRequest</span><span class="p">,</span><span class="w"> </span><span class="n">resposta</span><span class="p">.</span><span class="n">StatusCode</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">problema</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">resposta</span><span class="p">.</span><span class="n">Content</span><span class="p">.</span><span class="n">ReadFromJsonAsync</span><span class="p">&lt;</span><span class="n">HttpValidationProblemDetails</span><span class="p">&gt;();</span><span class="w"></span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="n">NotNull</span><span class="p">(</span><span class="n">problema</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="n">Contains</span><span class="p">(</span><span class="s">&quot;Sku&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">problema</span><span class="p">.</span><span class="n">Errors</span><span class="p">.</span><span class="n">Keys</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre>
 
 <table>
@@ -1246,8 +1246,8 @@ avisa quando não bate). O código dentro da pasta enxerga os tipos de <code>Nor
 (namespace pai); quem está fora precisa de <code>using Norte.Catalogo.CadastrarFichaProduto;</code>. Os testes
 espelham: <code>Norte.Catalogo.Tests/CadastrarFichaProduto/</code>.</p>
 <p><strong>Mover com <code>git mv</code></strong> (o Git registra como movimento, e o histórico do arquivo continua):</p>
-<pre class="highlight"><code><span class="n">mkdir</span> <span class="s2">"$src/CadastrarFichaProduto"</span>
-<span class="n">git</span> <span class="nb">mv </span><span class="s2">"$src/CadastrarFichaProdutoRequest.cs"</span> <span class="s2">"$src/CadastrarFichaProduto/"</span>
+<pre class="highlight"><code><span class="n">mkdir</span> <span class="s2">&quot;$src/CadastrarFichaProduto&quot;</span>
+<span class="n">git</span> <span class="nb">mv </span><span class="s2">&quot;$src/CadastrarFichaProdutoRequest.cs&quot;</span> <span class="s2">&quot;$src/CadastrarFichaProduto/&quot;</span>
 </code></pre>
 
 <p><strong>Por que agora (e não em M2, como estava previsto).</strong> Com uma funcionalidade só, a pasta ainda não
@@ -1420,8 +1420,8 @@ vezes).</p>
 <p><strong>O que acontece num 500, passo a passo:</strong></p>
 <pre class="highlight"><code>requisição → [UseExceptionHandler] → [UseStatusCodePages] → endpoint (a exceção nasce)
                   ↑ captura; grava a exceção COMPLETA no log; pede o corpo ao ProblemDetails
-resposta ← 500  application/problem+json  { "title": "An error occurred while processing
-           your request.", "status": 500, "traceId": "..." }       (sem detail, sem rastro)
+resposta ← 500  application/problem+json  { &quot;title&quot;: &quot;An error occurred while processing
+           your request.&quot;, &quot;status&quot;: 500, &quot;traceId&quot;: &quot;...&quot; }       (sem detail, sem rastro)
 log      ← fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1] + a exceção
 </code></pre>
 
@@ -1583,34 +1583,34 @@ testes do <code>Catalogo</code> apenas porque usa a rota do <code>Catalogo</code
 <span class="c1">/// do desenvolvedor captura o erro e devolve 500 mesmo sem o &lt;c&gt;UseExceptionHandler()&lt;/c&gt;,</span>
 <span class="c1">/// e o teste passaria sem proteger nada.</span>
 <span class="c1">/// &lt;/summary&gt;</span>
-<span class="na">[Fact]</span>
-<span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">Erro_inesperado_devolve_500_em_problem_details_sem_vazar_detalhes</span><span class="p">()</span>
-<span class="p">{</span>
+<span class="na">[Fact]</span><span class="w"></span>
+<span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">Erro_inesperado_devolve_500_em_problem_details_sem_vazar_detalhes</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="c1">// Dado: a API do teste, em ambiente Production, recebe um repositório que lança exceção</span>
-<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">cliente</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fabrica</span>
-<span class="w">        </span><span class="p">.</span><span class="n">WithWebHostBuilder</span><span class="p">(</span><span class="n">construtor</span><span class="w"> </span><span class="o">=&gt;</span>
-<span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="n">construtor</span><span class="p">.</span><span class="n">UseEnvironment</span><span class="p">(</span><span class="s">"Production"</span><span class="p">);</span>
-<span class="w">            </span><span class="n">construtor</span><span class="p">.</span><span class="n">ConfigureTestServices</span><span class="p">(</span><span class="n">servicos</span><span class="w"> </span><span class="o">=&gt;</span>
-<span class="w">                </span><span class="n">servicos</span><span class="p">.</span><span class="n">AddSingleton</span><span class="o">&lt;</span><span class="n">FichaProdutoRepository</span><span class="o">&gt;</span><span class="p">(</span>
-<span class="w">                    </span><span class="n">_</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">InvalidOperationException</span><span class="p">(</span><span class="s">"Falha simulada no repositorio"</span><span class="p">)));</span>
-<span class="w">        </span><span class="p">})</span>
-<span class="w">        </span><span class="p">.</span><span class="n">CreateClient</span><span class="p">();</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">cliente</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">fabrica</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="n">WithWebHostBuilder</span><span class="p">(</span><span class="n">construtor</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">construtor</span><span class="p">.</span><span class="n">UseEnvironment</span><span class="p">(</span><span class="s">&quot;Production&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">            </span><span class="n">construtor</span><span class="p">.</span><span class="n">ConfigureTestServices</span><span class="p">(</span><span class="n">servicos</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"></span>
+<span class="w">                </span><span class="n">servicos</span><span class="p">.</span><span class="n">AddSingleton</span><span class="p">&lt;</span><span class="n">FichaProdutoRepository</span><span class="p">&gt;(</span><span class="w"></span>
+<span class="w">                    </span><span class="n">_</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">InvalidOperationException</span><span class="p">(</span><span class="s">&quot;Falha simulada no repositorio&quot;</span><span class="p">)));</span><span class="w"></span>
+<span class="w">        </span><span class="p">})</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="n">CreateClient</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">    </span><span class="c1">// Quando: uma ficha válida é enviada</span>
-<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">corpo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">sku</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"LUV-001"</span><span class="p">,</span><span class="w"> </span><span class="n">descricao</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"Luva nitrilica"</span><span class="p">,</span><span class="w"> </span><span class="n">ncm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"40151900"</span><span class="w"> </span><span class="p">};</span>
-<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">resposta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">cliente</span><span class="p">.</span><span class="n">PostAsJsonAsync</span><span class="p">(</span><span class="s">"/catalogo/fichas-produto"</span><span class="p">,</span><span class="w"> </span><span class="n">corpo</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">corpo</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">sku</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;LUV-001&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">descricao</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;Luva nitrilica&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ncm</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;40151900&quot;</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">resposta</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">cliente</span><span class="p">.</span><span class="n">PostAsJsonAsync</span><span class="p">(</span><span class="s">&quot;/catalogo/fichas-produto&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">corpo</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">    </span><span class="c1">// Então: o cliente recebe 500, no formato padrão de erro, sem detalhes internos</span>
-<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">HttpStatusCode</span><span class="p">.</span><span class="n">InternalServerError</span><span class="p">,</span><span class="w"> </span><span class="n">resposta</span><span class="p">.</span><span class="n">StatusCode</span><span class="p">);</span>
-<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="s">"application/problem+json"</span><span class="p">,</span><span class="w"> </span><span class="n">resposta</span><span class="p">.</span><span class="n">Content</span><span class="p">.</span><span class="n">Headers</span><span class="p">.</span><span class="n">ContentType</span><span class="o">?.</span><span class="n">MediaType</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">HttpStatusCode</span><span class="p">.</span><span class="n">InternalServerError</span><span class="p">,</span><span class="w"> </span><span class="n">resposta</span><span class="p">.</span><span class="n">StatusCode</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="s">&quot;application/problem+json&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">resposta</span><span class="p">.</span><span class="n">Content</span><span class="p">.</span><span class="n">Headers</span><span class="p">.</span><span class="n">ContentType</span><span class="p">?.</span><span class="n">MediaType</span><span class="p">);</span><span class="w"></span>
 
-<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">problema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">resposta</span><span class="p">.</span><span class="n">Content</span><span class="p">.</span><span class="n">ReadFromJsonAsync</span><span class="o">&lt;</span><span class="n">ProblemDetails</span><span class="o">&gt;</span><span class="p">();</span>
-<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">NotNull</span><span class="p">(</span><span class="n">problema</span><span class="p">);</span>
-<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Contains</span><span class="p">(</span><span class="s">"traceId"</span><span class="p">,</span><span class="w"> </span><span class="n">problema</span><span class="p">.</span><span class="n">Extensions</span><span class="p">.</span><span class="n">Keys</span><span class="p">);</span>
-<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Null</span><span class="p">(</span><span class="n">problema</span><span class="p">.</span><span class="n">Detail</span><span class="p">);</span>
-<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">DoesNotContain</span><span class="p">(</span><span class="s">"exception"</span><span class="p">,</span><span class="w"> </span><span class="n">problema</span><span class="p">.</span><span class="n">Extensions</span><span class="p">.</span><span class="n">Keys</span><span class="p">);</span>
-<span class="p">}</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">problema</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">resposta</span><span class="p">.</span><span class="n">Content</span><span class="p">.</span><span class="n">ReadFromJsonAsync</span><span class="p">&lt;</span><span class="n">ProblemDetails</span><span class="p">&gt;();</span><span class="w"></span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">NotNull</span><span class="p">(</span><span class="n">problema</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Contains</span><span class="p">(</span><span class="s">&quot;traceId&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">problema</span><span class="p">.</span><span class="n">Extensions</span><span class="p">.</span><span class="n">Keys</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Null</span><span class="p">(</span><span class="n">problema</span><span class="p">.</span><span class="n">Detail</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">DoesNotContain</span><span class="p">(</span><span class="s">&quot;exception&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">problema</span><span class="p">.</span><span class="n">Extensions</span><span class="p">.</span><span class="n">Keys</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre>
 
 <p>Usings novos no arquivo: <code>Microsoft.AspNetCore.Mvc</code> (o <code>ProblemDetails</code>), <code>Microsoft.AspNetCore.TestHost</code>
@@ -1933,7 +1933,7 @@ dependência a mais (conferir licença e integração antes de adotar) (<a href=
 </ol>
 </details>
 </article>
-<footer class="rodape">Atualizado em 24/10/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="assets/search-index.js"></script>

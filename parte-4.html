@@ -28,7 +28,7 @@
 <h1 id="parte-4--o-build-cobra-as-convenções">PARTE 4 — O build cobra as convenções</h1>
 <p><strong>Onde isso fica no mapa (Parte 0):</strong> a Parte 3 desceu ao nível 3 (a funcionalidade). A Parte 4 volta ao nível 1, a solution: nada aqui muda um módulo ou uma funcionalidade; muda as regras com que todos os projetos compilam.</p>
 <pre class="highlight"><code>norte/
-├─ Directory.Build.props      ← configuração comum + "todo aviso é erro"      (4.1)
+├─ Directory.Build.props      ← configuração comum + &quot;todo aviso é erro&quot;      (4.1)
 ├─ .editorconfig              ← as convenções e a gravidade de cada uma       (4.2)
 ├─ Directory.Packages.props   ← as versões dos pacotes, num lugar só          (4.3)
 ├─ Norte.slnx
@@ -82,16 +82,16 @@
 </table>
 <p><strong>O arquivo do Norte, propriedade por propriedade:</strong></p>
 <pre class="highlight"><code><span class="nt">&lt;Project&gt;</span>
-<span class="w">  </span><span class="nt">&lt;PropertyGroup&gt;</span>
-<span class="w">    </span><span class="nt">&lt;TargetFramework&gt;</span>net10.0<span class="nt">&lt;/TargetFramework&gt;</span>
-<span class="w">    </span><span class="nt">&lt;Nullable&gt;</span>enable<span class="nt">&lt;/Nullable&gt;</span>
-<span class="w">    </span><span class="nt">&lt;ImplicitUsings&gt;</span>enable<span class="nt">&lt;/ImplicitUsings&gt;</span>
+  <span class="nt">&lt;PropertyGroup&gt;</span>
+    <span class="nt">&lt;TargetFramework&gt;</span>net10.0<span class="nt">&lt;/TargetFramework&gt;</span>
+    <span class="nt">&lt;Nullable&gt;</span>enable<span class="nt">&lt;/Nullable&gt;</span>
+    <span class="nt">&lt;ImplicitUsings&gt;</span>enable<span class="nt">&lt;/ImplicitUsings&gt;</span>
 
-<span class="w">    </span><span class="nt">&lt;TreatWarningsAsErrors&gt;</span>true<span class="nt">&lt;/TreatWarningsAsErrors&gt;</span>
-<span class="w">    </span><span class="nt">&lt;AnalysisLevel&gt;</span>latest<span class="nt">&lt;/AnalysisLevel&gt;</span>
-<span class="w">    </span><span class="nt">&lt;AnalysisMode&gt;</span>Recommended<span class="nt">&lt;/AnalysisMode&gt;</span>
-<span class="w">    </span><span class="nt">&lt;EnforceCodeStyleInBuild&gt;</span>true<span class="nt">&lt;/EnforceCodeStyleInBuild&gt;</span>
-<span class="w">  </span><span class="nt">&lt;/PropertyGroup&gt;</span>
+    <span class="nt">&lt;TreatWarningsAsErrors&gt;</span>true<span class="nt">&lt;/TreatWarningsAsErrors&gt;</span>
+    <span class="nt">&lt;AnalysisLevel&gt;</span>latest<span class="nt">&lt;/AnalysisLevel&gt;</span>
+    <span class="nt">&lt;AnalysisMode&gt;</span>Recommended<span class="nt">&lt;/AnalysisMode&gt;</span>
+    <span class="nt">&lt;EnforceCodeStyleInBuild&gt;</span>true<span class="nt">&lt;/EnforceCodeStyleInBuild&gt;</span>
+  <span class="nt">&lt;/PropertyGroup&gt;</span>
 <span class="nt">&lt;/Project&gt;</span>
 </code></pre>
 
@@ -313,48 +313,48 @@
 </tbody>
 </table>
 <p><strong>O arquivo do Norte, bloco por bloco:</strong></p>
-<pre class="highlight"><code><span class="na">root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">true</span>
+<pre class="highlight"><code><span class="na">root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">true</span><span class="w"></span>
 </code></pre>
 
 <p>Diz &quot;pare de procurar <code>.editorconfig</code> nas pastas de cima&quot;. Sem isso, um <code>.editorconfig</code> perdido em D:\Projetos\ poderia misturar regras.</p>
-<pre class="highlight"><code><span class="k">[*]</span>
-<span class="na">charset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">utf-8</span>
-<span class="na">indent_style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">space</span>
-<span class="na">insert_final_newline</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">true</span>
-<span class="na">trim_trailing_whitespace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">true</span>
+<pre class="highlight"><code><span class="k">[*]</span><span class="w"></span>
+<span class="na">charset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">utf-8</span><span class="w"></span>
+<span class="na">indent_style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">space</span><span class="w"></span>
+<span class="na">insert_final_newline</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">true</span><span class="w"></span>
+<span class="na">trim_trailing_whitespace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">true</span><span class="w"></span>
 </code></pre>
 
 <p>Vale para todo arquivo. Codificação, espaço (não tab), quebra de linha no fim do arquivo e sem espaço sobrando no fim da linha. Atenção: essas quatro são aplicadas pelo editor ao salvar; o <code>dotnet build</code> não as cobra. Cobrança automática fica para o CI (a conferir: <code>dotnet format --verify-no-changes</code>).</p>
-<pre class="highlight"><code><span class="k">[*.{csproj,props,targets,slnx,xml,json}]</span>
-<span class="na">indent_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2</span>
+<pre class="highlight"><code><span class="k">[*.{csproj,props,targets,slnx,xml,json}]</span><span class="w"></span>
+<span class="na">indent_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2</span><span class="w"></span>
 
-<span class="k">[*.md]</span>
-<span class="na">trim_trailing_whitespace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">false</span>
+<span class="k">[*.md]</span><span class="w"></span>
+<span class="na">trim_trailing_whitespace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">false</span><span class="w"></span>
 </code></pre>
 
 <p>Arquivos XML e JSON com 2 espaços (o costume do mercado). Em Markdown, dois espaços no fim da linha são quebra de linha, então não podem ser apagados.</p>
-<pre class="highlight"><code><span class="k">[*.cs]</span>
-<span class="na">indent_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">4</span>
+<pre class="highlight"><code><span class="k">[*.cs]</span><span class="w"></span>
+<span class="na">indent_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">4</span><span class="w"></span>
 
-<span class="na">csharp_style_namespace_declarations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">file_scoped</span>
-<span class="na">dotnet_diagnostic.IDE0161.severity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">warning</span>
+<span class="na">csharp_style_namespace_declarations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">file_scoped</span><span class="w"></span>
+<span class="na">dotnet_diagnostic.IDE0161.severity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">warning</span><span class="w"></span>
 </code></pre>
 
 <p>Duas linhas por regra de estilo: a opção (o que se prefere: <code>file_scoped</code>) e a severidade (quão grave: warning, que o <code>TreatWarningsAsErrors</code> transforma em erro).</p>
-<pre class="highlight"><code><span class="na">dotnet_naming_rule.metodos_async_terminam_em_async.symbols</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s">metodos_async</span>
-<span class="na">dotnet_naming_rule.metodos_async_terminam_em_async.style</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="s">sufixo_async</span>
-<span class="na">dotnet_naming_rule.metodos_async_terminam_em_async.severity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">warning</span>
-<span class="na">dotnet_naming_symbols.metodos_async.applicable_kinds</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s">method</span>
-<span class="na">dotnet_naming_symbols.metodos_async.required_modifiers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">async</span>
-<span class="na">dotnet_naming_style.sufixo_async.required_suffix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">Async</span>
-<span class="na">dotnet_naming_style.sufixo_async.capitalization</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s">pascal_case</span>
-<span class="na">dotnet_diagnostic.IDE1006.severity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">warning</span>
+<pre class="highlight"><code><span class="na">dotnet_naming_rule.metodos_async_terminam_em_async.symbols</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s">metodos_async</span><span class="w"></span>
+<span class="na">dotnet_naming_rule.metodos_async_terminam_em_async.style</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="s">sufixo_async</span><span class="w"></span>
+<span class="na">dotnet_naming_rule.metodos_async_terminam_em_async.severity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">warning</span><span class="w"></span>
+<span class="na">dotnet_naming_symbols.metodos_async.applicable_kinds</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s">method</span><span class="w"></span>
+<span class="na">dotnet_naming_symbols.metodos_async.required_modifiers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">async</span><span class="w"></span>
+<span class="na">dotnet_naming_style.sufixo_async.required_suffix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">Async</span><span class="w"></span>
+<span class="na">dotnet_naming_style.sufixo_async.capitalization</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s">pascal_case</span><span class="w"></span>
+<span class="na">dotnet_diagnostic.IDE1006.severity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">warning</span><span class="w"></span>
 </code></pre>
 
 <p>Uma regra de nomes tem três peças, sempre: a quem se aplica (symbols: métodos com async) · como deve ser (style: termina em <code>Async</code>, PascalCase) · quão grave (severity). Os nomes <code>metodos_async</code> e <code>sufixo_async</code> são nossos (rótulos livres). A regra <code>IDE1006</code> é a que reporta violações de nomes.</p>
-<pre class="highlight"><code><span class="k">[tests/**.cs]</span>
-<span class="na">dotnet_diagnostic.CA1707.severity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">none</span>
-<span class="na">dotnet_naming_rule.metodos_async_terminam_em_async.severity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">none</span>
+<pre class="highlight"><code><span class="k">[tests/**.cs]</span><span class="w"></span>
+<span class="na">dotnet_diagnostic.CA1707.severity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">none</span><span class="w"></span>
+<span class="na">dotnet_naming_rule.metodos_async_terminam_em_async.severity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">none</span><span class="w"></span>
 </code></pre>
 
 <p>Exceções dos testes, com motivo: o nome do teste é a regra em português com _ (<code>Recusa_ficha_sem_sku_e_devolve_400</code>, ADR-001); a documentação oficial da <code>CA1707</code> diz que suprimi-la em código de teste é seguro. E o método de teste async não leva <code>Async</code> porque o nome é a regra, não o método. A seção mais específica (<code>[tests/**.cs]</code>) sobrescreve a geral (<code>[*.cs]</code>) só onde repete a chave.</p>
@@ -418,16 +418,16 @@
 </table>
 <p><strong>O arquivo do Norte:</strong></p>
 <pre class="highlight"><code><span class="nt">&lt;Project&gt;</span>
-<span class="w">  </span><span class="nt">&lt;PropertyGroup&gt;</span>
-<span class="w">    </span><span class="nt">&lt;ManagePackageVersionsCentrally&gt;</span>true<span class="nt">&lt;/ManagePackageVersionsCentrally&gt;</span>
-<span class="w">  </span><span class="nt">&lt;/PropertyGroup&gt;</span>
-<span class="w">  </span><span class="nt">&lt;ItemGroup</span><span class="w"> </span><span class="na">Label=</span><span class="s">"Testes"</span><span class="nt">&gt;</span>
-<span class="w">    </span><span class="nt">&lt;PackageVersion</span><span class="w"> </span><span class="na">Include=</span><span class="s">"coverlet.collector"</span><span class="w"> </span><span class="na">Version=</span><span class="s">"6.0.4"</span><span class="w"> </span><span class="nt">/&gt;</span>
-<span class="w">    </span><span class="nt">&lt;PackageVersion</span><span class="w"> </span><span class="na">Include=</span><span class="s">"Microsoft.AspNetCore.Mvc.Testing"</span><span class="w"> </span><span class="na">Version=</span><span class="s">"10.0.12"</span><span class="w"> </span><span class="nt">/&gt;</span>
-<span class="w">    </span><span class="nt">&lt;PackageVersion</span><span class="w"> </span><span class="na">Include=</span><span class="s">"Microsoft.NET.Test.Sdk"</span><span class="w"> </span><span class="na">Version=</span><span class="s">"17.14.1"</span><span class="w"> </span><span class="nt">/&gt;</span>
-<span class="w">    </span><span class="nt">&lt;PackageVersion</span><span class="w"> </span><span class="na">Include=</span><span class="s">"xunit"</span><span class="w"> </span><span class="na">Version=</span><span class="s">"2.9.3"</span><span class="w"> </span><span class="nt">/&gt;</span>
-<span class="w">    </span><span class="nt">&lt;PackageVersion</span><span class="w"> </span><span class="na">Include=</span><span class="s">"xunit.runner.visualstudio"</span><span class="w"> </span><span class="na">Version=</span><span class="s">"3.1.4"</span><span class="w"> </span><span class="nt">/&gt;</span>
-<span class="w">  </span><span class="nt">&lt;/ItemGroup&gt;</span>
+  <span class="nt">&lt;PropertyGroup&gt;</span>
+    <span class="nt">&lt;ManagePackageVersionsCentrally&gt;</span>true<span class="nt">&lt;/ManagePackageVersionsCentrally&gt;</span>
+  <span class="nt">&lt;/PropertyGroup&gt;</span>
+  <span class="nt">&lt;ItemGroup</span> <span class="na">Label=</span><span class="s">&quot;Testes&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;PackageVersion</span> <span class="na">Include=</span><span class="s">&quot;coverlet.collector&quot;</span> <span class="na">Version=</span><span class="s">&quot;6.0.4&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;PackageVersion</span> <span class="na">Include=</span><span class="s">&quot;Microsoft.AspNetCore.Mvc.Testing&quot;</span> <span class="na">Version=</span><span class="s">&quot;10.0.12&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;PackageVersion</span> <span class="na">Include=</span><span class="s">&quot;Microsoft.NET.Test.Sdk&quot;</span> <span class="na">Version=</span><span class="s">&quot;17.14.1&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;PackageVersion</span> <span class="na">Include=</span><span class="s">&quot;xunit&quot;</span> <span class="na">Version=</span><span class="s">&quot;2.9.3&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;PackageVersion</span> <span class="na">Include=</span><span class="s">&quot;xunit.runner.visualstudio&quot;</span> <span class="na">Version=</span><span class="s">&quot;3.1.4&quot;</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/ItemGroup&gt;</span>
 <span class="nt">&lt;/Project&gt;</span>
 </code></pre>
 
@@ -553,7 +553,7 @@
 </ol>
 </details>
 </article>
-<footer class="rodape">Atualizado em 24/10/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="assets/search-index.js"></script>

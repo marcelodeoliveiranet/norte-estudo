@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ESTUDO S43 — Organização dos testes do Norte · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s43.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#estudo-s43--organização-dos-testes-do-norte" data-id="estudo-s43--organização-dos-testes-do-norte">ESTUDO S43 — Organização dos testes do Norte</a><a class="n2" href="#1-objetivo-e-resultado" data-id="1-objetivo-e-resultado">1. Objetivo e resultado</a><a class="n2" href="#2-mapa-dos-níveis" data-id="2-mapa-dos-níveis">2. Mapa dos níveis</a><a class="n2" href="#3-conceitos-de-para" data-id="3-conceitos-de-para">3. Conceitos (de-para)</a><a class="n2" href="#4-termos" data-id="4-termos">4. Termos</a><a class="n2" href="#5-dúvidas-que-apareceram" data-id="5-dúvidas-que-apareceram">5. Dúvidas que apareceram</a><a class="n2" href="#6-divergências-e-decisões" data-id="6-divergências-e-decisões">6. Divergências e decisões</a><a class="n2" href="#7-avaliação-da-sessão" data-id="7-avaliação-da-sessão">7. Avaliação da sessão</a><a class="n2" href="#8-pontos-a-melhorar" data-id="8-pontos-a-melhorar">8. Pontos a melhorar</a><a class="n2" href="#9-perguntas-de-recuperação" data-id="9-perguntas-de-recuperação">9. Perguntas de recuperação</a><a class="n2" href="#10-preparação-para-o-próximo-chat" data-id="10-preparação-para-o-próximo-chat">10. Preparação para o próximo chat</a></aside>
+<main class="conteudo"><article>
+<h1 id="estudo-s43--organização-dos-testes-do-norte">ESTUDO S43 — Organização dos testes do Norte</h1>
+<blockquote>
+<p>Material de estudo da sessão S43 (09/11/2026). Tempo líquido de estudo: <strong>4h55</strong> (14:48 a 21:58, pausa 18:00–20:15).</p>
+</blockquote>
+<h2 id="1-objetivo-e-resultado">1. Objetivo e resultado</h2>
+<p><strong>Objetivo:</strong> organizar os testes do Norte para que exista um &quot;modelo&quot; correto e os testes futuros já nasçam certos. Só os testes mudam (nada em <code>src/</code>); cada passo é uma branch e um PR pequeno; a régua de sucesso é <strong>309 testes verdes</strong> (2 Api + 69 Catálogo + 81 Clientes + 92 Pedidos + 65 Representantes).</p>
+<p><strong>Resultado:</strong> Passos 0 a 3 entregues e parte do Passo 4 (PRs #107 a #114, todos mesclados, CI verde, 309 testes em todos).</p>
+<table>
+<thead>
+<tr>
+<th>Passo</th>
+<th>O que foi feito</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Rascunho da convenção de testes</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Projeto <code>Norte.Testes.Compartilhado</code> + <code>Dados.Sku</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>Dados.Cnpj</code>, <code>Dados.Cpf</code>, <code>Dados.Email</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>PostgresFabricaBase</code> (fábrica base) usada pelas 5 fábricas</td>
+</tr>
+<tr>
+<td>4 (parcial)</td>
+<td>Extensões de <code>HttpClient</code>: <code>PutComIfMatchAsync</code> e <code>DeleteComIfMatchAsync</code> em Representantes e Clientes</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-mapa-dos-níveis">2. Mapa dos níveis</h2>
+<ul>
+<li><strong>Nível 1 — Gerar dados:</strong> <code>Dados.*</code> no lugar de literais e helpers repetidos.</li>
+<li><strong>Nível 2 — Subir o ambiente:</strong> uma fábrica base (Template Method) em vez de cinco cópias.</li>
+<li><strong>Nível 3 — Falar HTTP:</strong> métodos de extensão para o cabeçalho <code>If-Match</code>.</li>
+<li><strong>Nível 4 — Nomear e organizar:</strong> sufixo <code>Tests</code>, pastas, verbos dos métodos (próximas sessões).</li>
+</ul>
+<h2 id="3-conceitos-de-para">3. Conceitos (de-para)</h2>
+<table>
+<thead>
+<tr>
+<th>Antes</th>
+<th>Depois</th>
+<th>Por quê</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ProximoCpf()</code>, <code>Guid</code> como e-mail, SKUs locais</td>
+<td><code>Dados.Cpf()</code>, <code>Dados.Email()</code>, <code>Dados.Sku()</code></td>
+<td>Um só lugar para gerar dado válido e único</td>
+</tr>
+<tr>
+<td>5 fábricas com Testcontainers copiado</td>
+<td><code>PostgresFabricaBase</code></td>
+<td>Subir o Postgres é igual; só migrar muda</td>
+</tr>
+<tr>
+<td>Helper privado de PUT com <code>If-Match</code> em cada classe</td>
+<td><code>cliente.PutComIfMatchAsync(...)</code></td>
+<td>Escrito uma vez, usado por todos</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Regra &quot;o valor é o assunto do teste?&quot;</strong> Se o valor é o que o teste verifica (linha de <code>TheoryData</code>, teste de domínio, duplicado, maiúsculas), o literal fica. Se é só um dado qualquer para o teste rodar, usa <code>Dados.*</code>.</p>
+<p><strong>Template Method</strong> — a base define o esqueleto (<code>InitializeAsync</code> sobe o contêiner e chama <code>MigrarAsync</code>), e cada fábrica preenche só o que muda: <code>MigrarAsync</code> (abstrato), <code>Ambiente</code> (virtual, &quot;Testing&quot;) e <code>ConfigurarServicos</code> (virtual).</p>
+<p><strong>Método de extensão</strong> — <code>this HttpClient cliente</code> faz o método aparecer em qualquer <code>HttpClient</code>. A pasta <code>Extensions/</code> usa namespace igual à pasta, e cada csproj consumidor declara um <code>&lt;Using&gt;</code>.</p>
+<h2 id="4-termos">4. Termos</h2>
+<ul>
+<li><strong>Fábrica de teste:</strong> <code>WebApplicationFactory&lt;Program&gt;</code> que sobe a API de verdade para os testes.</li>
+<li><strong>Fixture (<code>IClassFixture</code>):</strong> objeto criado uma vez por classe de teste e compartilhado.</li>
+<li><strong>ETag / <code>If-Match</code>:</strong> controle de concorrência otimista; o cliente devolve o ETag que recebeu.</li>
+<li><strong><code>IsTestProject=false</code>:</strong> impede que o <code>dotnet test</code> trate uma biblioteca que referencia <code>xunit</code> como projeto de teste.</li>
+<li><strong>Central package management:</strong> versões dos pacotes em um só arquivo.</li>
+</ul>
+<h2 id="5-dúvidas-que-apareceram">5. Dúvidas que apareceram</h2>
+<ul>
+<li><code>ConfigureLogging</code> e <code>services.AddLogging</code> são equivalentes? <strong>Sim</strong>, é o mesmo registro.</li>
+<li>Por que a fábrica da Api migra com o próprio <code>DbContext</code> em vez de <code>Services</code>? Porque o seed de Development roda ao iniciar a API; usar <code>Services</code> iniciaria a API antes do banco estar migrado.</li>
+<li>Por que o <code>\s</code> do Ctrl+H do Visual Studio não pegou 6 das 8 ocorrências? Porque <code>\s</code> não atravessa quebra de linha; é preciso <code>\n</code>.</li>
+</ul>
+<h2 id="6-divergências-e-decisões">6. Divergências e decisões</h2>
+<ul>
+<li>Parâmetro <code>caminho</code> em vez de <code>uri</code> (regra CA1054 quebra o build).</li>
+<li>Os testes de <code>If-Match</code> ausente ou malformado (&quot;abc&quot;) ficam montados à mão: o cabeçalho errado é o assunto do teste.</li>
+<li>A pasta <code>Extensions/</code> nasce já pensando em mais extensões (cadastros por módulo).</li>
+</ul>
+<h2 id="7-avaliação-da-sessão">7. Avaliação da sessão</h2>
+<p>Entrega sólida e sem regressão, mas o caminho teve três tropeços de processo (teste perdido, aborto de CI, namespace). O principal aprendizado de método: <strong>contar os testes, não só olhar o CI verde</strong>.</p>
+<h2 id="8-pontos-a-melhorar">8. Pontos a melhorar</h2>
+<ol>
+<li>Rodar <code>dotnet test Norte.slnx</code> sempre que um csproj mudar, não só o projeto do módulo.</li>
+<li>Salvar tudo (Ctrl+Shift+S) antes de pedir conferência no disco.</li>
+<li>Conferir [Fact]/[Theory] antes e depois de cada refatoração.</li>
+<li>Ainda falta: Clientes <code>Excluir</code>, helper do Catálogo (<code>EntityTagHeaderValue</code>), extensões de cadastro por módulo, Passos 5 a 8, aprovação final da convenção (Passo 0).</li>
+</ol>
+<h2 id="9-perguntas-de-recuperação">9. Perguntas de recuperação</h2>
+<ol>
+<li>Por que o projeto compartilhado precisou de <code>IsTestProject=false</code>?</li>
+</ol>
+<details><summary>Resposta</summary>Porque ele referencia `xunit`; o `dotnet test Norte.slnx` o tratava como projeto de teste e o testhost abortava (BouncyCastle ausente no manifesto de dependências).</details>
+<ol start="2">
+<li>O que cada fábrica ainda implementa depois da base?</li>
+</ol>
+<details><summary>Resposta</summary>`MigrarAsync` (obrigatório), e opcionalmente `Ambiente` e `ConfigurarServicos`.</details>
+<ol start="3">
+<li>Quando um literal deve continuar no teste em vez de virar <code>Dados.*</code>?</li>
+</ol>
+<details><summary>Resposta</summary>Quando o valor é o assunto do teste (TheoryData, domínio, duplicidade, maiúsculas).</details>
+<ol start="4">
+<li>Por que a regex do Visual Studio achou só parte das ocorrências?</li>
+</ol>
+<details><summary>Resposta</summary>`\s` não atravessa quebra de linha; é preciso `\n` explícito.</details>
+<ol start="5">
+<li>Como um teste perdido passou despercebido, e como evitar?</li>
+</ol>
+<details><summary>Resposta</summary>O CI ficou verde porque um teste a menos não falha; evita-se contando os testes (309 esperados) e comparando [Fact]/[Theory] antes e depois.</details>
+<h2 id="10-preparação-para-o-próximo-chat">10. Preparação para o próximo chat</h2>
+<ul>
+<li>Estado: <code>main</code> em <code>b85ea52</code>, 309 testes verdes.</li>
+<li>Próximo: terminar o Passo 4 (Clientes <code>Excluir</code>, Catálogo, extensões de cadastro) e decidir até onde ir nos Passos 5 a 8.</li>
+<li>Trazer: a decisão sobre o teto do M1 e se a convenção (Passo 0) está aprovada.</li>
+</ul>
+
+</article>
+<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

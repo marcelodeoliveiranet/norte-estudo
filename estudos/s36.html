@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norte · S36 — Concorrência otimista com xmin, ETag e If-Match, 412 e 428, e a ADR-015 · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s36.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#norte--s36--concorrência-otimista-com-xmin-etag-e-if-match-412-e-428-e-a-adr-015" data-id="norte--s36--concorrência-otimista-com-xmin-etag-e-if-match-412-e-428-e-a-adr-015">Norte · S36 — Concorrência otimista com xmin, ETag e If-Match, 412 e…</a><a class="n2" href="#1-resultado-da-sessão" data-id="1-resultado-da-sessão">1. Resultado da sessão</a><a class="n2" href="#2-onde-isso-está-no-mapa-dos-níveis" data-id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</a><a class="n2" href="#3-conceitos" data-id="3-conceitos">3. Conceitos</a><a class="n2" href="#4-termos" data-id="4-termos">4. Termos</a><a class="n2" href="#5-dúvidas-e-respostas" data-id="5-dúvidas-e-respostas">5. Dúvidas e respostas</a><a class="n2" href="#6-decisões-do-aluno" data-id="6-decisões-do-aluno">6. Decisões do aluno</a><a class="n2" href="#7-avaliação" data-id="7-avaliação">7. Avaliação</a><a class="n2" href="#8-pontos-a-melhorar" data-id="8-pontos-a-melhorar">8. Pontos a melhorar</a><a class="n2" href="#9-teste-se" data-id="9-teste-se">9. Teste-se</a><a class="n2" href="#10-preparação-para-a-próxima-sessão-s37" data-id="10-preparação-para-a-próxima-sessão-s37">10. Preparação para a próxima sessão (S37)</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a></aside>
+<main class="conteudo"><article>
+<h1 id="norte--s36--concorrência-otimista-com-xmin-etag-e-if-match-412-e-428-e-a-adr-015">Norte · S36 — Concorrência otimista com <code>xmin</code>, <code>ETag</code> e <code>If-Match</code>, 412 e 428, e a ADR-015</h1>
+<p><strong>Sexta 30/10 a segunda 02/11/2026 · tempo líquido: 7h10 (início 09:39 de sexta; pausas 11:03–11:21, 12:27–12:47 e 13:29–14:22; pausa longa de 15:26 de sexta a 14:47 de segunda, descontada; fim 17:41 de segunda; blocos de 1h24, 1h06, 0h42, 1h04 e 2h54) · Marco M1</strong></p>
+<p>Até hoje, dois <code>PUT</code> na mesma ficha do <code>Catalogo</code> terminavam com <strong>o último vencendo sem aviso</strong>: quem gravou primeiro tinha a alteração apagada e ninguém sabia. Hoje a ficha passou a carregar uma <strong>marca de versão</strong> (o <code>xmin</code> do Postgres), a API devolve essa marca no cabeçalho <code>ETag</code>, e <code>PUT</code> e <code>DELETE</code> só valem se o cliente devolver a marca que <strong>leu</strong> (<code>If-Match</code>). Marca velha dá <strong>412</strong>; marca ausente dá <strong>428</strong>. A decisão ficou escrita na <strong>ADR-015</strong>. No fim, um nome que incomodava (<code>Versao</code>) virou <code>TokenConcorrencia</code>. A suíte foi de <strong>183 para 190 testes</strong>.</p>
+<p>A ideia para guardar: <strong>a pergunta que o servidor faz no <code>UPDATE</code> é &quot;a linha ainda está do jeito que você leu?&quot;</strong> Se estiver, grava. Se não, recusa e deixa o cliente reler. Ninguém tranca nada.</p>
+<blockquote>
+<p><strong>Antes de ler:</strong> a explicação completa está na entrada <strong>8.15 da Parte 8 do guia</strong> (<a href="../parte-8.html#815-concorrência-otimista-na-ficha-de-produto-xmin-etag-if-match-412-e-428">GUIA-DOTNET-P8.md</a>). Esta página é o roteiro de estudo da sessão.</p>
+<p><strong>Limite deste registro:</strong> a sessão foi compactada duas vezes e atravessou o fim de semana. O começo foi reconstituído pelo resumo e pelo Git; a ajuda por exercício não foi medida.</p>
+</blockquote>
+<hr />
+<h2 id="1-resultado-da-sessão">1. Resultado da sessão</h2>
+<table>
+<thead>
+<tr>
+<th>PR</th>
+<th>Commit</th>
+<th>O que entrou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#84</td>
+<td><code>1c21d3a</code></td>
+<td>concorrência otimista na <code>FichaProduto</code>: token de concorrência, <code>ETag</code>, <code>If-Match</code>, 412 e 428, testes</td>
+</tr>
+<tr>
+<td>#85</td>
+<td><code>81a072c</code></td>
+<td><strong>ADR-015</strong> — concorrência otimista na ficha de produto (Aceito em 30/10/2026)</td>
+</tr>
+<tr>
+<td>#86</td>
+<td><code>96e9f77</code></td>
+<td>refatoração de nomes: <code>Versao</code> → <code>TokenConcorrencia</code>, enum corrigido, helpers de ETag dos testes num lugar só</td>
+</tr>
+</tbody>
+</table>
+<p>Estado final: <code>main</code> em <code>96e9f77</code>, <strong>190 testes verdes</strong>, CI verde. O ciclo manual pelo <code>.http</code> passou nos <strong>12 passos</strong>. <strong>Pendências: nenhuma.</strong> A próxima ADR livre é a <strong>016</strong>.</p>
+<h2 id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</h2>
+<ul>
+<li><strong>Dentro do módulo <code>Catalogo</code>:</strong> a entidade ganha uma propriedade de controle; a configuração do EF diz que ela é a marca de versão; o repositório compara a marca lida com a atual.</li>
+<li><strong>Na borda HTTP do módulo:</strong> os endpoints leem e escrevem cabeçalhos (<code>ETag</code>, <code>If-Match</code>) e escolhem o status (412, 428).</li>
+<li><strong>Na documentação:</strong> a ADR-015 registra o contrato.</li>
+</ul>
+<h2 id="3-conceitos">3. Conceitos</h2>
+<h3 id="31-o-problema-o-último-vence-guia-815">3.1 O problema: o último vence (guia <a href="../parte-8.html#815-concorrência-otimista-na-ficha-de-produto-xmin-etag-if-match-412-e-428">8.15</a>)</h3>
+<p>Duas pessoas abrem a mesma ficha. As duas alteram. A primeira grava; a segunda grava depois e <strong>apaga</strong> a alteração da primeira sem saber. Isso se chama <strong>atualização perdida</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Abordagem</th>
+<th>Como funciona</th>
+<th>Preço</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Último vence (o que existia)</td>
+<td>nenhuma verificação</td>
+<td>alteração perdida em silêncio</td>
+</tr>
+<tr>
+<td><strong>Concorrência otimista</strong> (a escolhida)</td>
+<td>cada linha tem uma marca; o <code>UPDATE</code> só vale se a marca ainda for a que o cliente leu</td>
+<td>o cliente precisa guardar a marca e tratar a recusa</td>
+</tr>
+<tr>
+<td>Concorrência pessimista</td>
+<td>trancar a linha enquanto alguém edita</td>
+<td>tranca presa, pior escala; não cabe numa API sem estado</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-xmin-a-marca-de-versão-que-o-postgres-já-tem">3.2 <code>xmin</code>: a marca de versão que o Postgres já tem</h3>
+<p>Toda linha do Postgres tem a coluna de sistema <code>xmin</code>: o número da transação que gravou a linha. Cada alteração gera um <code>xmin</code> novo. Por isso ele serve de marca de versão <strong>sem criar coluna</strong>.</p>
+<pre class="highlight"><code><span class="c1">// FichaProduto.cs</span>
+<span class="k">public</span><span class="w"> </span><span class="kt">uint</span><span class="w"> </span><span class="n">TokenConcorrencia</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="c1">// FichaProdutoConfiguration.cs</span>
+<span class="n">builder</span><span class="p">.</span><span class="n">Property</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">TokenConcorrencia</span><span class="p">).</span><span class="n">IsRowVersion</span><span class="p">();</span><span class="w"></span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Parte</th>
+<th>Significado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>uint</code></td>
+<td>o <code>xmin</code> é um número de 32 bits sem sinal</td>
+</tr>
+<tr>
+<td><code>private set</code></td>
+<td>só o EF escreve; o domínio não mexe</td>
+</tr>
+<tr>
+<td><code>IsRowVersion()</code></td>
+<td>o Npgsql mapeia para <code>xmin</code> e o EF passa a incluir a marca no <code>WHERE</code> do <code>UPDATE</code> e do <code>DELETE</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cuidado que o aluno registrou:</strong> o <code>xmin</code> vem de um contador global de transações. Serve <strong>só para igualdade</strong> (&quot;é a mesma?&quot;). Não serve para ordenar nem para dizer &quot;qual é mais nova&quot;.</p>
+<h3 id="33-o-que-vai-no-cabeçalho">3.3 O que vai no cabeçalho</h3>
+<table>
+<thead>
+<tr>
+<th>Cabeçalho</th>
+<th>Quem manda</th>
+<th>Quando</th>
+<th>Exemplo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ETag</code></td>
+<td>servidor</td>
+<td>respostas de <code>GET</code>, <code>POST</code> e <code>PUT</code></td>
+<td><code>ETag: &quot;820&quot;</code></td>
+</tr>
+<tr>
+<td><code>If-Match</code></td>
+<td>cliente</td>
+<td><code>PUT</code> e <code>DELETE</code></td>
+<td><code>If-Match: &quot;820&quot;</code></td>
+</tr>
+</tbody>
+</table>
+<p>O valor comparado é <strong>o que o cliente leu</strong>, não o que o servidor tem agora. No <code>PUT</code> bem-sucedido a resposta traz o <strong><code>ETag</code> novo</strong> (no ciclo manual: 820 → 821).</p>
+<pre class="highlight"><code><span class="c1">// forma do trecho nos endpoints (nomes exatos no arquivo real podem diferir)</span>
+<span class="n">Response</span><span class="p">.</span><span class="n">Headers</span><span class="p">.</span><span class="n">ETag</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">$&quot;\&quot;{ficha.TokenConcorrencia}\&quot;&quot;</span><span class="p">;</span><span class="w"></span>
+
+<span class="kt">uint?</span><span class="w"> </span><span class="n">tokenLido</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">null</span><span class="p">;</span><span class="w"></span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kt">uint</span><span class="p">.</span><span class="n">TryParse</span><span class="p">(</span><span class="n">ifMatch</span><span class="p">.</span><span class="n">Trim</span><span class="p">(</span><span class="sc">&#39;&quot;&#39;</span><span class="p">),</span><span class="w"> </span><span class="k">out</span><span class="w"> </span><span class="kt">var</span><span class="w"> </span><span class="n">token</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="n">tokenLido</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">token</span><span class="p">;</span><span class="w"></span>
+</code></pre>
+
+<h3 id="34-no-repositório-a-marca-lida-entra-no-where">3.4 No repositório: a marca lida entra no <code>WHERE</code></h3>
+<pre class="highlight"><code><span class="c1">// AtualizarAsync (e ExcluirAsync): a marca lida pelo cliente vira o valor &quot;original&quot;</span>
+<span class="n">db</span><span class="p">.</span><span class="n">Entry</span><span class="p">(</span><span class="n">ficha</span><span class="p">).</span><span class="n">Property</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">TokenConcorrencia</span><span class="p">).</span><span class="n">OriginalValue</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">tokenLido</span><span class="p">.</span><span class="n">Value</span><span class="p">;</span><span class="w"></span>
+</code></pre>
+
+<p>Sem esta linha, o EF compararia com a marca que acabou de carregar do banco (sempre igual, nunca recusaria). Com ela, o <code>UPDATE ... WHERE sku = ... AND xmin = &lt;marca do cliente&gt;</code> afeta <strong>zero linhas</strong> se alguém mudou no meio, e o EF lança <code>DbUpdateConcurrencyException</code>.</p>
+<p>Ordem das perguntas do repositório (e dos status):</p>
+<table>
+<thead>
+<tr>
+<th>Ordem</th>
+<th>Pergunta</th>
+<th>Resultado</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>a ficha existe?</td>
+<td><code>NaoEncontrado</code></td>
+<td><strong>404</strong></td>
+</tr>
+<tr>
+<td>2</td>
+<td>veio <code>If-Match</code>?</td>
+<td><code>TokenNaoInformado</code></td>
+<td><strong>428</strong></td>
+</tr>
+<tr>
+<td>3</td>
+<td>grava; a marca bate?</td>
+<td><code>Atualizado</code> / <code>Excluido</code></td>
+<td>200 / 204</td>
+</tr>
+<tr>
+<td>4</td>
+<td>a marca não bate</td>
+<td><code>TokenDesatualizado</code></td>
+<td><strong>412</strong></td>
+</tr>
+<tr>
+<td>—</td>
+<td>SKU repetido (só no <code>PUT</code>)</td>
+<td><code>Conflito</code></td>
+<td><strong>409</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>404 vem antes de 428:</strong> pedir <code>If-Match</code> para uma ficha que nem existe seria confuso.</p>
+<p><strong>Ordem dos <code>catch</code>:</strong> <code>DbUpdateConcurrencyException</code> <strong>antes</strong> do <code>DbUpdateException</code> da violação de unicidade. A primeira herda da segunda; se a genérica vier antes, engole a específica.</p>
+<h3 id="35-por-que-412-e-428-e-não-409">3.5 Por que 412 e 428, e não 409</h3>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Quando</th>
+<th>Por que este</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>412 Precondition Failed</td>
+<td><code>If-Match</code> não bate com a versão atual</td>
+<td>o RFC 9110 criou o <code>If-Match</code> para isto: a condição falhou</td>
+</tr>
+<tr>
+<td>428 Precondition Required</td>
+<td><code>If-Match</code> ausente</td>
+<td>o servidor <strong>exige</strong> a condição</td>
+</tr>
+<tr>
+<td>409 Conflict</td>
+<td>só duplicidade (SKU repetido)</td>
+<td>continua com o significado que já tinha no Norte</td>
+</tr>
+<tr>
+<td>400</td>
+<td>validação do corpo</td>
+<td>inalterado</td>
+</tr>
+</tbody>
+</table>
+<p>Títulos em uso: <strong>&quot;Ficha alterada por outra requisição&quot;</strong> (412) e <strong>&quot;Versão obrigatória&quot;</strong> (428).</p>
+<h3 id="36-o-delete-precisou-mudar">3.6 O <code>DELETE</code> precisou mudar</h3>
+<p>O <code>DELETE</code> usava <code>ExecuteDeleteAsync</code>: um <code>DELETE</code> direto no banco, sem carregar a entidade. Assim a marca <strong>não entra</strong> no <code>WHERE</code>. Passou a ser: carregar, <code>Remove</code>, <code>SaveChangesAsync</code>. O preço é um <code>SELECT</code> a mais; o ganho é que o <code>DELETE</code> também respeita o <code>If-Match</code>.</p>
+<p>Da documentação do EF (conferida na S36): <code>ExecuteUpdate</code> e <code>ExecuteDelete</code> <strong>não</strong> abrem transação implícita (cada chamada é a sua), <strong>não</strong> passam pelo rastreador (entidades já carregadas ficam velhas) e <strong>não</strong> têm token de concorrência automático (é preciso conferir as linhas afetadas à mão).</p>
+<h3 id="37-limite-conhecido-put-com-valores-iguais">3.7 Limite conhecido: <code>PUT</code> com valores iguais</h3>
+<p>Se o <code>PUT</code> manda exatamente os valores que a ficha já tem, o EF <strong>não emite <code>UPDATE</code></strong>. Sem <code>UPDATE</code>, a marca não é conferida. É um limite aceito: nada mudou, então nada se perdeu.</p>
+<h3 id="38-o-ciclo-manual-pelo-http">3.8 O ciclo manual pelo <code>.http</code></h3>
+<p>O arquivo <code>Catalogo.http</code> ganhou um ciclo com 12 passos. O truque: um pedido nomeado guarda a resposta e o seguinte lê o cabeçalho dela.</p>
+<pre class="highlight"><code><span class="err"># @name obterFicha</span>
+<span class="err">GET {{host}}/catalogo/fichas-produto/LUV-HTTP-01</span>
+
+<span class="err">###</span>
+<span class="err">PUT {{host}}/catalogo/fichas-produto/LUV-HTTP-01</span>
+<span class="err">If-Match: {{obterFicha.response.headers.ETag}}</span>
+</code></pre>
+
+<p>(forma do trecho; a sintaxe <code>{{nome.response.headers.Cabeçalho}}</code> foi conferida na documentação do Visual Studio e na prática.) O pedido nomeado precisa ter sido <strong>enviado manualmente antes</strong>; vale a última resposta.</p>
+<p>Resultado do ciclo (todos os 12 passos deram o esperado):</p>
+<table>
+<thead>
+<tr>
+<th>Passo</th>
+<th>Pedido</th>
+<th>Resposta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>POST</code></td>
+<td>201, <code>ETag &quot;820&quot;</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>GET</code></td>
+<td>200, <code>ETag &quot;820&quot;</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>PUT</code> com <code>If-Match &quot;820&quot;</code></td>
+<td>200, <code>ETag &quot;821&quot;</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>PUT</code> com <code>If-Match &quot;1&quot;</code></td>
+<td><strong>412</strong></td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>PUT</code> sem <code>If-Match</code></td>
+<td><strong>428</strong></td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>PUT</code> com descrição vazia</td>
+<td>400</td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>PUT</code> em SKU inexistente</td>
+<td>404</td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>GET</code></td>
+<td>200, <code>ETag &quot;821&quot;</code></td>
+</tr>
+<tr>
+<td>9</td>
+<td><code>DELETE</code> sem <code>If-Match</code></td>
+<td><strong>428</strong></td>
+</tr>
+<tr>
+<td>10</td>
+<td><code>DELETE</code> com <code>If-Match &quot;1&quot;</code></td>
+<td><strong>412</strong></td>
+</tr>
+<tr>
+<td>11</td>
+<td><code>DELETE</code> com <code>If-Match &quot;821&quot;</code></td>
+<td>204</td>
+</tr>
+<tr>
+<td>12</td>
+<td><code>DELETE</code> de novo</td>
+<td>404</td>
+</tr>
+</tbody>
+</table>
+<h3 id="39-o-nome-versao-→-tokenconcorrencia-pr-86">3.9 O nome: <code>Versao</code> → <code>TokenConcorrencia</code> (PR #86)</h3>
+<p>O aluno apontou: &quot;daqui a alguns meses eu vou pensar que versão é algo relacionado a versionamento&quot;. Concordância do mentor: o nome escondia o papel. Mudou também o enum com erro de digitação (<code>ResultadoAtuaizarFichaProduto</code> → <code>ResultadoAtualizarFichaProduto</code>) e os helpers de <code>ETag</code> dos testes foram para um lugar compartilhado.</p>
+<p>Duas coisas para entender:</p>
+<ul>
+<li><strong>A coluna não mudou.</strong> O nome da coluna no banco é <code>xmin</code> por configuração explícita, então renomear a propriedade C# não altera o esquema. <code>dotnet ef migrations has-pending-model-changes</code> respondeu &quot;No changes&quot; depois de ajustar o <em>snapshot</em> à mão.</li>
+<li><strong>A migration antiga fica como está</strong> (<code>AdicionaVersaoDaFichaProduto</code> e seu <code>Designer</code> guardam o nome antigo): é histórico, não se reescreve.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Ganho</th>
+<th><strong>Preço</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Concorrência otimista com <code>xmin</code></td>
+<td>nenhuma coluna nova; nenhum tranco; atualização perdida vira 412</td>
+<td>o cliente tem de guardar e devolver a marca; <code>PUT</code> sem <code>If-Match</code> agora dá 428 (quebra quem usava sem)</td>
+</tr>
+<tr>
+<td>412/428 (não 409)</td>
+<td>significado padrão do HTTP; 409 segue só para duplicidade</td>
+<td>quem espera 409 para tudo tem de aprender mais dois status</td>
+</tr>
+<tr>
+<td><code>DELETE</code> carregando a ficha</td>
+<td>o <code>DELETE</code> respeita o <code>If-Match</code></td>
+<td>um <code>SELECT</code> a mais</td>
+</tr>
+<tr>
+<td>Nome <code>TokenConcorrencia</code></td>
+<td>o nome diz o papel</td>
+<td>15 arquivos mexidos (PR #86), só para renomear</td>
+</tr>
+</tbody>
+</table>
+<h3 id="310-transações-ficam-para-depois">3.10 Transações: ficam para depois</h3>
+<p>O roteiro dizia &quot;transações e concorrência otimista&quot;. O aluno decidiu: <strong>transação explícita (<code>BeginTransaction</code>) fica para quando houver uma regra com mais de uma escrita</strong> (a baixa de estoque entre <code>Catalogo</code> e <code>Pedidos</code>, pagamentos). Hoje cada operação grava uma linha só, e o <code>SaveChanges</code> já é uma transação. A documentação do EF não mostra a combinação de checagem de token com transação explícita; fica a verificar nesse dia. Isto é <strong>plano</strong>, não pendência.</p>
+<h2 id="4-termos">4. Termos</h2>
+<table>
+<thead>
+<tr>
+<th>Termo</th>
+<th>Em uma linha</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Concorrência otimista</td>
+<td>gravar assumindo que ninguém mudou, e conferir na hora de gravar</td>
+</tr>
+<tr>
+<td>Atualização perdida</td>
+<td>a segunda gravação apaga a primeira sem saber</td>
+</tr>
+<tr>
+<td><code>xmin</code></td>
+<td>coluna de sistema do Postgres: a transação que gravou a linha</td>
+</tr>
+<tr>
+<td>Token de concorrência</td>
+<td>valor que o EF inclui no <code>WHERE</code> do <code>UPDATE</code>/<code>DELETE</code></td>
+</tr>
+<tr>
+<td><code>IsRowVersion()</code></td>
+<td>marca a propriedade como versão da linha</td>
+</tr>
+<tr>
+<td><code>OriginalValue</code></td>
+<td>o valor que o EF acha que a linha tinha ao ler</td>
+</tr>
+<tr>
+<td><code>ETag</code></td>
+<td>cabeçalho da resposta que identifica a versão</td>
+</tr>
+<tr>
+<td><code>If-Match</code></td>
+<td>cabeçalho do pedido: &quot;só execute se a versão for esta&quot;</td>
+</tr>
+<tr>
+<td>412 / 428</td>
+<td>condição falhou / condição obrigatória ausente</td>
+</tr>
+<tr>
+<td><code>DbUpdateConcurrencyException</code></td>
+<td>o <code>UPDATE</code>/<code>DELETE</code> afetou zero linhas por causa do token</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-dúvidas-e-respostas">5. Dúvidas e respostas</h2>
+<p><strong>Por que não usar o <code>ExecuteUpdate</code> no <code>PUT</code>?</strong> Ele não tem token automático e não passa pelo rastreador; seria preciso conferir as linhas afetadas à mão.</p>
+<p><strong>O <code>ETag</code> não é só para cache?</strong> Também. Aqui o usamos para a condição do <code>If-Match</code>.</p>
+<p><strong>O que acontece se alguém mudar a ficha entre o <code>GET</code> e o <code>PUT</code>?</strong> A marca muda; o <code>PUT</code> do primeiro traz a velha; 412.</p>
+<p><strong>E dois <code>PUT</code> exatamente simultâneos com a mesma marca?</strong> O primeiro <code>UPDATE</code> vence e muda o <code>xmin</code>; o segundo afeta zero linhas e dá 412.</p>
+<h2 id="6-decisões-do-aluno">6. Decisões do aluno</h2>
+<table>
+<thead>
+<tr>
+<th>Tema</th>
+<th>Posição</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Transações explícitas</td>
+<td>deixar para quando houver fluxo de estoque, pagamentos etc.</td>
+<td><strong>decidido</strong> (plano)</td>
+</tr>
+<tr>
+<td>Nome <code>Versao</code></td>
+<td>trocar por <code>TokenConcorrencia</code> para não confundir com versionamento</td>
+<td><strong>feito</strong> (PR #86)</td>
+</tr>
+<tr>
+<td>Causa do erro <code>System.CodeDom</code> no Visual Studio</td>
+<td>&quot;Esqueça e vamos em frente&quot;</td>
+<td><strong>encerrado</strong>; contorno local: variável <code>SuppressTfmSupportBuildWarnings=true</code> (reabrir o VS depois de <code>setx</code>)</td>
+</tr>
+<tr>
+<td>Verificar o que ficou sem verificar</td>
+<td>fazer, para deixar tudo limpo</td>
+<td><strong>feito</strong> (doc do EF, sintaxe do <code>.http</code>)</td>
+</tr>
+<tr>
+<td>Autoria em commit e PR</td>
+<td>nunca</td>
+<td>regra permanente</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-avaliação">7. Avaliação</h2>
+<p><strong>Fez bem:</strong> percebeu o risco do nome <code>Versao</code> (confusão com versionamento daqui a meses) e mandou trocar; cortou transações do escopo com argumento (não há regra com duas escritas); mandou verificar o que ficou sem verificar, em vez de deixar como pendência; rodou o ciclo manual inteiro e entregou o registro dos 12 passos.</p>
+<p><strong>Recursos novos:</strong> <code>xmin</code> e <code>IsRowVersion()</code>; <code>OriginalValue</code>; <code>ETag</code>/<code>If-Match</code>; 412 e 428; <code>.http</code> com pedido nomeado.</p>
+<p><strong>O mentor conduziu mal:</strong> respondeu sobre código sem ler; escreveu o teste do <code>PUT</code> verde no lugar do aluno contra o combinado; pediu uma técnica que ele não tinha visto (<code>HttpRequestMessage</code>); presumiu o conteúdo de uma linha sem ler; levantou hipótese errada de cache corrompido (era lock velho); deu comandos pela ponte que deixaram lock velho; listou como pendência o que ainda não fora verificado; primeiro nome da sessão fora do padrão. Detalhes no <code>HIST-S36</code>.</p>
+<h2 id="8-pontos-a-melhorar">8. Pontos a melhorar</h2>
+<ul>
+<li><strong>Aluno:</strong> conferir, ao ler um 412, se a marca mandada é a <strong>lida</strong> e não a atual.</li>
+<li><strong>Mentor:</strong> ler antes de responder; deixar o aluno escrever o teste; só usar técnica já vista; verificar antes de listar pendência.</li>
+</ul>
+<h2 id="9-teste-se">9. Teste-se</h2>
+<ol>
+<li>O que é uma atualização perdida e como o Norte a evitava antes de hoje?</li>
+<li>Por que o <code>xmin</code> serve de marca de versão sem criar coluna?</li>
+<li>Por que o <code>xmin</code> só serve para igualdade e nunca para ordem?</li>
+<li>Qual valor o <code>If-Match</code> carrega: o que o cliente leu ou o que o servidor tem agora?</li>
+<li>O que a linha <code>OriginalValue = tokenLido</code> muda no <code>UPDATE</code>?</li>
+<li>Em que ordem o <code>PUT</code> decide 404, 428, 412 e 409, e por que 404 vem antes de 428?</li>
+<li>Por que o <code>catch</code> de <code>DbUpdateConcurrencyException</code> vem antes do de violação de unicidade?</li>
+<li>Por que o <code>DELETE</code> deixou de usar <code>ExecuteDeleteAsync</code>?</li>
+<li>O que acontece com um <code>PUT</code> cujos valores são iguais aos atuais?</li>
+<li>Por que renomear <code>Versao</code> para <code>TokenConcorrencia</code> não gerou migration?</li>
+<li>Por que 412 e 428, e não 409?</li>
+<li>Por que transações explícitas ficaram para depois?</li>
+</ol>
+<h2 id="10-preparação-para-a-próxima-sessão-s37">10. Preparação para a próxima sessão (S37)</h2>
+<ol>
+<li>Chat novo com a pasta <code>D:\Projetos\C#\Monolito_Modular</code> ligada; <code>git status</code> e <code>git log -3 --oneline</code> (esperado <code>96e9f77</code>). Docker aberto; API fechada.</li>
+<li>Limpeza local de branches já mescladas é rotina.</li>
+<li><strong>Plano (não é pendência):</strong> seguir o roteiro de M1: <strong>índices</strong> (inclusive o <code>LIKE '%texto%'</code> da listagem, S19), depois OpenAPI/Scalar, logging, spikes da Trilha B. Transações explícitas quando houver fluxo de estoque ou pagamento.</li>
+<li>Começar com a lista de pendências <strong>vazia</strong>. <strong>Perguntar se houve pausas na S33</strong> (12h17 está bruto).</li>
+</ol>
+<hr />
+<h2 id="respostas">Respostas</h2><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>A segunda gravação apaga a primeira sem aviso. Antes de hoje o Norte não evitava: o último <code>PUT</code> vencia.</li>
+<li>Porque toda linha do Postgres já tem o <code>xmin</code> (a transação que a gravou) e ele muda a cada alteração.</li>
+<li>O <code>xmin</code> vem de um contador global de transações: dá para saber se é a mesma marca, não qual é mais nova.</li>
+<li>O que o cliente leu (a marca do <code>GET</code> ou da resposta anterior).</li>
+<li>Faz a marca do cliente entrar no <code>WHERE</code> do <code>UPDATE</code>; sem ela o EF compararia com a marca recém-carregada e nunca recusaria.</li>
+<li>404 (não existe), 428 (sem <code>If-Match</code>), grava; marca diferente: 412; SKU repetido: 409. Pedir <code>If-Match</code> para ficha inexistente seria confuso.</li>
+<li>Porque a de concorrência herda da genérica; a genérica antes engoliria a específica.</li>
+<li>Porque ele apaga direto no banco e a marca não entra no <code>WHERE</code>; carregar, <code>Remove</code> e <code>SaveChanges</code> faz o <code>DELETE</code> respeitar o <code>If-Match</code>.</li>
+<li>O EF não emite <code>UPDATE</code>; a marca não é conferida. Limite aceito: nada mudou.</li>
+<li>A coluna se chama <code>xmin</code> por configuração explícita; só o nome da propriedade C# mudou (<code>has-pending-model-changes</code> deu &quot;No changes&quot;).</li>
+<li>412/428 são os status do HTTP para condição; o 409 segue só para duplicidade.</li>
+<li>Hoje cada operação grava uma linha só; a transação explícita só tem valor quando houver regra com mais de uma escrita (estoque, pagamentos).</li>
+</ol>
+</details>
+</article>
+<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

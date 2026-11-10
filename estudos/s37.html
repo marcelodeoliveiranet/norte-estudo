@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ESTUDO-S37 — índices, OpenAPI e logging (e o mapa da observabilidade) · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s37.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#estudo-s37--índices-openapi-e-logging-e-o-mapa-da-observabilidade" data-id="estudo-s37--índices-openapi-e-logging-e-o-mapa-da-observabilidade">ESTUDO-S37 — índices, OpenAPI e logging (e o mapa da observabilidade)</a><a class="n2" href="#1-índice-para-like-texto-pr-87" data-id="1-índice-para-like-texto-pr-87">1. Índice para LIKE &#x27;%texto%&#x27; (PR #87)</a><a class="n2" href="#2-openapi-e-scalar-pr-88" data-id="2-openapi-e-scalar-pr-88">2. OpenAPI e Scalar (PR #88)</a><a class="n2" href="#3-logging-dos-conflitos-pr-89" data-id="3-logging-dos-conflitos-pr-89">3. Logging dos conflitos (PR #89)</a><a class="n2" href="#4-como-um-traceid-nasce-e-morre" data-id="4-como-um-traceid-nasce-e-morre">4. Como um TraceId nasce e morre</a><a class="n2" href="#5-onde-cada-coisa-se-encaixa-o-mapa-que-tirou-a-salada" data-id="5-onde-cada-coisa-se-encaixa-o-mapa-que-tirou-a-salada">5. Onde cada coisa se encaixa (o mapa que tirou a &quot;salada&quot;)</a><a class="n2" href="#6-está-lento-o-caminho-de-investigação" data-id="6-está-lento-o-caminho-de-investigação">6. &quot;Está lento&quot;: o caminho de investigação</a><a class="n2" href="#7-as-três-perguntas-de-entrevista-e-o-que-você-pode-dizer-hoje" data-id="7-as-três-perguntas-de-entrevista-e-o-que-você-pode-dizer-hoje">7. As três perguntas de entrevista e o que você pode dizer hoje</a><a class="n2" href="#8-teste-se-sem-consultar" data-id="8-teste-se-sem-consultar">8. Teste-se (sem consultar)</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a></aside>
+<main class="conteudo"><article>
+<h1 id="estudo-s37--índices-openapi-e-logging-e-o-mapa-da-observabilidade">ESTUDO-S37 — índices, OpenAPI e logging (e o mapa da observabilidade)</h1>
+<p><strong>Sessão:</strong> terça 03/11/2026, 09:40 a 16:29 · <strong>5h44 líquidas</strong> · PRs #87 (índice com <code>pg_trgm</code>), #88 (OpenAPI/Scalar) e #89 (logging dos conflitos) · 192 testes · <code>main</code> em <code>d7f5ace</code>.</p>
+<blockquote>
+<p>Como usar: leia na ordem; no fim, responda a Seção 8 sem consultar. As respostas estão logo depois.</p>
+</blockquote>
+<hr />
+<h2 id="1-índice-para-like-texto-pr-87">1. Índice para <code>LIKE '%texto%'</code> (PR #87)</h2>
+<p><strong>O problema.</strong> A listagem do <code>Catalogo</code> filtra com <code>LIKE '%texto%'</code>. Um índice comum (B-tree) é ordenado pelo <strong>começo</strong> do texto; com <code>%</code> na frente, o banco não sabe onde começar e lê a tabela inteira (<em>Seq Scan</em>).</p>
+<p><strong>A solução.</strong> A extensão <code>pg_trgm</code> quebra o texto em pedaços de 3 letras (<em>trigramas</em>) e um índice <strong>GIN</strong> guarda &quot;qual trigrama aparece em quais linhas&quot;. Buscar <code>%ouro%</code> vira &quot;ache as linhas que têm os trigramas <code>our</code> e <code>uro</code>&quot;.</p>
+<p><strong>A prova.</strong> Não se acredita no índice: mede-se com <code>EXPLAIN (ANALYZE)</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Antes (sem índice)</th>
+<th>Depois (com índice trigram)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Seq Scan</code> lê todas as linhas</td>
+<td><code>Bitmap Index Scan</code> pelo índice, depois <code>Bitmap Heap Scan</code> nas linhas candidatas</td>
+</tr>
+</tbody>
+</table>
+<p><em>Os tempos medidos e o código da migration estão no PR #87.</em></p>
+<p><strong>Preço.</strong> O índice ocupa espaço e deixa cada <code>INSERT</code>/<code>UPDATE</code> um pouco mais lento. Com poucas linhas, o planejador <strong>pode preferir o Seq Scan</strong> mesmo com o índice: tabela pequena é mais barata de ler inteira. Por isso a prova usa volume (o seed de volume da S20).</p>
+<hr />
+<h2 id="2-openapi-e-scalar-pr-88">2. OpenAPI e Scalar (PR #88)</h2>
+<ul>
+<li><strong>OpenAPI</strong> é o contrato da API em um documento (rotas, parâmetros, respostas) gerado a partir do código.</li>
+<li><strong>Scalar</strong> é a tela que lê esse documento e deixa explorar/testar a API no navegador.</li>
+<li>Os <code>TypedResults</code> (S9) é que alimentam o documento com os status certos; por isso &quot;preferir <code>TypedResults</code>&quot; tinha a razão do OpenAPI.</li>
+</ul>
+<p><em>Detalhes de configuração: PR #88.</em></p>
+<hr />
+<h2 id="3-logging-dos-conflitos-pr-89">3. Logging dos conflitos (PR #89)</h2>
+<h3 id="31-o-que-foi-feito">3.1 O que foi feito</h3>
+<p>Os três repositórios (<code>Catalogo</code>, <code>Clientes</code>, <code>Representantes</code>) agora <strong>registram</strong> quando um conflito acontece:</p>
+<table>
+<thead>
+<tr>
+<th>Onde</th>
+<th>Evento</th>
+<th>Nível</th>
+<th>Mensagem (resumo)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Catálogo, <code>AdicionarAsync</code></td>
+<td>1</td>
+<td>Warning</td>
+<td>violação de unicidade da ficha <code>{Sku}</code></td>
+</tr>
+<tr>
+<td>Catálogo, <code>AtualizarAsync</code></td>
+<td>2</td>
+<td>Warning</td>
+<td>ficha <code>{Sku}</code> não atualizada: token desatualizado</td>
+</tr>
+<tr>
+<td>Catálogo, <code>ExcluirAsync</code></td>
+<td>3</td>
+<td>Warning</td>
+<td>ficha <code>{Sku}</code> não excluída: token desatualizado</td>
+</tr>
+<tr>
+<td>Clientes, <code>Adicionar</code>/<code>Atualizar</code></td>
+<td>1</td>
+<td>Warning</td>
+<td>violação de unicidade do CNPJ <code>{Cnpj}</code></td>
+</tr>
+<tr>
+<td>Representantes, os dois <code>catch</code></td>
+<td>1</td>
+<td>Warning</td>
+<td>violação de unicidade de CPF ou e-mail (<strong>sem valores</strong>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Por que Warning para os dois tipos.</strong> Os dois significam &quot;alguém tentou algo que o sistema recusou por regra&quot;. Mesma gravidade, mesmo nível (decisão sua).</p>
+<p><strong>Por que o Representantes não loga valores.</strong> CPF e e-mail são dado pessoal (LGPD). Regra: <strong>nunca registrar dado pessoal em log</strong>. O CNPJ é de empresa, e o SKU é do catálogo: podem entrar.</p>
+<h3 id="32-loggermessage-em-vez-de-_loggerlogwarning">3.2 <code>[LoggerMessage]</code> em vez de <code>_logger.LogWarning(...)</code></h3>
+<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">partial</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">ClientesRepository</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="na">[LoggerMessage(EventId = 1, Level = LogLevel.Warning,</span>
+<span class="na">        Message = &quot;Violação de unicidade ao gravar o CNPJ {Cnpj}: outra requisição gravou o mesmo CNPJ primeiro&quot;)]</span><span class="w"></span>
+<span class="w">    </span><span class="k">private</span><span class="w"> </span><span class="k">partial</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">RegistrarViolacaoDeUnicidade</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">cnpj</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre>
+
+<ul>
+<li>A classe vira <code>partial</code> e o método é <strong>declarado sem corpo</strong>; o compilador <strong>gera</strong> o corpo (<em>source generator</em>).</li>
+<li>Ganho: não monta texto à toa quando o nível está desligado, e o analisador <strong>CA1848</strong> (que o build do Norte exige) deixa de reclamar.</li>
+<li><code>{Cnpj}</code> é um <strong>campo estruturado</strong>: o nome entre chaves vira um campo pesquisável no destino do log, não só texto.</li>
+<li>O <code>EventId</code> é um número estável para achar aquele evento mesmo se a frase mudar.</li>
+</ul>
+<h3 id="33-o-que-aparece-no-console">3.3 O que aparece no console</h3>
+<p>Com <code>Logging:Console:IncludeScopes: true</code> (só em <code>Development</code>), cada linha traz os <strong>escopos</strong>: <code>SpanId</code>, <code>TraceId</code>, <code>ParentId</code>, <code>RequestPath</code>, <code>RequestId</code>, <code>ConnectionId</code>. O <code>warn:</code> do conflito tem o <strong>mesmo <code>TraceId</code></strong> do <code>ProblemDetails</code> que a resposta devolveu: é a ponte entre &quot;o que o cliente viu&quot; e &quot;o que o servidor registrou&quot;.</p>
+<p>Camadas de configuração (a última vence): <code>appsettings.json</code> &lt; <code>appsettings.{Env}.json</code> &lt; variáveis de ambiente &lt; linha de comando.</p>
+<p>O EF mostra os parâmetros como <code>?</code> por padrão (esconde valores para não vazar dados); por isso o log <strong>de propósito</strong> do repositório é o que carrega o <code>{Sku}</code>.</p>
+<h3 id="34-log-×-rastreamento-×-auditoria">3.4 Log × rastreamento × auditoria</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Responde</th>
+<th>Exemplo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Log</strong></td>
+<td>o que o sistema <strong>disse</strong> que aconteceu</td>
+<td>&quot;SKU duplicado&quot;</td>
+</tr>
+<tr>
+<td><strong>Rastreamento (<em>trace</em>)</strong></td>
+<td>por onde a requisição <strong>passou</strong> e quanto <strong>demorou</strong> em cada etapa</td>
+<td>requisição → EF → banco: 800 ms no banco</td>
+</tr>
+<tr>
+<td><strong>Auditoria</strong></td>
+<td><strong>quem</strong> fez <strong>o quê</strong> (valor legal/negócio)</td>
+<td>&quot;usuário X excluiu o cliente Y&quot;</td>
+</tr>
+</tbody>
+</table>
+<p>Auditoria <strong>não</strong> está feita (precisa de autenticação e de um destino).</p>
+<hr />
+<h2 id="4-como-um-traceid-nasce-e-morre">4. Como um <code>TraceId</code> nasce e morre</h2>
+<ol>
+<li>O ASP.NET Core cria uma <strong><code>Activity</code></strong> para cada requisição que chega.</li>
+<li>Se não veio nada junto, nasce uma <strong>raiz nova</strong> (<code>ParentId</code> de zeros) e um <code>TraceId</code> novo.</li>
+<li>Se veio o cabeçalho W3C <code>traceparent</code>, a <code>Activity</code> <strong>herda</strong> o <code>TraceId</code> dele:</li>
+</ol>
+<pre class="highlight"><code>traceparent: 00-&lt;TraceId 32 hex&gt;-&lt;SpanId 16 hex&gt;-&lt;flags&gt;
+              ^^                                   ^^ 01 = amostrado, 00 = não
+</code></pre>
+
+<ol start="4">
+<li>A <code>Activity</code> <strong>termina</strong> quando a requisição termina. O <code>TraceId</code> é só uma <strong>etiqueta</strong>: não &quot;fica vivo&quot; em lugar nenhum depois.</li>
+<li>O <code>traceId</code> do <code>ProblemDetails</code> é o id da <code>Activity</code> atual.</li>
+<li>O <strong><code>RequestId</code></strong> (<code>conexão:sequência</code> do Kestrel) é <strong>outra coisa</strong>: identifica a requisição para o servidor web, não atravessa serviços.</li>
+</ol>
+<p><strong>Microsserviços.</strong> O primeiro serviço cria o <code>TraceId</code>; ao chamar o próximo pelo <code>HttpClient</code>, o .NET manda o <code>traceparent</code> sozinho. O segundo serviço <strong>mantém o <code>TraceId</code></strong> e cria um <strong><code>SpanId</code> novo</strong>, com <code>ParentId</code> = o span de quem chamou. Resultado: uma <strong>árvore</strong> de spans com um só <code>TraceId</code>. A propagação <strong>quebra</strong> em canais que ninguém instrumentou (fila sem cabeçalho, chamada manual).</p>
+<p><strong>Na busca usa-se o <code>TraceId</code></strong>: é a chave que reúne todos os logs e spans de uma requisição.</p>
+<hr />
+<h2 id="5-onde-cada-coisa-se-encaixa-o-mapa-que-tirou-a-salada">5. Onde cada coisa se encaixa (o mapa que tirou a &quot;salada&quot;)</h2>
+<table>
+<thead>
+<tr>
+<th>Camada</th>
+<th>Pergunta</th>
+<th>Exemplos</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. Produzir</strong></td>
+<td>quem gera o dado?</td>
+<td><code>ILogger</code>, <code>[LoggerMessage]</code>, <code>Activity</code>, <code>Meter</code> (todos <strong>já vêm no .NET</strong>)</td>
+</tr>
+<tr>
+<td><strong>2. Transportar</strong></td>
+<td>como o dado sai do app?</td>
+<td><strong>OpenTelemetry</strong> (padrão + protocolo OTLP) ou <strong>Serilog</strong> (biblioteca)</td>
+</tr>
+<tr>
+<td><strong>3. Guardar e buscar</strong></td>
+<td>onde eu <strong>olho</strong>?</td>
+<td>Seq, Kibana/Elastic, Grafana/Loki, Datadog, Application Insights, dashboard do Aspire</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>OpenTelemetry</strong> nasceu em 2019 da fusão de OpenTracing e OpenCensus. É um <strong>padrão neutro</strong>: o app fala OTLP e você troca o destino sem mexer no código. SDK de fornecedor (Application Insights, agente da Datadog) amarra você ao fornecedor.</li>
+<li><strong>Nuvem</strong> = lugar que oferece a camada 3 <strong>pronta e gerenciada</strong>.</li>
+<li><strong>ELK</strong> = Elasticsearch (guarda/busca) + Logstash (transporta) + Kibana (tela). Ainda aparece em vagas.</li>
+<li><strong>Três sinais:</strong> <em>logs</em> (o que foi dito), <em>traces</em> (por onde passou e quanto demorou), <em>métricas</em> (números ao longo do tempo: p95, erros por minuto).</li>
+</ul>
+<hr />
+<h2 id="6-está-lento-o-caminho-de-investigação">6. &quot;Está lento&quot;: o caminho de investigação</h2>
+<ol>
+<li><strong>Delimitar:</strong> qual rota, desde quando, para quem?</li>
+<li><strong>Métrica:</strong> p95/p99 daquela rota subiu?</li>
+<li><strong>Trace</strong> de uma requisição lenta: qual etapa (span) consome o tempo?</li>
+<li><strong>Logs</strong> daquele <code>TraceId</code>: o que o sistema disse nessa hora?</li>
+<li><strong>Causa:</strong> se o span lento é o banco, <code>EXPLAIN</code> (a Seção 1 é isso).</li>
+<li><strong>Alerta:</strong> descrever a regra que teria avisado antes (p95 acima de X por Y minutos).</li>
+</ol>
+<p>Em nuvem os nomes mudam, a lógica não (a conferir na S38: Azure Application Insights/Log Analytics com KQL; AWS CloudWatch Logs Insights e X-Ray).</p>
+<hr />
+<h2 id="7-as-três-perguntas-de-entrevista-e-o-que-você-pode-dizer-hoje">7. As três perguntas de entrevista e o que você pode dizer hoje</h2>
+<table>
+<thead>
+<tr>
+<th>Pergunta</th>
+<th>O que <strong>já é verdade</strong> no Norte</th>
+<th>O que <strong>só sabe em conceito</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Onde vejo logs, tempos e fluxo?</td>
+<td>logs de conflito com <code>TraceId</code> no console; <code>[LoggerMessage]</code></td>
+<td>tempos e fluxo numa ferramenta</td>
+</tr>
+<tr>
+<td>Como sei que algo está lento?</td>
+<td>você sabe medir uma consulta com <code>EXPLAIN</code> e provou o índice</td>
+<td>métrica de latência e alerta</td>
+</tr>
+<tr>
+<td>Deu problema: onde vejo?</td>
+<td>casa <code>ProblemDetails.traceId</code> com a linha do log</td>
+<td>busca em ferramenta, em nuvem</td>
+</tr>
+</tbody>
+</table>
+<p>Isso vira a <strong>S38</strong>: fundação de observabilidade (<code>claude/PLANO-SPIKE-OBSERVABILIDADE.md</code>).</p>
+<hr />
+<h2 id="8-teste-se-sem-consultar">8. Teste-se (sem consultar)</h2>
+<ol>
+<li>Por que <code>LIKE '%texto%'</code> não usa um índice comum, e o que o <code>pg_trgm</code> muda?</li>
+<li>O que o <code>EXPLAIN (ANALYZE)</code> mostrou antes e depois do índice, e por que uma tabela pequena pode ignorar o índice?</li>
+<li>Qual o preço de um índice?</li>
+<li>Por que o Representantes não loga o CPF nem o e-mail?</li>
+<li>O que o <code>[LoggerMessage]</code> gera, e por que a classe precisa ser <code>partial</code>?</li>
+<li>O que <code>IncludeScopes: true</code> acrescenta ao console e como isso liga o log à resposta da API?</li>
+<li>Quando nasce um <code>TraceId</code> novo e quando ele é herdado?</li>
+<li>O que é o <code>RequestId</code> e por que ele não serve para seguir uma chamada entre serviços?</li>
+<li>Em microsserviços, o que muda e o que se mantém entre o primeiro e o segundo serviço?</li>
+<li>Diferença entre log, trace e auditoria, em uma frase cada.</li>
+<li>Em que camada ficam o <code>ILogger</code>, o OpenTelemetry e o Seq?</li>
+<li>Descreva em 5 passos como investigar &quot;a listagem está lenta&quot;.</li>
+</ol>
+<h2 id="respostas">Respostas</h2><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>O B-tree ordena pelo começo do texto; com <code>%</code> na frente não há onde começar e o banco lê tudo. O <code>pg_trgm</code> indexa trigramas (pedaços de 3 letras) e o índice GIN diz quais linhas os contêm.</li>
+<li>Antes: <code>Seq Scan</code>; depois: <code>Bitmap Index Scan</code> + <code>Bitmap Heap Scan</code>. Em tabela pequena ler tudo é mais barato que usar o índice, e o planejador escolhe o mais barato.</li>
+<li>Espaço em disco e escrita mais lenta (cada <code>INSERT</code>/<code>UPDATE</code> atualiza o índice).</li>
+<li>São dados pessoais (LGPD): log não guarda dado pessoal.</li>
+<li>O compilador gera o corpo do método de log; precisa ser <code>partial</code> para que a parte escrita por você e a gerada sejam a mesma classe.</li>
+<li>Acrescenta <code>TraceId</code>, <code>SpanId</code>, <code>ParentId</code>, <code>RequestPath</code>, <code>RequestId</code>; o <code>TraceId</code> da linha <code>warn:</code> é o mesmo do <code>ProblemDetails</code> devolvido.</li>
+<li>Nasce novo quando a requisição chega sem <code>traceparent</code>; é herdado quando o cabeçalho <code>traceparent</code> vem junto.</li>
+<li>É o id <code>conexão:sequência</code> do Kestrel; vale só dentro daquele servidor e não é propagado a outros serviços.</li>
+<li>Mantém-se o <code>TraceId</code>; muda o <code>SpanId</code> (novo) e o <code>ParentId</code> passa a ser o span de quem chamou.</li>
+<li>Log: o que foi dito. Trace: por onde passou e quanto demorou. Auditoria: quem fez o quê, com valor legal.</li>
+<li>Camada 1 (produzir): <code>ILogger</code>; camada 2 (transportar): OpenTelemetry; camada 3 (guardar e buscar): Seq.</li>
+<li>Delimitar a rota → ver a métrica p95 → abrir o trace de uma requisição lenta → ler os logs do <code>TraceId</code> → achar a causa (ex.: <code>EXPLAIN</code>) → descrever o alerta.</li>
+</ol>
+</details>
+</article>
+<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

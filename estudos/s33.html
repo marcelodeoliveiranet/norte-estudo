@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norte · S33 — O contrato entre módulos e o POST /pedidos · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s33.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#norte--s33--o-contrato-entre-módulos-e-o-post-pedidos" data-id="norte--s33--o-contrato-entre-módulos-e-o-post-pedidos">Norte · S33 — O contrato entre módulos e o POST /pedidos</a><a class="n2" href="#1-resultado-do-dia" data-id="1-resultado-do-dia">1. Resultado do dia</a><a class="n2" href="#2-onde-isso-está-no-mapa-dos-níveis" data-id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</a><a class="n2" href="#3-conceitos" data-id="3-conceitos">3. Conceitos</a><a class="n2" href="#4-termos" data-id="4-termos">4. Termos</a><a class="n2" href="#5-dúvidas-e-respostas" data-id="5-dúvidas-e-respostas">5. Dúvidas e respostas</a><a class="n2" href="#6-divergências-e-decisões-do-aluno" data-id="6-divergências-e-decisões-do-aluno">6. Divergências e decisões do aluno</a><a class="n2" href="#7-avaliação" data-id="7-avaliação">7. Avaliação</a><a class="n2" href="#8-pontos-a-melhorar" data-id="8-pontos-a-melhorar">8. Pontos a melhorar</a><a class="n2" href="#9-teste-se" data-id="9-teste-se">9. Teste-se</a><a class="n2" href="#10-preparação-para-a-s34" data-id="10-preparação-para-a-s34">10. Preparação para a S34</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a></aside>
+<main class="conteudo"><article>
+<h1 id="norte--s33--o-contrato-entre-módulos-e-o-post-pedidos">Norte · S33 — O contrato entre módulos e o <code>POST /pedidos</code></h1>
+<p><strong>Terça, 27/10/2026 · tempo: 12h17 (9:31–21:48, sem pausas informadas) · Marco M1</strong></p>
+<p>Hoje o <code>Pedidos</code> aprendeu a perguntar uma coisa ao <code>Clientes</code> <strong>sem enxergar o interior dele</strong>. Primeiro o <code>Clientes</code> ganhou os endpoints que faltavam (<code>DELETE</code>, <code>PUT</code> e listagem). Depois nasceu o <strong>contrato entre módulos</strong> (ADR-012): um projeto <code>Norte.Clientes.Contratos</code> com uma interface. Por fim o endpoint <code>POST /pedidos</code> usou esse contrato, com <strong>201, 404 e 400</strong>, e a validação nativa do .NET 10 foi levada até onde ela vai. Nove PRs na <code>main</code> (#58 a #66), <strong>153 testes</strong>, CI verde.</p>
+<p>A ideia para guardar: <strong>a fronteira entre módulos é uma interface em um projeto que não tem nada dentro; quem consulta só conhece a pergunta, e o módulo dono responde do jeito dele.</strong> O compilador garante a pergunta; só a execução garante que alguém a respondeu (por isso existe um teste com a API de verdade).</p>
+<blockquote>
+<p><strong>Antes de ler:</strong> a explicação completa de cada peça está na entrada <strong>8.12 da Parte 8 do guia</strong>. Esta página é o roteiro de estudo da sessão.</p>
+</blockquote>
+<hr />
+<h2 id="1-resultado-do-dia">1. Resultado do dia</h2>
+<table>
+<thead>
+<tr>
+<th>PR</th>
+<th>Merge</th>
+<th>O que entrou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#58</td>
+<td><code>27ff96f</code></td>
+<td><code>DELETE /clientes/{clienteId:int}</code> (204 ou 404)</td>
+</tr>
+<tr>
+<td>#59</td>
+<td><code>037b7b1</code></td>
+<td><code>PUT /clientes/{clienteId:int}</code> (200, 404, 409 de CNPJ já cadastrado, 400)</td>
+</tr>
+<tr>
+<td>#60</td>
+<td><code>5e3161f</code></td>
+<td><code>GET /clientes</code> (listagem com paginação e validação)</td>
+</tr>
+<tr>
+<td>#61</td>
+<td><code>b95bab4</code></td>
+<td><strong>ADR-012:</strong> um projeto de contratos por módulo</td>
+</tr>
+<tr>
+<td>#62</td>
+<td><code>3df1005</code></td>
+<td><code>Norte.Clientes.Contratos</code> com <code>IConsultaClientes</code>, implementação <code>internal</code> e teste</td>
+</tr>
+<tr>
+<td>#63</td>
+<td><code>d96947d</code></td>
+<td><code>POST /pedidos</code> (201, 404 pelo contrato, 400 pela validação nativa)</td>
+</tr>
+<tr>
+<td>#64</td>
+<td><code>f8be0d3</code></td>
+<td>nome da classe de teste do <code>GET</code> por id corrigido</td>
+</tr>
+<tr>
+<td>#65</td>
+<td><code>a6ed8b9</code></td>
+<td>nome do teste do 404 corrigido</td>
+</tr>
+<tr>
+<td>#66</td>
+<td><code>aafcbef</code></td>
+<td>CI fixado em <code>ubuntu-26.04</code></td>
+</tr>
+</tbody>
+</table>
+<p>Estado final: <code>main</code> em <code>aafcbef</code>, <strong>153 testes verdes</strong>, CI verde em todos os PRs.</p>
+<p>Decisões de escopo do dia: o teto do M1 sobe <strong>+80h</strong> (de ≈ 100h para ≈ 180h); <strong>nada de FluentValidation</strong> nesta sessão; a origem do pedido é um <strong>código <code>int</code></strong>; o <code>criadoPor</code> fica como <strong>texto</strong> &quot;por simplicidade&quot;; e uma regra nova: <strong>zerar as pendências no começo e no fim de toda sessão</strong>.</p>
+<h2 id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</h2>
+<p>Solution → módulos → funcionalidades → camadas. Hoje apareceu uma peça no <strong>nível dos módulos</strong>: a <strong>fronteira entre eles</strong>. O <code>Pedidos</code> passou a depender de um projeto novo (<code>Norte.Clientes.Contratos</code>), que é público e quase vazio. O <code>Norte.Clientes</code> (o módulo) continua <code>internal</code> por dentro e implementa a interface. Quem liga as duas pontas é o host (<code>Norte.Api</code>), pelo contêiner de injeção de dependência.</p>
+<h2 id="3-conceitos">3. Conceitos</h2>
+<h3 id="31-o-contrato-entre-módulos-guia-812">3.1 O contrato entre módulos (guia <a href="../parte-8.html#812-o-contrato-entre-módulos-e-o-post-pedidos-perguntar-sem-enxergar-o-interior">8.12</a>)</h3>
+<p><strong>Palavra nova — contrato:</strong> o que um módulo aceita responder aos outros. É uma interface pública, num projeto separado, que não referencia nenhum módulo.</p>
+<pre class="highlight"><code><span class="k">namespace</span><span class="w"> </span><span class="nn">Norte.Clientes.Contratos</span><span class="p">;</span><span class="w"></span>
+
+<span class="k">public</span><span class="w"> </span><span class="k">interface</span><span class="w"> </span><span class="n">IConsultaClientes</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">Task</span><span class="p">&lt;</span><span class="kt">bool</span><span class="p">&gt;</span><span class="w"> </span><span class="n">ClienteExisteAsync</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">clienteId</span><span class="p">,</span><span class="w"> </span><span class="n">CancellationToken</span><span class="w"> </span><span class="n">ct</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre>
+
+<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nf">ConsultaClientes</span><span class="p">(</span><span class="n">ClientesRepository</span><span class="w"> </span><span class="n">clienteRepository</span><span class="p">)</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">IConsultaClientes</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="p">&lt;</span><span class="kt">bool</span><span class="p">&gt;</span><span class="w"> </span><span class="n">ClienteExisteAsync</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">clienteId</span><span class="p">,</span><span class="w"> </span><span class="n">CancellationToken</span><span class="w"> </span><span class="n">ct</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">clienteRepository</span><span class="p">.</span><span class="n">ExisteClientePeloIdAsync</span><span class="p">(</span><span class="n">clienteId</span><span class="p">,</span><span class="w"> </span><span class="n">ct</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Peça</th>
+<th>Onde mora</th>
+<th>Por quê</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>IConsultaClientes</code></td>
+<td><code>Norte.Clientes.Contratos</code> (<code>public</code>)</td>
+<td>é a única coisa que o <code>Pedidos</code> enxerga</td>
+</tr>
+<tr>
+<td><code>ConsultaClientes</code></td>
+<td><code>Norte.Clientes</code> (<code>internal sealed</code>)</td>
+<td>a implementação é detalhe do dono do dado</td>
+</tr>
+<tr>
+<td><code>AddScoped&lt;IConsultaClientes, ConsultaClientes&gt;()</code></td>
+<td><code>AddClientes</code></td>
+<td>o contêiner entrega a implementação a quem pedir a interface</td>
+</tr>
+<tr>
+<td><code>ProjectReference</code> ao projeto de contratos</td>
+<td><code>Norte.Pedidos.csproj</code></td>
+<td>o <code>Pedidos</code> <strong>não</strong> referencia o <code>Norte.Clientes</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Regras do ADR-012 (resumo):</strong> um projeto de contratos por módulo consultado; quem consulta referencia só ele; a implementação é <code>internal</code> e fica no módulo dono; o projeto de contratos não referencia módulo nenhum; <strong>começa sem expor nada</strong> e cada método nasce de uma pergunta concreta, desenhada por <strong>caso de uso</strong> (&quot;o cliente existe?&quot;), não por dado (&quot;devolva o cliente&quot;).</p>
+<p><strong>Por que não as outras opções (ADR-012):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Opção</th>
+<th>Por que ficou de fora</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Interface dentro do <code>Norte.Compartilhado</code></td>
+<td>contraria o ADR-007 (só constantes); o projeto viraria depósito de contratos</td>
+</tr>
+<tr>
+<td>Interface <code>public</code> dentro do próprio <code>Norte.Clientes</code></td>
+<td>quando o <code>Clientes</code> precisar perguntar ao <code>Pedidos</code> (regra do <code>DELETE</code>), os dois se referenciariam; o .NET não aceita referência circular</td>
+</tr>
+<tr>
+<td>Eventos (o <code>Clientes</code> publica, o <code>Pedidos</code> guarda cópia)</td>
+<td>cópia pode ficar defasada; pede mensageria; custo grande para um <code>bool</code></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Ganho</th>
+<th><strong>Preço</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Um projeto de contratos por módulo</td>
+<td>a fronteira é garantida pelo compilador e o módulo dono continua livre para mudar o interior</td>
+<td>um projeto a mais por módulo consultado; o contrato <strong>não elimina o acoplamento, só o torna explícito</strong>; quem consulta depende da interface</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-ligação-na-compilação-×-ligação-na-execução">3.2 Ligação na compilação × ligação na execução</h3>
+<p>São duas garantias diferentes:</p>
+<table>
+<thead>
+<tr>
+<th>Garantia</th>
+<th>Quem dá</th>
+<th>O que falha se faltar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a interface existe e o <code>Pedidos</code> a usa certo</td>
+<td><strong>compilador</strong> (<code>ProjectReference</code>)</td>
+<td>erro de build</td>
+</tr>
+<tr>
+<td>alguém registrou uma implementação</td>
+<td><strong>contêiner de DI</strong>, <strong>em tempo de execução</strong></td>
+<td>exceção na primeira requisição que pedir <code>IConsultaClientes</code></td>
+</tr>
+</tbody>
+</table>
+<p>Por isso o ADR-012 diz: &quot;a ligação em tempo de execução pode falhar; um teste do endpoint com a API de verdade cobre esse caso&quot;.</p>
+<h3 id="33-anyasync-×-firstordefaultasync">3.3 <code>AnyAsync</code> × <code>FirstOrDefaultAsync</code></h3>
+<p>A pergunta do dia (sua) foi por que o <code>ExisteClientePeloIdAsync</code> usa <code>AnyAsync</code>, e não o método que já busca o cliente.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><code>AnyAsync</code></th>
+<th><code>FirstOrDefaultAsync</code> / <code>ObterClientePeloIdAsync</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SQL</td>
+<td><code>EXISTS</code>: responde sim ou não</td>
+<td>traz a linha inteira</td>
+</tr>
+<tr>
+<td>Devolve</td>
+<td><code>bool</code></td>
+<td>o objeto (ou <code>null</code>)</td>
+</tr>
+<tr>
+<td>Quando serve</td>
+<td>só importa <strong>se existe</strong></td>
+<td>você vai <strong>usar</strong> os dados</td>
+</tr>
+</tbody>
+</table>
+<p>O contrato pergunta &quot;existe?&quot;; trazer a linha inteira para jogar fora seria trabalho a mais. E o <code>ExcluirClientePeloIdAsync</code> não serve aqui porque <strong>apagaria</strong> o cliente: um método que muda dado nunca responde a uma pergunta de consulta.</p>
+<h3 id="34-post-pedidos-com-resultscreated-problemhttpresult">3.4 <code>POST /pedidos</code> com <code>Results&lt;Created&lt;...&gt;, ProblemHttpResult&gt;</code></h3>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="p">&lt;</span><span class="n">Results</span><span class="p">&lt;</span><span class="n">Created</span><span class="p">&lt;</span><span class="n">CriarPedidoResponse</span><span class="p">&gt;,</span><span class="w"> </span><span class="n">ProblemHttpResult</span><span class="p">&gt;&gt;</span><span class="w"> </span><span class="n">ExecutarAsync</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">CriarPedidoRequest</span><span class="w"> </span><span class="n">request</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">IConsultaClientes</span><span class="w"> </span><span class="n">consultaClientes</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">PedidosRepository</span><span class="w"> </span><span class="n">pedidosRepository</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">CancellationToken</span><span class="w"> </span><span class="n">ct</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">clienteExiste</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">consultaClientes</span><span class="p">.</span><span class="n">ClienteExisteAsync</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">ClienteId</span><span class="p">,</span><span class="w"> </span><span class="n">ct</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(!</span><span class="n">clienteExiste</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">Problem</span><span class="p">(</span><span class="w"></span>
+<span class="w">            </span><span class="n">statusCode</span><span class="p">:</span><span class="w"> </span><span class="n">StatusCodes</span><span class="p">.</span><span class="n">Status404NotFound</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="n">title</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Cliente não encontrado&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="n">detail</span><span class="p">:</span><span class="w"> </span><span class="s">$&quot;O cliente {request.ClienteId} não foi encontrado&quot;</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// monta os itens e o Pedido; os construtores validam de novo</span>
+<span class="w">    </span><span class="p">...</span><span class="w"></span>
+<span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="n">pedidosRepository</span><span class="p">.</span><span class="n">AdicionarAsync</span><span class="p">(</span><span class="n">pedido</span><span class="p">,</span><span class="w"> </span><span class="n">ct</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">Created</span><span class="p">(</span><span class="s">$&quot;/pedidos/{pedido.PedidoId}&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CriarPedidoResponse</span><span class="p">(</span><span class="n">pedido</span><span class="p">.</span><span class="n">PedidoId</span><span class="p">));</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Resposta</th>
+<th>Quando</th>
+<th>Quem produz</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>400</strong></td>
+<td>o corpo não passa na validação</td>
+<td>validação nativa, <strong>antes</strong> do endpoint</td>
+</tr>
+<tr>
+<td><strong>404</strong> &quot;Cliente não encontrado&quot;</td>
+<td>o contrato diz que o cliente não existe</td>
+<td>o endpoint</td>
+</tr>
+<tr>
+<td><strong>201</strong> com <code>Location</code></td>
+<td>tudo certo</td>
+<td>o endpoint</td>
+</tr>
+</tbody>
+</table>
+<p>O <code>IConsultaClientes</code> aparece como <strong>parâmetro do endpoint</strong>: o Minimal API pede ao contêiner. O endpoint não sabe quem implementa.</p>
+<blockquote>
+<p><strong>Dívida conhecida:</strong> o <code>Location</code> aponta para <code>/pedidos/{id}</code>, mas a rota <code>GET /pedidos/{id}</code> <strong>ainda não existe</strong>. É a primeira coisa do plano da S34.</p>
+</blockquote>
+<h3 id="35-testar-com-um-dublê-consultaclientesfake">3.5 Testar com um dublê: <code>ConsultaClientesFake</code></h3>
+<p>O teste do <code>Pedidos</code> não sobe o <code>Clientes</code> de verdade. Ele <strong>troca</strong> a implementação do contrato:</p>
+<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nf">ConsultaClientesFake</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">existe</span><span class="p">)</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">IConsultaClientes</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">Task</span><span class="p">&lt;</span><span class="kt">bool</span><span class="p">&gt;</span><span class="w"> </span><span class="n">ClienteExisteAsync</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">clienteId</span><span class="p">,</span><span class="w"> </span><span class="n">CancellationToken</span><span class="w"> </span><span class="n">ct</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">Task</span><span class="p">.</span><span class="n">FromResult</span><span class="p">(</span><span class="n">existe</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre>
+
+<pre class="highlight"><code><span class="k">using</span><span class="w"> </span><span class="nn">var</span><span class="w"> </span><span class="n">fabricaComClienteExistente</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">fabrica</span><span class="p">.</span><span class="n">WithWebHostBuilder</span><span class="p">(</span><span class="n">builder</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"></span>
+<span class="w">    </span><span class="n">builder</span><span class="p">.</span><span class="n">ConfigureServices</span><span class="p">(</span><span class="n">services</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"></span>
+<span class="w">        </span><span class="n">services</span><span class="p">.</span><span class="n">AddScoped</span><span class="p">&lt;</span><span class="n">IConsultaClientes</span><span class="p">&gt;(</span><span class="n">_</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ConsultaClientesFake</span><span class="p">(</span><span class="n">existe</span><span class="p">:</span><span class="w"> </span><span class="k">true</span><span class="p">))));</span><span class="w"></span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Peça</th>
+<th>O que faz</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>WithWebHostBuilder</code></td>
+<td>cria uma variação da fábrica de teste, só para este teste</td>
+</tr>
+<tr>
+<td><code>AddScoped&lt;IConsultaClientes&gt;(...)</code></td>
+<td>registra <strong>depois</strong> do <code>AddClientes</code>; o contêiner usa a <strong>última</strong> registração, e o fake vence</td>
+</tr>
+<tr>
+<td><code>existe: true</code> / <code>false</code></td>
+<td>decide a resposta sem banco de clientes</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Palavra nova — dublê (<em>test double</em>):</strong> qualquer objeto que ocupa o lugar de um colaborador no teste. Os tipos mais comuns são <em>stub</em> (responde o que você mandou), <em>fake</em> (uma implementação simples e funcional) e <em>mock</em> (também confere se foi chamado). O nome <code>ConsultaClientesFake</code> foi <strong>sua</strong> escolha (o primeiro nome era <code>ConsultaClientesFalsa</code>): &quot;vai ao encontro de <code>Tests</code> etc.&quot; O <code>Fake</code> descreve o papel; o sufixo em inglês segue o padrão de <code>Tests</code>.</p>
+<h3 id="36-validação-nativa-do-net-10-levada-ao-limite">3.6 Validação nativa do .NET 10 levada ao limite</h3>
+<p>O <code>CriarPedidoRequest</code> é <code>public</code> (exceção do ADR-003) e a validação roda <strong>antes</strong> do endpoint.</p>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Atributo</th>
+<th>Detalhe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Origem</code></td>
+<td><code>[Range(1, 6)]</code></td>
+<td>você decidiu receber o <strong>código</strong> (<code>int</code>), não o nome</td>
+</tr>
+<tr>
+<td><code>CriadoPor</code></td>
+<td><code>[Required]</code> + <code>[StringLength(Constantes.TamanhoMaximoCriadoPor)]</code></td>
+<td><code>[StringLength]</code> ignora <code>null</code>; o <code>[Required]</code> fecha</td>
+</tr>
+<tr>
+<td><code>ClienteId</code>, <code>RepresentanteId</code></td>
+<td><code>[Range(1, int.MaxValue)]</code></td>
+<td><code>[Range]</code> é <strong>inclusivo</strong></td>
+</tr>
+<tr>
+<td><code>Itens</code></td>
+<td><code>[Required]</code> + <code>[MinLength(1)]</code></td>
+<td><code>[Required]</code> barra <code>null</code>; <code>[MinLength]</code> barra lista vazia</td>
+</tr>
+<tr>
+<td><code>PrecoUnitario</code>, <code>ValorDesconto</code></td>
+<td><code>[Range(typeof(decimal), &quot;0.01&quot;, &quot;79228162514264337593543950335&quot;, ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]</code></td>
+<td>veja abaixo</td>
+</tr>
+<tr>
+<td>desconto × preço × quantidade</td>
+<td><code>IValidatableObject</code> no item</td>
+<td>veja 3.7</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>[Range]</code> com <code>decimal</code>.</strong> Atributo só aceita constante, e <code>decimal</code> não é constante de atributo. Por isso os limites vão <strong>como texto</strong>. Sem os dois <code>...InvariantCulture</code>, <code>&quot;0.01&quot;</code> seria lido com a cultura do servidor; em pt-BR o ponto é separador de milhar e o valor virava <code>1</code>. Os dois <code>true</code> mandam ler os limites <strong>e</strong> o valor recebido com a cultura invariante (o ponto decimal do JSON).</p>
+<p><strong>Origem como <code>int</code>.</strong> Sua razão: &quot;número não dá erro de digitação&quot;. O <code>Enum.IsDefined</code> continua no construtor do domínio (segunda barreira). O <code>[Range(1, 6)]</code> não pode ler o enum (atributo só aceita constante), então o limite está escrito à mão <strong>e um teste de reflexão garante que ele acompanha o enum</strong>:</p>
+<pre class="highlight"><code><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">codigos</span><span class="p">.</span><span class="n">Min</span><span class="p">(),</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">range</span><span class="p">.</span><span class="n">Minimum</span><span class="p">);</span><span class="w"></span>
+<span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">codigos</span><span class="p">.</span><span class="n">Max</span><span class="p">(),</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">range</span><span class="p">.</span><span class="n">Maximum</span><span class="p">);</span><span class="w"></span>
+<span class="c1">// Sem buracos: o Range só é suficiente se os códigos forem contínuos</span>
+<span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">codigos</span><span class="p">.</span><span class="n">Max</span><span class="p">()</span><span class="w"> </span><span class="p">-</span><span class="w"> </span><span class="n">codigos</span><span class="p">.</span><span class="n">Min</span><span class="p">()</span><span class="w"> </span><span class="p">+</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">codigos</span><span class="p">.</span><span class="n">Count</span><span class="p">);</span><span class="w"></span>
+</code></pre>
+
+<p>Se alguém acrescentar <code>OrigemPedido.Telefone = 7</code> e esquecer o <code>Range</code>, o teste fica vermelho. Se alguém pular um número (1, 2, 4), o último <code>Assert</code> também.</p>
+<h3 id="37-ivalidatableobject-a-regra-que-olha-três-campos">3.7 <code>IValidatableObject</code>: a regra que olha três campos</h3>
+<p>Um atributo no campo só enxerga aquele campo. A regra &quot;o desconto deve ser <strong>menor</strong> que preço × quantidade&quot; olha três:</p>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="n">IEnumerable</span><span class="p">&lt;</span><span class="n">ValidationResult</span><span class="p">&gt;</span><span class="w"> </span><span class="n">Validate</span><span class="p">(</span><span class="n">ValidationContext</span><span class="w"> </span><span class="n">validationContext</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ValorDesconto</span><span class="w"> </span><span class="p">&gt;=</span><span class="w"> </span><span class="n">PrecoUnitario</span><span class="w"> </span><span class="p">*</span><span class="w"> </span><span class="n">Quantidade</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="k">yield</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="nf">ValidationResult</span><span class="p">(</span><span class="w"></span>
+<span class="w">            </span><span class="s">&quot;O valor do desconto deve ser menor que o valor total do item&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="na">[nameof(ValorDesconto)]</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre>
+
+<p>O segundo argumento (<code>[nameof(ValorDesconto)]</code>) diz <strong>qual campo</strong> aparece em <code>Errors</code> no 400. A regra é a mesma do construtor do <code>ItemPedido</code> (S24): a API barra primeiro e o domínio é a segunda defesa.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Ganho</th>
+<th><strong>Preço</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Validar na entrada <strong>e</strong> no domínio</td>
+<td>a API responde 400 com o campo certo; o domínio protege qualquer outra porta</td>
+<td>a regra do desconto existe em dois lugares</td>
+</tr>
+<tr>
+<td><code>IValidatableObject</code></td>
+<td>sem biblioteca nova; a regra composta fica junto do <code>Request</code></td>
+<td>a regra fica escrita em código dentro do <code>Request</code>; se as regras compostas crescerem, o FluentValidation (adiado) volta à conversa</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Limite não coberto:</strong> <code>PrecoUnitario * Quantidade</code> pode <strong>estourar</strong> o <code>decimal</code> (preço 79228162514264337593543950335 × quantidade 2). O resultado seria uma exceção de estouro, e a API devolveria <strong>500</strong>. Fica anotado como <strong>dívida</strong> (preço e quantidade máximos), junto com o contrato <code>Pedidos</code> ↔ <code>Catalogo</code>.</p>
+<h3 id="38-o-teste-do-400-que-troca-um-campo-de-cada-vez">3.8 O teste do 400 que troca um campo de cada vez</h3>
+<pre class="highlight"><code><span class="kt">var</span><span class="w"> </span><span class="n">corpo</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">JsonObject</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">[</span><span class="s">&quot;origem&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="s">&quot;criadoPor&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;vendedor.teste&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
+<span class="n">corpo</span><span class="p">[</span><span class="n">campo</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">JsonNode</span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="n">valorInvalidoJson</span><span class="p">);</span><span class="w"></span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Peça</th>
+<th>Papel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TheoryData&lt;string, string&gt;</code> (campo, valor inválido em JSON)</td>
+<td>cada linha troca <strong>um</strong> campo por um valor ruim</td>
+</tr>
+<tr>
+<td><code>JsonObject</code> e <code>JsonNode.Parse</code></td>
+<td>montam o corpo e permitem pôr <code>null</code>, <code>[]</code>, <code>&quot;   &quot;</code> como JSON de verdade</td>
+</tr>
+<tr>
+<td>um campo ruim por vez</td>
+<td>os outros ficam válidos para só uma regra poder falhar</td>
+</tr>
+</tbody>
+</table>
+<p>Para os itens, <code>ItensInvalidos</code> faz o mesmo dentro do item (SKU nulo, vazio, só espaços, 21 caracteres; quantidade 0 e −1; preço 0 e −1; desconto −1, 21,00 e 25,00). O item válido do teste é <code>2 × 10,50 = 21,00</code>; por isso <strong>21,00 é recusado</strong> (a regra é &quot;estritamente menor&quot;) e 25,00 também.</p>
+<h3 id="39-tdd-de-verdade-o-teste-vermelho-vai-no-commit-antes">3.9 TDD de verdade: o teste vermelho vai no commit antes</h3>
+<p>Os commits do PR #63 seguem o par <strong>teste vermelho → código</strong>: <code>962d17d</code> (falha com campos inválidos) → <code>cce3b11</code> (valida a forma do pedido); <code>0f8ee29</code> (falha com item inválido) → <code>0e42f09</code> (valida os campos do item); <code>eea8562</code> valida a origem; <code>ebd4c3d</code> fixa o <code>Range</code> ao enum. O histórico <strong>prova</strong> o vermelho. E o vermelho precisa ser <strong>pelo motivo certo</strong>: um teste do 404 vermelho porque o endpoint nem existe (404 de rota) não prova nada sobre o cliente.</p>
+<h3 id="310-git-e-github-do-dia">3.10 Git e GitHub do dia</h3>
+<table>
+<thead>
+<tr>
+<th>Situação</th>
+<th>O que fazer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Abrir o PR</td>
+<td><code>gh pr create --base main --head &lt;branch&gt; --title &quot;...&quot; --web</code> (o <code>--web</code> abre o template; <code>--body</code> e <code>--body-file</code> pulam o template)</td>
+</tr>
+<tr>
+<td>Esperar o CI</td>
+<td><code>gh pr checks &lt;n&gt;</code> até tudo verde; só então o merge</td>
+</tr>
+<tr>
+<td>Merge</td>
+<td>merge commit (sem squash)</td>
+</tr>
+<tr>
+<td>Limpar</td>
+<td><code>git switch main</code>, <code>git pull</code>, <code>git branch -d &lt;branch&gt;</code></td>
+</tr>
+<tr>
+<td>CI</td>
+<td><code>runs-on: ubuntu-26.04</code> fixado: o <code>ubuntu-latest</code> migra do 24.04 para o 26.04 entre 19/10 e 19/11/2026</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-termos">4. Termos</h2>
+<table>
+<thead>
+<tr>
+<th>Termo</th>
+<th>Em uma linha</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Contrato</td>
+<td>interface pública, num projeto próprio, que um módulo oferece aos outros</td>
+</tr>
+<tr>
+<td>Projeto de contratos</td>
+<td><code>Norte.&lt;Modulo&gt;.Contratos</code>: só interface e DTOs, sem referência a módulo</td>
+</tr>
+<tr>
+<td>Ligação na compilação</td>
+<td>o <code>ProjectReference</code> garante que a interface existe</td>
+</tr>
+<tr>
+<td>Ligação na execução</td>
+<td>o contêiner de DI garante que alguém a implementou</td>
+</tr>
+<tr>
+<td>Dublê (<em>test double</em>)</td>
+<td>objeto que ocupa o lugar de um colaborador no teste</td>
+</tr>
+<tr>
+<td>Fake</td>
+<td>dublê com uma implementação simples que funciona (<code>ConsultaClientesFake</code>)</td>
+</tr>
+<tr>
+<td><code>WithWebHostBuilder</code></td>
+<td>variação da fábrica de teste com serviços trocados</td>
+</tr>
+<tr>
+<td><code>AnyAsync</code></td>
+<td>pergunta &quot;existe?&quot; ao banco (<code>EXISTS</code>)</td>
+</tr>
+<tr>
+<td><code>IValidatableObject</code></td>
+<td>validação que olha vários campos do mesmo objeto</td>
+</tr>
+<tr>
+<td><code>ParseLimitsInInvariantCulture</code></td>
+<td>lê os limites do <code>[Range]</code> com a cultura invariante</td>
+</tr>
+<tr>
+<td><code>JsonNode</code></td>
+<td>árvore de JSON editável, usada para trocar um campo no teste</td>
+</tr>
+<tr>
+<td>TDD</td>
+<td>teste vermelho primeiro, código depois, verde</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-dúvidas-e-respostas">5. Dúvidas e respostas</h2>
+<p><strong>O que a origem do pedido tem a ver com o contrato do cliente?</strong> Nada diretamente. A decisão da origem (código <code>int</code>) é sobre o <strong>formato da entrada</strong> do <code>POST /pedidos</code>; o contrato é sobre <strong>perguntar ao <code>Clientes</code> se o cliente existe</strong>. As duas coisas aparecem no mesmo endpoint, mas são decisões separadas.</p>
+<p><strong>Por que não usar o <code>ExcluirClientePeloIdAsync</code>?</strong> Porque ele <strong>apaga</strong>. Consulta nunca pode alterar dado.</p>
+<p><strong>Por que <code>AnyAsync</code> e não <code>FirstOrDefaultAsync</code>?</strong> Porque a pergunta é &quot;existe?&quot;, e não &quot;quem é?&quot;. Veja 3.3.</p>
+<p><strong>O <code>Request</code> do pedido é <code>public</code>. Isso não fura o <code>internal</code>?</strong> É a exceção do ADR-003 (a validação nativa precisa enxergá-lo); o <code>Response</code>, o endpoint e o repositório seguem <code>internal</code>.</p>
+<p><strong>Onde está o limite do <code>decimal</code>?</strong> O <code>[Range]</code> usa o maior <code>decimal</code> como teto, mas <strong>preço × quantidade</strong> pode passar dele. Hoje o teto de preço e de quantidade não existe.</p>
+<h2 id="6-divergências-e-decisões-do-aluno">6. Divergências e decisões do aluno</h2>
+<table>
+<thead>
+<tr>
+<th>Tema</th>
+<th>Posição</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Origem do pedido</td>
+<td>código <code>int</code> com <code>[Range]</code> e <code>Enum.IsDefined</code> no construtor; &quot;número não dá erro de digitação&quot;</td>
+<td><strong>decidido</strong></td>
+</tr>
+<tr>
+<td>404 para cliente inexistente</td>
+<td>&quot;404&quot; (resposta curta)</td>
+<td><strong>decidido</strong></td>
+</tr>
+<tr>
+<td><code>criadoPor</code></td>
+<td>&quot;deveria ser um <code>short</code>... por simplicidade, texto mesmo e seguir em frente&quot;</td>
+<td><strong>decidido</strong></td>
+</tr>
+<tr>
+<td>Nome do dublê</td>
+<td><code>ConsultaClientesFake</code> (não <code>ConsultaClientesFalsa</code>)</td>
+<td><strong>você tinha razão</strong></td>
+</tr>
+<tr>
+<td>Comando <code>--filter</code> do mentor</td>
+<td>achou errado; perguntou onde no <code>Pedidos</code> há <code>CriarPedidoComBancoApi</code></td>
+<td><strong>você tinha razão</strong>; corrigido</td>
+</tr>
+<tr>
+<td>FluentValidation</td>
+<td>&quot;O que eu acho que faríamos apenas o contrato... Nada de Fluent&quot;</td>
+<td><strong>decidido</strong>; o que o mentor criou foi <strong>revertido</strong></td>
+</tr>
+<tr>
+<td>PR com <code>--body</code></td>
+<td>&quot;Por que você está usando <code>--body</code> em vez de <code>--web</code>? Por que mudou?&quot;</td>
+<td><strong>você tinha razão</strong>; volta o <code>--web</code></td>
+</tr>
+<tr>
+<td><code>dotnet build Norte.slnx</code> depois de criar a branch</td>
+<td>&quot;Para que esse comando?&quot;</td>
+<td><strong>você tinha razão</strong>: era redundante</td>
+</tr>
+<tr>
+<td>Pendências antigas</td>
+<td>&quot;Todo início e final de sessão precisamos limpar tudo, para começarmos novas sessões sem pendências&quot;</td>
+<td><strong>regra nova</strong></td>
+</tr>
+<tr>
+<td>Teto do M1</td>
+<td>+80h</td>
+<td><strong>decidido</strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-avaliação">7. Avaliação</h2>
+<p><strong>Fez bem:</strong> perguntou o porquê de <code>AnyAsync</code> antes de aceitar e mostrou a alternativa que já existia; decidiu a origem como código com argumento e a defendeu com <code>Range</code> e <code>Enum.IsDefined</code>; achou o comando <code>--filter</code> errado; escolheu o nome <code>ConsultaClientesFake</code> por coerência com <code>Tests</code>; barrou o FluentValidation que não foi pedido; perguntou o valor de cada pendência (&quot;Isso realmente tem valor ou é algo que você acha que tem?&quot;); criou a regra de zerar pendências; questionou o <code>--body</code> e o <code>dotnet build</code> redundante.</p>
+<p><strong>Recursos novos:</strong> contrato entre módulos; <code>Results&lt;Created&lt;...&gt;, ProblemHttpResult&gt;</code> com um parâmetro vindo do contêiner; <code>[Range]</code> com <code>decimal</code> e as duas opções de cultura; <code>IValidatableObject</code>; <code>TheoryData</code> com <code>JsonNode</code>. A autoria exata de cada trecho de código não foi preservada no resumo de compactação; <strong>a ajuda não foi medida</strong>.</p>
+<p><strong>O mentor conduziu mal:</strong> entregou código incompleto (&quot;Novamente isso está incompleto&quot;); passou um <code>--filter</code> errado; criou FluentValidation sem pedido; usou <code>--body-file</code> onde o padrão é <code>--web</code>; listou várias vezes pendências <strong>já encerradas</strong> por você (ruleset <code>proteger-main</code>, dígitos do CNPJ, <code>DOMINIO.md</code>, Instruções v2.5) e misturou pendência com plano; pediu um build redundante; afirmou sem conferir que o <code>id + 1</code> era frágil e que o <code>ESTUDO-S29.md</code> não existia (os dois estavam errados).</p>
+<h2 id="8-pontos-a-melhorar">8. Pontos a melhorar</h2>
+<ul>
+<li><strong>Aluno:</strong> conferir o que o PR afirma contra o <code>git diff --stat</code> antes de abrir; no teste de requisição, dizer <strong>qual campo</strong> deve aparecer no <code>Errors</code> (a quinta coluna da <code>Theory</code> da S31).</li>
+<li><strong>Mentor:</strong> entregar o arquivo/trecho <strong>completo</strong>; conferir comando contra o que já foi combinado; não repetir item que o aluno já encerrou; separar plano de pendência.</li>
+<li><strong>Código (S34):</strong> <code>GET /pedidos/{id}</code>; regra &quot;não excluir cliente com pedidos&quot; (<code>Pedidos.Contratos</code>); contrato <code>Pedidos</code> ↔ <code>Catalogo</code> (preço e máximos); decidir qual regra merece FluentValidation.</li>
+</ul>
+<h2 id="9-teste-se">9. Teste-se</h2>
+<ol>
+<li>Por que a interface <code>IConsultaClientes</code> fica num projeto separado, e não dentro do <code>Norte.Clientes</code>?</li>
+<li>O <code>Pedidos</code> referencia o <code>Norte.Clientes</code>? O que ele referencia?</li>
+<li>O que o compilador garante e o que só a execução garante no contrato?</li>
+<li>Por que o <code>ExisteClientePeloIdAsync</code> usa <code>AnyAsync</code> e não <code>FirstOrDefaultAsync</code>?</li>
+<li>Como o teste do 404 faz o endpoint responder &quot;o cliente não existe&quot; sem subir o <code>Clientes</code>?</li>
+<li>Por que a última registração vence, e por que isso importa para o dublê?</li>
+<li>Qual é a diferença entre <em>stub</em>, <em>fake</em> e <em>mock</em>? Em qual o <code>ConsultaClientesFake</code> se encaixa?</li>
+<li>Por que o <code>[Range]</code> com <code>decimal</code> precisa dos limites em texto e de <code>ParseLimitsInInvariantCulture</code>?</li>
+<li>Por que o limite do <code>[Range(1, 6)]</code> da origem tem um teste de reflexão?</li>
+<li>Por que a regra &quot;desconto menor que preço × quantidade&quot; usa <code>IValidatableObject</code> e não um atributo?</li>
+<li>Qual campo aparece no <code>Errors</code> quando o desconto é 21,00 num item de <code>2 × 10,50</code>, e por quê?</li>
+<li>Que limite a validação nativa <strong>não</strong> cobre hoje, e o que a API devolveria?</li>
+<li>Por que o histórico do PR #63 tem o commit do teste <strong>antes</strong> do commit do código?</li>
+<li>Por que o <code>gh pr create</code> usa <code>--web</code> e não <code>--body</code>?</li>
+</ol>
+<h2 id="10-preparação-para-a-s34">10. Preparação para a S34</h2>
+<ol>
+<li>Abrir um chat novo com a pasta <code>D:\Projetos\C#\Monolito_Modular</code> ligada; trazer <code>git status</code> e <code>git log -3 --oneline</code> (esperado <code>aafcbef</code>). Docker aberto.</li>
+<li><strong>Plano (não é pendência):</strong> (A) <code>GET /pedidos/{id}</code>, para o <code>Location</code> do 201 funcionar; (B) regra para bloquear o <code>DELETE</code> de cliente que tem pedidos (<code>Pedidos.Contratos</code>, o contrato nos dois sentidos); (C) contrato <code>Pedidos</code> ↔ <code>Catalogo</code> (preço e máximos). Decidir também qual regra recebe FluentValidation.</li>
+<li>Começar com a lista de pendências <strong>vazia</strong>, como combinado.</li>
+</ol>
+<hr />
+<h2 id="respostas">Respostas</h2><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>Porque o <code>Clientes</code> e o <code>Pedidos</code> vão precisar perguntar um ao outro (o <code>DELETE</code> de cliente pergunta ao <code>Pedidos</code>); se a interface morasse no módulo, haveria referência circular, que o .NET não aceita. Um projeto de contratos sem referências quebra o ciclo e mantém o interior do módulo <code>internal</code>.</li>
+<li>Não. Referencia só o <code>Norte.Clientes.Contratos</code>.</li>
+<li>O compilador garante que a interface existe e que o <code>Pedidos</code> a usa certo (<code>ProjectReference</code>). Só a execução garante que alguém registrou uma implementação no contêiner de DI; sem registro, a primeira requisição que pedir a interface falha. Por isso há um teste com a API de verdade.</li>
+<li>Porque a pergunta é &quot;existe?&quot;: <code>AnyAsync</code> vira <code>EXISTS</code> e devolve <code>bool</code>, sem trazer a linha. <code>FirstOrDefaultAsync</code> traz a linha inteira, o que só vale se os dados forem usados.</li>
+<li>Troca a implementação do contrato: <code>WithWebHostBuilder</code> + <code>AddScoped&lt;IConsultaClientes&gt;(_ =&gt; new ConsultaClientesFake(existe: false))</code>. O endpoint pergunta ao fake, que responde <code>false</code>, e devolve 404.</li>
+<li>O contêiner entrega a última implementação registrada para uma interface. O fake é registrado depois do <code>AddClientes</code>, então vence a implementação real, só naquele teste.</li>
+<li><em>Stub</em> devolve o que foi combinado; <em>fake</em> é uma implementação simples que funciona; <em>mock</em> também confere como foi chamado. O <code>ConsultaClientesFake</code> devolve o <code>bool</code> que o teste mandou: na prática é um stub, e o nome <code>Fake</code> foi escolhido por coerência com <code>Tests</code>.</li>
+<li>Atributo só aceita constante e <code>decimal</code> não é constante de atributo; os limites vão como texto. Sem <code>ParseLimitsInInvariantCulture</code> o <code>&quot;0.01&quot;</code> seria lido com a cultura do servidor (em pt-BR o ponto é separador de milhar).</li>
+<li>O <code>Range</code> não pode ler o enum (atributo só aceita constante), então o limite é escrito à mão. O teste confere por reflexão que o mínimo e o máximo do <code>Range</code> são os do enum e que não há buracos; se o enum crescer e o <code>Range</code> ficar, o teste fica vermelho.</li>
+<li>Porque a regra olha três campos (desconto, preço e quantidade) e um atributo no campo só enxerga aquele campo. O <code>Validate</code> olha o objeto inteiro.</li>
+<li><code>ValorDesconto</code>: o <code>Validate</code> devolve o erro com <code>[nameof(ValorDesconto)]</code>. Com 21,00 o desconto é igual ao total (2 × 10,50) e a regra é &quot;estritamente menor&quot;.</li>
+<li>O estouro de <code>PrecoUnitario * Quantidade</code> no <code>decimal</code>: o cálculo lançaria uma exceção de estouro e a API devolveria 500. Falta definir preço e quantidade máximos (dívida anotada).</li>
+<li>Porque o histórico prova que o teste ficou vermelho antes do código existir; se o teste viesse junto com o código, ninguém saberia se ele consegue falhar.</li>
+<li>Porque o <code>--web</code> abre o formulário do GitHub já com o template do repositório (O que muda / Como verificar / Decisões). <code>--body</code> e <code>--body-file</code> pulam o template.</li>
+</ol>
+</details>
+</article>
+<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

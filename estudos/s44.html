@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ESTUDO S44 — Fechando a organização dos testes do Norte · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s44.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#estudo-s44--fechando-a-organização-dos-testes-do-norte" data-id="estudo-s44--fechando-a-organização-dos-testes-do-norte">ESTUDO S44 — Fechando a organização dos testes do Norte</a><a class="n2" href="#1-objetivo-e-resultado" data-id="1-objetivo-e-resultado">1. Objetivo e resultado</a><a class="n2" href="#2-mapa-dos-níveis" data-id="2-mapa-dos-níveis">2. Mapa dos níveis</a><a class="n2" href="#3-conceitos-de-para" data-id="3-conceitos-de-para">3. Conceitos (de-para)</a><a class="n2" href="#4-termos" data-id="4-termos">4. Termos</a><a class="n2" href="#5-dúvidas-que-apareceram" data-id="5-dúvidas-que-apareceram">5. Dúvidas que apareceram</a><a class="n2" href="#6-divergências-e-decisões" data-id="6-divergências-e-decisões">6. Divergências e decisões</a><a class="n2" href="#7-avaliação-da-sessão" data-id="7-avaliação-da-sessão">7. Avaliação da sessão</a><a class="n2" href="#8-pontos-a-melhorar" data-id="8-pontos-a-melhorar">8. Pontos a melhorar</a><a class="n2" href="#9-perguntas-de-recuperação" data-id="9-perguntas-de-recuperação">9. Perguntas de recuperação</a><a class="n2" href="#10-preparação-para-o-próximo-chat" data-id="10-preparação-para-o-próximo-chat">10. Preparação para o próximo chat</a></aside>
+<main class="conteudo"><article>
+<h1 id="estudo-s44--fechando-a-organização-dos-testes-do-norte">ESTUDO S44 — Fechando a organização dos testes do Norte</h1>
+<blockquote>
+<p>Material de estudo da sessão S44 (10/11/2026). Tempo líquido de estudo: <strong>2h39</strong> (09:41 a 12:20, sem pausas).</p>
+</blockquote>
+<h2 id="1-objetivo-e-resultado">1. Objetivo e resultado</h2>
+<p><strong>Objetivo:</strong> continuar o plano de organização dos testes (S43) até o ponto em que o aluno decidiu parar, e deixar a convenção escrita no repositório.</p>
+<p><strong>Resultado:</strong> PRs #115 a #123 mesclados, CI verde, <strong>309 testes</strong> em todos. Só <code>tests/</code> e documentação mudaram (nada em <code>src/</code>). <code>main</code> em <code>da9bbbd</code>.</p>
+<table>
+<thead>
+<tr>
+<th>PR</th>
+<th>O que foi feito</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#115</td>
+<td><code>Clientes</code>, <code>Excluir</code>: usa <code>PutComIfMatchAsync</code> e <code>DeleteComIfMatchAsync</code></td>
+</tr>
+<tr>
+<td>#116</td>
+<td><code>Catálogo</code>, <code>Excluir</code>: usa as extensões de <code>If-Match</code></td>
+</tr>
+<tr>
+<td>#117</td>
+<td><code>Catálogo</code>, <code>Atualizar</code>: usa a extensão, o helper privado de PUT sai</td>
+</tr>
+<tr>
+<td>#118</td>
+<td>Sufixo <code>Tests</code> nas 17 classes de integração e <code>SemBanco</code> no Catálogo</td>
+</tr>
+<tr>
+<td>#119</td>
+<td>Pastas <code>Fakes/</code> e <code>Persistencia/</code> nos módulos</td>
+</tr>
+<tr>
+<td>#120</td>
+<td><code>Clientes</code>: <code>CadastrarClienteAsync</code> (<code>Extensions/</code>)</td>
+</tr>
+<tr>
+<td>#121</td>
+<td><code>Representantes</code>: <code>CadastrarRepresentanteAsync</code> (duas versões)</td>
+</tr>
+<tr>
+<td>#122</td>
+<td><code>Catálogo</code>: <code>CadastrarFichaProdutoAsync</code></td>
+</tr>
+<tr>
+<td>#123</td>
+<td><code>docs/convencao-de-testes.md</code> e Seção 7 do <code>CLAUDE.md</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Decisões do dia:</strong> <code>Pedidos</code> não ganha helper (só 2 POSTs de preparação, e o corpo é o assunto do teste); Passo 6 (verbos nos ~64 métodos antigos) não vale; Passo 7 (dividir <code>CriarPedido</code> e <code>AtualizarFichaProduto</code>) não vale agora.</p>
+<h2 id="2-mapa-dos-níveis">2. Mapa dos níveis</h2>
+<ul>
+<li><strong>Nível 1 — Gerar dados:</strong> <code>Dados.*</code> (S43).</li>
+<li><strong>Nível 2 — Subir o ambiente:</strong> fábrica base (S43).</li>
+<li><strong>Nível 3 — Falar HTTP:</strong> extensões de <code>HttpClient</code>: <code>If-Match</code> (compartilhadas) e <strong>cadastro (uma por módulo)</strong>.</li>
+<li><strong>Nível 4 — Nomear e organizar:</strong> sufixo <code>Tests</code>, pastas <code>Dominio/ Funcionalidades/ Contratos/ Persistencia/ Fakes/</code>, convenção escrita.</li>
+</ul>
+<h2 id="3-conceitos-de-para">3. Conceitos (de-para)</h2>
+<table>
+<thead>
+<tr>
+<th>Antes</th>
+<th>Depois</th>
+<th>Por quê</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5 a 8 linhas de POST + <code>Assert</code> + leitura do JSON em cada teste</td>
+<td><code>var (id, etag) = await cliente.CadastrarClienteAsync(corpo)</code></td>
+<td>O passo de preparação é escrito uma vez; o teste mostra só o que importa</td>
+</tr>
+<tr>
+<td>Helpers privados parecidos em 3 classes do mesmo módulo</td>
+<td>1 extensão no <code>Extensions/</code> do módulo</td>
+<td>Um lugar só para consertar</td>
+</tr>
+<tr>
+<td><code>PostAsJsonAsync</code> genérico como extensão do projeto compartilhado</td>
+<td><strong>não criado</strong></td>
+<td><code>PostAsJsonAsync</code> já existe; o valor está no cadastro por módulo (id + ETag + 201 conferido)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Por que o cadastro mora no projeto de teste de cada módulo e não no compartilhado:</strong> a rota (<code>/clientes/</code>, <code>/representantes/</code>, <code>/catalogo/fichas-produto</code>) e o formato da resposta (id numérico × SKU) são de cada módulo. O compartilhado fica com o que serve a todos (<code>Dados</code>, fábrica base, <code>If-Match</code>).</p>
+<p><strong>Regra do terceiro uso:</strong> o passo de Arrange ou Act que se repete pela terceira vez é extraído no mesmo PR. Por isso <code>Pedidos</code> ficou de fora: 2 usos, e o corpo era o assunto do teste.</p>
+<p><strong>Desconstrução com descarte:</strong> <code>var (id, _) = ...</code> pega só o que o teste usa; <code>var (id, etag) = ...</code> pega os dois.</p>
+<h2 id="4-termos">4. Termos</h2>
+<ul>
+<li><strong>Método de extensão:</strong> <code>this HttpClient cliente</code> faz o método aparecer em qualquer <code>HttpClient</code>.</li>
+<li><strong>Helper de cadastro:</strong> extensão que faz o POST de preparação, confere 201 e o ETag e devolve o que o teste precisa (id e ETag; no Catálogo, só o ETag, porque a chave é o SKU).</li>
+<li><strong>Arrange × Act:</strong> o POST de preparação fica no Arrange; o POST que é o assunto do teste (testes de Cadastrar) fica no Act.</li>
+</ul>
+<h2 id="5-dúvidas-que-apareceram">5. Dúvidas que apareceram</h2>
+<ul>
+<li><em>&quot;Se criamos PUT e DELETE, não seria padrão criar também o POST?&quot;</em> O aluno achou que ficaria mais padronizado. A análise: um POST genérico não acrescenta nada ao <code>PostAsJsonAsync</code>; o ganho está no <strong>helper de cadastro por módulo</strong> (5 linhas viram 1). O aluno concordou e escolheu uma extensão por módulo, um PR por módulo.</li>
+<li><em>Por que o <code>ObterEtagAsync</code> (GET) do Atualizar do Catálogo continua?</em> O POST já devolve o ETag, mas trocar a origem do ETag é outra decisão; ficou fora do PR.</li>
+</ul>
+<h2 id="6-divergências-e-decisões">6. Divergências e decisões</h2>
+<ul>
+<li>Teto do M1 (≈180h): <strong>estourado por decisão do aluno</strong>, mantendo o roteiro final inteiro (≈9h).</li>
+<li>Convenção de testes aprovada (página inteira) e escrita no repositório.</li>
+<li>Quatro regras de conduta aprovadas (Seção 8).</li>
+<li>Sem autoria em commit e PR (regra (cl)); a mensagem automática voltou a pedir e o mentor errou uma vez; corrigido.</li>
+</ul>
+<h2 id="7-avaliação-da-sessão">7. Avaliação da sessão</h2>
+<p>Entrega limpa: nove PRs pequenos, 309 testes em todos, nenhum teste perdido (contagem conferida). O ganho maior foi de método: a análise da causa do retrabalho das S43 e S44 mostrou que a convenção existia pela metade e o <code>CLAUDE.md</code> estava parado na S27; agora há documento, regra do terceiro uso e conferência.</p>
+<h2 id="8-pontos-a-melhorar">8. Pontos a melhorar</h2>
+<ol>
+<li>Antes de propor uma refatoração de teste, <strong>trazer contagens reais</strong> (foi o que evitou o PR de <code>Pedidos</code> e o Passo 7).</li>
+<li>Teste novo nasce conforme a Seção 7 do <code>CLAUDE.md</code>; o mentor confere com uma pergunta ao revisar.</li>
+<li>Ao replicar uma funcionalidade em outro módulo, listar antes o que se repete nos testes e onde mora o helper.</li>
+<li>Terceiro uso: extrair no mesmo PR.</li>
+</ol>
+<h2 id="9-perguntas-de-recuperação">9. Perguntas de recuperação</h2>
+<ol>
+<li>Por que o POST genérico não virou extensão, e o cadastro por módulo sim?</li>
+</ol>
+<details><summary>Resposta</summary>`PostAsJsonAsync` já existe; o cadastro por módulo junta POST, conferência do 201 e do ETag e leitura do id, e a rota e a resposta são de cada módulo.</details>
+<ol start="2">
+<li>Por que <code>Pedidos</code> não ganhou helper de cadastro?</li>
+</ol>
+<details><summary>Resposta</summary>Só 2 POSTs de preparação, e nos dois o corpo é o assunto do teste (a regra do terceiro uso não foi atingida).</details>
+<ol start="3">
+<li>Onde mora o helper de cadastro de cada módulo e por quê?</li>
+</ol>
+<details><summary>Resposta</summary>Em `Extensions/` do projeto de teste do módulo, porque a rota e o formato da resposta são do módulo; o compartilhado fica com o que serve a todos.</details>
+<ol start="4">
+<li>O que a regra do terceiro uso manda?</li>
+</ol>
+<details><summary>Resposta</summary>O passo de Arrange ou Act que se repete pela terceira vez é extraído no mesmo PR.</details>
+<ol start="5">
+<li>Por que o helper do Catálogo devolve só o ETag?</li>
+</ol>
+<details><summary>Resposta</summary>A chave da ficha é o SKU, que o teste já tem; o ETag é o que falta para o `PUT`/`DELETE` com `If-Match`.</details>
+<h2 id="10-preparação-para-o-próximo-chat">10. Preparação para o próximo chat</h2>
+<ul>
+<li>Estado: <code>main</code> em <code>da9bbbd</code>, 309 testes verdes, nenhum PR aberto.</li>
+<li>Frente de testes <strong>encerrada</strong> (Passos 6 e 7 dispensados pelo aluno).</li>
+<li>Próximo: roteiro final do M1 (análise de marco, checkpoint, prova de transferência, revisão de mercado, spikes de leitura, documento de consulta); o aluno escolhe a ordem.</li>
+</ul>
+
+</article>
+<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

@@ -76,29 +76,29 @@
 <h2 id="3-conceitos">3. Conceitos</h2>
 <h3 id="31-a-fábrica-do-banco-iasynclifetime-iclassfixture-e-migrateasync">3.1 A fábrica do banco: <code>IAsyncLifetime</code>, <code>IClassFixture</code> e <code>MigrateAsync</code></h3>
 <p>No <code>Catalogo</code> (S17) a fábrica sobe a API inteira. No <code>Pedidos</code> não há API ainda, então a fábrica é menor: sobe <strong>só o banco</strong> e entrega um <code>DbContext</code> pronto.</p>
-<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">PostgresFabrica</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">IAsyncLifetime</span>
-<span class="p">{</span>
-<span class="w">    </span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="n">PostgreSqlContainer</span><span class="w"> </span><span class="n">_postgres</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">PostgreSqlBuilder</span><span class="p">(</span><span class="s">"postgres:18"</span><span class="p">).</span><span class="n">Build</span><span class="p">();</span>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">PostgresFabrica</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">IAsyncLifetime</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="n">PostgreSqlContainer</span><span class="w"> </span><span class="n">_postgres</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">PostgreSqlBuilder</span><span class="p">(</span><span class="s">&quot;postgres:18&quot;</span><span class="p">).</span><span class="n">Build</span><span class="p">();</span><span class="w"></span>
 
-<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">InitializeAsync</span><span class="p">()</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="n">_postgres</span><span class="p">.</span><span class="n">StartAsync</span><span class="p">();</span>
-<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="nn">var</span><span class="w"> </span><span class="n">contexto</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CriarContexto</span><span class="p">();</span>
-<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="n">contexto</span><span class="p">.</span><span class="n">Database</span><span class="p">.</span><span class="n">MigrateAsync</span><span class="p">();</span>
-<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">InitializeAsync</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="n">_postgres</span><span class="p">.</span><span class="n">StartAsync</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="nn">var</span><span class="w"> </span><span class="n">contexto</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">CriarContexto</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="n">contexto</span><span class="p">.</span><span class="n">Database</span><span class="p">.</span><span class="n">MigrateAsync</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
 
-<span class="w">    </span><span class="k">internal</span><span class="w"> </span><span class="n">PedidoDbContext</span><span class="w"> </span><span class="nf">CriarContexto</span><span class="p">()</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">opcoes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">DbContextOptionsBuilder</span><span class="o">&lt;</span><span class="n">PedidoDbContext</span><span class="o">&gt;</span><span class="p">()</span>
-<span class="w">            </span><span class="p">.</span><span class="n">UseNpgsql</span><span class="p">(</span><span class="n">_postgres</span><span class="p">.</span><span class="n">GetConnectionString</span><span class="p">(),</span>
-<span class="w">                </span><span class="n">npgsql</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">npgsql</span><span class="p">.</span><span class="n">MigrationsHistoryTable</span><span class="p">(</span><span class="s">"__EFMigrationsHistory"</span><span class="p">,</span><span class="w"> </span><span class="n">PedidoDbContext</span><span class="p">.</span><span class="n">Schema</span><span class="p">))</span>
-<span class="w">            </span><span class="p">.</span><span class="n">Options</span><span class="p">;</span>
+<span class="w">    </span><span class="k">internal</span><span class="w"> </span><span class="n">PedidoDbContext</span><span class="w"> </span><span class="nf">CriarContexto</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">opcoes</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">DbContextOptionsBuilder</span><span class="p">&lt;</span><span class="n">PedidoDbContext</span><span class="p">&gt;()</span><span class="w"></span>
+<span class="w">            </span><span class="p">.</span><span class="n">UseNpgsql</span><span class="p">(</span><span class="n">_postgres</span><span class="p">.</span><span class="n">GetConnectionString</span><span class="p">(),</span><span class="w"></span>
+<span class="w">                </span><span class="n">npgsql</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">npgsql</span><span class="p">.</span><span class="n">MigrationsHistoryTable</span><span class="p">(</span><span class="s">&quot;__EFMigrationsHistory&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">PedidoDbContext</span><span class="p">.</span><span class="n">Schema</span><span class="p">))</span><span class="w"></span>
+<span class="w">            </span><span class="p">.</span><span class="n">Options</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="nf">PedidoDbContext</span><span class="p">(</span><span class="n">opcoes</span><span class="p">);</span>
-<span class="w">    </span><span class="p">}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="nf">PedidoDbContext</span><span class="p">(</span><span class="n">opcoes</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
 
-<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">DisposeAsync</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_postgres</span><span class="p">.</span><span class="n">DisposeAsync</span><span class="p">().</span><span class="n">AsTask</span><span class="p">();</span>
-<span class="p">}</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">DisposeAsync</span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">_postgres</span><span class="p">.</span><span class="n">DisposeAsync</span><span class="p">().</span><span class="n">AsTask</span><span class="p">();</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre>
 
 <table>
@@ -143,7 +143,7 @@
 </tbody>
 </table>
 <p><strong>Como o teste usa a fábrica:</strong> a classe de teste declara <code>IClassFixture&lt;PostgresFabrica&gt;</code> e recebe a fábrica no construtor primário. O xUnit cria <strong>uma fábrica por classe de teste</strong>: o container sobe uma vez, os dois testes usam o mesmo banco.</p>
-<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nf">PedidoPersistenciaTests</span><span class="p">(</span><span class="n">PostgresFabrica</span><span class="w"> </span><span class="n">fabrica</span><span class="p">)</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">IClassFixture</span><span class="o">&lt;</span><span class="n">PostgresFabrica</span><span class="o">&gt;</span>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nf">PedidoPersistenciaTests</span><span class="p">(</span><span class="n">PostgresFabrica</span><span class="w"> </span><span class="n">fabrica</span><span class="p">)</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">IClassFixture</span><span class="p">&lt;</span><span class="n">PostgresFabrica</span><span class="p">&gt;</span><span class="w"></span>
 </code></pre>
 
 <p><strong>Dois erros que apareceram no caminho</strong> (bons para guardar):</p>
@@ -174,14 +174,14 @@
 </table>
 <h3 id="32-gravar-com-um-contexto-ler-com-outro-e-o-include">3.2 Gravar com um contexto, ler com outro, e o <code>Include</code></h3>
 <p>O <code>DbContext</code> <strong>lembra</strong> o que já carregou (é o <em>rastreamento</em>). Se o mesmo contexto grava e depois lê, o EF devolve o objeto que ele já tem na memória e <strong>nem vai ao banco</strong>. O teste passaria mesmo se o banco guardasse errado. Por isso:</p>
-<pre class="highlight"><code><span class="k">await</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="nn">var</span><span class="w"> </span><span class="n">contextoA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fabrica</span><span class="p">.</span><span class="n">CriarContexto</span><span class="p">();</span>
-<span class="k">await</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="nn">var</span><span class="w"> </span><span class="n">contextoB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fabrica</span><span class="p">.</span><span class="n">CriarContexto</span><span class="p">();</span>
+<pre class="highlight"><code><span class="k">await</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="nn">var</span><span class="w"> </span><span class="n">contextoA</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">fabrica</span><span class="p">.</span><span class="n">CriarContexto</span><span class="p">();</span><span class="w"></span>
+<span class="k">await</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="nn">var</span><span class="w"> </span><span class="n">contextoB</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">fabrica</span><span class="p">.</span><span class="n">CriarContexto</span><span class="p">();</span><span class="w"></span>
 <span class="c1">// ...</span>
-<span class="k">await</span><span class="w"> </span><span class="n">contextoA</span><span class="p">.</span><span class="n">Pedidos</span><span class="p">.</span><span class="n">AddAsync</span><span class="p">(</span><span class="n">pedido</span><span class="p">);</span>
-<span class="k">await</span><span class="w"> </span><span class="n">contextoA</span><span class="p">.</span><span class="n">SaveChangesAsync</span><span class="p">();</span>
-<span class="kt">var</span><span class="w"> </span><span class="n">pedidoLido</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">contextoB</span><span class="p">.</span><span class="n">Pedidos</span>
-<span class="w">                                </span><span class="p">.</span><span class="n">Include</span><span class="p">(</span><span class="n">p</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">Itens</span><span class="p">)</span>
-<span class="w">                                </span><span class="p">.</span><span class="n">FirstOrDefaultAsync</span><span class="p">(</span><span class="n">p</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">PedidoId</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">pedido</span><span class="p">.</span><span class="n">PedidoId</span><span class="p">);</span>
+<span class="k">await</span><span class="w"> </span><span class="n">contextoA</span><span class="p">.</span><span class="n">Pedidos</span><span class="p">.</span><span class="n">AddAsync</span><span class="p">(</span><span class="n">pedido</span><span class="p">);</span><span class="w"></span>
+<span class="k">await</span><span class="w"> </span><span class="n">contextoA</span><span class="p">.</span><span class="n">SaveChangesAsync</span><span class="p">();</span><span class="w"></span>
+<span class="kt">var</span><span class="w"> </span><span class="n">pedidoLido</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">contextoB</span><span class="p">.</span><span class="n">Pedidos</span><span class="w"></span>
+<span class="w">                                </span><span class="p">.</span><span class="n">Include</span><span class="p">(</span><span class="n">p</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">Itens</span><span class="p">)</span><span class="w"></span>
+<span class="w">                                </span><span class="p">.</span><span class="n">FirstOrDefaultAsync</span><span class="p">(</span><span class="n">p</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">PedidoId</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="n">pedido</span><span class="p">.</span><span class="n">PedidoId</span><span class="p">);</span><span class="w"></span>
 </code></pre>
 
 <table>
@@ -409,7 +409,7 @@
 </ol>
 </details>
 </article>
-<footer class="rodape">Atualizado em 24/10/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="../assets/search-index.js"></script>

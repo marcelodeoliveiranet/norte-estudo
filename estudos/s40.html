@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ESTUDO-S40 — o token de concorrência nos três CRUDs e o &quot;pente fino&quot; dos testes · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s40.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#estudo-s40--o-token-de-concorrência-nos-três-cruds-e-o-pente-fino-dos-testes" data-id="estudo-s40--o-token-de-concorrência-nos-três-cruds-e-o-pente-fino-dos-testes">ESTUDO-S40 — o token de concorrência nos três CRUDs e o &quot;pente fino&quot;…</a><a class="n2" href="#1-a-pergunta-da-sessão-e-a-resposta" data-id="1-a-pergunta-da-sessão-e-a-resposta">1. A pergunta da sessão e a resposta</a><a class="n2" href="#2-o-padrão-do-token-peça-por-peça" data-id="2-o-padrão-do-token-peça-por-peça">2. O padrão do token, peça por peça</a><a class="n2" href="#3-de-para-como-era-→-como-é-no-norte" data-id="3-de-para-como-era-→-como-é-no-norte">3. De-para (como era → como é no Norte)</a><a class="n2" href="#4-o-que-é-o-pente-fino" data-id="4-o-que-é-o-pente-fino">4. O que é o &quot;pente fino&quot;</a><a class="n2" href="#5-o-defeito-real-a-busca-de-sku-por-contrato-não-ignorava-a-caixa" data-id="5-o-defeito-real-a-busca-de-sku-por-contrato-não-ignorava-a-caixa">5. O defeito real: a busca de SKU por contrato não ignorava a caixa</a><a class="n2" href="#6-o-pedidos-só-testes-nenhuma-linha-de-produção" data-id="6-o-pedidos-só-testes-nenhuma-linha-de-produção">6. O Pedidos: só testes, nenhuma linha de produção</a><a class="n2" href="#7-erros-de-build-que-apareceram-e-o-que-significam" data-id="7-erros-de-build-que-apareceram-e-o-que-significam">7. Erros de build que apareceram (e o que significam)</a><a class="n2" href="#8-cuidados-de-ambiente-que-valem-repetir" data-id="8-cuidados-de-ambiente-que-valem-repetir">8. Cuidados de ambiente que valem repetir</a><a class="n2" href="#9-o-que-o-aluno-decidiu-e-o-que-ficou-para-depois" data-id="9-o-que-o-aluno-decidiu-e-o-que-ficou-para-depois">9. O que o aluno decidiu e o que ficou para depois</a><a class="n2" href="#10-teste-se-sem-consultar" data-id="10-teste-se-sem-consultar">10. Teste-se (sem consultar)</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a><a class="n2" href="#11-provado-×-não-provado" data-id="11-provado-×-não-provado">11. Provado × não provado</a><a class="n2" href="#12-para-a-próxima-conversa" data-id="12-para-a-próxima-conversa">12. Para a próxima conversa</a></aside>
+<main class="conteudo"><article>
+<h1 id="estudo-s40--o-token-de-concorrência-nos-três-cruds-e-o-pente-fino-dos-testes">ESTUDO-S40 — o token de concorrência nos três CRUDs e o &quot;pente fino&quot; dos testes</h1>
+<p><strong>Sessão:</strong> quinta 05/11 a sexta 06/11/2026 · início 11:12 de quinta (<strong>estimado</strong>, ver a nota de tempo) · pausa de quinta 22:24 a sexta 09:44 (descontada) · fim 12:31 de sexta · <strong>≈ 13h59 líquidas (estimadas)</strong> · PRs #96 a #100 · <code>main</code> em <code>0d9009c</code>.</p>
+<blockquote>
+<p>Como usar: leia na ordem; no fim, responda a Seção 10 sem consultar. As respostas estão logo depois.</p>
+<p><strong>Legenda de confiança.</strong> ✅ feito e visto no Norte (código, teste ou CI verde) · 🟡 hipótese ou limite: <strong>não foi confirmado</strong> · 📖 só conhecido em conceito.</p>
+<p><strong>Nota de tempo.</strong> A hora de início não sobreviveu à compactação da conversa. O valor 11:12 vem do horário em que o ambiente da sessão foi criado e <strong>pode estar errado</strong>; as pausas de quinta antes das 22:24, se existiram, também não foram preservadas. O número de 13h59 é, portanto, um <strong>teto estimado</strong>.</p>
+</blockquote>
+<hr />
+<h2 id="1-a-pergunta-da-sessão-e-a-resposta">1. A pergunta da sessão e a resposta</h2>
+<p><strong>Pergunta:</strong> o <code>Clientes</code> e o <code>Representantes</code> podem ficar com a mesma proteção contra &quot;atualização perdida&quot; que o <code>Catálogo</code> já tinha? E, depois, o que mais falta nos testes dos módulos?</p>
+<p><strong>Resposta (✅):</strong></p>
+<ul>
+<li><strong>Sim.</strong> Os dois ganharam o mesmo desenho do Catálogo (ADR-015): a coluna <code>xmin</code> do Postgres vira o <code>TokenConcorrencia</code>; o <code>GET</code> devolve o <code>ETag</code>; o <code>PUT</code> e o <code>DELETE</code> exigem o <code>If-Match</code> e recusam marca velha com <strong>412</strong>. PRs #96 (<code>Clientes</code>) e #97 (<code>Representantes</code>).</li>
+<li><strong>Depois</strong> veio o <strong>pente fino</strong>: uma revisão completa, módulo por módulo, procurando o que ainda não estava provado. Rendeu <strong>um defeito real no Catálogo</strong> e <strong>um trecho de código inalcançável</strong> (removido). PRs #98 (<code>Clientes</code>), #99 (<code>Catálogo</code>) e #100 (<code>Pedidos</code>).</li>
+</ul>
+<hr />
+<h2 id="2-o-padrão-do-token-peça-por-peça">2. O padrão do token, peça por peça</h2>
+<p>Mesmo desenho nos três CRUDs. O que o guia (entrada 8.15) explica com o Catálogo, agora vale também para <code>Clientes</code> e <code>Representantes</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Peça</th>
+<th>O que faz</th>
+<th>Observação</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Entidade</td>
+<td>tem a propriedade <code>uint TokenConcorrencia</code></td>
+<td>no banco é a coluna de sistema <code>xmin</code> do Postgres</td>
+</tr>
+<tr>
+<td>Configuração do EF</td>
+<td>marca a propriedade com <code>IsRowVersion()</code></td>
+<td>o EF passa a levar a marca lida no <code>WHERE</code> do <code>UPDATE</code>/<code>DELETE</code></td>
+</tr>
+<tr>
+<td>Migration</td>
+<td><code>AdicionaTokenConcorrenciaDoCliente</code> e <code>…DoRepresentante</code></td>
+<td>uma por módulo (cada módulo tem o seu <code>DbContext</code>)</td>
+</tr>
+<tr>
+<td><code>GET /{id}</code></td>
+<td>devolve o <code>ETag</code> no cabeçalho</td>
+<td>o corpo <strong>não</strong> carrega o token</td>
+</tr>
+<tr>
+<td><code>PUT</code></td>
+<td>exige <code>If-Match</code>; devolve o <code>ETag</code> <strong>novo</strong></td>
+<td>o cliente já pode fazer outro <code>PUT</code> sem ler de novo</td>
+</tr>
+<tr>
+<td><code>DELETE</code></td>
+<td>exige <code>If-Match</code></td>
+<td>carrega a linha para respeitar a marca</td>
+</tr>
+<tr>
+<td>Repositório</td>
+<td>confere <strong>nesta ordem</strong>: não achou → marca ausente → marca lida (<code>OriginalValue</code>) → <code>SaveChanges</code></td>
+<td>a ordem decide qual status aparece</td>
+</tr>
+</tbody>
+</table>
+<p>Os status, e quando cada um aparece:</p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Quando</th>
+<th>Por quê</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>404</strong></td>
+<td>o id não existe</td>
+<td>o recurso não está lá; vem <strong>antes</strong> de qualquer conferência de marca</td>
+</tr>
+<tr>
+<td><strong>428</strong></td>
+<td><code>If-Match</code> ausente <strong>ou malformado</strong> (não é um número <code>uint</code>)</td>
+<td>o servidor exige a condição e não recebeu uma que entenda</td>
+</tr>
+<tr>
+<td><strong>412</strong></td>
+<td><code>If-Match</code> válido, mas a marca é <strong>velha</strong></td>
+<td>outra pessoa alterou depois da sua leitura</td>
+</tr>
+<tr>
+<td><strong>409</strong></td>
+<td>só <strong>duplicidade</strong> (CNPJ, e-mail…)</td>
+<td>continua sendo o status da duplicidade, nunca da marca</td>
+</tr>
+<tr>
+<td>200 / 204</td>
+<td>tudo certo</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Palavra nova: <code>If-Match</code>.</strong> Cabeçalho da requisição que diz &quot;só faça se a marca do recurso ainda for esta&quot;. Sem ele, o servidor não sabe se você leu a versão atual.</p>
+<p><strong>Ponto fino que apareceu nos testes (✅):</strong> um <code>If-Match</code> que não é número (<code>If-Match: &quot;abc&quot;</code>) cai no <strong>428</strong>, não no 412. O servidor não consegue nem comparar; tratou como &quot;marca não informada&quot;.</p>
+<p>Mais sobre o desenho: <a href="../parte-8.html#815-concorr%C3%AAncia-otimista-na-ficha-de-produto-xmin-etag-if-match-412-e-428">8.15 Concorrência otimista</a>.</p>
+<hr />
+<h2 id="3-de-para-como-era-→-como-é-no-norte">3. De-para (como era → como é no Norte)</h2>
+<table>
+<thead>
+<tr>
+<th>Como era (EF clássico)</th>
+<th>Como é no Norte</th>
+<th>Observação</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>[Timestamp] byte[] RowVersion</code> (SQL Server)</td>
+<td><code>uint TokenConcorrencia</code> mapeado para <code>xmin</code> (Postgres)</td>
+<td>no Postgres não existe coluna <code>rowversion</code>; usa-se a coluna de sistema</td>
+</tr>
+<tr>
+<td><code>DbUpdateConcurrencyException</code> capturada no serviço</td>
+<td>marca lida no <code>OriginalValue</code> e conferida antes do <code>SaveChanges</code>; resposta <strong>412</strong></td>
+<td>o status HTTP faz parte do contrato</td>
+</tr>
+<tr>
+<td>a marca viajava no corpo (<code>rowVersion</code> no JSON)</td>
+<td>a marca viaja no cabeçalho (<code>ETag</code> / <code>If-Match</code>)</td>
+<td>o corpo do <code>PUT</code> <strong>não</strong> deve levar o token (há teste para isso)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-o-que-é-o-pente-fino">4. O que é o &quot;pente fino&quot;</h2>
+<p><strong>Em uma frase:</strong> uma passada completa por <strong>um módulo</strong>, endpoint por endpoint, perguntando &quot;o que este código promete e eu ainda não provei?&quot;.</p>
+<p><strong>Adaptação do laboratório, não prática estabelecida:</strong> o nome e o roteiro são deste laboratório. Em equipe se diria &quot;revisão de cobertura&quot; ou &quot;hardening de testes&quot;.</p>
+<p>O roteiro que a sessão seguiu em cada endpoint:</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Pergunta</th>
+<th>Exemplo que virou teste</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Os status que o código <strong>declara</strong> são os que ele <strong>devolve</strong>?</td>
+<td><code>PUT</code>/<code>DELETE</code> do <code>Clientes</code> passaram a declarar 412 e 428 nos metadados da rota</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Depois de uma recusa, o <strong>estado</strong> ficou intacto?</td>
+<td>412 não altera; 412 e 428 não apagam</td>
+</tr>
+<tr>
+<td>3</td>
+<td>O erro de entrada <strong>malformada</strong> tem teste?</td>
+<td><code>If-Match</code> que não é número → 428</td>
+</tr>
+<tr>
+<td>4</td>
+<td>O 404 tem <strong>título</strong> e <strong>não</strong> devolve <code>ETag</code>?</td>
+<td><code>GET</code> de id inexistente</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Os <strong>limites</strong> valem no limite?</td>
+<td>SKU de 20 caracteres → 201; filtro de 16 → 400; página <code>1000001</code> → 400</td>
+</tr>
+<tr>
+<td>6</td>
+<td>O <strong>padrão</strong> (sem parâmetros) é o prometido?</td>
+<td>listagem: página 1, tamanho 10</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Os <strong>limites do meio</strong> estão certos?</td>
+<td>página além do fim → 200 com lista vazia e totais</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Quem consome o módulo por <strong>contrato</strong> foi testado direto?</td>
+<td><code>IConsultaCatalogo</code>, <code>IConsultaPedidos</code></td>
+</tr>
+<tr>
+<td>9</td>
+<td>O <code>.http</code> do módulo cobre os casos novos?</td>
+<td>exemplos de 404, 428, 412, listagem e status</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O que não é:</strong> não é &quot;mais testes por mais testes&quot;. Cada teste novo da sessão responde a uma pergunta da tabela.</p>
+<hr />
+<h2 id="5-o-defeito-real-a-busca-de-sku-por-contrato-não-ignorava-a-caixa">5. O defeito real: a busca de SKU por contrato não ignorava a caixa</h2>
+<p><strong>Onde:</strong> <code>FichaProdutoRepository.NaoExisteSkuAsync</code> (o método que o <code>Pedidos</code> chama, por contrato, para saber se um SKU existe).</p>
+<p><strong>O que acontecia (✅ visto pelo teste):</strong> o SKU é guardado <strong>em maiúsculas</strong> (ADR-009). A busca normal do repositório converte o texto recebido; esse método <strong>não convertia</strong>. Uma chamada com <code>luv-nit-002</code> respondia &quot;não existe&quot;, mesmo existindo <code>LUV-NIT-002</code>.</p>
+<p><strong>Conserto:</strong> a primeira linha do método virou <code>sku = sku.ToUpperInvariant();</code>.</p>
+<p><strong>Por que o defeito passou até aqui:</strong> os testes do <code>Pedidos</code> usam um <strong>dublê</strong> (<em>fake</em>) do contrato do Catálogo; a implementação real só era exercitada pelos testes do próprio Catálogo, que chamam a API (e a API converte). Ninguém chamava a implementação real do contrato com minúsculas. Teste com dublê não prova a implementação que ele substitui.</p>
+<p><strong>Teste (arquivo novo <code>ConsultaCatalogoComBancoApi.cs</code>, 3 testes):</strong> SKU existente, SKU existente em minúsculas, SKU inexistente.</p>
+<p><strong>Lição, em frase:</strong> regra aplicada em um caminho (a busca) e esquecida em outro (o contrato) é o mesmo tipo de falha da S27. Quando uma regra de entrada existe, <strong>cada porta de entrada</strong> precisa de um teste.</p>
+<h3 id="código-inalcançável-removido">Código inalcançável removido</h3>
+<p>O resultado <code>Conflito</code> do <code>PUT</code> do Catálogo (e o <code>catch</code> de violação de índice único que o alimentava) <strong>nunca podia acontecer</strong>: o SKU vem da rota e não muda no <code>PUT</code>. Foi removido por inteiro: o valor do enum, o <code>catch</code> no repositório, o <code>case</code> no endpoint e o <code>ProducesProblem(409)</code> da rota. 409 no <code>PUT</code> do Catálogo <strong>não existe mais</strong>; a duplicidade segue 409 no <code>POST</code>.</p>
+<p><strong>Palavra nova: código inalcançável.</strong> Código que nenhuma entrada consegue executar. Mantê-lo engana quem lê (parece que o <code>PUT</code> pode dar 409) e engana quem testa (não há como cobrir).</p>
+<hr />
+<h2 id="6-o-pedidos-só-testes-nenhuma-linha-de-produção">6. O <code>Pedidos</code>: só testes, nenhuma linha de produção</h2>
+<p>O pente fino do <code>Pedidos</code> <strong>não achou defeito</strong>; ampliou a prova do que já existia:</p>
+<table>
+<thead>
+<tr>
+<th>Teste</th>
+<th>Garante</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST</code> válido</td>
+<td>201 com <code>Location</code> e o pedido realmente gravado</td>
+</tr>
+<tr>
+<td>SKU em minúsculas</td>
+<td>gravado em maiúsculas</td>
+</tr>
+<tr>
+<td>mesmo SKU repetido</td>
+<td>juntado em <strong>um</strong> item (quantidade 5 no exemplo do teste)</td>
+</tr>
+<tr>
+<td>cliente <strong>e</strong> representante inexistentes</td>
+<td>responde &quot;cliente não encontrado&quot; (o cliente vem primeiro)</td>
+</tr>
+<tr>
+<td>pedido recusado (<code>Theory</code>)</td>
+<td><strong>nada</strong> é gravado (confere o banco por um contexto novo)</td>
+</tr>
+<tr>
+<td>seis origens válidas; limites aceitos</td>
+<td>201</td>
+</tr>
+<tr>
+<td><code>GET</code> com cabeçalho completo e quantidades zeradas</td>
+<td>200</td>
+</tr>
+<tr>
+<td>ids <code>0</code> e <code>-1</code></td>
+<td>404</td>
+</tr>
+<tr>
+<td><code>/pedidos/abc</code></td>
+<td>404 (a rota é <code>:int</code>; texto não chega ao endpoint)</td>
+</tr>
+<tr>
+<td><code>/pedidos/status</code></td>
+<td>&quot;Pedidos ativo&quot;</td>
+</tr>
+<tr>
+<td>contrato <code>IConsultaPedidos</code></td>
+<td>cliente com e sem pedidos</td>
+</tr>
+</tbody>
+</table>
+<p>Arquivo novo: <code>Pedidos.http</code>, com a cadeia representante → cliente → pedido (usa requisições nomeadas), o caso do SKU repetido e os 404 e 400. <strong>Aviso do arquivo:</strong> o CPF e o CNPJ de exemplo dão 409 se você repetir a cadeia.</p>
+<p><strong>Discordância ainda aberta (não é pendência):</strong> na junção de SKUs repetidos, <strong>vale o último desconto</strong>. Reabrir quando entrarem as regras de negócio do pedido (decisão do aluno).</p>
+<hr />
+<h2 id="7-erros-de-build-que-apareceram-e-o-que-significam">7. Erros de build que apareceram (e o que significam)</h2>
+<p>O build do Norte trata aviso como erro (<code>TreatWarningsAsErrors</code>) com analisadores ligados.</p>
+<table>
+<thead>
+<tr>
+<th>Código</th>
+<th>Onde apareceu</th>
+<th>Significado</th>
+<th>O que fazer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>CA1305</strong></td>
+<td><code>long.ToString(&quot;D11&quot;)</code></td>
+<td>formatar número sem dizer a cultura: o resultado muda conforme o computador</td>
+<td><code>ToString(&quot;D11&quot;, CultureInfo.InvariantCulture)</code></td>
+</tr>
+<tr>
+<td><strong>CA1845</strong></td>
+<td><code>&quot;t-&quot; + Guid.NewGuid().ToString().Substring(0, 8)</code></td>
+<td><code>Substring</code> dentro de uma concatenação cria texto intermediário à toa</td>
+<td>guardar o pedaço numa variável local e usar interpolação: <code>$&quot;t-{sufixo}&quot;</code></td>
+</tr>
+</tbody>
+</table>
+<p>Os dois erros foram vistos pelo <strong>build</strong>, antes de qualquer teste rodar: é a ordem certa. O CA1845 foi culpa do exemplo que o mentor sugeriu e aconteceu em dois arquivos de teste do <code>Pedidos</code>.</p>
+<hr />
+<h2 id="8-cuidados-de-ambiente-que-valem-repetir">8. Cuidados de ambiente que valem repetir</h2>
+<table>
+<thead>
+<tr>
+<th>Cuidado</th>
+<th>Por quê</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>total: 0</code> <strong>não é verde</strong></td>
+<td>um filtro errado roda zero testes e &quot;passa&quot;; confira o total (regra (am))</td>
+</tr>
+<tr>
+<td>API rodando trava as DLLs (MSB3026)</td>
+<td>feche a API antes de <code>dotnet build</code>/<code>dotnet test</code></td>
+</tr>
+<tr>
+<td>Os arquivos do disco estão em CRLF e o <code>HEAD</code> em LF</td>
+<td><code>git diff --ignore-cr-at-eol</code> na hora de comparar; um <code>git status</code> cheio de &quot;modificados&quot; pode ser só fim de linha</td>
+</tr>
+<tr>
+<td>Os enums saem como <strong>número</strong> no JSON</td>
+<td>o repositório não usa <code>JsonStringEnumConverter</code>; teste que espera texto falha</td>
+</tr>
+<tr>
+<td>A fábrica do <code>Pedidos</code> aplica só as migrations do <code>Pedidos</code></td>
+<td>os outros módulos entram como dublê (<em>fake</em>); quem precisar de cliente real precisa de outra fábrica</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="9-o-que-o-aluno-decidiu-e-o-que-ficou-para-depois">9. O que o aluno decidiu e o que ficou para depois</h2>
+<p>Ao fim do pente fino o aluno decidiu, um a um, os itens que o mentor listou:</p>
+<table>
+<thead>
+<tr>
+<th>Decisão</th>
+<th>Registro</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Itens 1, 2 e 4 da lista do fim do pente fino</td>
+<td><strong>não vamos fazer</strong> (não são pendência nem plano)</td>
+</tr>
+<tr>
+<td>Item 3: regra de desconto do <code>Pedidos</code></td>
+<td><strong>fazer quando entrarem as regras de negócio do pedido</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Depois ele perguntou: &quot;De tudo o que aprendemos até agora, falta algo para ser implantado nos CRUDs?&quot; Da lista que veio, decidiu:</p>
+<table>
+<thead>
+<tr>
+<th>Decisão</th>
+<th>Registro</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Itens 1, 3, 4 e 5</td>
+<td><strong>fazer em outra sessão</strong> (plano, não pendência): nota na ADR-015 sobre os três CRUDs, <code>.gitattributes</code>, resumos do OpenAPI (<code>WithSummary</code>) e a prova do log de conflito do Catálogo com corrida real</td>
+</tr>
+<tr>
+<td>Item 2: índices</td>
+<td><strong>&quot;não precisa&quot;</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="10-teste-se-sem-consultar">10. Teste-se (sem consultar)</h2>
+<ol>
+<li>Quais são as cinco peças do token de concorrência e onde cada uma mora?</li>
+<li>Um <code>PUT</code> chega com <code>If-Match: &quot;abc&quot;</code>. Qual o status e por quê?</li>
+<li>Qual a diferença entre 412, 428 e 409 neste projeto?</li>
+<li>Por que o <code>PUT</code> devolve o <code>ETag</code> <strong>novo</strong>?</li>
+<li>Por que o bug de caixa no SKU passou pelos testes do <code>Pedidos</code> e só apareceu no teste do contrato do Catálogo?</li>
+<li>O que é código inalcançável e por que o resultado <code>Conflito</code> do <code>PUT</code> do Catálogo era um?</li>
+<li>Depois de um 412, o que o teste confere além do status?</li>
+<li>O que significa <code>total: 0</code> num <code>dotnet test</code> e por que não é verde?</li>
+</ol>
+<h2 id="respostas">Respostas</h2><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li><strong>Entidade</strong> (<code>uint TokenConcorrencia</code>), <strong>configuração</strong> (<code>IsRowVersion()</code> sobre <code>xmin</code>), <strong>migration</strong>, <strong>endpoints</strong> (<code>GET</code> devolve o <code>ETag</code>; <code>PUT</code> e <code>DELETE</code> leem o <code>If-Match</code>) e <strong>repositório</strong> (confere a ordem: não achou → marca ausente → marca lida → grava).</li>
+<li><strong>428.</strong> O valor não é um número <code>uint</code>; o servidor trata como &quot;marca não informada&quot;. Não é 412, porque nem chegou a comparar.</li>
+<li><strong>412:</strong> marca válida, mas velha (outra pessoa alterou). <strong>428:</strong> marca ausente ou malformada. <strong>409:</strong> só duplicidade (CNPJ, e-mail…), nunca a marca.</li>
+<li>Para o cliente poder fazer o próximo <code>PUT</code> sem um <code>GET</code> no meio; a marca antiga seria recusada com 412.</li>
+<li>Os testes do <code>Pedidos</code> usam um dublê do contrato; a implementação real só era chamada pelos testes do Catálogo, via API (que converte). O teste do contrato foi o primeiro a chamar a implementação real <strong>direto</strong>, com minúsculas.</li>
+<li>Código que nenhuma entrada consegue executar. O <code>PUT</code> não troca o SKU (ele vem da rota), então o banco nunca recusaria o <code>PUT</code> por índice único; o resultado e o <code>catch</code> eram impossíveis de alcançar.</li>
+<li>Que o recurso <strong>não foi alterado</strong> (ou apagado): lê de novo e compara. Status certo com estado errado é falha.</li>
+<li>Que nenhum teste rodou (filtro errado, nome errado). Sem teste rodado não há prova; confira sempre o total.</li>
+</ol>
+<hr />
+</details><h2 id="11-provado-×-não-provado">11. Provado × não provado</h2>
+<table>
+<thead>
+<tr>
+<th>✅ Provado (CI verde nos cinco PRs)</th>
+<th>🟡 Não provado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>token nos três CRUDs com 412 e 428</td>
+<td>a <strong>corrida real</strong> do log de conflito do Catálogo (plano)</td>
+</tr>
+<tr>
+<td>o defeito da caixa do SKU no contrato e o conserto</td>
+<td>o <strong>total</strong> de testes ao fim da sessão (não ficou registrado no fechamento; conferir com <code>dotnet test</code>)</td>
+</tr>
+<tr>
+<td>409 só para duplicidade; estado intacto depois de 412 e 428</td>
+<td>a regra do desconto na junção de SKUs (aguarda as regras do pedido)</td>
+</tr>
+<tr>
+<td><code>Pedidos.http</code> criado com a cadeia completa</td>
+<td>o tempo da sessão (início estimado; ver a nota no topo)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="12-para-a-próxima-conversa">12. Para a próxima conversa</h2>
+<p>Título sugerido: <code>Norte · S41 — &lt;tema&gt;</code> (o aluno escolhe). Opções do plano: nota na ADR-015, <code>.gitattributes</code>, <code>WithSummary</code> no OpenAPI, prova do log com corrida real; ou voltar ao roteiro de M1 (resultados tipados e os spikes restantes). <strong>Sexta 06/11:</strong> o <code>RECONSTRUCAO-2026-11-07.md</code> para o sábado.</p>
+
+</article>
+<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

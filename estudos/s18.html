@@ -108,23 +108,23 @@
 <p>Commits: PR #12 = <code>df37794</code> <code>feat(catalogo): recusar sku, descricao e ncm vazios na ficha de produto</code>. PR #13 = <code>0115ee5</code> <code>feat(catalogo): semear fichas de produto iniciais em development</code> e <code>62aaf1b</code> <code>test(catalogo): mover testes do 400 para o banco descartavel</code>.</p>
 <h2 id="3-como-ler-o-código">3. Como ler o código</h2>
 <h3 id="31-o-construtor">3.1 O construtor</h3>
-<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">FichaProduto</span>
-<span class="p">{</span>
-<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="nf">FichaProduto</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">sku</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">descricao</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">ncm</span><span class="p">)</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="n">ArgumentException</span><span class="p">.</span><span class="n">ThrowIfNullOrWhiteSpace</span><span class="p">(</span><span class="n">sku</span><span class="p">);</span>
-<span class="w">        </span><span class="n">ArgumentException</span><span class="p">.</span><span class="n">ThrowIfNullOrWhiteSpace</span><span class="p">(</span><span class="n">descricao</span><span class="p">);</span>
-<span class="w">        </span><span class="n">ArgumentException</span><span class="p">.</span><span class="n">ThrowIfNullOrWhiteSpace</span><span class="p">(</span><span class="n">ncm</span><span class="p">);</span>
+<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">FichaProduto</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="nf">FichaProduto</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">sku</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">descricao</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">ncm</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">ArgumentException</span><span class="p">.</span><span class="n">ThrowIfNullOrWhiteSpace</span><span class="p">(</span><span class="n">sku</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">ArgumentException</span><span class="p">.</span><span class="n">ThrowIfNullOrWhiteSpace</span><span class="p">(</span><span class="n">descricao</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">ArgumentException</span><span class="p">.</span><span class="n">ThrowIfNullOrWhiteSpace</span><span class="p">(</span><span class="n">ncm</span><span class="p">);</span><span class="w"></span>
 
-<span class="w">        </span><span class="n">Sku</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sku</span><span class="p">;</span>
-<span class="w">        </span><span class="n">Descricao</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">descricao</span><span class="p">;</span>
-<span class="w">        </span><span class="n">Ncm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ncm</span><span class="p">;</span>
-<span class="w">    </span><span class="p">}</span>
+<span class="w">        </span><span class="n">Sku</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sku</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="n">Descricao</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">descricao</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="n">Ncm</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ncm</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
 
-<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Sku</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Descricao</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Ncm</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="p">}</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Sku</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Descricao</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Ncm</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre>
 
 <table>
@@ -154,19 +154,19 @@
 </tbody>
 </table>
 <h3 id="32-um-teste-de-unidade-que-espera-falha">3.2 Um teste de unidade que espera falha</h3>
-<pre class="highlight"><code><span class="na">[Fact]</span>
-<span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">FichaProduto_Com_Sku_Vazio_Lanca_Excecao</span><span class="p">()</span>
-<span class="p">{</span>
+<pre class="highlight"><code><span class="na">[Fact]</span><span class="w"></span>
+<span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">FichaProduto_Com_Sku_Vazio_Lanca_Excecao</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="c1">// Arrange: com que valores preparo o cenário?</span>
-<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">skuInvalido</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">""</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">skuInvalido</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">    </span><span class="c1">// Act + Assert: a criação da ficha deve falhar com ArgumentException</span>
-<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">excecao</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Assert</span><span class="p">.</span><span class="n">Throws</span><span class="o">&lt;</span><span class="n">ArgumentException</span><span class="o">&gt;</span><span class="p">(</span>
-<span class="w">        </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FichaProduto</span><span class="p">(</span><span class="n">skuInvalido</span><span class="p">,</span><span class="w"> </span><span class="s">"Luva nitrilica"</span><span class="p">,</span><span class="w"> </span><span class="s">"40151900"</span><span class="p">));</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">excecao</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Assert</span><span class="p">.</span><span class="n">Throws</span><span class="p">&lt;</span><span class="n">ArgumentException</span><span class="p">&gt;(</span><span class="w"></span>
+<span class="w">        </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FichaProduto</span><span class="p">(</span><span class="n">skuInvalido</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Luva nitrilica&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;40151900&quot;</span><span class="p">));</span><span class="w"></span>
 
 <span class="w">    </span><span class="c1">// Assert: o que prova que a regra foi cumprida? O campo recusado foi o SKU</span>
-<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="s">"sku"</span><span class="p">,</span><span class="w"> </span><span class="n">excecao</span><span class="p">.</span><span class="n">ParamName</span><span class="p">);</span>
-<span class="p">}</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="s">&quot;sku&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">excecao</span><span class="p">.</span><span class="n">ParamName</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre>
 
 <table>
@@ -200,31 +200,31 @@
 <p><strong>Por que o teste confere o <code>ParamName</code> e não a mensagem?</strong> A mensagem é detalhe de como o erro foi escrito; se alguém a reescrever, o teste quebra sem a regra ter mudado. O <code>ParamName</code> diz <strong>qual campo</strong> foi recusado, que é o que a regra exige.</p>
 <p><strong>Os três vazios:</strong> <code>null</code>, <code>&quot;&quot;</code> e <code>&quot;   &quot;</code>. O <code>null</code> não tem teste: o parâmetro é <code>string</code> (sem <code>?</code>), então o compilador recusa passar um <code>null</code> conhecido (o aviso de nulidade vira erro pelo ADR-004; o número do erro não foi visto). Os testes cobrem o que o compilador <strong>não</strong> pega: <code>&quot;&quot;</code> e só espaços.</p>
 <h3 id="33-o-seed">3.3 O seed</h3>
-<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">CatalogoSeed</span>
-<span class="p">{</span>
-<span class="w">    </span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="n">FichaProdutoRepository</span><span class="w"> </span><span class="n">_repositorio</span><span class="p">;</span>
+<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">CatalogoSeed</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="n">FichaProdutoRepository</span><span class="w"> </span><span class="n">_repositorio</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="nf">CatalogoSeed</span><span class="p">(</span><span class="n">FichaProdutoRepository</span><span class="w"> </span><span class="n">repositorio</span><span class="p">)</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="n">_repositorio</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">repositorio</span><span class="p">;</span>
-<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="nf">CatalogoSeed</span><span class="p">(</span><span class="n">FichaProdutoRepository</span><span class="w"> </span><span class="n">repositorio</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">_repositorio</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">repositorio</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
 
-<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">ExecutarAsync</span><span class="p">()</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="nf">GarantirFichaAsync</span><span class="p">(</span><span class="s">"LUV-NIT-001"</span><span class="p">,</span><span class="w"> </span><span class="s">"Luva nitrilica tamanho M"</span><span class="p">,</span><span class="w"> </span><span class="s">"40151900"</span><span class="p">);</span>
-<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="nf">GarantirFichaAsync</span><span class="p">(</span><span class="s">"LUV-NIT-002"</span><span class="p">,</span><span class="w"> </span><span class="s">"Luva nitrilica tamanho G"</span><span class="p">,</span><span class="w"> </span><span class="s">"40151900"</span><span class="p">);</span>
-<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="nf">GarantirFichaAsync</span><span class="p">(</span><span class="s">"LUV-LAT-001"</span><span class="p">,</span><span class="w"> </span><span class="s">"Luva de latex tamanho M"</span><span class="p">,</span><span class="w"> </span><span class="s">"40151900"</span><span class="p">);</span>
-<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">ExecutarAsync</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="nf">GarantirFichaAsync</span><span class="p">(</span><span class="s">&quot;LUV-NIT-001&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Luva nitrilica tamanho M&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;40151900&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="nf">GarantirFichaAsync</span><span class="p">(</span><span class="s">&quot;LUV-NIT-002&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Luva nitrilica tamanho G&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;40151900&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="nf">GarantirFichaAsync</span><span class="p">(</span><span class="s">&quot;LUV-LAT-001&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Luva de latex tamanho M&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;40151900&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
 
-<span class="w">    </span><span class="k">private</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">GarantirFichaAsync</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">sku</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">descricao</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">ncm</span><span class="p">)</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">existente</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">_repositorio</span><span class="p">.</span><span class="n">ObterPorSkuAsync</span><span class="p">(</span><span class="n">sku</span><span class="p">);</span>
-<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">existente</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">null</span><span class="p">)</span>
-<span class="w">            </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="k">private</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">GarantirFichaAsync</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">sku</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">descricao</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">ncm</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">existente</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">_repositorio</span><span class="p">.</span><span class="n">ObterPorSkuAsync</span><span class="p">(</span><span class="n">sku</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">existente</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">not</span><span class="w"> </span><span class="k">null</span><span class="p">)</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="n">_repositorio</span><span class="p">.</span><span class="n">AdicionarAsync</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">FichaProduto</span><span class="p">(</span><span class="n">sku</span><span class="p">,</span><span class="w"> </span><span class="n">descricao</span><span class="p">,</span><span class="w"> </span><span class="n">ncm</span><span class="p">));</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="p">}</span>
+<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="n">_repositorio</span><span class="p">.</span><span class="n">AdicionarAsync</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">FichaProduto</span><span class="p">(</span><span class="n">sku</span><span class="p">,</span><span class="w"> </span><span class="n">descricao</span><span class="p">,</span><span class="w"> </span><span class="n">ncm</span><span class="p">));</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre>
 
 <table>
@@ -249,15 +249,15 @@
 </tr>
 </tbody>
 </table>
-<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">SemearCatalogoAsync</span><span class="p">(</span><span class="k">this</span><span class="w"> </span><span class="n">WebApplication</span><span class="w"> </span><span class="n">app</span><span class="p">)</span>
-<span class="p">{</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">app</span><span class="p">.</span><span class="n">Environment</span><span class="p">.</span><span class="n">IsDevelopment</span><span class="p">())</span>
-<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">SemearCatalogoAsync</span><span class="p">(</span><span class="k">this</span><span class="w"> </span><span class="n">WebApplication</span><span class="w"> </span><span class="n">app</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(!</span><span class="n">app</span><span class="p">.</span><span class="n">Environment</span><span class="p">.</span><span class="n">IsDevelopment</span><span class="p">())</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="nn">var</span><span class="w"> </span><span class="n">escopo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="n">Services</span><span class="p">.</span><span class="n">CreateScope</span><span class="p">();</span>
-<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">seed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">escopo</span><span class="p">.</span><span class="n">ServiceProvider</span><span class="p">.</span><span class="n">GetRequiredService</span><span class="o">&lt;</span><span class="n">CatalogoSeed</span><span class="o">&gt;</span><span class="p">();</span>
-<span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="n">seed</span><span class="p">.</span><span class="n">ExecutarAsync</span><span class="p">();</span>
-<span class="p">}</span>
+<span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="nn">var</span><span class="w"> </span><span class="n">escopo</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="n">Services</span><span class="p">.</span><span class="n">CreateScope</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">seed</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">escopo</span><span class="p">.</span><span class="n">ServiceProvider</span><span class="p">.</span><span class="n">GetRequiredService</span><span class="p">&lt;</span><span class="n">CatalogoSeed</span><span class="p">&gt;();</span><span class="w"></span>
+<span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="n">seed</span><span class="p">.</span><span class="n">ExecutarAsync</span><span class="p">();</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre>
 
 <table>
@@ -287,9 +287,9 @@
 </tbody>
 </table>
 <p>No <code>Program.cs</code>, a chamada entra <strong>depois dos <code>Map...</code> e antes do <code>app.Run()</code></strong> (o <code>Run()</code> bloqueia atendendo requisições; depois dele a linha nunca executaria):</p>
-<pre class="highlight"><code><span class="k">await</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="n">SemearCatalogoAsync</span><span class="p">();</span>
+<pre class="highlight"><code><span class="k">await</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="n">SemearCatalogoAsync</span><span class="p">();</span><span class="w"></span>
 
-<span class="n">app</span><span class="p">.</span><span class="n">Run</span><span class="p">();</span>
+<span class="n">app</span><span class="p">.</span><span class="n">Run</span><span class="p">();</span><span class="w"></span>
 </code></pre>
 
 <p>E no <code>AddCatalogo</code> entra o registro <code>services.AddScoped&lt;CatalogoSeed&gt;();</code>.</p>
@@ -329,7 +329,7 @@
 <h2 id="5-o-que-quebrou-no-caminho-e-por-quê">5. O que quebrou no caminho (e por quê)</h2>
 <h3 id="51-o-seed-rodou-dentro-da-fábrica-de-teste-antes-da-migration">5.1 O seed rodou dentro da fábrica de teste, antes da migration</h3>
 <p>Depois de ligar o seed ao <code>Program.cs</code>, o teste do 409 (o único que usa o Postgres descartável) falhou com:</p>
-<pre class="highlight"><code>Npgsql.PostgresException : 42P01: relation "catalogo.fichas_produto" does not exist
+<pre class="highlight"><code>Npgsql.PostgresException : 42P01: relation &quot;catalogo.fichas_produto&quot; does not exist
 </code></pre>
 
 <p>O rastro mostrou a cadeia: <code>ApiComPostgresFabrica.InitializeAsync()</code> → <code>SemearCatalogoAsync</code> → <code>CatalogoSeed.GarantirFichaAsync</code>. A fábrica estava em <code>Development</code>; ao tocar em <code>Services</code>, ela sobe a API inteira, o <code>Program.cs</code> roda até o seed, e o contêiner ainda <strong>não tem tabela</strong> (a <code>MigrateAsync</code> vem depois). O seed só funciona num banco que já tem a tabela.</p>
@@ -546,7 +546,7 @@
 </ul>
 
 </article>
-<footer class="rodape">Atualizado em 24/10/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="../assets/search-index.js"></script>

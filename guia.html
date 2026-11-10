@@ -43,10 +43,17 @@ tente explicar em voz alta a linha &quot;Em uma frase&quot; e a seção &quot;Na
 <li>🔎 <strong>Saber onde encontrar</strong> — sintaxe exata, nome de <code>using</code>, comando de CLI. Qualquer sênior
 consulta; o <code>Ctrl+.</code> e a documentação resolvem.</li>
 </ul>
-<p><strong>Última atualização:</strong> 24/10/2026 (<strong>Parte 8 v1.4: entrada 8.10</strong>, no fechamento da S30) · <strong>Versão:</strong> 1.19</p>
+<p><strong>Última atualização:</strong> 03/11/2026 (<strong>Parte 8 v1.10: entradas 8.16 e 8.17</strong>, no fechamento da S38) · <strong>Versão:</strong> 1.25</p>
 <hr />
 <h2 id="onde-estamos-atualizado-a-cada-sessão">Onde estamos (atualizado a cada sessão)</h2>
-<p><strong>Fim da S30:</strong> o módulo <code>Clientes</code> foi para o banco (schema <code>clientes</code>, índice único no CNPJ provado por <code>23505</code>) e ganhou o <code>POST /clientes</code> (201, 400, 409), com a regex do CNPJ no <code>Compartilhado</code>. Conteúdo na <a href="parte-8.html">Parte 8</a>, entrada 8.10, e no material <code>ESTUDO-S30</code>. Ficou aberto: testes de API do cadastro, corrida do mesmo CNPJ (500), <code>GET /clientes/{id}</code>, contrato do <code>Clientes</code> para o <code>Pedidos</code>. Próximo passo de M1: <strong>S31</strong>.</p>
+<p><strong>Fim da S38:</strong> a API ganhou a <strong>fundação de observabilidade</strong> (ADR-016): logs, traces e métricas saem por <strong>OTLP</strong> (OpenTelemetry) para um <strong>painel Aspire</strong> em contêiner no <code>compose.yaml</code>; o serviço aparece como <code>norte-api</code>; duas lentidões provocadas de propósito (atraso no código e índice removido com 1 milhão de linhas) foram achadas pelo trace e pelo <code>EXPLAIN</code>; alerta só descrito. 192 testes. Conteúdo na <a href="parte-8.html">Parte 8</a>, entrada <a href="parte-8.html#817-fundação-de-observabilidade-painel-opentelemetry-ler-um-trace-e-achar-a-lentidão-s38">8.17</a>.</p>
+<p><strong>Fim da S37:</strong> índice trigram (<code>pg_trgm</code>, GIN) provado por <code>EXPLAIN</code>, OpenAPI/Scalar, <code>[LoggerMessage]</code> nos conflitos e o mapa das camadas da observabilidade. Conteúdo na <a href="parte-8.html">Parte 8</a>, entrada <a href="parte-8.html#816-índice-trigram-com-prova-por-explain-loggermessage-nos-conflitos-e-o-mapa-da-observabilidade-s37">8.16</a>.</p>
+<p><strong>Fim da S36:</strong> a <code>FichaProduto</code> ganhou <strong>concorrência otimista</strong>: o <code>xmin</code> do Postgres é a marca de versão (<code>TokenConcorrencia</code>, <code>IsRowVersion()</code>), a API devolve a marca no <code>ETag</code> e exige o <code>If-Match</code> no <code>PUT</code> e no <code>DELETE</code>; marca velha dá <strong>412</strong>, marca ausente dá <strong>428</strong>, e o 409 fica só para duplicidade (ADR-015); o <code>DELETE</code> passou a carregar a ficha para respeitar o <code>If-Match</code>; a propriedade <code>Versao</code> virou <code>TokenConcorrencia</code>. Transações explícitas ficam para quando houver estoque ou pagamento. 190 testes. Conteúdo na <a href="parte-8.html">Parte 8</a>, entrada <a href="parte-8.html#815-concorrência-otimista-na-ficha-de-produto-xmin-etag-if-match-412-e-428">8.15</a>.</p>
+<p><strong>Fim da S35 (resumo):</strong> o <code>Representantes</code> passou a validar a entrada com <strong>FluentValidation</strong> (só nele; ADR-013: módulo com Fluent não chama <code>AddValidation()</code> e todo request tem validador e teste do inválido) e ganhou todos os endpoints; o host ganhou o <code>RequisicaoInvalidaExceptionHandler</code>, que transforma requisição malformada (<code>?pagina=abc</code>) em <strong>400</strong> em vez de 500 (ADR-014); o <code>DELETE /representantes/{id}</code> pergunta aos outros módulos pelos contratos (<code>IConsultaClientes</code>, <code>IConsultaPedidos</code>) e recusa representante com clientes ou pedidos; os limites de preço e quantidade do item passaram a ser presos à coluna do banco por teste. 183 testes. Conteúdo na <a href="parte-8.html">Parte 8</a>, entrada <a href="parte-8.html#814-fluentvalidation-num-módulo-só-400-para-requisição-malformada-e-o-contrato-do-representantes">8.14</a>.</p>
+<p><strong>Fim da S34 (resumo):</strong> o contrato entre módulos passou a valer <strong>nos dois sentidos</strong>: o <code>Clientes</code> pergunta ao <code>Pedidos</code> (<code>IConsultaPedidos</code>) antes de excluir um cliente, e o <code>Pedidos</code> pergunta ao <code>Catalogo</code> (<code>IConsultaCatalogo</code>) se o SKU existe antes de criar o pedido, sem módulo referenciar módulo. O <code>GET /pedidos/{id}</code> ganhou Assert dos itens e o teste do 404; os testes do <code>POST /pedidos</code> registram os dois fakes pela fábrica derivada (o <code>using var</code> fica no teste). Nasceu o módulo <code>Representantes</code> com <code>POST /representantes/</code> (CPF e e-mail únicos, 201/400/409). Conteúdo na <a href="parte-8.html">Parte 8</a>, entrada 8.13, e no material <code>ESTUDO-S34</code>. Ficou como plano: FluentValidation no <code>Representantes</code> (próxima fatia), preço e quantidade máximos. Próximo passo de M1: <strong>S35</strong>.</p>
+<p><strong>Fim da S33 (resumo):</strong> nasceu o <strong>contrato entre módulos</strong> (ADR-012): o <code>Norte.Clientes.Contratos</code> guarda <code>IConsultaClientes</code>; o <code>POST /pedidos</code> o consulta (404), valida a entrada com a validação nativa e responde 201; entrada 8.12.</p>
+<p><strong>Fim da S31 (resumo):</strong> o <code>POST /clientes</code> ganhou testes de API (201, 409 e 13 casos de 400 com <code>Theory</code>/<code>MemberData</code>) e o 409 passou a valer também com <strong>requisições simultâneas</strong> (o repositório trata o <code>23505</code>); <code>ArgumentException</code> → 400 e corpo vazio foram examinados e descartados. Conteúdo na <a href="parte-8.html">Parte 8</a>, entrada 8.11, e no material <code>ESTUDO-S31</code>. Ficou aberto: <code>GET /clientes/{id}</code> e demais endpoints do cliente, o mesmo teste de requisições simultâneas no <code>FichaProduto</code> (SKU), contrato do <code>Clientes</code> para o <code>Pedidos</code>. Próximo passo de M1: <strong>S32</strong>.</p>
+<p><strong>Fim da S30 (resumo):</strong> o módulo <code>Clientes</code> foi para o banco (schema <code>clientes</code>, índice único no CNPJ provado por <code>23505</code>) e ganhou o <code>POST /clientes</code> (201, 400, 409), com a regex do CNPJ no <code>Compartilhado</code>. Conteúdo na <a href="parte-8.html">Parte 8</a>, entrada 8.10, e no material <code>ESTUDO-S30</code>. Ficou aberto: testes de API do cadastro, corrida do mesmo CNPJ (500), <code>GET /clientes/{id}</code>, contrato do <code>Clientes</code> para o <code>Pedidos</code>. Próximo passo de M1: <strong>S31</strong>.</p>
 <p><strong>Fim da S27:</strong> o SKU passou a ter <strong>uma forma só, maiúscula, garantida pela aplicação</strong> (domínio e repositório do <code>Catalogo</code>), sem <code>CHECK</code> e sem migration (ADR-009, que supera em parte a ADR-008); o build passou a recusar <strong>código sem uso</strong> (IDE0059 e IDE0051) e <strong>interface sem <code>I</code></strong>; o pedido e seus itens no banco ficaram registrados no ADR-010. Conteúdo na <a href="parte-8.html">Parte 8</a>, entrada 8.9, e no material <code>ESTUDO-S27</code>. Ficou aberto só o que é novo: de onde nasce o cliente, o endpoint de criação do pedido (com a decisão do número do pedido) e o contrato <code>Pedidos</code>↔<code>Catalogo</code>. Próximo passo de M1: <strong>S28</strong>.</p>
 <p><strong>Fim da S26 (resumo):</strong> o <code>Pedidos</code> e o <code>Catalogo</code> passaram a dividir um projeto pequeno de constantes (<code>Norte.Compartilhado</code>, ADR-007); o domínio recusa SKU acima de 20 e <code>criadoPor</code> acima de 50; entrada 8.8.</p>
 <p><strong>Fim da S25 (resumo):</strong> teste com Postgres real do <code>Pedidos</code> (fábrica Testcontainers, salvar com um contexto e ler com outro, <code>Include</code>), entrada 8.7.</p>
@@ -109,7 +116,7 @@ consulta; o <code>Ctrl+.</code> e a documentação resolvem.</li>
 <td><a href="parte-8.html"><code>GUIA-DOTNET-P8.md</code></a></td>
 <td>Parte 8 — O <code>Pedidos</code> recusa dado errado, junta itens e vai para o banco</td>
 <td>S24–</td>
-<td><strong>v1.4 (8.1–8.10)</strong></td>
+<td><strong>v1.10 (8.1–8.17)</strong></td>
 </tr>
 <tr>
 <td><a href="mapa.html"><code>GUIA-MAPA-NORTE.md</code></a></td>
@@ -238,6 +245,13 @@ da parte com a âncora.</p>
 <li><a href="parte-8.html#88-o-projeto-compartilhado-e-o-tamanho-dos-textos-no-domínio">8.8</a> <strong>O projeto compartilhado e o tamanho dos textos no domínio</strong> (S26)</li>
 <li><a href="parte-8.html#89-regras-de-build-para-código-sem-uso-e-nome-de-interface-e-o-sku-em-maiúsculas-só-pela-aplicação">8.9</a> <strong>Regras de build para código sem uso e nome de interface, e o SKU em maiúsculas só pela aplicação</strong> (S27)</li>
 <li><a href="parte-8.html#810-o-cliente-no-banco-e-o-post-clientes-índice-único-23505-e-a-regex-em-um-lugar-só">8.10</a> <strong>O <code>Cliente</code> no banco e o <code>POST /clientes</code>: índice único, <code>23505</code> e a regex em um lugar só</strong> (S30)</li>
+<li><a href="parte-8.html#811-testes-de-api-do-cadastro-de-cliente-e-o-409-nas-requisições-simultâneas">8.11</a> <strong>Testes de API do cadastro de cliente e o 409 nas requisições simultâneas</strong> (S31)</li>
+<li><a href="parte-8.html#812-o-contrato-entre-módulos-e-o-post-pedidos-perguntar-sem-enxergar-o-interior">8.12</a> <strong>O contrato entre módulos e o <code>POST /pedidos</code>: perguntar sem enxergar o interior</strong> (S33)</li>
+<li><a href="parte-8.html#813-o-contrato-nos-dois-sentidos-o-sku-que-precisa-existir-e-o-módulo-representantes">8.13</a> <strong>O contrato nos dois sentidos, o SKU que precisa existir e o módulo <code>Representantes</code></strong> (S34)</li>
+<li><a href="parte-8.html#814-fluentvalidation-num-módulo-só-400-para-requisição-malformada-e-o-contrato-do-representantes">8.14</a> <strong>FluentValidation num módulo só, 400 para requisição malformada e o contrato do <code>Representantes</code></strong> (S35)</li>
+<li><a href="parte-8.html#815-concorrência-otimista-na-ficha-de-produto-xmin-etag-if-match-412-e-428">8.15</a> <strong>Concorrência otimista na ficha de produto: <code>xmin</code>, <code>ETag</code>, <code>If-Match</code>, 412 e 428</strong> (S36)</li>
+<li><a href="parte-8.html#816-índice-trigram-com-prova-por-explain-loggermessage-nos-conflitos-e-o-mapa-da-observabilidade-s37">8.16</a> <strong>Índice trigram com prova por <code>EXPLAIN</code>, <code>[LoggerMessage]</code> nos conflitos e o mapa da observabilidade</strong> (S37)</li>
+<li><a href="parte-8.html#817-fundação-de-observabilidade-painel-opentelemetry-ler-um-trace-e-achar-a-lentidão-s38">8.17</a> <strong>Fundação de observabilidade: painel, OpenTelemetry, ler um trace e achar a lentidão</strong> (S38)</li>
 <li>Juntando tudo, Teste-se e respostas (no fim da Parte 8)</li>
 </ul>
 </li>
@@ -350,11 +364,41 @@ da parte com a âncora.</p>
 <td>24/10/2026 (S30)</td>
 <td>Parte 8 v1.4: <strong>entrada 8.10</strong> (<code>Cliente</code> no banco, índice único e <code>23505</code>, <code>POST /clientes</code>, regex do CNPJ no <code>Compartilhado</code>); Teste-se (24–25); &quot;onde estamos&quot; no <code>Clientes</code> com persistência e cadastro</td>
 </tr>
+<tr>
+<td>1.20</td>
+<td>26/10/2026 (S31)</td>
+<td>Parte 8 v1.5: <strong>entrada 8.11</strong> (testes de API do <code>POST /clientes</code>: 201 com <code>Location</code>, 409 e <code>Theory</code> com <code>MemberData</code>/<code>TheoryData</code>; requisições simultâneas e o <code>23505</code> tratado no repositório; o que foi descartado); 8.10 retocada; Teste-se (26–31); &quot;onde estamos&quot; no <code>Clientes</code> testado pela API</td>
+</tr>
+<tr>
+<td>1.21</td>
+<td>27/10/2026 (S33)</td>
+<td>Parte 8 v1.6: <strong>entrada 8.12</strong> (contrato entre módulos, ADR-012; <code>POST /pedidos</code> com 201, 404 pelo contrato e 400; dublê <code>ConsultaClientesFake</code>; <code>[Range]</code> com <code>decimal</code>; <code>IValidatableObject</code>; Range da origem × enum); Teste-se (32–40); &quot;onde estamos&quot; com o contrato</td>
+</tr>
+<tr>
+<td>1.22</td>
+<td>28/10/2026 (S34)</td>
+<td>Parte 8 v1.7: <strong>entrada 8.13</strong> (Assert dos itens do <code>GET</code>, contrato nos dois sentidos, <code>IConsultaPedidos</code> e <code>IConsultaCatalogo</code>, fábrica derivada com <code>using var</code> no teste, dono do dado e módulo <code>Representantes</code>, FluentValidation × <code>AddValidation</code>); Teste-se (41–46); &quot;onde estamos&quot; com o contrato nos dois sentidos</td>
+</tr>
+<tr>
+<td>1.23</td>
+<td>29/10/2026 (S35)</td>
+<td>Parte 8 v1.8: <strong>entrada 8.14</strong> (FluentValidation só no <code>Representantes</code> e o ADR-013; <code>RequisicaoInvalidaExceptionHandler</code> e <code>ThrowOnBadRequest</code>, ADR-014; contrato do <code>Representantes</code> com <code>Clientes</code> e <code>Pedidos</code>; limites do item presos à coluna com <code>GetPrecision</code>/<code>GetScale</code>; prova do vermelho que se desfaz sozinha), Teste-se 47–52</td>
+</tr>
+<tr>
+<td>1.24</td>
+<td>02/11/2026 (S36)</td>
+<td>Parte 8 v1.9: <strong>entrada 8.15</strong> (concorrência otimista na <code>FichaProduto</code>: <code>xmin</code> como <code>TokenConcorrencia</code>, <code>ETag</code> e <code>If-Match</code>, 412 e 428, ADR-015; <code>DELETE</code> que carrega a ficha; o nome <code>TokenConcorrencia</code>; transações explícitas adiadas), Teste-se 53–57</td>
+</tr>
+<tr>
+<td>1.25</td>
+<td>03/11/2026 (S37 e S38)</td>
+<td>Parte 8 v1.10: <strong>entradas 8.16</strong> (índice trigram com <code>EXPLAIN</code>, <code>[LoggerMessage]</code>, mapa das camadas) <strong>e 8.17</strong> (painel Aspire, OpenTelemetry, ler um trace, lentidão por métrica → trace → <code>EXPLAIN</code>); Teste-se (58–64); &quot;Ainda não visto&quot; atualizado</td>
+</tr>
 </tbody>
 </table>
 
 </article>
-<footer class="rodape">Atualizado em 24/10/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="assets/search-index.js"></script>

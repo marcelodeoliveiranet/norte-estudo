@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ESTUDO-S42 — roteiro final do M1 e material de estudo (testes, módulos que conversam, concorrência e observabilidade) · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s42.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#estudo-s42--roteiro-final-do-m1-e-material-de-estudo-testes-módulos-que-conversam-concorrência-e-observabilidade" data-id="estudo-s42--roteiro-final-do-m1-e-material-de-estudo-testes-módulos-que-conversam-concorrência-e-observabilidade">ESTUDO-S42 — roteiro final do M1 e material de estudo (testes, módul…</a><a class="n2" href="#1-a-pergunta-da-sessão-e-a-resposta" data-id="1-a-pergunta-da-sessão-e-a-resposta">1. A pergunta da sessão e a resposta</a><a class="n2" href="#2-onde-isso-está-no-mapa-dos-níveis" data-id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</a><a class="n2" href="#3-conceitos" data-id="3-conceitos">3. Conceitos</a><a class="n2" href="#4-termos-da-sessão" data-id="4-termos-da-sessão">4. Termos da sessão</a><a class="n2" href="#5-dúvidas-do-aluno-e-as-respostas" data-id="5-dúvidas-do-aluno-e-as-respostas">5. Dúvidas do aluno e as respostas</a><a class="n2" href="#6-divergências" data-id="6-divergências">6. Divergências</a><a class="n2" href="#7-avaliação" data-id="7-avaliação">7. Avaliação</a><a class="n2" href="#8-pontos-a-melhorar" data-id="8-pontos-a-melhorar">8. Pontos a melhorar</a><a class="n2" href="#9-perguntas-de-recuperação-sem-consultar" data-id="9-perguntas-de-recuperação-sem-consultar">9. Perguntas de recuperação (sem consultar)</a><a class="n2" href="#10-preparação-para-o-próximo-chat" data-id="10-preparação-para-o-próximo-chat">10. Preparação para o próximo chat</a></aside>
+<main class="conteudo"><article>
+<h1 id="estudo-s42--roteiro-final-do-m1-e-material-de-estudo-testes-módulos-que-conversam-concorrência-e-observabilidade">ESTUDO-S42 — roteiro final do M1 e material de estudo (testes, módulos que conversam, concorrência e observabilidade)</h1>
+<p><strong>Sessão:</strong> segunda 09/11/2026 · início 09:52 · sem pausas · fim 11:37 · <strong>1h45 líquidas</strong> · M1 · <strong>sem código novo</strong> (repositório <code>norte</code> intacto em <code>a92cb29</code>).</p>
+<blockquote>
+<p>Como usar: leia na ordem; no fim, responda a Seção 9 sem consultar. As respostas estão logo depois.</p>
+</blockquote>
+<hr />
+<h2 id="1-a-pergunta-da-sessão-e-a-resposta">1. A pergunta da sessão e a resposta</h2>
+<p><strong>Pergunta:</strong> o que falta para fechar o M1, e o que vale a pena fazer com o tempo que resta?</p>
+<p><strong>Resposta (✅):</strong> em vez de ver algo novo, a semana vira <strong>preparação de estudo</strong>. O roteiro do M1 foi enxugado, e quatro blocos de material foram escritos para você estudar sozinho:</p>
+<table>
+<thead>
+<tr>
+<th>Bloco</th>
+<th>Arquivo em <code>estudos/</code></th>
+<th>Tempo estimado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4 · Testes</td>
+<td><code>M1-BLOCO-04-testes.md</code></td>
+<td>~25 min + ~40 min de exercício</td>
+</tr>
+<tr>
+<td>9 · Módulos que conversam</td>
+<td><code>M1-BLOCO-09-modulos-que-conversam.md</code></td>
+<td>~25 min + ~45 min</td>
+</tr>
+<tr>
+<td>10 · Concorrência otimista</td>
+<td><code>M1-BLOCO-10-concorrencia-otimista.md</code></td>
+<td>~25 min + ~45 min</td>
+</tr>
+<tr>
+<td>11 · Observabilidade e OpenAPI</td>
+<td><code>M1-BLOCO-11-observabilidade-e-openapi.md</code></td>
+<td>~30 min + ~45 min</td>
+</tr>
+</tbody>
+</table>
+<p>Os outros sete blocos (estrutura, funcionalidade de ponta a ponta, erros e validação, build/CI/Git, banco, consultas e CRUD, domínio do <code>Pedido</code>) <strong>só serão escritos se você pedir</strong>.</p>
+<hr />
+<h2 id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</h2>
+<p>Nada mudou no código. A sessão mexeu na camada do <strong>método de estudo</strong>: do que se aprende em sessão para o que se consegue <strong>refazer sozinho</strong> depois de dias. O documento de consulta do M1 (planejado para antes do M2) é o passo seguinte.</p>
+<hr />
+<h2 id="3-conceitos">3. Conceitos</h2>
+<h3 id="31-o-que-sobrou-do-m1-estimativas-do-mentor-✅-decididas-por-você">3.1 O que sobrou do M1 (estimativas do mentor, ✅ decididas por você)</h3>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>O que é</th>
+<th>Tempo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Análise de marco</td>
+<td>mini-entrevista, nota de 1 a 5 por conceito e comparação com o desempenho</td>
+<td>~0,5h</td>
+</tr>
+<tr>
+<td>Checkpoint</td>
+<td>você explica cada item do núcleo (problema, alternativa com custo, o que a solução não resolve)</td>
+<td>~2,5h</td>
+</tr>
+<tr>
+<td>Prova de transferência</td>
+<td>~1h sozinho num domínio novo, mais a revisão</td>
+<td>~1,5h</td>
+</tr>
+<tr>
+<td>Revisão de mercado</td>
+<td>ler o <code>Vagas.md</code> e responder se o .NET 10 serve, já que as vagas ainda pedem 6 e 8</td>
+<td>~1,5h</td>
+</tr>
+<tr>
+<td>Spikes de <strong>leitura</strong></td>
+<td>Swashbuckle × OpenAPI/Scalar e Controllers × Minimal APIs</td>
+<td>~1,5h cada</td>
+</tr>
+<tr>
+<td>Documento de consulta do M1</td>
+<td>para reestudar cada tópico e conseguir refazê-lo, antes de abrir o M2</td>
+<td>a definir</td>
+</tr>
+</tbody>
+</table>
+<p>Total ≈ 9h para ≈ 11,7h que restam até o teto de ≈ 180h do M1.</p>
+<h3 id="32-o-que-foi-cortado-e-por-quê">3.2 O que foi cortado, e por quê</h3>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Motivo (✅ verificado)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Resultados tipados nos endpoints</strong></td>
+<td><strong>já estavam feitos desde a S11</strong>: dos 17 endpoints, 15 devolvem <code>Results&lt;...&gt;</code> e 2 devolvem <code>Ok&lt;...&gt;</code>; os status de erro já chegam ao OpenAPI pelas linhas <code>.ProducesProblem</code> dos <code>*Modulo.cs</code></td>
+</tr>
+<tr>
+<td>Spike do Serilog</td>
+<td>&quot;Serilog&quot; aparece em 2 linhas do <code>Vagas.md</code> (ELK em 17, OpenTelemetry em 3); você já fez OpenTelemetry, ELK e Grafana</td>
+</tr>
+<tr>
+<td><code>ILike</code>, <code>traceId</code> documentado, <code>maxLength</code> do SKU no <code>PUT</code></td>
+<td>melhorias soltas, sem valor de aprendizagem</td>
+</tr>
+<tr>
+<td>Captura do corpo da requisição</td>
+<td>descartada por você</td>
+</tr>
+<tr>
+<td>Spike de validação nativa × FluentValidation</td>
+<td>já coberto pela ADR-013</td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-por-que-os-resultados-tipados-não-valeriam-a-pena-de-para">3.3 Por que os resultados tipados não valeriam a pena (de-para)</h3>
+<table>
+<thead>
+<tr>
+<th>Como é hoje</th>
+<th>Como poderia ser</th>
+<th>O que muda</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Results&lt;Ok&lt;T&gt;, ProblemHttpResult&gt;</code> + <code>.ProducesProblem(404)</code> no <code>*Modulo.cs</code></td>
+<td><code>Results&lt;Ok&lt;T&gt;, NotFound&lt;ProblemDetails&gt;, Conflict&lt;ProblemDetails&gt;&gt;</code></td>
+<td>só o lugar onde o status é declarado; o <code>.NET</code> não tem tipo pronto para 412 e 428; 🟡 hipótese: <code>NotFound&lt;ProblemDetails&gt;</code> perderia o formato <code>problem+json</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="34-datas-do-suporte-do-net-✅-fonte-microsoft">3.4 Datas do suporte do .NET (✅ fonte: Microsoft)</h3>
+<p>O .NET 8 e o .NET 9 saem de suporte em <strong>10/11/2026</strong>. O .NET 10 passa a ser a versão com suporte. No <code>Vagas.md</code>: &quot;.NET 8&quot; em 17 linhas, &quot;.NET 6&quot; em 15, &quot;.NET 9&quot; em nenhuma, &quot;.NET 10&quot; em 1; &quot;MVC&quot; em 27 linhas e &quot;minimal api&quot; em 2.</p>
+<h3 id="35-regra-nova-de-conduta-a-régua-do-mercado-dp">3.5 Regra nova de conduta: a régua do mercado (dp)</h3>
+<p>Antes de objetar a algo que você disse ou escreveu, o mentor se pergunta: (1) muda o comportamento do código ou da API, ou quebra algo? (2) um colega sênior travaria o PR por isso? (3) cai em entrevista ou no trabalho? Se (2) e (3) forem não, no máximo uma linha, uma vez. Uma objeção por assunto. Na dúvida, vale a régua de um projeto comum. <strong>Sem limite de minutos:</strong> você acompanha a discussão e decide.</p>
+<hr />
+<h2 id="4-termos-da-sessão">4. Termos da sessão</h2>
+<ul>
+<li><strong>Resultado tipado:</strong> o tipo de retorno do endpoint diz quais respostas ele pode dar (<code>Ok&lt;T&gt;</code>, <code>Created&lt;T&gt;</code>, <code>ProblemHttpResult</code>).</li>
+<li><strong>Spike de leitura:</strong> estudo curto (1 a 2h) só para conseguir ler um projeto escrito de outro jeito, sem escrever do zero.</li>
+<li><strong>Preparação de estudo:</strong> semana em que o foco é fixar o que já foi feito, e não ver algo novo.</li>
+<li><strong>Documento de consulta:</strong> o arquivo que você abre depois de semanas para refazer cada tópico.</li>
+</ul>
+<hr />
+<h2 id="5-dúvidas-do-aluno-e-as-respostas">5. Dúvidas do aluno e as respostas</h2>
+<table>
+<thead>
+<tr>
+<th>Dúvida</th>
+<th>Resposta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Vale mexer nos 4 módulos ou ver só um?</td>
+<td>nem um nem outro: o item já estava feito; foi tirado do roteiro</td>
+</tr>
+<tr>
+<td>O spike de validação (E) ainda falta algo?</td>
+<td>não: a ADR-013 já compara as duas formas</td>
+</tr>
+<tr>
+<td>O que é o <code>traceId</code> documentado?</td>
+<td>o <code>traceId</code> já vem em todo erro <code>ProblemDetails</code>; &quot;documentar&quot; seria só escrever isso no OpenAPI; cortado</td>
+</tr>
+<tr>
+<td>Controllers (MVC) ainda se usam?</td>
+<td>sim, nas vagas ainda aparece (27 linhas); por isso o spike entra, mas só de leitura</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-divergências">6. Divergências</h2>
+<table>
+<thead>
+<tr>
+<th>Tema</th>
+<th>Posição de cada lado</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Refinar os resultados tipados</td>
+<td>o mentor listou como pendente; você questionou (&quot;já é a segunda ou terceira vez que mexemos nisso&quot;) e a leitura do código deu razão a você</td>
+<td><strong>você tinha razão</strong>; item cortado</td>
+</tr>
+<tr>
+<td>Limite de 5 minutos na discussão</td>
+<td>o mentor propôs; você recusou (&quot;eu verifico até onde a discussão está indo e decido&quot;)</td>
+<td><strong>sua decisão vale</strong>; a regra (dp) ficou sem limite</td>
+</tr>
+<tr>
+<td>Blocos de estudo no site</td>
+<td>o mentor disse que iriam para o site; o gerador só publica arquivos <code>ESTUDO-*.md</code></td>
+<td>🟡 em aberto: os blocos <strong>não</strong> estão no site; decidir se entram</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="7-avaliação">7. Avaliação</h2>
+<p><strong>O que você fez bem:</strong> cortou escopo com argumento e acertou (o item já estava feito); lembrou que já tinha pedido um pente fino e perguntou por que a recomendação só aparecia agora; pôs o estudo à frente de código novo; pediu o equilíbrio entre a régua do mentor e a do mercado; pediu o documento de consulta do M1.</p>
+<p><strong>Onde travou e por quê:</strong> não houve exercício, então não há medição. Sessão de decisão e preparação.</p>
+<p><strong>O que o mentor conduziu mal:</strong></p>
+<ul>
+<li><strong>Ofereceu como pendente um item que já estava feito</strong>, sem abrir o código antes (A7 de condução).</li>
+<li><strong>Perguntou a hora de início</strong> quando ela já estava na primeira mensagem do dia.</li>
+<li><strong>Disse que os blocos iriam para o site</strong> sem conferir o que o gerador publica.</li>
+</ul>
+<hr />
+<h2 id="8-pontos-a-melhorar">8. Pontos a melhorar</h2>
+<table>
+<thead>
+<tr>
+<th>Quem</th>
+<th>O que</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Aluno</td>
+<td>estudar os quatro blocos e anotar as dúvidas para a outra conversa</td>
+</tr>
+<tr>
+<td>Mentor</td>
+<td>abrir o código antes de listar um item como pendente; tirar a hora de início da primeira mensagem; conferir o gerador do site antes de prometer publicação</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="9-perguntas-de-recuperação-sem-consultar">9. Perguntas de recuperação (sem consultar)</h2>
+<ol>
+<li>Por que os resultados tipados nos endpoints não valem mais mexida no Norte?</li>
+<li>De onde o documento OpenAPI tira os status de erro 404, 409, 412 e 428?</li>
+<li>Quais são as três perguntas da regra (dp) antes de o mentor objetar a algo?</li>
+<li>O que falta para fechar o M1, em ordem?</li>
+<li>O que são os &quot;spikes de leitura&quot; e por que o de Controllers continua no roteiro?</li>
+</ol>
+<details>
+<summary><strong>Respostas</strong></summary>
+<ol>
+<li>Porque já são tipados desde a S11 (<code>Results&lt;...&gt;</code>), e os status de erro já chegam ao OpenAPI pelas linhas <code>.ProducesProblem</code>; mudar só moveria o lugar da declaração.</li>
+<li>Das linhas <code>.ProducesProblem(StatusCodes.Status…)</code> em cada <code>*Modulo.cs</code> (o 400 vem de <code>.ProducesValidationProblem()</code>); os status de sucesso vêm do tipo de retorno com <code>TypedResults</code>.</li>
+<li>Muda o comportamento ou quebra algo? Um colega sênior travaria o PR por isso? Cai em entrevista ou no trabalho?</li>
+<li>Análise de marco, checkpoint, prova de transferência, revisão de mercado, spikes de leitura (Swashbuckle e Controllers) e o documento de consulta antes do M2.</li>
+<li>Estudos curtos de 1 a 2h só para conseguir ler projetos de outro estilo; o de Controllers fica porque MVC ainda aparece em 27 linhas do <code>Vagas.md</code>.</li>
+</ol>
+</details>
+<hr />
+<h2 id="10-preparação-para-o-próximo-chat">10. Preparação para o próximo chat</h2>
+<ul>
+<li><strong>Antes de tudo:</strong> estudar os quatro blocos (ordem sugerida: 4, 9, 11, 10) e levar as dúvidas para <strong>outra conversa</strong>.</li>
+<li><strong>Título sugerido da próxima sessão:</strong> <code>Norte · S43 — &lt;tema&gt;</code> (você escolhe).</li>
+<li><strong>Opções para a S43 (nenhuma é pendência):</strong> análise de marco e checkpoint; spikes de leitura; ou outro tema que você trouxer.</li>
+<li><strong>Sexta 13/11:</strong> gerar <code>RECONSTRUCAO-2026-11-14.md</code> para o sábado, tirada dos blocos que você estudou.</li>
+</ul>
+
+</article>
+<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

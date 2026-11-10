@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norte · S34 — O contrato nos dois sentidos, o SKU no pedido e o módulo Representantes · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s34.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#norte--s34--o-contrato-nos-dois-sentidos-o-sku-no-pedido-e-o-módulo-representantes" data-id="norte--s34--o-contrato-nos-dois-sentidos-o-sku-no-pedido-e-o-módulo-representantes">Norte · S34 — O contrato nos dois sentidos, o SKU no pedido e o módu…</a><a class="n2" href="#1-resultado-do-dia" data-id="1-resultado-do-dia">1. Resultado do dia</a><a class="n2" href="#2-onde-isso-está-no-mapa-dos-níveis" data-id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</a><a class="n2" href="#3-conceitos" data-id="3-conceitos">3. Conceitos</a><a class="n2" href="#4-termos" data-id="4-termos">4. Termos</a><a class="n2" href="#5-dúvidas-e-respostas" data-id="5-dúvidas-e-respostas">5. Dúvidas e respostas</a><a class="n2" href="#6-divergências-e-decisões-do-aluno" data-id="6-divergências-e-decisões-do-aluno">6. Divergências e decisões do aluno</a><a class="n2" href="#7-avaliação" data-id="7-avaliação">7. Avaliação</a><a class="n2" href="#8-pontos-a-melhorar" data-id="8-pontos-a-melhorar">8. Pontos a melhorar</a><a class="n2" href="#9-teste-se" data-id="9-teste-se">9. Teste-se</a><a class="n2" href="#10-preparação-para-a-próxima-sessão" data-id="10-preparação-para-a-próxima-sessão">10. Preparação para a próxima sessão</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a></aside>
+<main class="conteudo"><article>
+<h1 id="norte--s34--o-contrato-nos-dois-sentidos-o-sku-no-pedido-e-o-módulo-representantes">Norte · S34 — O contrato nos dois sentidos, o SKU no pedido e o módulo Representantes</h1>
+<p><strong>Quarta, 28/10/2026 · tempo: 10h56 (09:31–22:20, pausas 13:14–13:29 e 16:01–17:39) · Marco M1</strong></p>
+<p>Hoje o <code>Pedidos</code> ganhou o <code>GET /pedidos/{id}</code> (com Assert de verdade nos itens), o <code>Clientes</code> passou a <strong>perguntar ao <code>Pedidos</code></strong> antes de excluir um cliente, o <code>Pedidos</code> passou a <strong>perguntar ao <code>Catalogo</code></strong> se o SKU existe, e nasceu um módulo novo: o <strong><code>Representantes</code></strong>, com <code>POST /representantes/</code>. Quatro PRs na <code>main</code> (#67 a #70), <strong>157 testes</strong>, CI verde.</p>
+<p>A ideia para guardar: <strong>o contrato entre módulos agora vai e volta, e nenhum módulo referencia o outro.</strong> <code>Clientes</code> → <code>Pedidos.Contratos</code>; <code>Pedidos</code> → <code>Clientes.Contratos</code> e <code>Catalogo.Contratos</code>. Cada pergunta é uma interface num projeto quase vazio; cada resposta é do módulo dono do dado.</p>
+<blockquote>
+<p><strong>Antes de ler:</strong> a explicação completa está na entrada <strong>8.13 da Parte 8 do guia</strong>. Esta página é o roteiro de estudo da sessão.</p>
+</blockquote>
+<hr />
+<h2 id="1-resultado-do-dia">1. Resultado do dia</h2>
+<table>
+<thead>
+<tr>
+<th>PR</th>
+<th>Merge</th>
+<th>O que entrou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#67</td>
+<td><code>15ba0a0</code></td>
+<td><code>GET /pedidos/{id}</code>: Assert dos itens (sku, quantidade, preço, desconto) e teste do 404</td>
+</tr>
+<tr>
+<td>#68</td>
+<td><code>55c071a</code></td>
+<td>regra B: <code>Norte.Pedidos.Contratos</code>; o <code>DELETE</code> de cliente com pedidos responde 400</td>
+</tr>
+<tr>
+<td>#69</td>
+<td><code>a919e7b</code></td>
+<td>regra C: <code>Norte.Catalogo.Contratos</code>; <code>POST /pedidos</code> recusa SKU que não existe (400)</td>
+</tr>
+<tr>
+<td>#70</td>
+<td><code>b44a426</code></td>
+<td>módulo <code>Representantes</code>: <code>POST /representantes/</code> (201, 400, 409), migration, <code>.http</code></td>
+</tr>
+</tbody>
+</table>
+<p>Estado final: <code>main</code> em <code>b44a426</code>, <strong>157 testes verdes</strong> (o PR #70 não trouxe teste automatizado: foi decisão sua cobrir pelo <code>.http</code>), CI verde em todos.</p>
+<h2 id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</h2>
+<p>Solution → módulos → funcionalidades → camadas. Hoje mexemos no <strong>nível dos módulos</strong>: a fronteira ganhou mais dois projetos de contratos (<code>Pedidos.Contratos</code>, <code>Catalogo.Contratos</code>) e um módulo novo entrou na solution (<code>Representantes</code>, com <code>DbContext</code>, schema e migration próprios).</p>
+<h2 id="3-conceitos">3. Conceitos</h2>
+<h3 id="31-assert-que-confere-os-itens-de-uma-lista-guia-813">3.1 Assert que confere os itens de uma lista (guia <a href="../parte-8.html#813-o-contrato-nos-dois-sentidos-o-sku-que-precisa-existir-e-o-módulo-representantes">8.13</a>)</h3>
+<p>Conferir só que &quot;a lista não está vazia&quot; não prova que os <strong>valores</strong> voltaram. O teste do <code>GET /pedidos/{id}</code> grava N itens, lê o corpo e compara item a item:</p>
+<pre class="highlight"><code><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">Enumerable</span><span class="p">.</span><span class="n">Range</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">quantidadeItensIncluidos</span><span class="p">))</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// o POST usa 10m + i de preço e i como quantidade; o Assert usa as mesmas fórmulas</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">sku</span><span class="p">,</span><span class="w"> </span><span class="n">item</span><span class="p">.</span><span class="n">GetProperty</span><span class="p">(</span><span class="s">&quot;sku&quot;</span><span class="p">).</span><span class="n">GetString</span><span class="p">());</span><span class="w"></span>
+<span class="w">    </span><span class="p">...</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre>
+
+<p>A falha da tarde foi <code>Expected: 1 Actual: 2</code>: o <code>POST</code> mandava <code>Quantidade: 2</code> fixo e o <code>Assert</code> esperava <code>i</code>. <strong>Regra:</strong> a fórmula do Arrange e a do Assert precisam ser a mesma. O 404 usa <code>ProblemDetails</code> tipado e um id que não existe (<code>int.MaxValue</code>).</p>
+<h3 id="32-o-contrato-nos-dois-sentidos-regra-b">3.2 O contrato nos dois sentidos (regra B)</h3>
+<p>O <code>DELETE /clientes/{id}</code> agora pergunta ao <code>Pedidos</code> se existem pedidos para o cliente:</p>
+<table>
+<thead>
+<tr>
+<th>Peça</th>
+<th>Onde mora</th>
+<th>Papel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>IConsultaPedidos</code></td>
+<td><code>Norte.Pedidos.Contratos</code> (<code>public</code>)</td>
+<td>a pergunta</td>
+</tr>
+<tr>
+<td><code>ConsultaPedidos</code></td>
+<td><code>Norte.Pedidos</code> (<code>internal</code>)</td>
+<td>a resposta, via <code>AnyAsync</code> (<code>EXISTS</code>)</td>
+</tr>
+<tr>
+<td><code>ProjectReference</code></td>
+<td><code>Norte.Clientes.csproj</code> → <code>Norte.Pedidos.Contratos</code></td>
+<td><code>Clientes</code> <strong>não</strong> referencia <code>Norte.Pedidos</code></td>
+</tr>
+</tbody>
+</table>
+<p>Sem o projeto de contratos, <code>Clientes</code> → <code>Pedidos</code> e <code>Pedidos</code> → <code>Clientes</code> seriam uma referência circular. <strong>Por isso o ADR-012 escolheu um projeto por módulo.</strong> Se há pedidos, o endpoint responde <strong>400</strong> &quot;Existem pedidos para esse cliente&quot; e não exclui.</p>
+<h3 id="33-o-helper-do-teste-devolve-a-fábrica-e-o-using-var-fica-no-teste">3.3 O helper do teste devolve a fábrica (e o <code>using var</code> fica no teste)</h3>
+<p>Para trocar o <code>IConsultaPedidos</code> por um fake, o teste cria uma fábrica derivada:</p>
+<pre class="highlight"><code><span class="k">private</span><span class="w"> </span><span class="n">WebApplicationFactory</span><span class="p">&lt;</span><span class="n">Program</span><span class="p">&gt;</span><span class="w"> </span><span class="n">CriarFabricaComPedidos</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">existemPedidos</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">fabrica</span><span class="p">.</span><span class="n">WithWebHostBuilder</span><span class="p">(</span><span class="n">builder</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"></span>
+<span class="w">        </span><span class="n">builder</span><span class="p">.</span><span class="n">ConfigureServices</span><span class="p">(</span><span class="n">services</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"></span>
+<span class="w">            </span><span class="n">services</span><span class="p">.</span><span class="n">AddScoped</span><span class="p">&lt;</span><span class="n">IConsultaPedidos</span><span class="p">&gt;(</span><span class="n">_</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ConsultaPedidosFake</span><span class="p">(</span><span class="n">existe</span><span class="p">:</span><span class="w"> </span><span class="n">existemPedidos</span><span class="p">))));</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre>
+
+<pre class="highlight"><code><span class="k">using</span><span class="w"> </span><span class="nn">var</span><span class="w"> </span><span class="n">fabricaComPedidos</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">CriarFabricaComPedidos</span><span class="p">(</span><span class="n">existemPedidos</span><span class="p">:</span><span class="w"> </span><span class="k">true</span><span class="p">);</span><span class="w"></span>
+<span class="kt">var</span><span class="w"> </span><span class="n">cliente</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">fabricaComPedidos</span><span class="p">.</span><span class="n">CreateClient</span><span class="p">();</span><span class="w"></span>
+</code></pre>
+
+<p><strong>Erro da tarde:</strong> um <code>using var</code> <strong>dentro</strong> do helper descartava a fábrica antes do teste usar o <code>HttpClient</code> (<code>ObjectDisposedException</code>, 3 testes vermelhos). A fábrica derivada precisa viver <strong>até o fim do teste</strong>; quem a descarta é o teste. (O mentor tinha aconselhado o contrário sem verificar.)</p>
+<h3 id="34-regra-c-o-sku-precisa-existir-no-catálogo">3.4 Regra C: o SKU precisa existir no Catálogo</h3>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">interface</span><span class="w"> </span><span class="n">IConsultaCatalogo</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">Task</span><span class="p">&lt;</span><span class="kt">bool</span><span class="p">&gt;</span><span class="w"> </span><span class="n">NaoExisteSkuAsync</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">sku</span><span class="p">,</span><span class="w"> </span><span class="n">CancellationToken</span><span class="w"> </span><span class="n">ct</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre>
+
+<p>Dois pontos de desenho:</p>
+<ul>
+<li><strong>Um laço só.</strong> A primeira versão tinha dois <code>foreach</code> (um para montar o <code>ItemPedido</code>, outro para consultar o Catálogo). Você pediu para melhorar; ficou um <code>foreach</code>: cria o <code>ItemPedido</code>, pergunta ao Catálogo, devolve 400 se o SKU não existe, adiciona à lista.</li>
+<li><strong>O SKU é consultado normalizado.</strong> O construtor do <code>ItemPedido</code> aplica <code>ToUpperInvariant</code> (ADR-009); a consulta usa o valor já normalizado.</li>
+</ul>
+<p><strong>Consequência nos testes:</strong> todo teste que faz <code>POST /pedidos</code> agora precisa dos <strong>dois</strong> fakes (<code>ConsultaClientesFake</code> e <code>ConsultaCatalogoFake</code>), inclusive o do <code>GET</code>. Sem o fake do Catálogo a API tenta o banco do Catálogo e responde 500. O helper <code>CriarFabrica(bool clienteExiste, bool skuExiste = true)</code> concentra o registro.</p>
+<h3 id="35-quem-é-o-dono-do-dado-representantes-como-módulo">3.5 Quem é o dono do dado? Representantes como módulo</h3>
+<p>A conversa de domínio do meio do dia: vários representantes ↔ vários pedidos; 1 representante ↔ N clientes. Sua conclusão: <strong>dono = dono do dado</strong> (ADR-011): quem cria e altera é o módulo dono. Como o representante é o elo da carteira, ele merece módulo próprio (<code>Representantes</code>), em vez de ficar um <code>int</code> solto no <code>Pedido</code>. O vínculo <code>Cliente.RepresentanteId</code> segue <strong>provisório</strong>.</p>
+<h3 id="36-o-módulo-representantes-cadastro">3.6 O módulo <code>Representantes</code> (cadastro)</h3>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Decisão</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ficha</td>
+<td><code>RepresentanteId</code> (banco), <code>Nome</code> (120), <code>Cpf</code> (14), <code>Email</code> (120), <code>Telefone</code> (16)</td>
+</tr>
+<tr>
+<td>CPF</td>
+<td><strong>só o padrão</strong> (regex), como o CNPJ no ADR-011; sem dígitos verificadores</td>
+</tr>
+<tr>
+<td>Telefone</td>
+<td><code>(11) 9 7119-4051</code> — regex <code>^\(\d{2}\) 9 \d{4}-\d{4}$</code></td>
+</tr>
+<tr>
+<td>E-mail</td>
+<td>gravado em <strong>minúsculas</strong> no domínio (<code>ToLowerInvariant</code> no construtor e no <code>Atualizar</code>); único</td>
+</tr>
+<tr>
+<td>Unicidade</td>
+<td>índices únicos <code>ix_representantes_cpf</code> e <code>ix_representantes_email</code></td>
+</tr>
+<tr>
+<td>Respostas</td>
+<td>201 com <code>Location</code>, 400 (validação nativa), <strong>409</strong> para CPF ou e-mail já cadastrado</td>
+</tr>
+<tr>
+<td>Concorrência</td>
+<td>consulta antes + captura do <code>23505</code> no <code>AdicionarAsync</code> (mesmo padrão do <code>Clientes</code> e do <code>Catalogo</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>O projeto segue o molde dos outros: <code>Dominio/</code>, <code>Configuracoes/</code>, <code>Funcionalidades/CadastrarRepresentante/</code>, <code>RepresentantesModulo</code> (<code>AddRepresentantes</code>/<code>MapRepresentantes</code>), schema <code>representantes</code>, migration com <code>.editorconfig</code> em <code>Migrations/</code> (<code>IDE0161 = none</code>).</p>
+<h3 id="37-fluentvalidation-×-validação-nativa-a-decisão">3.7 <code>FluentValidation</code> × validação nativa: a decisão</h3>
+<p>Sua decisão (com o porquê): <strong>Pedidos fica com <code>AddValidation</code></strong> (não se mexe no que está pronto e testado); <strong>FluentValidation entra só no <code>Representantes</code>, para aprender</strong>, numa próxima fatia. A primeira fatia do <code>Representantes</code> usou <code>DataAnnotations</code>. Regra de estado ou de negócio continua no domínio ou no endpoint.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Ganho</th>
+<th><strong>Preço</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Manter <code>AddValidation</code> no <code>Pedidos</code></td>
+<td>zero retrabalho; 157 testes continuam valendo</td>
+<td>quem ler os dois módulos vê dois estilos</td>
+</tr>
+<tr>
+<td>Fluent só no <code>Representantes</code></td>
+<td>aprendizado num código novo, sem arriscar o pronto</td>
+<td>dependência a mais e dois estilos até uma decisão final</td>
+</tr>
+</tbody>
+</table>
+<h3 id="38-git-do-dia">3.8 Git do dia</h3>
+<ul>
+<li>Nenhum commit nem PR leva <code>Co-Authored-By</code> ou linha de autoria (regra sua: <strong>&quot;Nunca acrescente autoria&quot;</strong>).</li>
+<li><code>git add &lt;caminhos&gt;</code>, nunca <code>git add .</code>: vários arquivos aparecem como <code>M</code> só por fim de linha (CRLF); <code>git diff --ignore-space-at-eol</code> vazio.</li>
+<li>No CI Ubuntu o caminho é <strong>case-sensitive</strong>: <code>modulos</code> ≠ <code>Modulos</code>. Dois caminhos em minúsculo (<code>Norte.Api.csproj</code>, <code>Norte.slnx</code>) foram corrigidos antes de quebrar o CI.</li>
+</ul>
+<h2 id="4-termos">4. Termos</h2>
+<table>
+<thead>
+<tr>
+<th>Termo</th>
+<th>Em uma linha</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Contrato nos dois sentidos</td>
+<td>cada módulo expõe uma interface própria; ninguém referencia o interior do outro</td>
+</tr>
+<tr>
+<td>Dono do dado</td>
+<td>o módulo que cria e altera o dado (ADR-011)</td>
+</tr>
+<tr>
+<td>Fábrica derivada</td>
+<td><code>WithWebHostBuilder</code>: variação da fábrica de teste com serviços trocados</td>
+</tr>
+<tr>
+<td><code>ObjectDisposedException</code></td>
+<td>usar um objeto (<code>HttpClient</code>) depois de a fábrica ter sido descartada</td>
+</tr>
+<tr>
+<td><code>Select</code> ignora <code>Include</code></td>
+<td>projetar para outro tipo faz o EF buscar só as colunas usadas</td>
+</tr>
+<tr>
+<td><code>UniqueViolation</code> / <code>23505</code></td>
+<td>violação de índice único do Postgres, traduzida em 409</td>
+</tr>
+<tr>
+<td>Argumentos nomeados</td>
+<td><code>new ItemPedido(sku: ..., quantidade: ...)</code>: legíveis e seguros contra troca de ordem</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-dúvidas-e-respostas">5. Dúvidas e respostas</h2>
+<p><strong>Por que o <code>Clientes</code> não referencia o <code>Pedidos</code>?</strong> Porque o <code>Pedidos</code> já referencia o contrato do <code>Clientes</code>; uma referência direta fecharia um ciclo. Os dois falam por projetos de contratos.</p>
+<p><strong>400 ou 409 para &quot;existem pedidos para esse cliente&quot;?</strong> Ficou <strong>400</strong> (a requisição pede uma exclusão que a regra recusa). O 409 ficou para <strong>duplicidade</strong> (CPF/CNPJ/SKU). A discussão está nos PRs como &quot;o que fica pior&quot;.</p>
+<p><strong>Por que o <code>Select</code> ignorou o <code>Include</code>?</strong> Quando a consulta projeta para outro tipo (<code>Response</code>), o EF monta o <code>SELECT</code> só com o que a projeção usa; o <code>Include</code> só vale quando a entidade inteira é devolvida.</p>
+<p><strong>O Representantes não tem teste automatizado?</strong> Não: decisão sua, coberta pelo <code>.http</code> (265 linhas de cenários, com dados fictícios).</p>
+<h2 id="6-divergências-e-decisões-do-aluno">6. Divergências e decisões do aluno</h2>
+<table>
+<thead>
+<tr>
+<th>Tema</th>
+<th>Posição</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Assert dos itens</td>
+<td><code>foreach</code> sobre <code>Enumerable.Range</code>, comparação item a item</td>
+<td><strong>decidido</strong></td>
+</tr>
+<tr>
+<td>Helper de fábrica</td>
+<td>devolve a fábrica; <code>using var</code> no teste</td>
+<td><strong>você tinha razão</strong> (o conselho contrário era do mentor)</td>
+</tr>
+<tr>
+<td>Regra C</td>
+<td>um <code>foreach</code> só, com o contrato dentro</td>
+<td><strong>decidido</strong></td>
+</tr>
+<tr>
+<td>&quot;Em aberto&quot; do preço</td>
+<td>&quot;até onde eu sei essa pendência não existe&quot;</td>
+<td><strong>você tinha razão</strong>; não vira pendência</td>
+</tr>
+<tr>
+<td>Argumentos nomeados</td>
+<td>&quot;Eu sei o que são e acho bastante úteis&quot;</td>
+<td><strong>decidido</strong>; mantidos</td>
+</tr>
+<tr>
+<td>FluentValidation</td>
+<td>Pedidos fica; Representantes para aprender, numa próxima fatia</td>
+<td><strong>decidido</strong></td>
+</tr>
+<tr>
+<td>Troca de representante no pedido</td>
+<td>&quot;Onde vc viu isso?&quot;</td>
+<td><strong>você tinha razão</strong>: não existia no plano</td>
+</tr>
+<tr>
+<td>Testes do <code>Pedidos</code></td>
+<td>&quot;não quero deixar algo 100% correto&quot;</td>
+<td><strong>decidido</strong>: laboratório, não produção</td>
+</tr>
+<tr>
+<td>CPF</td>
+<td>só o padrão, como o CNPJ</td>
+<td><strong>decidido</strong></td>
+</tr>
+<tr>
+<td>E-mail</td>
+<td>minúsculas, único</td>
+<td><strong>decidido</strong></td>
+</tr>
+<tr>
+<td><code>.editorconfig</code> de <code>Migrations/</code></td>
+<td>passo seu depois de gerar a migration</td>
+<td><strong>você tinha razão</strong>; o mentor cobrou como se faltasse</td>
+</tr>
+<tr>
+<td>Autoria</td>
+<td>&quot;Nunca acrescente autoria&quot;</td>
+<td><strong>regra permanente</strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-avaliação">7. Avaliação</h2>
+<p><strong>Fez bem:</strong> escreveu sozinho o Assert dos itens e o teste do 404; resolveu as regras B e C pedindo só o enunciado (&quot;deixe eu quebrar a cabeça&quot;); achou os dois laços da regra C e pediu para melhorar; identificou que o helper do teste tinha de espelhar o <code>CriarFabrica</code>; separou o que é pendência do que é plano; defendeu o escopo (&quot;deixar as coisas pedirem&quot;); contrariou o mentor com evidência (representante, <code>.editorconfig</code>, pendência do preço); modelou o <code>Representantes</code> inteiro e corrigiu sozinho o <code>PedidoId</code> copiado do <code>Pedidos</code>, o <code>set</code> público do telefone e o e-mail sem normalização; testou todos os cenários pelo <code>.http</code>.</p>
+<p><strong>Recursos novos:</strong> <code>Enumerable.Range</code> num Assert de lista; segundo contrato (<code>Pedidos.Contratos</code>, <code>Catalogo.Contratos</code>); fábrica derivada com <code>using var</code> no teste; <code>Select</code> × <code>Include</code>; unicidade com <code>23505</code> num módulo novo; migration de módulo novo.</p>
+<p><strong>O mentor conduziu mal:</strong> afirmou o <code>using var</code> no helper sem verificar (3 testes vermelhos); cobrou o <code>.editorconfig</code> como se faltasse; explicou argumentos nomeados que você já conhecia; inventou a &quot;pendência&quot; do preço; entregou texto longo quando você pediu o código errado; esqueceu o fake do Catálogo ao planejar a regra C (quebrou testes do <code>Pedidos</code>).</p>
+<h2 id="8-pontos-a-melhorar">8. Pontos a melhorar</h2>
+<ul>
+<li><strong>Aluno:</strong> salvar o arquivo antes de compilar (o <code>.csproj</code> sem salvar custou um build); conferir caminhos em minúsculo antes do CI; copiar de um módulo para outro conferindo cada nome (<code>PedidoId</code> no <code>Representantes</code>).</li>
+<li><strong>Mentor:</strong> verificar antes de aconselhar; não cobrar passos que são do aluno; texto curto; não criar pendência.</li>
+<li><strong>Código (próxima sessão):</strong> FluentValidation no <code>Representantes</code> (próxima fatia); testes automatizados do <code>Representantes</code> só se você pedir.</li>
+</ul>
+<h2 id="9-teste-se">9. Teste-se</h2>
+<ol>
+<li>Por que a fórmula do preço e da quantidade no <code>POST</code> precisa ser a mesma do <code>Assert</code>?</li>
+<li>Por que o <code>Clientes</code> pergunta ao <code>Pedidos</code> sem referenciar o <code>Norte.Pedidos</code>?</li>
+<li>O que acontece com o <code>HttpClient</code> se o <code>using var</code> da fábrica estiver dentro do helper?</li>
+<li>Por que todo teste de <code>POST /pedidos</code> agora registra dois fakes?</li>
+<li>Por que o SKU é consultado depois do <code>ToUpperInvariant</code>?</li>
+<li>Por que a regra C ficou num <code>foreach</code> só?</li>
+<li>Por que o <code>Select</code> para <code>Response</code> ignora o <code>Include</code>?</li>
+<li>O que é &quot;dono do dado&quot; e como ele decidiu que <code>Representantes</code> é módulo?</li>
+<li>Por que o CPF valida só o padrão?</li>
+<li>Por que o e-mail é gravado em minúsculas, e onde isso acontece?</li>
+<li>Quando o <code>Representantes</code> responde 409, e o que cobre dois cadastros simultâneos?</li>
+<li>Por que o PR de hoje não leva <code>Co-Authored-By</code>?</li>
+</ol>
+<h2 id="10-preparação-para-a-próxima-sessão">10. Preparação para a próxima sessão</h2>
+<ol>
+<li>Chat novo com a pasta <code>D:\Projetos\C#\Monolito_Modular</code> ligada; <code>git status</code> e <code>git log -3 --oneline</code> (esperado <code>b44a426</code>). Docker aberto. Limpeza local: <code>git branch -d feat/representantes-cadastro</code>.</li>
+<li><strong>Plano (não é pendência):</strong> FluentValidation no <code>Representantes</code> (a próxima fatia); outros endpoints do módulo, se você quiser; decidir o destino do <code>Cliente.RepresentanteId</code> provisório.</li>
+<li>Começar com a lista de pendências <strong>vazia</strong>.</li>
+</ol>
+<hr />
+<h2 id="respostas">Respostas</h2><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>Porque o <code>POST</code> grava o valor e o <code>Assert</code> confere o valor lido; se as fórmulas diferem, o teste falha por erro do próprio teste (<code>Expected: 1 Actual: 2</code>), não por defeito do código.</li>
+<li>O <code>Pedidos</code> oferece <code>Norte.Pedidos.Contratos</code> (interface pública, projeto quase vazio); o <code>Clientes</code> referencia só esse projeto. Se referenciasse o <code>Norte.Pedidos</code>, haveria ciclo com o <code>Pedidos</code> → <code>Clientes.Contratos</code>.</li>
+<li>A fábrica derivada é descartada antes do teste usar o cliente: <code>ObjectDisposedException</code>. O <code>using var</code> fica no teste.</li>
+<li>O endpoint consulta o <code>Clientes</code> (cliente existe?) e o <code>Catalogo</code> (SKU existe?); sem o fake de qualquer um, a API usa a implementação real e o teste cai em 500.</li>
+<li>O construtor do <code>ItemPedido</code> guarda o SKU em maiúsculas (ADR-009) e o <code>Catalogo</code> guarda assim; consultar o texto digitado em minúsculas diria &quot;não existe&quot; para um SKU que existe.</li>
+<li>Um laço só cria o item, consulta e acumula; dois laços percorrem a lista duas vezes e separam duas partes da mesma decisão.</li>
+<li>Com projeção para outro tipo, o EF monta o <code>SELECT</code> só com as colunas usadas; o <code>Include</code> só vale quando a entidade é devolvida.</li>
+<li>Dono do dado é o módulo que cria e altera o dado. O representante é o elo da carteira de clientes e pedidos; por isso tem módulo próprio, com o vínculo do cliente ainda provisório.</li>
+<li>Mesma decisão do CNPJ (ADR-011): só o padrão é validado; os dígitos verificadores custam código e teste que o laboratório não precisa.</li>
+<li>Para que <code>Ana@x.com</code> e <code>ana@x.com</code> não sejam dois cadastros; acontece no construtor e no <code>Atualizar</code> do <code>Representante</code>, e a consulta também usa minúsculas.</li>
+<li>CPF ou e-mail já existentes. A consulta antes de gravar cobre o caso comum; dois cadastros simultâneos são cobertos pelo índice único e pela captura do <code>23505</code> no <code>AdicionarAsync</code>.</li>
+<li>Regra permanente sua: nenhum commit ou PR leva linha de autoria.</li>
+</ol>
+</details>
+</article>
+<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

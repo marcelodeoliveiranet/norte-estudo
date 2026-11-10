@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ESTUDO-S39 — o mesmo OTLP, três destinos: Aspire, ELK enxuto e Grafana · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s39.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#estudo-s39--o-mesmo-otlp-três-destinos-aspire-elk-enxuto-e-grafana" data-id="estudo-s39--o-mesmo-otlp-três-destinos-aspire-elk-enxuto-e-grafana">ESTUDO-S39 — o mesmo OTLP, três destinos: Aspire, ELK enxuto e Grafana</a><a class="n2" href="#1-a-pergunta-da-sessão-e-a-resposta" data-id="1-a-pergunta-da-sessão-e-a-resposta">1. A pergunta da sessão e a resposta</a><a class="n2" href="#2-como-ligar-e-desligar-cada-destino" data-id="2-como-ligar-e-desligar-cada-destino">2. Como ligar e desligar cada destino</a><a class="n2" href="#3-os-três-destinos-lado-a-lado" data-id="3-os-três-destinos-lado-a-lado">3. Os três destinos, lado a lado</a><a class="n2" href="#4-o-elk-enxuto-o-que-foi-montado-e-o-que-ficou-de-fora" data-id="4-o-elk-enxuto-o-que-foi-montado-e-o-que-ficou-de-fora">4. O ELK enxuto: o que foi montado e o que ficou de fora</a><a class="n2" href="#5-o-grafana-uma-caixa-só" data-id="5-o-grafana-uma-caixa-só">5. O Grafana: uma caixa só</a><a class="n2" href="#6-a-impressão-do-aluno-julgamento-não-medição" data-id="6-a-impressão-do-aluno-julgamento-não-medição">6. A impressão do aluno (julgamento, não medição)</a><a class="n2" href="#7-dado-pessoal-na-telemetria-continuação-da-regra-dd" data-id="7-dado-pessoal-na-telemetria-continuação-da-regra-dd">7. Dado pessoal na telemetria (continuação da regra (dd))</a><a class="n2" href="#8-nuvem-o-vocabulário-certo-📖-só-conceito" data-id="8-nuvem-o-vocabulário-certo-📖-só-conceito">8. Nuvem: o vocabulário certo (📖 só conceito)</a><a class="n2" href="#9-teste-se-sem-consultar" data-id="9-teste-se-sem-consultar">9. Teste-se (sem consultar)</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a><a class="n2" href="#10-hipóteses-e-limites-não-afirme-sem-conferir" data-id="10-hipóteses-e-limites-não-afirme-sem-conferir">10. Hipóteses e limites (não afirme sem conferir)</a><a class="n2" href="#11-o-que-vem-depois-planos-não-pendências" data-id="11-o-que-vem-depois-planos-não-pendências">11. O que vem depois (planos, não pendências)</a></aside>
+<main class="conteudo"><article>
+<h1 id="estudo-s39--o-mesmo-otlp-três-destinos-aspire-elk-enxuto-e-grafana">ESTUDO-S39 — o mesmo OTLP, três destinos: Aspire, ELK enxuto e Grafana</h1>
+<p><strong>Sessão:</strong> quarta 04/11/2026, 14:59 a 17:26 (pausa 15:29–15:38) · <strong>2h18 líquidas</strong> · PRs #94 (nota da ADR-016) e #95 (ELK e Grafana por perfil do Compose) · <code>main</code> em <code>384983f</code> · 192 testes (nenhum código C# mudou).</p>
+<blockquote>
+<p>Como usar: leia na ordem; no fim, responda a Seção 9 sem consultar. As respostas estão logo depois.</p>
+<p><strong>Legenda de confiança.</strong> ✅ feito e visto no Norte · 🟡 hipótese ou julgamento: <strong>não foi confirmado</strong> · 📖 só conhecido em conceito (não foi montado).</p>
+</blockquote>
+<hr />
+<h2 id="1-a-pergunta-da-sessão-e-a-resposta">1. A pergunta da sessão e a resposta</h2>
+<p><strong>Pergunta:</strong> o que muda na aplicação quando o destino da telemetria muda (Aspire, ELK, Grafana)?</p>
+<p><strong>Resposta (✅ visto):</strong> <strong>nada no código da API.</strong> O <code>Program.cs</code> continua com <code>UseOtlpExporter()</code>, que envia para <code>localhost:4317</code>. Cada destino sobe com um receptor OTLP nessa mesma porta; trocar de destino é desligar um contêiner e ligar outro. Nas duas trocas feitas (ELK → Aspire e Aspire → Grafana) a <strong>API ficou rodando</strong> e passou a enviar para o novo destino <strong>sem reiniciar</strong>.</p>
+<p>Esta é a prova prática do que a ADR-016 afirmou: <strong>OTLP é o contrato</strong>; o destino é configuração.</p>
+<p>Dois limites:</p>
+<ul>
+<li>Os três destinos usam as <strong>mesmas portas</strong> (4317 e 4318). Por isso o desenho é <strong>um destino por vez</strong> (✅ decisão da sessão).</li>
+<li>Só foram testados destinos que falam OTLP. Um SDK de fornecedor (Datadog, New Relic) <strong>não</strong> seria só configuração: quebraria o contrato (📖).</li>
+</ul>
+<hr />
+<h2 id="2-como-ligar-e-desligar-cada-destino">2. Como ligar e desligar cada destino</h2>
+<p>O <code>compose.yaml</code> usa <strong>perfis</strong> (<code>profiles</code>): serviço sem perfil sobe sempre; serviço com perfil só sobe se o perfil for pedido.</p>
+<table>
+<thead>
+<tr>
+<th>Quero...</th>
+<th>Comando (na pasta do repositório)</th>
+<th>O que sobe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>só o banco</td>
+<td><code>docker compose up -d</code></td>
+<td>Postgres</td>
+</tr>
+<tr>
+<td>Aspire</td>
+<td><code>docker compose --profile aspire up -d</code></td>
+<td>Postgres + painel</td>
+</tr>
+<tr>
+<td>ELK enxuto</td>
+<td><code>docker compose --profile elk up -d</code></td>
+<td>Postgres + Elasticsearch + Kibana + coletor</td>
+</tr>
+<tr>
+<td>Grafana</td>
+<td><code>docker compose --profile grafana up -d</code></td>
+<td>Postgres + Grafana (imagem <code>otel-lgtm</code>)</td>
+</tr>
+<tr>
+<td>desligar um destino</td>
+<td><code>docker compose stop &lt;serviço&gt;</code></td>
+<td>para só aquele serviço</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cuidado (🟡 não testado):</strong> a documentação diz que <code>down --profile &lt;x&gt;</code> também remove serviços sem perfil (o Postgres). Para desligar um destino, a sessão usou <code>stop &lt;serviço&gt;</code>.</p>
+<p>Regra prática: <strong>um perfil de destino por vez</strong>. Se dois tentam abrir a porta 4317, o segundo falha.</p>
+<hr />
+<h2 id="3-os-três-destinos-lado-a-lado">3. Os três destinos, lado a lado</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>Aspire dashboard</strong></th>
+<th><strong>ELK enxuto</strong></th>
+<th><strong>Grafana (otel-lgtm)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Imagens</td>
+<td><code>aspire/dashboard:13.6.2</code></td>
+<td>Elasticsearch 9.5.6 + Kibana 9.5.6 + <code>otel/opentelemetry-collector-contrib:0.164.0</code></td>
+<td><code>grafana/otel-lgtm:0.39.0</code></td>
+</tr>
+<tr>
+<td>Contêineres</td>
+<td>1</td>
+<td>3</td>
+<td>1 (por dentro: Grafana, Prometheus, Loki, Tempo e coletor)</td>
+</tr>
+<tr>
+<td>Licença</td>
+<td>não conferida nesta sessão</td>
+<td>Elastic License 2.0 ✅</td>
+<td>Apache-2.0 ✅</td>
+</tr>
+<tr>
+<td>Memória medida</td>
+<td>não medida</td>
+<td>≈ <strong>3,4 GiB</strong> (Kibana 1,66 · Elasticsearch 1,66, heap de 1 GB · coletor 37 MiB)</td>
+<td>≈ <strong>674 MiB</strong></td>
+</tr>
+<tr>
+<td>Histórico</td>
+<td>some ao reiniciar o painel ✅</td>
+<td>fica no volume <code>norte-elasticsearch-dados</code></td>
+<td>fica no volume <code>norte-grafana-dados</code></td>
+</tr>
+<tr>
+<td>Onde olhar</td>
+<td>Structured logs · Traces · Metrics</td>
+<td>Kibana → Discover (uma linha por span)</td>
+<td>Grafana → Drilldown (Metrics, Logs, Traces)</td>
+</tr>
+<tr>
+<td>Cascata de spans (<em>waterfall</em>)</td>
+<td>sim (lida na S38)</td>
+<td><strong>não</strong> neste desenho enxuto</td>
+<td>🟡 não conferida nesta sessão</td>
+</tr>
+<tr>
+<td>Para que serve na imagem</td>
+<td>desenvolvimento</td>
+<td>laboratório (segurança desligada)</td>
+<td>&quot;desenvolvimento, demonstração e teste&quot; (README da imagem)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ressalvas honestas sobre os números:</strong></p>
+<ul>
+<li>As medições <strong>não são do mesmo cenário</strong>: a do ELK foi feita <strong>antes</strong> de a API enviar dados; a do Grafana, <strong>com</strong> a API enviando; a do Aspire não foi feita. Servem para ordem de grandeza (3,4 GiB × 0,7 GiB), não para comparação exata.</li>
+<li>O exportador <code>elasticsearch</code> do coletor é <strong>beta</strong> para traces e logs e <strong>em desenvolvimento</strong> para métricas (README do exportador). Serviu para o laboratório; não é um desenho de produção.</li>
+</ul>
+<hr />
+<h2 id="4-o-elk-enxuto-o-que-foi-montado-e-o-que-ficou-de-fora">4. O ELK enxuto: o que foi montado e o que ficou de fora</h2>
+<p><strong>Montado (✅):</strong> Elasticsearch + Kibana + um coletor (<code>otel-collector-contrib</code>) com receptor OTLP e exportador <code>elasticsearch</code>. O coletor é quem traduz OTLP em documentos do Elasticsearch. Arquivo: <code>infra/elk/otel-collector.yaml</code>.</p>
+<pre class="highlight"><code><span class="nt">receivers</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">otlp</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">protocols</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">grpc</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> endpoint</span><span class="p">:</span><span class="w"> </span><span class="nv">0.0.0.0</span><span class="p p-Indicator">:</span><span class="nv">4317</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"></span>
+<span class="w">      </span><span class="nt">http</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> endpoint</span><span class="p">:</span><span class="w"> </span><span class="nv">0.0.0.0</span><span class="p p-Indicator">:</span><span class="nv">4318</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"></span>
+<span class="nt">processors</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">batch</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"></span>
+<span class="nt">exporters</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">elasticsearch</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://elasticsearch:9200</span><span class="w"></span>
+<span class="nt">service</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">pipelines</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">traces</span><span class="p">:</span><span class="w">  </span><span class="p p-Indicator">{</span><span class="nt"> receivers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">otlp</span><span class="p p-Indicator">],</span><span class="nt"> processors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">batch</span><span class="p p-Indicator">],</span><span class="nt"> exporters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">elasticsearch</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"></span>
+<span class="w">    </span><span class="nt">metrics</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> receivers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">otlp</span><span class="p p-Indicator">],</span><span class="nt"> processors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">batch</span><span class="p p-Indicator">],</span><span class="nt"> exporters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">elasticsearch</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"></span>
+<span class="w">    </span><span class="nt">logs</span><span class="p">:</span><span class="w">    </span><span class="p p-Indicator">{</span><span class="nt"> receivers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">otlp</span><span class="p p-Indicator">],</span><span class="nt"> processors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">batch</span><span class="p p-Indicator">],</span><span class="nt"> exporters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">elasticsearch</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"></span>
+</code></pre>
+
+<p>Leitura em português: o coletor <strong>recebe</strong> OTLP, <strong>agrupa</strong> em lotes e <strong>grava</strong> no Elasticsearch, uma tubulação (<em>pipeline</em>) para cada sinal.</p>
+<p><strong>O que apareceu no Elasticsearch (✅):</strong> três <em>data streams</em>: <code>traces-generic.otel-default</code>, <code>logs-generic.otel-default</code> e <code>metrics-generic.otel-default</code> (na conferência: 21, 54 e 20 documentos).</p>
+<p><strong>Como se olha (✅):</strong> no Kibana, em <strong>Discover</strong>. Cada <strong>span</strong> é uma linha; o <code>TraceId</code> serve de filtro.</p>
+<p><strong>Segurança (⚠ só laboratório):</strong> <code>xpack.security.enabled=false</code> e portas presas a <code>127.0.0.1</code>. Nada disso serve para uma máquina exposta.</p>
+<p><strong>Ficou de fora, de propósito:</strong> o &quot;ELK completo&quot; (cascata de spans e mapa de serviços do Kibana APM, que pedem o Elastic Agent em modo OTel). <strong>O aluno decidiu que é desnecessário</strong> para o laboratório; não foi montado e não será tratado como pendência.</p>
+<hr />
+<h2 id="5-o-grafana-uma-caixa-só">5. O Grafana: uma caixa só</h2>
+<p>A imagem <code>grafana/otel-lgtm</code> traz tudo num contêiner: Grafana (a tela), Loki (logs), Tempo (traces), Prometheus (métricas) e um coletor OTLP. Para o laboratório isso basta (✅ visto). O login é anônimo como administrador, <strong>só em laboratório</strong>.</p>
+<p>Dica de uso que saiu da sessão: a tela <strong>Explore</strong> é pesada; <strong>Drilldown</strong> (Metrics, Logs, Traces) leva mais rápido ao que se procura.</p>
+<p>Montar Grafana, Prometheus, Loki e Tempo como contêineres separados <strong>não foi feito</strong>; o aluno decidiu que é desnecessário.</p>
+<hr />
+<h2 id="6-a-impressão-do-aluno-julgamento-não-medição">6. A impressão do aluno (julgamento, não medição)</h2>
+<blockquote>
+<p>&quot;Para desenvolvimento o Aspire é melhor, mais fácil de ler e encontrar as informações; as outras ferramentas são muito poderosas, mas extremamente difíceis de mexer e encontrar as informações; o Grafana foi o pior.&quot;</p>
+</blockquote>
+<p>🟡 É <strong>uma pessoa, num laboratório, com pouco tempo de uso</strong>. Vale como registro de experiência, não como ranking. A parte que se sustenta em fatos: o Aspire sobe em <strong>um</strong> contêiner e sem arquivo de configuração; o ELK pede <strong>três</strong> contêineres, um arquivo de coletor e conhecimento de índices (<em>data streams</em>).</p>
+<p><strong>Evidência de mercado</strong> (<code>Vagas.md</code>, 141 vagas; contagem de menções, não qualidade): ELK 17 · Datadog 12 · CloudWatch 12 · Grafana 11 · New Relic 8 · Prometheus 6 · Dynatrace 6 · Application Insights 5 · OpenTelemetry 3. Quem vê o mercado vê muito ELK e muito Grafana; o laboratório agora tem <strong>uma experiência real com os dois</strong>, ainda que enxuta.</p>
+<hr />
+<h2 id="7-dado-pessoal-na-telemetria-continuação-da-regra-dd">7. Dado pessoal na telemetria (continuação da regra (dd))</h2>
+<p>O receio era: &quot;os parâmetros das consultas e os valores dos campos vão aparecer no ELK e no Grafana?&quot;. O que foi visto e lido:</p>
+<table>
+<thead>
+<tr>
+<th>Pergunta</th>
+<th>Resposta</th>
+<th>Confiança</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Os valores de parâmetros do EF aparecem nos spans do banco?</td>
+<td><strong>Não.</strong> O EF mascara (<code>@sku='?'</code>) enquanto não existir <code>EnableSensitiveDataLogging</code>, que não existe no repositório. Foi visto no ELK e no Grafana.</td>
+<td>✅ visto</td>
+</tr>
+<tr>
+<td>O caminho da requisição (<code>url.path</code>) leva dado pessoal?</td>
+<td>Leva o <strong>SKU</strong> (<code>/catalogo/fichas-produto/LUV-NIT-002</code>), que não é dado pessoal. As rotas de <code>Clientes</code> e <code>Representantes</code> usam <strong>ids numéricos</strong>.</td>
+<td>✅ visto e lido nas rotas</td>
+</tr>
+<tr>
+<td>O corpo da requisição é capturado?</td>
+<td><strong>Não.</strong> Nenhuma instrumentação de corpo foi ligada.</td>
+<td>✅ (configuração lida)</td>
+</tr>
+<tr>
+<td>O CNPJ aparece em algum lugar?</td>
+<td>Na <strong>resposta HTTP</strong> do 409 (<code>detail: &quot;O cnpj ... já está cadastrado&quot;</code>), mas isso é resposta, não telemetria. Em log, o CNPJ só entra no <code>Warning</code> da <strong>corrida de gravação</strong> (duas requisições gravando o mesmo CNPJ ao mesmo tempo).</td>
+<td>🟡 pelo código; a corrida <strong>não foi reproduzida</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Pergunta que o aluno fez e que vale guardar:</strong> &quot;no cadastro duplicado normal, sai um Warning?&quot; <strong>Não:</strong> o <code>POST</code> consulta antes de gravar, devolve 409 e <strong>não loga</strong>; o <code>Warning</code> só existe quando a consulta passa e o banco recusa na gravação (a corrida). O teste foi planejado achando o contrário (falha do mentor) e foi descartado.</p>
+<p><strong>Captura do corpo da requisição:</strong> continua sendo uma decisão própria, ainda não tomada. Se um dia for ligada, a regra (dd) manda mascarar CPF e e-mail.</p>
+<hr />
+<h2 id="8-nuvem-o-vocabulário-certo-📖-só-conceito">8. Nuvem: o vocabulário certo (📖 só conceito)</h2>
+<p>Pergunta do aluno: &quot;AWS e Azure têm algo a nível de Docker que simule o que fizemos?&quot;. Resposta lida na documentação:</p>
+<table>
+<thead>
+<tr>
+<th>Quero...</th>
+<th>AWS</th>
+<th>Azure</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>receber OTLP na nuvem</td>
+<td><strong>ADOT Collector</strong> (distribuição AWS do coletor); precisa de credenciais e conta real</td>
+<td><strong>Azure Monitor</strong>: aceita OTLP pelo coletor (sem emulador local)</td>
+</tr>
+<tr>
+<td>ver traces</td>
+<td><strong>X-Ray</strong></td>
+<td>Application Insights</td>
+</tr>
+<tr>
+<td>ver logs</td>
+<td>CloudWatch Logs</td>
+<td>Log Analytics (consulta em KQL)</td>
+</tr>
+<tr>
+<td>simular em Docker</td>
+<td>LocalStack: o X-Ray é pago e só tem a API</td>
+<td><strong>não há emulador local</strong> de Application Insights</td>
+</tr>
+</tbody>
+</table>
+<p>Consequências para o Norte:</p>
+<ul>
+<li>A tradução &quot;Aspire local → serviço de nuvem&quot; é <strong>trocar o destino do OTLP</strong> (um coletor no meio), <strong>sem mexer na API</strong> (✅ mesma lógica do que foi visto).</li>
+<li>Usar o SDK ou a &quot;distro&quot; do fornecedor <strong>quebra o contrato</strong> da ADR-016 (lock-in).</li>
+<li>A cobrança de nuvem costuma ser por <strong>volume recebido, retenção, consultas e saída de dados</strong>. 🟡 Os <strong>preços não foram conferidos</strong>.</li>
+<li>Subir tudo isso numa <strong>máquina Linux própria</strong> troca a conta de nuvem por <strong>VM, disco, memória e operação</strong> (você passa a cuidar de atualização e backup).</li>
+</ul>
+<p>Nada disso foi montado. Em entrevista: &quot;conheço o desenho; no Norte praticei com Aspire, ELK enxuto e Grafana&quot;.</p>
+<hr />
+<h2 id="9-teste-se-sem-consultar">9. Teste-se (sem consultar)</h2>
+<ol>
+<li>O que a API precisou mudar para trocar o destino da telemetria? Por quê?</li>
+<li>Por que os três destinos não rodam ao mesmo tempo?</li>
+<li>Para que serve o perfil (<code>profiles</code>) no <code>compose.yaml</code>?</li>
+<li>O que o coletor faz no ELK enxuto, em três verbos?</li>
+<li>Em que tela do Kibana se olha e como é o &quot;trace&quot; ali?</li>
+<li>O que o ELK enxuto <strong>não</strong> mostra e que o Aspire mostra?</li>
+<li>Por que a medição de memória do ELK e a do Grafana não se comparam diretamente?</li>
+<li>Dê duas razões para o ELK enxuto não servir em produção.</li>
+<li>O valor do parâmetro de uma consulta do EF aparece na telemetria? Por quê?</li>
+<li>Quando o Warning com o CNPJ é emitido e quando <strong>não</strong> é?</li>
+<li>Qual a diferença entre usar OTLP e usar o SDK de um fornecedor?</li>
+<li>Cite duas coisas que você <strong>não</strong> pode dizer em entrevista sobre esta sessão.</li>
+</ol>
+<h2 id="respostas">Respostas</h2><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li><strong>Nada.</strong> O <code>UseOtlpExporter()</code> fala OTLP em <code>localhost:4317</code>; cada destino expõe um receptor nessa porta.</li>
+<li>Todos usam as portas 4317 e 4318 do computador; o segundo a subir não conseguiria abri-las.</li>
+<li>Separar serviços que só sobem quando pedidos (<code>--profile elk</code>); sem perfil, o serviço sobe sempre (Postgres).</li>
+<li><strong>Recebe</strong> OTLP, <strong>agrupa</strong> em lotes e <strong>grava</strong> no Elasticsearch.</li>
+<li><strong>Discover</strong>. Cada span é uma linha; não há cascata nem mapa de serviços neste desenho.</li>
+<li>A <strong>cascata de spans</strong> (<em>waterfall</em>) de um trace, que o Aspire mostra.</li>
+<li>A do ELK foi medida antes de a API enviar dados; a do Grafana, com a API enviando; a do Aspire nem foi medida. Serve para ordem de grandeza.</li>
+<li>Segurança desligada (<code>xpack.security.enabled=false</code>) e exportador do coletor ainda beta/em desenvolvimento para alguns sinais; também pede ~3,4 GiB e operação própria.</li>
+<li><strong>Não</strong>: o EF mascara os valores (<code>@sku='?'</code>) enquanto não houver <code>EnableSensitiveDataLogging</code>.</li>
+<li>Só na <strong>corrida</strong> de gravação (duas requisições com o mesmo CNPJ passam da consulta e a segunda esbarra no índice único). No cadastro duplicado normal o <code>POST</code> devolve 409 sem logar.</li>
+<li>OTLP é padrão aberto: trocar o destino é configuração. O SDK de fornecedor amarra o código àquele fornecedor.</li>
+<li>Por exemplo: que montei ELK completo com APM; que operei Grafana com peças separadas; que usei Datadog, X-Ray ou Azure Monitor; que conferi preços de nuvem; que o ELK enxuto está pronto para produção.</li>
+</ol>
+<hr />
+</details><h2 id="10-hipóteses-e-limites-não-afirme-sem-conferir">10. Hipóteses e limites (não afirme sem conferir)</h2>
+<table>
+<thead>
+<tr>
+<th>🟡 Hipótese ou limite</th>
+<th>Situação</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>docker compose down --profile &lt;x&gt;</code> remove também o Postgres</td>
+<td>só lido na documentação; não testado</td>
+</tr>
+<tr>
+<td>retenção e tamanho do volume do Elasticsearch</td>
+<td><strong>não configurados</strong> (dados só crescem)</td>
+</tr>
+<tr>
+<td>memória do Aspire e comparação no mesmo cenário</td>
+<td>não medidas</td>
+</tr>
+<tr>
+<td>o Warning com o CNPJ na corrida</td>
+<td>lido no código; <strong>não reproduzido</strong></td>
+</tr>
+<tr>
+<td>captura do corpo da requisição</td>
+<td>decisão própria, não conversada</td>
+</tr>
+<tr>
+<td>persistência do Aspire; telemetria durante a queda do painel</td>
+<td>continuam não testadas (S38)</td>
+</tr>
+<tr>
+<td>preços e limites de nuvem</td>
+<td>não conferidos</td>
+</tr>
+<tr>
+<td>pool do Npgsql (~5 min), limites do histograma, <code>service.instance.id</code></td>
+<td>continuam hipóteses (S38)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="11-o-que-vem-depois-planos-não-pendências">11. O que vem depois (planos, não pendências)</h2>
+<ol>
+<li><strong>Observabilidade, lacunas:</strong> span próprio (<code>ActivitySource</code>), persistência do Aspire, confirmar as hipóteses acima, decisão sobre o corpo da requisição.</li>
+<li><strong>Token de concorrência</strong> (<code>xmin</code>/<code>ETag</code>/<code>If-Match</code>) em <code>Clientes</code> e <code>Representantes</code>, para ficarem como o Catálogo.</li>
+<li><strong>Sexta 06/11:</strong> gerar <code>RECONSTRUCAO-2026-11-07.md</code> para o sábado.</li>
+</ol>
+
+</article>
+<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

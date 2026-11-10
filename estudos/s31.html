@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norte · S31 — Testes de API do cadastro de Cliente e 409 nas requisições simultâneas · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s31.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#norte--s31--testes-de-api-do-cadastro-de-cliente-e-409-nas-requisições-simultâneas" data-id="norte--s31--testes-de-api-do-cadastro-de-cliente-e-409-nas-requisições-simultâneas">Norte · S31 — Testes de API do cadastro de Cliente e 409 nas requisi…</a><a class="n2" href="#1-resultado-do-dia" data-id="1-resultado-do-dia">1. Resultado do dia</a><a class="n2" href="#2-onde-isso-está-no-mapa-dos-níveis" data-id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</a><a class="n2" href="#3-conceitos" data-id="3-conceitos">3. Conceitos</a><a class="n2" href="#4-termos" data-id="4-termos">4. Termos</a><a class="n2" href="#5-divergências-e-decisões-do-aluno" data-id="5-divergências-e-decisões-do-aluno">5. Divergências e decisões do aluno</a><a class="n2" href="#6-avaliação" data-id="6-avaliação">6. Avaliação</a><a class="n2" href="#7-pontos-a-melhorar" data-id="7-pontos-a-melhorar">7. Pontos a melhorar</a><a class="n2" href="#8-teste-se" data-id="8-teste-se">8. Teste-se</a><a class="n2" href="#9-preparação-para-a-s32" data-id="9-preparação-para-a-s32">9. Preparação para a S32</a><a class="n2" href="#respostas" data-id="respostas">Respostas</a></aside>
+<main class="conteudo"><article>
+<h1 id="norte--s31--testes-de-api-do-cadastro-de-cliente-e-409-nas-requisições-simultâneas">Norte · S31 — Testes de API do cadastro de Cliente e 409 nas requisições simultâneas</h1>
+<p><strong>Segunda 26/10/2026 · tempo líquido: 6h14 (2h03 + 4h11) · Marco M1</strong></p>
+<p>Hoje o <code>POST /clientes</code> ganhou testes de verdade e um defeito foi achado e corrigido. O endpoint já existia desde a S30, mas nenhum teste passava pela API inteira. Agora passam: <strong>201, 409 e 400 (13 casos)</strong>, todos vistos vermelhos antes de confiar. Depois, o teste das <strong>requisições simultâneas</strong> (20 ao mesmo tempo, mesmo CNPJ) ficou vermelho com um 500, o repositório foi corrigido e o resultado certo apareceu: <strong>um 201 e dezenove 409</strong>.</p>
+<p>A ideia para guardar: <strong>um teste só vale depois de ser visto vermelho, e um erro só é erro de verdade se a API consegue chegar até ele.</strong> Duas coisas que pareciam pendentes (<code>ArgumentException</code> virando 400 e corpo vazio) foram examinadas e descartadas por esse critério.</p>
+<h2 id="1-resultado-do-dia">1. Resultado do dia</h2>
+<table>
+<thead>
+<tr>
+<th>PR</th>
+<th>O quê</th>
+<th>Merge</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#53</td>
+<td>testes de API do <code>POST /clientes</code>: 409 (CNPJ repetido), 201 (com <code>Location</code>) e 400 (<code>Theory</code> com 13 casos)</td>
+<td><code>4173154</code></td>
+</tr>
+<tr>
+<td>#54</td>
+<td>teste das 20 requisições simultâneas (vermelho) e a correção no repositório: <code>23505</code> vira 409</td>
+<td><code>d0a61fb</code></td>
+</tr>
+<tr>
+<td>#55</td>
+<td>nota no ADR-002: o <code>Request</code> <code>public</code> é exceção prevista no ADR-003</td>
+<td><code>724f1c6</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>main</code> em <code>724f1c6</code>, CI verde nos três PRs. Testes: <strong>104 na solução</strong> (37 só no <code>Norte.Clientes.Tests</code>).</p>
+<p>Tempo: 6h14, <strong>1h14 acima</strong> do limite de 5h por sessão (alerta A4).</p>
+<h2 id="2-onde-isso-está-no-mapa-dos-níveis">2. Onde isso está no mapa dos níveis</h2>
+<p>Camada de <strong>testes de API</strong> do módulo <code>Clientes</code> (o teste passa pelo HTTP, pelo endpoint, pelo repositório e pelo Postgres real) e um ajuste na <strong>infraestrutura</strong> (o repositório). Mesmo desenho que o <code>Catalogo</code> tem desde a S17.</p>
+<h2 id="3-conceitos">3. Conceitos</h2>
+<h3 id="31-teste-de-api-com-banco-real-guia-811">3.1 Teste de API com banco real (guia <a href="../parte-8.html#811-testes-de-api-do-cadastro-de-cliente-e-o-409-nas-requisições-simultâneas">8.11</a>)</h3>
+<table>
+<thead>
+<tr>
+<th>Como era (S17, <code>Catalogo</code>)</th>
+<th>Como é agora (S31, <code>Clientes</code>)</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ApiComPostgresFabrica</code> do <code>Catalogo</code></td>
+<td><code>PostgresFabrica</code> do <code>Clientes</code> com <code>WebApplicationFactory&lt;Program&gt;</code></td>
+<td>cada módulo tem a sua fábrica</td>
+</tr>
+<tr>
+<td><code>UseEnvironment(&quot;Testing&quot;)</code></td>
+<td>igual</td>
+<td>o seed e outras coisas de <code>Development</code> não rodam</td>
+</tr>
+<tr>
+<td>um container por classe de teste</td>
+<td>igual</td>
+<td>os testes da classe dividem o banco</td>
+</tr>
+</tbody>
+</table>
+<p>Consequência prática: <strong>cada teste usa um CNPJ diferente</strong>, porque o banco é um só dentro da classe e o CNPJ é único.</p>
+<h3 id="32-o-201-e-o-location">3.2 O 201 e o <code>Location</code></h3>
+<p>O teste do 201 confere três coisas: o status <code>Created</code>, o cabeçalho <code>Location</code> não nulo e o <code>Location</code> igual a <code>/clientes/{id}</code>. O <code>id</code> <strong>não é escrito no teste</strong>: é lido do corpo da resposta (<code>clienteId</code>) e comparado.</p>
+<table>
+<thead>
+<tr>
+<th>Primeira ideia</th>
+<th>Problema</th>
+<th>Jeito certo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>escrever <code>/clientes/1</code></td>
+<td>o banco gera o número; o <code>1</code> só vale se este for o primeiro cliente da classe (depende da ordem)</td>
+<td>ler <code>clienteId</code> do JSON e montar <code>/clientes/{clienteId}</code></td>
+</tr>
+<tr>
+<td>validar o <code>Location</code> com regex</td>
+<td>mais complicado do que o necessário</td>
+<td>comparar com o texto montado</td>
+</tr>
+</tbody>
+</table>
+<p>Pergunta boa do aluno: <em>&quot;um humano pensaria assim?&quot;</em> Não. Se o teste ficou difícil, normalmente o teste está pedindo o dado errado.</p>
+<h3 id="33-theory-com-memberdata-e-theorydata-primeira-vez">3.3 <code>Theory</code> com <code>MemberData</code> e <code>TheoryData</code> (primeira vez)</h3>
+<p><code>[Fact]</code> roda uma vez. <code>[Theory]</code> roda <strong>uma vez por linha de dados</strong>. Os dados podem vir de <code>[InlineData]</code> (escritos em cima do teste) ou de <code>[MemberData]</code> (uma lista guardada em outro lugar da classe). Para 13 casos com 5 valores cada, a lista fica melhor num membro da classe.</p>
+<table>
+<thead>
+<tr>
+<th>Peça</th>
+<th>Papel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TheoryData&lt;string, string, string, int, string&gt;</code></td>
+<td>uma tabela tipada: cada linha tem 5 colunas, nesta ordem: CNPJ, razão social, nome fantasia, representante, <strong>campo que deve acusar erro</strong></td>
+</tr>
+<tr>
+<td><code>[MemberData(nameof(RequisicoesInvalidas))]</code></td>
+<td>diz ao xUnit: &quot;pegue as linhas desse membro&quot;</td>
+</tr>
+<tr>
+<td>parâmetros do método de teste</td>
+<td>recebem as 5 colunas, na mesma ordem</td>
+</tr>
+</tbody>
+</table>
+<p>Forma da tabela (a lista completa está no arquivo do teste):</p>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">TheoryData</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="p">&gt;</span><span class="w"> </span><span class="n">RequisicoesInvalidas</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="k">new</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// cnpj, razaoSocial, nomeFantasia, representanteId, campo que deve acusar o erro</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Razão&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fantasia&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">CampoCnpj</span><span class="w"> </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;40.7DK.4BT/0001-47&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fantasia&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">CampoRazaoSocial</span><span class="w"> </span><span class="p">},</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+</code></pre>
+
+<p>Os 13 casos: CNPJ (14 dígitos, minúsculo com máscara, misturado sem máscara, 18 dígitos sem máscara, vazio), razão (nula, vazia, mais de 120), fantasia (nula, vazia, mais de 120) e representante (−1 e 0).</p>
+<p>Tropeços do dia e o que ensinam: uma aspa a mais (<code>&quot;&quot;DCV&quot;</code>) quebra a linha inteira; uma <code>const</code> não vai dentro do inicializador, vai no nível da classe; <code>string</code> que recebe <code>null</code> na tabela pede <code>!</code> ao montar o <code>Request</code> (aviso CS8604).</p>
+<h3 id="34-o-que-o-400-devolve-chaves-em-pascalcase">3.4 O que o 400 devolve: chaves em PascalCase</h3>
+<p>O corpo do 400 de validação é um <code>HttpValidationProblemDetails</code>. O campo <code>Errors</code> é um dicionário <strong>campo → mensagens</strong>, e as chaves usam o nome da propriedade em C#: <code>Cnpj</code>, <code>RazaoSocial</code>, <code>NomeFantasia</code>, <code>RepresentanteId</code>. Escrever <code>cnpj</code> em minúsculo falha. O Assert é:</p>
+<pre class="highlight"><code><span class="n">Assert</span><span class="p">.</span><span class="n">Contains</span><span class="p">(</span><span class="n">campo</span><span class="p">,</span><span class="w"> </span><span class="n">problema</span><span class="p">.</span><span class="n">Errors</span><span class="p">.</span><span class="n">Keys</span><span class="p">);</span><span class="w"></span>
+</code></pre>
+
+<p>Por isso a quinta coluna da <code>TheoryData</code> existe: ela diz <strong>qual campo</strong> o teste espera ver reclamado.</p>
+<h3 id="35-prova-do-vermelho-com-sabotagem-mínima">3.5 Prova do vermelho com sabotagem mínima</h3>
+<table>
+<thead>
+<tr>
+<th>Teste</th>
+<th>Sabotagem</th>
+<th>O que apareceu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>201</td>
+<td>tirar a linha que grava (<code>AdicionarAsync</code>)</td>
+<td>vermelho (eu tinha previsto verde; errei)</td>
+</tr>
+<tr>
+<td>409</td>
+<td>estrago mínimo na regra do 409 (feito no início da sessão)</td>
+<td>vermelho</td>
+</tr>
+<tr>
+<td>400</td>
+<td>estragar o <code>[RegularExpression]</code> do <code>Request</code></td>
+<td><strong>4 vermelhos, 9 verdes</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Regra: <strong>commit do teste antes</strong>, estrago de uma linha, <code>dotnet test</code> <strong>sem</strong> <code>--no-build</code>, <code>git restore</code> no fim.</p>
+<p>O 400 ensina uma coisa fina: com a regex sabotada, o CNPJ <strong>vazio continua verde</strong>. Não é falha do teste; é o <code>[Required]</code> barrando antes. Cada garantia tem o seu dono.</p>
+<p>Outra descoberta: se a validação de entrada some, o <code>ArgumentException</code> do domínio sai da API como <strong>500</strong>. A validação de entrada é o que impede o domínio de ser tocado com dado ruim.</p>
+<h3 id="36-requisições-simultâneas-antes-chamado-de-corrida">3.6 Requisições simultâneas (antes chamado de &quot;corrida&quot;)</h3>
+<p>O termo &quot;corrida&quot; foi mal escolhido; o nome do assunto é <strong>requisições simultâneas</strong>. O problema:</p>
+<table>
+<thead>
+<tr>
+<th>Passo</th>
+<th>Requisição A</th>
+<th>Requisição B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>consulta o CNPJ: não existe</td>
+<td>consulta o CNPJ: não existe</td>
+</tr>
+<tr>
+<td>2</td>
+<td>grava: ok (201)</td>
+<td>grava: o índice único recusa (<code>23505</code>)</td>
+</tr>
+<tr>
+<td>3</td>
+<td></td>
+<td>sem tratamento: <strong>500</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Consultar antes de gravar <strong>não basta</strong>, porque o passo 1 das duas acontece antes de qualquer gravação. A garantia final é o índice do banco; o código precisa <strong>entender a recusa</strong> do banco e responder 409.</p>
+<h3 id="37-o-teste-das-20-requisições">3.7 O teste das 20 requisições</h3>
+<pre class="highlight"><code><span class="c1">// forma do teste (o arquivo completo está no repositório)</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">tarefas</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Enumerable</span><span class="p">.</span><span class="n">Range</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">20</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="n">Select</span><span class="p">(</span><span class="n">_</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">cliente</span><span class="p">.</span><span class="n">PostAsJsonAsync</span><span class="p">(</span><span class="s">&quot;/clientes&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">request</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="n">ToList</span><span class="p">();</span><span class="w"></span>
+
+<span class="kt">var</span><span class="w"> </span><span class="n">respostas</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">Task</span><span class="p">.</span><span class="n">WhenAll</span><span class="p">(</span><span class="n">tarefas</span><span class="p">);</span><span class="w"></span>
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Detalhe</th>
+<th>Por quê</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>as 20 tarefas são criadas <strong>antes</strong> de esperar</td>
+<td>com <code>await</code> dentro do laço seria uma de cada vez, e nada seria simultâneo</td>
+</tr>
+<tr>
+<td>nenhum POST antes do Act</td>
+<td>o primeiro POST faria os outros 19 serem 409 comuns, sem testar nada novo</td>
+</tr>
+<tr>
+<td>conferir <strong>todas</strong> as respostas</td>
+<td>conferir só a última esconde o problema</td>
+</tr>
+<tr>
+<td>asserts: nenhum 500, exatamente um 201, dezenove 409</td>
+<td>descrevem o que o negócio quer</td>
+</tr>
+<tr>
+<td>CNPJ próprio do teste</td>
+<td>não colide com o teste do 409</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O vermelho aqui é provável, não garantido</strong>: depende do tempo. Com 20 requisições, na prática, ficou vermelho. Se um dia ficar verde sem a correção, é sorte, não proteção.</p>
+<h3 id="38-a-correção-o-repositório-entende-o-23505">3.8 A correção: o repositório entende o <code>23505</code></h3>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="p">&lt;</span><span class="kt">bool</span><span class="p">&gt;</span><span class="w"> </span><span class="n">AdicionarAsync</span><span class="p">(</span><span class="n">Cliente</span><span class="w"> </span><span class="n">cliente</span><span class="p">,</span><span class="w"> </span><span class="n">CancellationToken</span><span class="w"> </span><span class="n">ct</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">try</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// ... Add + SaveChangesAsync</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">true</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">DbUpdateException</span><span class="w"> </span><span class="n">ex</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="n">when</span><span class="w"> </span><span class="p">(</span><span class="n">ex</span><span class="p">.</span><span class="n">InnerException</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">PostgresException</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">SqlState</span><span class="p">:</span><span class="w"> </span><span class="n">PostgresErrorCodes</span><span class="p">.</span><span class="n">UniqueViolation</span><span class="w"> </span><span class="p">})</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">false</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre>
+
+<p>O endpoint faz <code>if (!gravou) return CnpjJaCadastrado(request.Cnpj);</code> e a mesma função monta o 409 da consulta e o 409 da recusa do banco (<code>CnpjJaCadastrado</code>).</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Ganho</th>
+<th><strong>Preço</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tratar o <code>23505</code> no repositório</td>
+<td>a resposta certa (409) mesmo com requisições simultâneas</td>
+<td>o repositório conhece um detalhe do Postgres (<code>PostgresException</code>)</td>
+</tr>
+<tr>
+<td>Manter também a consulta antes</td>
+<td>409 sem exceção no caminho normal (o comum)</td>
+<td>duas verificações do mesmo fato</td>
+</tr>
+<tr>
+<td>Devolver <code>bool</code></td>
+<td>o endpoint decide a resposta</td>
+<td><code>false</code> não diz o motivo; hoje só existe um motivo possível</td>
+</tr>
+</tbody>
+</table>
+<p>O filtro <code>when</code> é importante: <strong>só</strong> a violação de unicidade vira <code>false</code>. Qualquer outro erro do banco continua subindo como exceção.</p>
+<h3 id="39-o-que-foi-examinado-e-descartado">3.9 O que foi examinado e descartado</h3>
+<table>
+<thead>
+<tr>
+<th>Candidato</th>
+<th>Resultado</th>
+<th>Por quê</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ArgumentException</code> do domínio → 400</td>
+<td><strong>descartado</strong></td>
+<td>a API nunca chega lá: a validação do <code>Request</code> (<code>[Required]</code> recusa até espaços) cobre todas as guardas do domínio. Um mapeamento global esconderia bugs verdadeiros</td>
+</tr>
+<tr>
+<td>Corpo vazio e JSON malformado no <code>POST</code></td>
+<td><strong>descartado</strong></td>
+<td>no ambiente <code>Testing</code> os dois dão 400 (teste verde sem valor). Em <code>Development</code> dão <strong>500</strong></td>
+</tr>
+<tr>
+<td>Dois <code>POST</code> extras no <code>Clientes.http</code></td>
+<td><strong>removidos</strong></td>
+<td>só mostravam o 500 de <code>Development</code></td>
+</tr>
+</tbody>
+</table>
+<p>Sobre o 500 de <code>Development</code>: o log mostrou uma <code>BadHttpRequestException</code> (corpo ruim), que o <code>UseExceptionHandler</code> transforma em 500. Em <code>Testing</code> a mesma exceção vira 400. A hipótese é que o <code>Development</code> configura o servidor para <strong>lançar</strong> a exceção em vez de responder 400; <strong>não foi verificado em <code>Production</code></strong>.</p>
+<h3 id="310-adr-002-uma-exceção-anotada">3.10 ADR-002: uma exceção anotada</h3>
+<p>O ADR-002 diz que tudo no módulo é <code>internal</code>. O <code>CadastrarClienteRequest</code> é <code>public</code> por causa da validação nativa (ADR-003). A nota registra: o <code>Request</code> <code>public</code> é a <strong>exceção prevista</strong>; <code>Response</code>, endpoint, repositório, <code>DbContext</code> e domínio continuam <code>internal</code>; rever no .NET 11.</p>
+<h2 id="4-termos">4. Termos</h2>
+<table>
+<thead>
+<tr>
+<th>Termo</th>
+<th>Em uma linha</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Requisições simultâneas</td>
+<td>duas ou mais requisições processadas ao mesmo tempo (antes dito &quot;corrida&quot;)</td>
+</tr>
+<tr>
+<td><code>Theory</code></td>
+<td>teste que roda uma vez por linha de dados</td>
+</tr>
+<tr>
+<td><code>MemberData</code></td>
+<td>diz de onde vêm as linhas (um membro da classe)</td>
+</tr>
+<tr>
+<td><code>TheoryData&lt;...&gt;</code></td>
+<td>a tabela tipada de linhas</td>
+</tr>
+<tr>
+<td><code>Task.WhenAll</code></td>
+<td>espera todas as tarefas terminarem, sem esperar uma de cada vez</td>
+</tr>
+<tr>
+<td><code>HttpValidationProblemDetails</code></td>
+<td>corpo do 400 de validação, com <code>Errors</code></td>
+</tr>
+<tr>
+<td><code>PostgresErrorCodes.UniqueViolation</code></td>
+<td>nome do código <code>23505</code></td>
+</tr>
+<tr>
+<td>Sabotagem mínima</td>
+<td>estragar uma linha só para ver o teste ficar vermelho</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-divergências-e-decisões-do-aluno">5. Divergências e decisões do aluno</h2>
+<table>
+<thead>
+<tr>
+<th>Tema</th>
+<th>Posição</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Validar o <code>Location</code></td>
+<td>&quot;um humano usaria regex?&quot; → ler o id do corpo</td>
+<td>adotado</td>
+</tr>
+<tr>
+<td>Id fixo no teste</td>
+<td>questionou: &quot;o primeiro teste não retorna sempre 1?&quot;</td>
+<td>corrigido (depende da ordem)</td>
+</tr>
+<tr>
+<td><code>ArgumentException</code> → 400</td>
+<td>a API não chega lá</td>
+<td>descartado</td>
+</tr>
+<tr>
+<td>Corpo vazio no <code>POST</code></td>
+<td>&quot;Isso agrega algo? Se sim, o quê?&quot;</td>
+<td>descartado; 2 POST do <code>.http</code> removidos</td>
+</tr>
+<tr>
+<td>Detalhes de PR</td>
+<td>&quot;Isso é preciosismo. Não vou colocar&quot;</td>
+<td>vale a decisão dele</td>
+</tr>
+<tr>
+<td>Ordem do próximo passo</td>
+<td>primeiro os outros endpoints do cliente; depois o mesmo teste no <code>FichaProduto</code></td>
+<td>decidido (S32)</td>
+</tr>
+<tr>
+<td>Nota no ADR-002</td>
+<td>trabalho do mentor</td>
+<td>feita (PR #55)</td>
+</tr>
+<tr>
+<td>Site e <code>PROMPT</code></td>
+<td>&quot;não gere o site e nem o prompt&quot;</td>
+<td>decidido</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-avaliação">6. Avaliação</h2>
+<p><strong>Fez bem:</strong> perguntou o que cada teste agregava antes de aceitar; leu os vermelhos do jeito certo; pegou o id fixo; escreveu a tabela dos 13 casos; achou as chaves em PascalCase pelo próprio erro; conferiu &quot;foi feito tudo relacionado a esta sessão?&quot;; transformou a dúvida do 500 em investigação com <code>.http</code> e log.</p>
+<p><strong>Com ajuda:</strong> <code>Theory</code> com <code>MemberData</code> e <code>TheoryData</code> (construção nova, ajuda 2); o teste das requisições simultâneas (a primeira versão rodava uma de cada vez); a correção do <code>23505</code> (padrão já visto na S30).</p>
+<p><strong>O mentor conduziu mal:</strong> previu que a sabotagem do 201 ficaria verde (ficou vermelha); previu 400 para o JSON vazio (era 500); listou como pendência o <code>ArgumentException</code> → 400 sem provar que a API chega lá; explicou <code>Theory</code>/<code>MemberData</code> longo demais e sem mostrar o exemplo primeiro; usou o termo &quot;corrida&quot; sem explicar; entregou código incompleto; insistiu em detalhe de PR que o aluno não escreveria.</p>
+<h2 id="7-pontos-a-melhorar">7. Pontos a melhorar</h2>
+<ul>
+<li><strong>Você:</strong> o caminho do <code>.csproj</code> no texto de um PR veio com o nome de outro módulo (Catalogo em vez de Clientes); conferir o que o PR afirma contra o que o <code>git diff --stat</code> mostra.</li>
+<li><strong>Mentor:</strong> mostrar o exemplo pequeno antes da explicação; uma ação por mensagem; provar que um erro é alcançável antes de listá-lo como pendência; nunca prever o que o servidor vai responder.</li>
+<li><strong>Código (S32):</strong> <code>GET /clientes/{id:int}</code> e os outros endpoints do cliente; o mesmo teste de requisições simultâneas e a mesma correção no <code>FichaProduto</code> (SKU); depois o contrato &quot;o cliente existe e tem a ficha completa?&quot;.</li>
+</ul>
+<h2 id="8-teste-se">8. Teste-se</h2>
+<ol>
+<li>Por que o teste do 201 lê o <code>clienteId</code> do corpo em vez de escrever <code>/clientes/1</code>?</li>
+<li>O que é cada coluna da <code>TheoryData&lt;string, string, string, int, string&gt;</code> do teste do 400?</li>
+<li>Por que as chaves do erro são <code>Cnpj</code> e <code>RazaoSocial</code>, e não <code>cnpj</code>?</li>
+<li>Com a regex sabotada, por que o CNPJ vazio continua verde?</li>
+<li>O que acontece quando duas requisições com o mesmo CNPJ passam pela consulta ao mesmo tempo? Que resposta o usuário recebia antes da correção?</li>
+<li>Por que as 20 tarefas são criadas antes do <code>Task.WhenAll</code>?</li>
+<li>Por que o vermelho do teste simultâneo é &quot;provável&quot; e não &quot;garantido&quot;?</li>
+<li>Qual exceção e qual código o repositório captura, e por que o <code>when</code> é necessário?</li>
+<li>Por que o <code>ArgumentException</code> do domínio nunca chega a virar resposta da API?</li>
+<li>Por que o JSON vazio dá 500 em <code>Development</code> e 400 no teste? O que não foi verificado?</li>
+</ol>
+<h2 id="9-preparação-para-a-s32">9. Preparação para a S32</h2>
+<ol>
+<li>Abrir um chat novo com a pasta <code>D:\Projetos\C#\Monolito_Modular</code> ligada; trazer <code>git status</code> e <code>git log -3 --oneline</code> (esperado <code>724f1c6</code>).</li>
+<li>Docker aberto para os testes.</li>
+<li>Escolher qual endpoint do cliente vem depois do <code>GET /clientes/{id:int}</code> (o <code>DELETE</code> com pedidos existentes é pergunta de negócio).</li>
+<li>Atenção ao tempo do M1: faltam cerca de 3,6h para o teto de ≈ 100h; o aluno decide o que fazer ao chegar nele.</li>
+</ol>
+<hr />
+<h2 id="respostas">Respostas</h2><details class="respostas"><summary>Mostrar respostas</summary>
+<ol>
+<li>Porque o número é gerado pelo banco. O <code>1</code> só vale se este for o primeiro cliente da classe; o teste passaria a depender da ordem. Ler o <code>clienteId</code> do corpo funciona sempre.</li>
+<li>Na ordem: CNPJ, razão social, nome fantasia, <code>RepresentanteId</code> (número) e o <strong>nome do campo que deve aparecer no erro</strong>.</li>
+<li>Porque o <code>HttpValidationProblemDetails</code> usa o nome da propriedade em C# (PascalCase) como chave. A chave em minúsculo não existe no dicionário.</li>
+<li>Porque o <code>[Required]</code> barra o CNPJ vazio antes da regex. Cada garantia tem o seu dono; o teste de CNPJ vazio protege o <code>[Required]</code>, não a regex.</li>
+<li>As duas passam pela consulta (ninguém gravou ainda). A primeira grava; a segunda bate no índice único do Postgres e o erro <code>23505</code> não tratado saía como <strong>500</strong>. O certo é 409.</li>
+<li>Para as 20 requisições começarem juntas. Com <code>await</code> dentro do laço seria uma de cada vez e não haveria simultaneidade.</li>
+<li>Depende do tempo de cada requisição. Com 20 requisições costuma falhar sem a correção, mas se um dia passar sem ela, foi sorte, não proteção.</li>
+<li><code>DbUpdateException</code> cuja <code>InnerException</code> é uma <code>PostgresException</code> com <code>SqlState</code> igual a <code>23505</code> (violação de unicidade). O <code>when</code> garante que <strong>só</strong> esse caso vira <code>false</code>; qualquer outro erro do banco continua subindo.</li>
+<li>Porque a validação do <code>Request</code> (<code>[Required]</code>, regex, <code>[StringLength]</code>, <code>[Range]</code>) recusa antes todo valor que as guardas do domínio recusariam. Sem a validação de entrada, o <code>ArgumentException</code> viraria 500; com ela, o domínio não é tocado.</li>
+<li>Em <code>Development</code>, a <code>BadHttpRequestException</code> do corpo ruim chega ao <code>UseExceptionHandler</code> e vira 500; em <code>Testing</code> a mesma situação vira 400. A hipótese (configuração do servidor que lança a exceção só em <code>Development</code>) não foi verificada, e o comportamento em <code>Production</code> também não.</li>
+</ol>
+</details>
+</article>
+<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>
