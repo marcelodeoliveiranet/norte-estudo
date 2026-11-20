@@ -14,7 +14,7 @@
 <header class="topo">
   <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
   <a class="marca" href="index.html">Norte · Estudo</a>
-  <nav class="menu"><a href="index.html">Início</a><a href="guia.html" class=ativo>Guia</a><a href="estudos.html">Materiais</a></nav>
+  <nav class="menu"><a href="index.html">Início</a><a href="guia.html" class=ativo>Guia</a><a href="estudos.html">Materiais</a><a href="mapa-mental.html">Mapa mental</a></nav>
   <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
   <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
 </header>
@@ -130,7 +130,7 @@ ser usado é marcado, não removido.</p>
 </tbody>
 </table>
 <p>Listar e filtrar pelo nome (o <code>|</code> encadeia a saída de um comando na entrada do outro):</p>
-<pre class="highlight"><code><span class="n">dotnet</span> <span class="n">test</span> <span class="n">Norte</span><span class="p">.</span><span class="n">slnx</span> <span class="p">-</span><span class="n">-list-tests</span> <span class="p">|</span> <span class="nb">Select-String</span> <span class="s2">&quot;ExcluirFichaProdutoComBancoApiTests&quot;</span>
+<pre class="highlight"><code><span class="n">dotnet</span> <span class="n">test</span> <span class="n">Norte</span><span class="p">.</span><span class="n">slnx</span> <span class="p">-</span><span class="n">-list-tests</span> <span class="p">|</span> <span class="nb">Select-String</span> <span class="s2">"ExcluirFichaProdutoComBancoApiTests"</span>
 </code></pre>
 
 <p><strong>Cuidado que já custou tempo:</strong> com a API rodando, o <code>build</code> e o <code>test</code> falham com <code>MSB3026</code> (arquivo bloqueado por
@@ -400,7 +400,7 @@ salva a sessão quando a página falha (na S21 o GitHub mostrou &quot;Unable to 
 </tbody>
 </table>
 <p>O comando completo, com cada parte explicada:</p>
-<pre class="highlight"><code><span class="n">gh</span> <span class="n">pr</span> <span class="n">create</span> <span class="p">-</span><span class="n">-base</span> <span class="n">main</span> <span class="p">-</span><span class="n">-head</span> <span class="n">test</span><span class="p">/</span><span class="n">catalogo-excluir-sku-maior-que</span><span class="p">-</span><span class="n">20</span> <span class="p">-</span><span class="n">-title</span> <span class="s2">&quot;test(catalogo): provar o 400 do delete com sku de 21 caracteres&quot;</span> <span class="p">-</span><span class="n">-web</span>
+<pre class="highlight"><code><span class="n">gh</span> <span class="n">pr</span> <span class="n">create</span> <span class="p">-</span><span class="n">-base</span> <span class="n">main</span> <span class="p">-</span><span class="n">-head</span> <span class="n">test</span><span class="p">/</span><span class="n">catalogo-excluir-sku-maior-que</span><span class="p">-</span><span class="n">20</span> <span class="p">-</span><span class="n">-title</span> <span class="s2">"test(catalogo): provar o 400 do delete com sku de 21 caracteres"</span> <span class="p">-</span><span class="n">-web</span>
 </code></pre>
 
 <ul>
@@ -533,7 +533,7 @@ inspeção, e a IDE costuma fazer o mesmo com um clique.</p>
 que uma completa que ninguém consulta.</p>
 
 </article>
-<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 19/11/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="assets/search-index.js"></script>

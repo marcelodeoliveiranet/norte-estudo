@@ -14,7 +14,7 @@
 <header class="topo">
   <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
   <a class="marca" href="../index.html">Norte · Estudo</a>
-  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a><a href="../mapa-mental.html">Mapa mental</a></nav>
   <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
   <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
 </header>
@@ -108,24 +108,24 @@
 <p>Os commits do PR #10, na ordem: <code>build(catalogo): adicionar testcontainers…</code> → <code>test(catalogo): adicionar fábrica da api com postgres em container</code> → <code>fix(catalogo): recusar sku duplicado com 409</code> → <code>test(catalogo): proteger o 409 do sku duplicado com postgres real</code>. O PR #11 tem um commit: <code>ci: fixar runner no ubuntu-24.04</code>.</p>
 <h2 id="3-como-ler-o-código">3. Como ler o código</h2>
 <h3 id="31-o-endpoint-com-o-409">3.1 O endpoint com o 409</h3>
-<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="p">&lt;</span><span class="n">Results</span><span class="p">&lt;</span><span class="n">Created</span><span class="p">&lt;</span><span class="n">FichaProduto</span><span class="p">&gt;,</span><span class="w"> </span><span class="n">ProblemHttpResult</span><span class="p">&gt;&gt;</span><span class="w"> </span><span class="n">ExecutarAsync</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">CadastrarFichaProdutoRequest</span><span class="w"> </span><span class="n">request</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">FichaProdutoRepository</span><span class="w"> </span><span class="n">fichas</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">fichaExistente</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">fichas</span><span class="p">.</span><span class="n">ObterPorSkuAsync</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Sku</span><span class="p">!);</span><span class="w"></span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">fichaExistente</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">not</span><span class="w"> </span><span class="k">null</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">Problem</span><span class="p">(</span><span class="w"></span>
-<span class="w">            </span><span class="n">statusCode</span><span class="p">:</span><span class="w"> </span><span class="n">StatusCodes</span><span class="p">.</span><span class="n">Status409Conflict</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="n">title</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Sku já cadastrado&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="n">detail</span><span class="p">:</span><span class="w"> </span><span class="s">$&quot;O sku {request.Sku} já está cadastrado&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="o">&lt;</span><span class="n">Results</span><span class="o">&lt;</span><span class="n">Created</span><span class="o">&lt;</span><span class="n">FichaProduto</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">ProblemHttpResult</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">ExecutarAsync</span><span class="p">(</span>
+<span class="w">    </span><span class="n">CadastrarFichaProdutoRequest</span><span class="w"> </span><span class="n">request</span><span class="p">,</span>
+<span class="w">    </span><span class="n">FichaProdutoRepository</span><span class="w"> </span><span class="n">fichas</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">fichaExistente</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">fichas</span><span class="p">.</span><span class="n">ObterPorSkuAsync</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Sku</span><span class="o">!</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">fichaExistente</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">null</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">Problem</span><span class="p">(</span>
+<span class="w">            </span><span class="n">statusCode</span><span class="p">:</span><span class="w"> </span><span class="n">StatusCodes</span><span class="p">.</span><span class="n">Status409Conflict</span><span class="p">,</span>
+<span class="w">            </span><span class="n">title</span><span class="p">:</span><span class="w"> </span><span class="s">"Sku já cadastrado"</span><span class="p">,</span>
+<span class="w">            </span><span class="n">detail</span><span class="p">:</span><span class="w"> </span><span class="s">$"O sku {request.Sku} já está cadastrado"</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">ficha</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FichaProduto</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Sku</span><span class="p">!,</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="n">Descricao</span><span class="p">!,</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="n">Ncm</span><span class="p">!);</span><span class="w"></span>
-<span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="n">fichas</span><span class="p">.</span><span class="n">AdicionarAsync</span><span class="p">(</span><span class="n">ficha</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">ficha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FichaProduto</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Sku</span><span class="o">!</span><span class="p">,</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="n">Descricao</span><span class="o">!</span><span class="p">,</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="n">Ncm</span><span class="o">!</span><span class="p">);</span>
+<span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="n">fichas</span><span class="p">.</span><span class="n">AdicionarAsync</span><span class="p">(</span><span class="n">ficha</span><span class="p">);</span>
 
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">Created</span><span class="p">(</span><span class="s">$&quot;/catalogo/fichas-produto/{ficha.Sku}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ficha</span><span class="p">);</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">Created</span><span class="p">(</span><span class="s">$"/catalogo/fichas-produto/{ficha.Sku}"</span><span class="p">,</span><span class="w"> </span><span class="n">ficha</span><span class="p">);</span>
+<span class="p">}</span>
 </code></pre>
 
 <table>
@@ -160,25 +160,25 @@
 </table>
 <p>Por que <code>TypedResults.Problem(...)</code> e não <code>TypedResults.Conflict()</code>? O <code>Conflict()</code> devolve só o status; o <code>Problem</code> leva título e detalhe que o cliente consegue ler. O preço é que o título passa a ser contrato com o teste.</p>
 <h3 id="32-a-fábrica-da-api-com-banco-real">3.2 A fábrica da API com banco real</h3>
-<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">ApiComPostgresFabrica</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">WebApplicationFactory</span><span class="p">&lt;</span><span class="n">Program</span><span class="p">&gt;,</span><span class="w"> </span><span class="n">IAsyncLifetime</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="n">PostgreSqlContainer</span><span class="w"> </span><span class="n">_postgres</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">PostgreSqlBuilder</span><span class="p">(</span><span class="s">&quot;postgres:18&quot;</span><span class="p">).</span><span class="n">Build</span><span class="p">();</span><span class="w"></span>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">ApiComPostgresFabrica</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">WebApplicationFactory</span><span class="o">&lt;</span><span class="n">Program</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">IAsyncLifetime</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="n">PostgreSqlContainer</span><span class="w"> </span><span class="n">_postgres</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">PostgreSqlBuilder</span><span class="p">(</span><span class="s">"postgres:18"</span><span class="p">).</span><span class="n">Build</span><span class="p">();</span>
 
-<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">InitializeAsync</span><span class="p">()</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="n">_postgres</span><span class="p">.</span><span class="n">StartAsync</span><span class="p">();</span><span class="w"></span>
-<span class="w">        </span><span class="k">using</span><span class="w"> </span><span class="nn">var</span><span class="w"> </span><span class="n">escopo</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Services</span><span class="p">.</span><span class="n">CreateScope</span><span class="p">();</span><span class="w"></span>
-<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">contexto</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">escopo</span><span class="p">.</span><span class="n">ServiceProvider</span><span class="p">.</span><span class="n">GetRequiredService</span><span class="p">&lt;</span><span class="n">CatalogoDbContext</span><span class="p">&gt;();</span><span class="w"></span>
-<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="n">contexto</span><span class="p">.</span><span class="n">Database</span><span class="p">.</span><span class="n">MigrateAsync</span><span class="p">();</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">InitializeAsync</span><span class="p">()</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="n">_postgres</span><span class="p">.</span><span class="n">StartAsync</span><span class="p">();</span>
+<span class="w">        </span><span class="k">using</span><span class="w"> </span><span class="nn">var</span><span class="w"> </span><span class="n">escopo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Services</span><span class="p">.</span><span class="n">CreateScope</span><span class="p">();</span>
+<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">contexto</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">escopo</span><span class="p">.</span><span class="n">ServiceProvider</span><span class="p">.</span><span class="n">GetRequiredService</span><span class="o">&lt;</span><span class="n">CatalogoDbContext</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="n">contexto</span><span class="p">.</span><span class="n">Database</span><span class="p">.</span><span class="n">MigrateAsync</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="k">protected</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">ConfigureWebHost</span><span class="p">(</span><span class="n">IWebHostBuilder</span><span class="w"> </span><span class="n">builder</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">builder</span><span class="p">.</span><span class="n">UseSetting</span><span class="p">(</span><span class="s">&quot;ConnectionStrings:Norte&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">_postgres</span><span class="p">.</span><span class="n">GetConnectionString</span><span class="p">());</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">protected</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">ConfigureWebHost</span><span class="p">(</span><span class="n">IWebHostBuilder</span><span class="w"> </span><span class="n">builder</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">builder</span><span class="p">.</span><span class="n">UseSetting</span><span class="p">(</span><span class="s">"ConnectionStrings:Norte"</span><span class="p">,</span><span class="w"> </span><span class="n">_postgres</span><span class="p">.</span><span class="n">GetConnectionString</span><span class="p">());</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">DisposeAsync</span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">_postgres</span><span class="p">.</span><span class="n">DisposeAsync</span><span class="p">().</span><span class="n">AsTask</span><span class="p">();</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="nf">DisposeAsync</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_postgres</span><span class="p">.</span><span class="n">DisposeAsync</span><span class="p">().</span><span class="n">AsTask</span><span class="p">();</span>
+<span class="p">}</span>
 </code></pre>
 
 <table>
@@ -472,7 +472,7 @@
 </ul>
 
 </article>
-<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 19/11/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="../assets/search-index.js"></script>

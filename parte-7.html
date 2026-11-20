@@ -14,7 +14,7 @@
 <header class="topo">
   <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
   <a class="marca" href="index.html">Norte · Estudo</a>
-  <nav class="menu"><a href="index.html">Início</a><a href="guia.html" class=ativo>Guia</a><a href="estudos.html">Materiais</a></nav>
+  <nav class="menu"><a href="index.html">Início</a><a href="guia.html" class=ativo>Guia</a><a href="estudos.html">Materiais</a><a href="mapa-mental.html">Mapa mental</a></nav>
   <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
   <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
 </header>
@@ -201,8 +201,8 @@ ganhou os quatro verbos do recurso (cadastrar, consultar, alterar e excluir) mai
 </tbody>
 </table>
 <p><strong>Em uma frase:</strong> o SKU que vem na URL entra num record validado pela validação nativa, e SKU grande demais vira 400 antes de o endpoint rodar.</p>
-<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="n">record</span><span class="w"> </span><span class="nf">ObterUmaFichaProdutoRequest</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="na">[FromRoute(Name = &quot;sku&quot;)]</span><span class="w"> </span><span class="p">[</span><span class="n">StringLength</span><span class="p">(</span><span class="m">20</span><span class="p">)]</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Sku</span><span class="p">);</span><span class="w"></span>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">record</span><span class="w"> </span><span class="nf">ObterUmaFichaProdutoRequest</span><span class="p">(</span>
+<span class="w">    </span><span class="na">[FromRoute(Name = "sku")]</span><span class="w"> </span><span class="p">[</span><span class="n">StringLength</span><span class="p">(</span><span class="mi">20</span><span class="p">)]</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Sku</span><span class="p">);</span>
 </code></pre>
 
 <table>
@@ -343,10 +343,10 @@ ganhou os quatro verbos do recurso (cadastrar, consultar, alterar e excluir) mai
 </table>
 <p><strong>Em uma frase:</strong> <code>DELETE /catalogo/fichas-produto/{sku}</code> apaga a ficha numa ida ao banco e responde 204; se não existia, 404.</p>
 <pre class="highlight"><code><span class="c1">// forma do repositório</span>
-<span class="kt">var</span><span class="w"> </span><span class="n">linhas</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">_contexto</span><span class="p">.</span><span class="n">FichasProduto</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="n">sku</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="n">ExecuteDeleteAsync</span><span class="p">(</span><span class="n">ct</span><span class="p">);</span><span class="w"></span>
-<span class="k">return</span><span class="w"> </span><span class="n">linhas</span><span class="w"> </span><span class="p">&gt;</span><span class="w"> </span><span class="m">0</span><span class="p">;</span><span class="w"></span>
+<span class="kt">var</span><span class="w"> </span><span class="n">linhas</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">_contexto</span><span class="p">.</span><span class="n">FichasProduto</span>
+<span class="w">    </span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">sku</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">ExecuteDeleteAsync</span><span class="p">(</span><span class="n">ct</span><span class="p">);</span>
+<span class="k">return</span><span class="w"> </span><span class="n">linhas</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </code></pre>
 
 <table>
@@ -414,14 +414,14 @@ ganhou os quatro verbos do recurso (cadastrar, consultar, alterar e excluir) mai
 </table>
 <p><strong>Em uma frase:</strong> a ficha é buscada <strong>com</strong> rastreamento, a própria ficha troca <code>descricao</code> e <code>ncm</code> (recusando vazio) e o <code>SaveChangesAsync</code> grava só o que mudou; o SKU, que é a chave, não muda.</p>
 <pre class="highlight"><code><span class="c1">// na entidade</span>
-<span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">Atualizar</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">descricao</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">ncm</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">ArgumentException</span><span class="p">.</span><span class="n">ThrowIfNullOrWhiteSpace</span><span class="p">(</span><span class="n">descricao</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="n">ArgumentException</span><span class="p">.</span><span class="n">ThrowIfNullOrWhiteSpace</span><span class="p">(</span><span class="n">ncm</span><span class="p">);</span><span class="w"></span>
+<span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">Atualizar</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">descricao</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">ncm</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">ArgumentException</span><span class="p">.</span><span class="n">ThrowIfNullOrWhiteSpace</span><span class="p">(</span><span class="n">descricao</span><span class="p">);</span>
+<span class="w">    </span><span class="n">ArgumentException</span><span class="p">.</span><span class="n">ThrowIfNullOrWhiteSpace</span><span class="p">(</span><span class="n">ncm</span><span class="p">);</span>
 
-<span class="w">    </span><span class="n">Descricao</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">descricao</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">Ncm</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ncm</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="n">Descricao</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">descricao</span><span class="p">;</span>
+<span class="w">    </span><span class="n">Ncm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ncm</span><span class="p">;</span>
+<span class="p">}</span>
 </code></pre>
 
 <p><em>(Forma do método; os nomes exatos no arquivo real podem diferir.)</em></p>
@@ -650,7 +650,7 @@ ganhou os quatro verbos do recurso (cadastrar, consultar, alterar e excluir) mai
 </ol>
 </details>
 </article>
-<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 19/11/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="assets/search-index.js"></script>

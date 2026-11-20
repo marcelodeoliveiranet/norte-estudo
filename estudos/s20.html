@@ -14,7 +14,7 @@
 <header class="topo">
   <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
   <a class="marca" href="../index.html">Norte · Estudo</a>
-  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a><a href="../mapa-mental.html">Mapa mental</a></nav>
   <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
   <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
 </header>
@@ -149,8 +149,8 @@ Sessão de 15/10/2026. Tempo líquido: 2h44. Resultado: PRs #15, #16 e #17 merge
 <hr />
 <h2 id="2-request-na-rota">2. Request na rota</h2>
 <p>O SKU deixou de ser uma <code>string</code> solta no método do endpoint e virou um record, como o da listagem:</p>
-<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="n">record</span><span class="w"> </span><span class="nf">ObterUmaFichaProdutoRequest</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="na">[FromRoute(Name = &quot;sku&quot;)]</span><span class="w"> </span><span class="p">[</span><span class="n">StringLength</span><span class="p">(</span><span class="m">20</span><span class="p">)]</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Sku</span><span class="p">);</span><span class="w"></span>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">record</span><span class="w"> </span><span class="nf">ObterUmaFichaProdutoRequest</span><span class="p">(</span>
+<span class="w">    </span><span class="na">[FromRoute(Name = "sku")]</span><span class="w"> </span><span class="p">[</span><span class="n">StringLength</span><span class="p">(</span><span class="mi">20</span><span class="p">)]</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Sku</span><span class="p">);</span>
 </code></pre>
 
 <p><em>(Forma do tipo; os nomes exatos no arquivo real podem diferir.)</em></p>
@@ -243,10 +243,10 @@ Sessão de 15/10/2026. Tempo líquido: 2h44. Resultado: PRs #15, #16 e #17 merge
 <h2 id="4-excluir">4. Excluir</h2>
 <p><code>DELETE /catalogo/fichas-produto/{sku}</code>: 204 se apagou, 404 se a ficha não existe.</p>
 <pre class="highlight"><code><span class="c1">// forma do repositório</span>
-<span class="kt">var</span><span class="w"> </span><span class="n">linhas</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">_contexto</span><span class="p">.</span><span class="n">FichasProduto</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="n">sku</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="n">ExecuteDeleteAsync</span><span class="p">(</span><span class="n">ct</span><span class="p">);</span><span class="w"></span>
-<span class="k">return</span><span class="w"> </span><span class="n">linhas</span><span class="w"> </span><span class="p">&gt;</span><span class="w"> </span><span class="m">0</span><span class="p">;</span><span class="w"></span>
+<span class="kt">var</span><span class="w"> </span><span class="n">linhas</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">_contexto</span><span class="p">.</span><span class="n">FichasProduto</span>
+<span class="w">    </span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Sku</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">sku</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">ExecuteDeleteAsync</span><span class="p">(</span><span class="n">ct</span><span class="p">);</span>
+<span class="k">return</span><span class="w"> </span><span class="n">linhas</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </code></pre>
 
 <p><code>ExecuteDeleteAsync</code> manda um <code>DELETE ... WHERE</code> <strong>direto ao banco</strong> (uma ida), sem carregar a ficha.</p>
@@ -277,14 +277,14 @@ Sessão de 15/10/2026. Tempo líquido: 2h44. Resultado: PRs #15, #16 e #17 merge
 <h2 id="5-alterar">5. Alterar</h2>
 <p><code>PUT /catalogo/fichas-produto/{sku}</code>: o SKU (a chave) <strong>não muda</strong>; só <code>descricao</code> e <code>ncm</code>.</p>
 <pre class="highlight"><code><span class="c1">// na entidade</span>
-<span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">Atualizar</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">descricao</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">ncm</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">ArgumentException</span><span class="p">.</span><span class="n">ThrowIfNullOrWhiteSpace</span><span class="p">(</span><span class="n">descricao</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="n">ArgumentException</span><span class="p">.</span><span class="n">ThrowIfNullOrWhiteSpace</span><span class="p">(</span><span class="n">ncm</span><span class="p">);</span><span class="w"></span>
+<span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">Atualizar</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">descricao</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">ncm</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">ArgumentException</span><span class="p">.</span><span class="n">ThrowIfNullOrWhiteSpace</span><span class="p">(</span><span class="n">descricao</span><span class="p">);</span>
+<span class="w">    </span><span class="n">ArgumentException</span><span class="p">.</span><span class="n">ThrowIfNullOrWhiteSpace</span><span class="p">(</span><span class="n">ncm</span><span class="p">);</span>
 
-<span class="w">    </span><span class="n">Descricao</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">descricao</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">Ncm</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">ncm</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="n">Descricao</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">descricao</span><span class="p">;</span>
+<span class="w">    </span><span class="n">Ncm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ncm</span><span class="p">;</span>
+<span class="p">}</span>
 </code></pre>
 
 <p><em>(Forma do método; os nomes exatos no arquivo real podem diferir.)</em></p>
@@ -510,7 +510,7 @@ Sessão de 15/10/2026. Tempo líquido: 2h44. Resultado: PRs #15, #16 e #17 merge
 </details>
 
 </article>
-<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 19/11/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="../assets/search-index.js"></script>

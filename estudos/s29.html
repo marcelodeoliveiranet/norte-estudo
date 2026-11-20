@@ -14,7 +14,7 @@
 <header class="topo">
   <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
   <a class="marca" href="../index.html">Norte · Estudo</a>
-  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a><a href="../mapa-mental.html">Mapa mental</a></nav>
   <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
   <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
 </header>
@@ -162,8 +162,8 @@
 <p>Onde mora o 120: no <code>Compartilhado</code>, seguindo o precedente do SKU (ADR-007).</p>
 <h3 id="35-o-cnpj-máscara-18-caracteres-e-a-regex">3.5 O CNPJ: máscara, 18 caracteres e a regex</h3>
 <p>O ADR-011 fixa o CNPJ <strong>com máscara</strong>, alfanumérico, em maiúsculas: <code>40.7DK.4BT/0001-47</code> (18 caracteres). Primeiro veio o guard de tamanho; depois a regex, que <strong>substitui</strong> o guard de 18.</p>
-<pre class="highlight"><code><span class="na">[GeneratedRegex(@&quot;^[0-9A-Z]</span><span class="p">{</span><span class="m">2</span><span class="p">}</span><span class="err">\</span><span class="p">.[</span><span class="m">0</span><span class="p">-</span><span class="m">9</span><span class="n">A</span><span class="p">-</span><span class="n">Z</span><span class="p">]{</span><span class="m">3</span><span class="p">}</span><span class="err">\</span><span class="p">.[</span><span class="m">0</span><span class="p">-</span><span class="m">9</span><span class="n">A</span><span class="p">-</span><span class="n">Z</span><span class="p">]{</span><span class="m">3</span><span class="p">}/[</span><span class="m">0</span><span class="p">-</span><span class="m">9</span><span class="n">A</span><span class="p">-</span><span class="n">Z</span><span class="p">]{</span><span class="m">4</span><span class="p">}-[</span><span class="m">0</span><span class="p">-</span><span class="m">9</span><span class="p">]{</span><span class="m">2</span><span class="p">}</span><span class="err">\</span><span class="n">z</span><span class="s">&quot;)]</span>
-<span class="k">private</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">partial</span><span class="w"> </span><span class="n">Regex</span><span class="w"> </span><span class="nf">PadraoCnpj</span><span class="p">();</span><span class="w"></span>
+<pre class="highlight"><code><span class="na">[GeneratedRegex(@"^[0-9A-Z]</span><span class="p">{</span><span class="mi">2</span><span class="p">}</span><span class="err">\</span><span class="p">.[</span><span class="mi">0</span><span class="o">-</span><span class="mi">9</span><span class="n">A</span><span class="o">-</span><span class="n">Z</span><span class="p">]{</span><span class="mi">3</span><span class="p">}</span><span class="err">\</span><span class="p">.[</span><span class="mi">0</span><span class="o">-</span><span class="mi">9</span><span class="n">A</span><span class="o">-</span><span class="n">Z</span><span class="p">]{</span><span class="mi">3</span><span class="p">}</span><span class="o">/</span><span class="p">[</span><span class="mi">0</span><span class="o">-</span><span class="mi">9</span><span class="n">A</span><span class="o">-</span><span class="n">Z</span><span class="p">]{</span><span class="mi">4</span><span class="p">}</span><span class="o">-</span><span class="p">[</span><span class="mi">0</span><span class="o">-</span><span class="mi">9</span><span class="p">]{</span><span class="mi">2</span><span class="p">}</span><span class="err">\</span><span class="n">z</span><span class="s">")]</span>
+<span class="k">private</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">partial</span><span class="w"> </span><span class="n">Regex</span><span class="w"> </span><span class="nf">PadraoCnpj</span><span class="p">();</span>
 </code></pre>
 
 <table>
@@ -369,7 +369,7 @@
 </ol>
 </details>
 </article>
-<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 19/11/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="../assets/search-index.js"></script>

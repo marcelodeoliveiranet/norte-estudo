@@ -14,7 +14,7 @@
 <header class="topo">
   <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
   <a class="marca" href="../index.html">Norte · Estudo</a>
-  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a><a href="../mapa-mental.html">Mapa mental</a></nav>
   <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
   <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
 </header>
@@ -116,7 +116,7 @@
 </ul>
 <h3 id="34-projeto-de-teste-novo-e-internalsvisibleto">3.4 Projeto de teste novo e <code>InternalsVisibleTo</code></h3>
 <p>O <code>Pedido</code> é <code>internal sealed</code>. Para o projeto de teste enxergá-lo, o <code>Norte.Pedidos.csproj</code> ganhou:</p>
-<pre class="highlight"><code><span class="nt">&lt;InternalsVisibleTo</span> <span class="na">Include=</span><span class="s">&quot;Norte.Pedidos.Tests&quot;</span> <span class="nt">/&gt;</span>
+<pre class="highlight"><code><span class="nt">&lt;InternalsVisibleTo</span><span class="w"> </span><span class="na">Include=</span><span class="s">"Norte.Pedidos.Tests"</span><span class="w"> </span><span class="nt">/&gt;</span>
 </code></pre>
 
 <table>
@@ -168,14 +168,14 @@
 </table>
 <p>O estrago foi desfeito com <code>git restore</code> e o teste voltou ao verde. <strong>Conclusão:</strong> quando o <code>Actual</code> está errado, o defeito está no código; o teste descreve o que o <code>Pedido</code> deve ser.</p>
 <h3 id="37-enums-com-valor-explícito">3.7 Enums com valor explícito</h3>
-<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="n">SituacaoPedido</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">Digitado</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">Aprovado</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">FaturadoTotalmente</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">3</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">FaturadoParcialmente</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">4</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">Cancelado</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">5</span><span class="p">,</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="n">SituacaoPedido</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">Digitado</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Aprovado</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<span class="w">    </span><span class="n">FaturadoTotalmente</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="w">    </span><span class="n">FaturadoParcialmente</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Cancelado</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="p">}</span>
 </code></pre>
 
 <p><strong>O que fica pior sem o valor explícito:</strong> quem reordenar os nomes muda o número que já foi gravado no banco. Os enums moram em <code>Dominio/</code> (organização por assunto); não criamos pasta <code>Enums/</code> sem decisão.</p>
@@ -285,7 +285,7 @@
 </ol>
 </details>
 </article>
-<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 19/11/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="../assets/search-index.js"></script>

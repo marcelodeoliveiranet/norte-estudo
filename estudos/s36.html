@@ -14,7 +14,7 @@
 <header class="topo">
   <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
   <a class="marca" href="../index.html">Norte · Estudo</a>
-  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a><a href="../mapa-mental.html">Mapa mental</a></nav>
   <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
   <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
 </header>
@@ -96,10 +96,10 @@
 <h3 id="32-xmin-a-marca-de-versão-que-o-postgres-já-tem">3.2 <code>xmin</code>: a marca de versão que o Postgres já tem</h3>
 <p>Toda linha do Postgres tem a coluna de sistema <code>xmin</code>: o número da transação que gravou a linha. Cada alteração gera um <code>xmin</code> novo. Por isso ele serve de marca de versão <strong>sem criar coluna</strong>.</p>
 <pre class="highlight"><code><span class="c1">// FichaProduto.cs</span>
-<span class="k">public</span><span class="w"> </span><span class="kt">uint</span><span class="w"> </span><span class="n">TokenConcorrencia</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="k">public</span><span class="w"> </span><span class="kt">uint</span><span class="w"> </span><span class="n">TokenConcorrencia</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">get</span><span class="p">;</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">set</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
 <span class="c1">// FichaProdutoConfiguration.cs</span>
-<span class="n">builder</span><span class="p">.</span><span class="n">Property</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">TokenConcorrencia</span><span class="p">).</span><span class="n">IsRowVersion</span><span class="p">();</span><span class="w"></span>
+<span class="n">builder</span><span class="p">.</span><span class="n">Property</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">TokenConcorrencia</span><span class="p">).</span><span class="n">IsRowVersion</span><span class="p">();</span>
 </code></pre>
 
 <table>
@@ -152,16 +152,16 @@
 </table>
 <p>O valor comparado é <strong>o que o cliente leu</strong>, não o que o servidor tem agora. No <code>PUT</code> bem-sucedido a resposta traz o <strong><code>ETag</code> novo</strong> (no ciclo manual: 820 → 821).</p>
 <pre class="highlight"><code><span class="c1">// forma do trecho nos endpoints (nomes exatos no arquivo real podem diferir)</span>
-<span class="n">Response</span><span class="p">.</span><span class="n">Headers</span><span class="p">.</span><span class="n">ETag</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">$&quot;\&quot;{ficha.TokenConcorrencia}\&quot;&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="n">Response</span><span class="p">.</span><span class="n">Headers</span><span class="p">.</span><span class="n">ETag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">$"\"{ficha.TokenConcorrencia}\""</span><span class="p">;</span>
 
-<span class="kt">uint?</span><span class="w"> </span><span class="n">tokenLido</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">null</span><span class="p">;</span><span class="w"></span>
-<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kt">uint</span><span class="p">.</span><span class="n">TryParse</span><span class="p">(</span><span class="n">ifMatch</span><span class="p">.</span><span class="n">Trim</span><span class="p">(</span><span class="sc">&#39;&quot;&#39;</span><span class="p">),</span><span class="w"> </span><span class="k">out</span><span class="w"> </span><span class="kt">var</span><span class="w"> </span><span class="n">token</span><span class="p">))</span><span class="w"></span>
-<span class="w">    </span><span class="n">tokenLido</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">token</span><span class="p">;</span><span class="w"></span>
+<span class="kt">uint?</span><span class="w"> </span><span class="n">tokenLido</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">null</span><span class="p">;</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kt">uint</span><span class="p">.</span><span class="n">TryParse</span><span class="p">(</span><span class="n">ifMatch</span><span class="p">.</span><span class="n">Trim</span><span class="p">(</span><span class="sc">'"'</span><span class="p">),</span><span class="w"> </span><span class="k">out</span><span class="w"> </span><span class="kt">var</span><span class="w"> </span><span class="n">token</span><span class="p">))</span>
+<span class="w">    </span><span class="n">tokenLido</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">token</span><span class="p">;</span>
 </code></pre>
 
 <h3 id="34-no-repositório-a-marca-lida-entra-no-where">3.4 No repositório: a marca lida entra no <code>WHERE</code></h3>
-<pre class="highlight"><code><span class="c1">// AtualizarAsync (e ExcluirAsync): a marca lida pelo cliente vira o valor &quot;original&quot;</span>
-<span class="n">db</span><span class="p">.</span><span class="n">Entry</span><span class="p">(</span><span class="n">ficha</span><span class="p">).</span><span class="n">Property</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">TokenConcorrencia</span><span class="p">).</span><span class="n">OriginalValue</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">tokenLido</span><span class="p">.</span><span class="n">Value</span><span class="p">;</span><span class="w"></span>
+<pre class="highlight"><code><span class="c1">// AtualizarAsync (e ExcluirAsync): a marca lida pelo cliente vira o valor "original"</span>
+<span class="n">db</span><span class="p">.</span><span class="n">Entry</span><span class="p">(</span><span class="n">ficha</span><span class="p">).</span><span class="n">Property</span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">TokenConcorrencia</span><span class="p">).</span><span class="n">OriginalValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tokenLido</span><span class="p">.</span><span class="n">Value</span><span class="p">;</span>
 </code></pre>
 
 <p>Sem esta linha, o EF compararia com a marca que acabou de carregar do banco (sempre igual, nunca recusaria). Com ela, o <code>UPDATE ... WHERE sku = ... AND xmin = &lt;marca do cliente&gt;</code> afeta <strong>zero linhas</strong> se alguém mudou no meio, e o EF lança <code>DbUpdateConcurrencyException</code>.</p>
@@ -513,7 +513,7 @@
 </ol>
 </details>
 </article>
-<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 19/11/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="../assets/search-index.js"></script>

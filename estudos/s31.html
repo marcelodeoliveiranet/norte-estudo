@@ -14,7 +14,7 @@
 <header class="topo">
   <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
   <a class="marca" href="../index.html">Norte · Estudo</a>
-  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a><a href="../mapa-mental.html">Mapa mental</a></nav>
   <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
   <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
 </header>
@@ -134,19 +134,19 @@
 </tbody>
 </table>
 <p>Forma da tabela (a lista completa está no arquivo do teste):</p>
-<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">TheoryData</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="p">&gt;</span><span class="w"> </span><span class="n">RequisicoesInvalidas</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="k">new</span><span class="p">()</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">TheoryData</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">RequisicoesInvalidas</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">new</span><span class="p">()</span>
+<span class="p">{</span>
 <span class="w">    </span><span class="c1">// cnpj, razaoSocial, nomeFantasia, representanteId, campo que deve acusar o erro</span>
-<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Razão&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fantasia&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">CampoCnpj</span><span class="w"> </span><span class="p">},</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;40.7DK.4BT/0001-47&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Fantasia&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">CampoRazaoSocial</span><span class="w"> </span><span class="p">},</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="s">""</span><span class="p">,</span><span class="w"> </span><span class="s">"Razão"</span><span class="p">,</span><span class="w"> </span><span class="s">"Fantasia"</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">CampoCnpj</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="s">"40.7DK.4BT/0001-47"</span><span class="p">,</span><span class="w"> </span><span class="s">""</span><span class="p">,</span><span class="w"> </span><span class="s">"Fantasia"</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">CampoRazaoSocial</span><span class="w"> </span><span class="p">},</span>
+<span class="p">};</span>
 </code></pre>
 
 <p>Os 13 casos: CNPJ (14 dígitos, minúsculo com máscara, misturado sem máscara, 18 dígitos sem máscara, vazio), razão (nula, vazia, mais de 120), fantasia (nula, vazia, mais de 120) e representante (−1 e 0).</p>
 <p>Tropeços do dia e o que ensinam: uma aspa a mais (<code>&quot;&quot;DCV&quot;</code>) quebra a linha inteira; uma <code>const</code> não vai dentro do inicializador, vai no nível da classe; <code>string</code> que recebe <code>null</code> na tabela pede <code>!</code> ao montar o <code>Request</code> (aviso CS8604).</p>
 <h3 id="34-o-que-o-400-devolve-chaves-em-pascalcase">3.4 O que o 400 devolve: chaves em PascalCase</h3>
 <p>O corpo do 400 de validação é um <code>HttpValidationProblemDetails</code>. O campo <code>Errors</code> é um dicionário <strong>campo → mensagens</strong>, e as chaves usam o nome da propriedade em C#: <code>Cnpj</code>, <code>RazaoSocial</code>, <code>NomeFantasia</code>, <code>RepresentanteId</code>. Escrever <code>cnpj</code> em minúsculo falha. O Assert é:</p>
-<pre class="highlight"><code><span class="n">Assert</span><span class="p">.</span><span class="n">Contains</span><span class="p">(</span><span class="n">campo</span><span class="p">,</span><span class="w"> </span><span class="n">problema</span><span class="p">.</span><span class="n">Errors</span><span class="p">.</span><span class="n">Keys</span><span class="p">);</span><span class="w"></span>
+<pre class="highlight"><code><span class="n">Assert</span><span class="p">.</span><span class="n">Contains</span><span class="p">(</span><span class="n">campo</span><span class="p">,</span><span class="w"> </span><span class="n">problema</span><span class="p">.</span><span class="n">Errors</span><span class="p">.</span><span class="n">Keys</span><span class="p">);</span>
 </code></pre>
 
 <p>Por isso a quinta coluna da <code>TheoryData</code> existe: ela diz <strong>qual campo</strong> o teste espera ver reclamado.</p>
@@ -211,11 +211,11 @@
 <p>Consultar antes de gravar <strong>não basta</strong>, porque o passo 1 das duas acontece antes de qualquer gravação. A garantia final é o índice do banco; o código precisa <strong>entender a recusa</strong> do banco e responder 409.</p>
 <h3 id="37-o-teste-das-20-requisições">3.7 O teste das 20 requisições</h3>
 <pre class="highlight"><code><span class="c1">// forma do teste (o arquivo completo está no repositório)</span>
-<span class="kt">var</span><span class="w"> </span><span class="n">tarefas</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Enumerable</span><span class="p">.</span><span class="n">Range</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">20</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="n">Select</span><span class="p">(</span><span class="n">_</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">cliente</span><span class="p">.</span><span class="n">PostAsJsonAsync</span><span class="p">(</span><span class="s">&quot;/clientes&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">request</span><span class="p">))</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="n">ToList</span><span class="p">();</span><span class="w"></span>
+<span class="kt">var</span><span class="w"> </span><span class="n">tarefas</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Enumerable</span><span class="p">.</span><span class="n">Range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">Select</span><span class="p">(</span><span class="n">_</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cliente</span><span class="p">.</span><span class="n">PostAsJsonAsync</span><span class="p">(</span><span class="s">"/clientes"</span><span class="p">,</span><span class="w"> </span><span class="n">request</span><span class="p">))</span>
+<span class="w">    </span><span class="p">.</span><span class="n">ToList</span><span class="p">();</span>
 
-<span class="kt">var</span><span class="w"> </span><span class="n">respostas</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">Task</span><span class="p">.</span><span class="n">WhenAll</span><span class="p">(</span><span class="n">tarefas</span><span class="p">);</span><span class="w"></span>
+<span class="kt">var</span><span class="w"> </span><span class="n">respostas</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">Task</span><span class="p">.</span><span class="n">WhenAll</span><span class="p">(</span><span class="n">tarefas</span><span class="p">);</span>
 </code></pre>
 
 <table>
@@ -250,19 +250,19 @@
 </table>
 <p><strong>O vermelho aqui é provável, não garantido</strong>: depende do tempo. Com 20 requisições, na prática, ficou vermelho. Se um dia ficar verde sem a correção, é sorte, não proteção.</p>
 <h3 id="38-a-correção-o-repositório-entende-o-23505">3.8 A correção: o repositório entende o <code>23505</code></h3>
-<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="p">&lt;</span><span class="kt">bool</span><span class="p">&gt;</span><span class="w"> </span><span class="n">AdicionarAsync</span><span class="p">(</span><span class="n">Cliente</span><span class="w"> </span><span class="n">cliente</span><span class="p">,</span><span class="w"> </span><span class="n">CancellationToken</span><span class="w"> </span><span class="n">ct</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">try</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">AdicionarAsync</span><span class="p">(</span><span class="n">Cliente</span><span class="w"> </span><span class="n">cliente</span><span class="p">,</span><span class="w"> </span><span class="n">CancellationToken</span><span class="w"> </span><span class="n">ct</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">try</span>
+<span class="w">    </span><span class="p">{</span>
 <span class="w">        </span><span class="c1">// ... Add + SaveChangesAsync</span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">true</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">DbUpdateException</span><span class="w"> </span><span class="n">ex</span><span class="p">)</span><span class="w"></span>
-<span class="w">        </span><span class="n">when</span><span class="w"> </span><span class="p">(</span><span class="n">ex</span><span class="p">.</span><span class="n">InnerException</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">PostgresException</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">SqlState</span><span class="p">:</span><span class="w"> </span><span class="n">PostgresErrorCodes</span><span class="p">.</span><span class="n">UniqueViolation</span><span class="w"> </span><span class="p">})</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">false</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">true</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">DbUpdateException</span><span class="w"> </span><span class="n">ex</span><span class="p">)</span>
+<span class="w">        </span><span class="k">when</span><span class="w"> </span><span class="p">(</span><span class="n">ex</span><span class="p">.</span><span class="n">InnerException</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">PostgresException</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">SqlState</span><span class="p">:</span><span class="w"> </span><span class="n">PostgresErrorCodes</span><span class="p">.</span><span class="n">UniqueViolation</span><span class="w"> </span><span class="p">})</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">false</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </code></pre>
 
 <p>O endpoint faz <code>if (!gravou) return CnpjJaCadastrado(request.Cnpj);</code> e a mesma função monta o 409 da consulta e o 409 da recusa do banco (<code>CnpjJaCadastrado</code>).</p>
@@ -464,7 +464,7 @@
 </ol>
 </details>
 </article>
-<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 19/11/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="../assets/search-index.js"></script>

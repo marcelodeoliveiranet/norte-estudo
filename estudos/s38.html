@@ -14,7 +14,7 @@
 <header class="topo">
   <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
   <a class="marca" href="../index.html">Norte · Estudo</a>
-  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a><a href="../mapa-mental.html">Mapa mental</a></nav>
   <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
   <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
 </header>
@@ -101,15 +101,15 @@
 <hr />
 <h2 id="3-as-peças-o-que-mudou-no-repositório-pr-91">3. As peças (o que mudou no repositório, PR #91)</h2>
 <h3 id="31-o-painel-no-composeyaml">3.1 O painel no <code>compose.yaml</code></h3>
-<pre class="highlight"><code><span class="nt">painel</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mcr.microsoft.com/aspire/dashboard:13.6.2</span><span class="w"></span>
-<span class="w">  </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">norte-painel</span><span class="w"></span>
-<span class="w">  </span><span class="nt">environment</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">ASPIRE_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">ports</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;18888:18888&quot;</span><span class="w">   </span><span class="c1"># a tela (navegador)</span><span class="w"></span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;4317:18889&quot;</span><span class="w">    </span><span class="c1"># OTLP por gRPC (a API envia por aqui)</span><span class="w"></span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;4318:18890&quot;</span><span class="w">    </span><span class="c1"># OTLP por HTTP</span><span class="w"></span>
+<pre class="highlight"><code><span class="nt">painel</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mcr.microsoft.com/aspire/dashboard:13.6.2</span>
+<span class="w">  </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">norte-painel</span>
+<span class="w">  </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">ASPIRE_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS</span><span class="p">:</span><span class="w"> </span><span class="s">"true"</span>
+<span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"18888:18888"</span><span class="w">   </span><span class="c1"># a tela (navegador)</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"4317:18889"</span><span class="w">    </span><span class="c1"># OTLP por gRPC (a API envia por aqui)</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"4318:18890"</span><span class="w">    </span><span class="c1"># OTLP por HTTP</span>
 </code></pre>
 
 <p>A porta <strong>4317</strong> é a porta padrão do OTLP por gRPC; por isso a API não precisa de endereço no <code>appsettings</code>: o exportador já olha <code>localhost:4317</code>.</p>
@@ -147,15 +147,15 @@
 </table>
 <p>Instrumentações <strong>dispensadas de propósito</strong>: a do EF Core (o span do Npgsql já mostra a consulta) e a do <code>HttpClient</code> (o Norte não faz chamada HTTP de saída).</p>
 <h3 id="33-o-programcs">3.3 O <code>Program.cs</code></h3>
-<pre class="highlight"><code><span class="n">builder</span><span class="p">.</span><span class="n">Services</span><span class="p">.</span><span class="n">AddOpenTelemetry</span><span class="p">()</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="n">ConfigureResource</span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">AddService</span><span class="p">(</span><span class="s">&quot;norte-api&quot;</span><span class="p">))</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="n">WithLogging</span><span class="p">()</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="n">WithTracing</span><span class="p">(</span><span class="n">t</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">t</span><span class="w"></span>
-<span class="w">        </span><span class="p">.</span><span class="n">AddAspNetCoreInstrumentation</span><span class="p">()</span><span class="w"></span>
-<span class="w">        </span><span class="p">.</span><span class="n">AddNpgsql</span><span class="p">())</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="n">WithMetrics</span><span class="p">(</span><span class="n">m</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">m</span><span class="w"></span>
-<span class="w">        </span><span class="p">.</span><span class="n">AddAspNetCoreInstrumentation</span><span class="p">())</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="n">UseOtlpExporter</span><span class="p">();</span><span class="w"></span>
+<pre class="highlight"><code><span class="n">builder</span><span class="p">.</span><span class="n">Services</span><span class="p">.</span><span class="n">AddOpenTelemetry</span><span class="p">()</span>
+<span class="w">    </span><span class="p">.</span><span class="n">ConfigureResource</span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">AddService</span><span class="p">(</span><span class="s">"norte-api"</span><span class="p">))</span>
+<span class="w">    </span><span class="p">.</span><span class="n">WithLogging</span><span class="p">()</span>
+<span class="w">    </span><span class="p">.</span><span class="n">WithTracing</span><span class="p">(</span><span class="n">t</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">t</span>
+<span class="w">        </span><span class="p">.</span><span class="n">AddAspNetCoreInstrumentation</span><span class="p">()</span>
+<span class="w">        </span><span class="p">.</span><span class="n">AddNpgsql</span><span class="p">())</span>
+<span class="w">    </span><span class="p">.</span><span class="n">WithMetrics</span><span class="p">(</span><span class="n">m</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">m</span>
+<span class="w">        </span><span class="p">.</span><span class="n">AddAspNetCoreInstrumentation</span><span class="p">())</span>
+<span class="w">    </span><span class="p">.</span><span class="n">UseOtlpExporter</span><span class="p">();</span>
 </code></pre>
 
 <table>
@@ -559,7 +559,7 @@
 </ol>
 </details>
 </article>
-<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 19/11/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="../assets/search-index.js"></script>

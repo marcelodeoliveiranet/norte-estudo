@@ -14,7 +14,7 @@
 <header class="topo">
   <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
   <a class="marca" href="../index.html">Norte · Estudo</a>
-  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a><a href="../mapa-mental.html">Mapa mental</a></nav>
   <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
   <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
 </header>
@@ -93,21 +93,21 @@
 <h2 id="3-conceitos">3. Conceitos</h2>
 <h3 id="31-o-contrato-entre-módulos-guia-812">3.1 O contrato entre módulos (guia <a href="../parte-8.html#812-o-contrato-entre-módulos-e-o-post-pedidos-perguntar-sem-enxergar-o-interior">8.12</a>)</h3>
 <p><strong>Palavra nova — contrato:</strong> o que um módulo aceita responder aos outros. É uma interface pública, num projeto separado, que não referencia nenhum módulo.</p>
-<pre class="highlight"><code><span class="k">namespace</span><span class="w"> </span><span class="nn">Norte.Clientes.Contratos</span><span class="p">;</span><span class="w"></span>
+<pre class="highlight"><code><span class="k">namespace</span><span class="w"> </span><span class="nn">Norte.Clientes.Contratos</span><span class="p">;</span>
 
-<span class="k">public</span><span class="w"> </span><span class="k">interface</span><span class="w"> </span><span class="n">IConsultaClientes</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">Task</span><span class="p">&lt;</span><span class="kt">bool</span><span class="p">&gt;</span><span class="w"> </span><span class="n">ClienteExisteAsync</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">clienteId</span><span class="p">,</span><span class="w"> </span><span class="n">CancellationToken</span><span class="w"> </span><span class="n">ct</span><span class="p">);</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="k">public</span><span class="w"> </span><span class="k">interface</span><span class="w"> </span><span class="n">IConsultaClientes</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">Task</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ClienteExisteAsync</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">clienteId</span><span class="p">,</span><span class="w"> </span><span class="n">CancellationToken</span><span class="w"> </span><span class="n">ct</span><span class="p">);</span>
+<span class="p">}</span>
 </code></pre>
 
-<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nf">ConsultaClientes</span><span class="p">(</span><span class="n">ClientesRepository</span><span class="w"> </span><span class="n">clienteRepository</span><span class="p">)</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">IConsultaClientes</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="p">&lt;</span><span class="kt">bool</span><span class="p">&gt;</span><span class="w"> </span><span class="n">ClienteExisteAsync</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">clienteId</span><span class="p">,</span><span class="w"> </span><span class="n">CancellationToken</span><span class="w"> </span><span class="n">ct</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">clienteRepository</span><span class="p">.</span><span class="n">ExisteClientePeloIdAsync</span><span class="p">(</span><span class="n">clienteId</span><span class="p">,</span><span class="w"> </span><span class="n">ct</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nf">ConsultaClientes</span><span class="p">(</span><span class="n">ClientesRepository</span><span class="w"> </span><span class="n">clienteRepository</span><span class="p">)</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">IConsultaClientes</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ClienteExisteAsync</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">clienteId</span><span class="p">,</span><span class="w"> </span><span class="n">CancellationToken</span><span class="w"> </span><span class="n">ct</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">clienteRepository</span><span class="p">.</span><span class="n">ExisteClientePeloIdAsync</span><span class="p">(</span><span class="n">clienteId</span><span class="p">,</span><span class="w"> </span><span class="n">ct</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </code></pre>
 
 <table>
@@ -235,26 +235,26 @@
 </table>
 <p>O contrato pergunta &quot;existe?&quot;; trazer a linha inteira para jogar fora seria trabalho a mais. E o <code>ExcluirClientePeloIdAsync</code> não serve aqui porque <strong>apagaria</strong> o cliente: um método que muda dado nunca responde a uma pergunta de consulta.</p>
 <h3 id="34-post-pedidos-com-resultscreated-problemhttpresult">3.4 <code>POST /pedidos</code> com <code>Results&lt;Created&lt;...&gt;, ProblemHttpResult&gt;</code></h3>
-<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="p">&lt;</span><span class="n">Results</span><span class="p">&lt;</span><span class="n">Created</span><span class="p">&lt;</span><span class="n">CriarPedidoResponse</span><span class="p">&gt;,</span><span class="w"> </span><span class="n">ProblemHttpResult</span><span class="p">&gt;&gt;</span><span class="w"> </span><span class="n">ExecutarAsync</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">CriarPedidoRequest</span><span class="w"> </span><span class="n">request</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">IConsultaClientes</span><span class="w"> </span><span class="n">consultaClientes</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">PedidosRepository</span><span class="w"> </span><span class="n">pedidosRepository</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">CancellationToken</span><span class="w"> </span><span class="n">ct</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">clienteExiste</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">consultaClientes</span><span class="p">.</span><span class="n">ClienteExisteAsync</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">ClienteId</span><span class="p">,</span><span class="w"> </span><span class="n">ct</span><span class="p">);</span><span class="w"></span>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="o">&lt;</span><span class="n">Results</span><span class="o">&lt;</span><span class="n">Created</span><span class="o">&lt;</span><span class="n">CriarPedidoResponse</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">ProblemHttpResult</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">ExecutarAsync</span><span class="p">(</span>
+<span class="w">    </span><span class="n">CriarPedidoRequest</span><span class="w"> </span><span class="n">request</span><span class="p">,</span>
+<span class="w">    </span><span class="n">IConsultaClientes</span><span class="w"> </span><span class="n">consultaClientes</span><span class="p">,</span>
+<span class="w">    </span><span class="n">PedidosRepository</span><span class="w"> </span><span class="n">pedidosRepository</span><span class="p">,</span>
+<span class="w">    </span><span class="n">CancellationToken</span><span class="w"> </span><span class="n">ct</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">clienteExiste</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">consultaClientes</span><span class="p">.</span><span class="n">ClienteExisteAsync</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">ClienteId</span><span class="p">,</span><span class="w"> </span><span class="n">ct</span><span class="p">);</span>
 
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(!</span><span class="n">clienteExiste</span><span class="p">)</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">Problem</span><span class="p">(</span><span class="w"></span>
-<span class="w">            </span><span class="n">statusCode</span><span class="p">:</span><span class="w"> </span><span class="n">StatusCodes</span><span class="p">.</span><span class="n">Status404NotFound</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="n">title</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Cliente não encontrado&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="n">detail</span><span class="p">:</span><span class="w"> </span><span class="s">$&quot;O cliente {request.ClienteId} não foi encontrado&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">clienteExiste</span><span class="p">)</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">Problem</span><span class="p">(</span>
+<span class="w">            </span><span class="n">statusCode</span><span class="p">:</span><span class="w"> </span><span class="n">StatusCodes</span><span class="p">.</span><span class="n">Status404NotFound</span><span class="p">,</span>
+<span class="w">            </span><span class="n">title</span><span class="p">:</span><span class="w"> </span><span class="s">"Cliente não encontrado"</span><span class="p">,</span>
+<span class="w">            </span><span class="n">detail</span><span class="p">:</span><span class="w"> </span><span class="s">$"O cliente {request.ClienteId} não foi encontrado"</span><span class="p">);</span>
 
 <span class="w">    </span><span class="c1">// monta os itens e o Pedido; os construtores validam de novo</span>
-<span class="w">    </span><span class="p">...</span><span class="w"></span>
-<span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="n">pedidosRepository</span><span class="p">.</span><span class="n">AdicionarAsync</span><span class="p">(</span><span class="n">pedido</span><span class="p">,</span><span class="w"> </span><span class="n">ct</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">...</span>
+<span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="n">pedidosRepository</span><span class="p">.</span><span class="n">AdicionarAsync</span><span class="p">(</span><span class="n">pedido</span><span class="p">,</span><span class="w"> </span><span class="n">ct</span><span class="p">);</span>
 
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">Created</span><span class="p">(</span><span class="s">$&quot;/pedidos/{pedido.PedidoId}&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CriarPedidoResponse</span><span class="p">(</span><span class="n">pedido</span><span class="p">.</span><span class="n">PedidoId</span><span class="p">));</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">Created</span><span class="p">(</span><span class="s">$"/pedidos/{pedido.PedidoId}"</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CriarPedidoResponse</span><span class="p">(</span><span class="n">pedido</span><span class="p">.</span><span class="n">PedidoId</span><span class="p">));</span>
+<span class="p">}</span>
 </code></pre>
 
 <table>
@@ -289,16 +289,16 @@
 </blockquote>
 <h3 id="35-testar-com-um-dublê-consultaclientesfake">3.5 Testar com um dublê: <code>ConsultaClientesFake</code></h3>
 <p>O teste do <code>Pedidos</code> não sobe o <code>Clientes</code> de verdade. Ele <strong>troca</strong> a implementação do contrato:</p>
-<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nf">ConsultaClientesFake</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">existe</span><span class="p">)</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">IConsultaClientes</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">Task</span><span class="p">&lt;</span><span class="kt">bool</span><span class="p">&gt;</span><span class="w"> </span><span class="n">ClienteExisteAsync</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">clienteId</span><span class="p">,</span><span class="w"> </span><span class="n">CancellationToken</span><span class="w"> </span><span class="n">ct</span><span class="p">)</span><span class="w"></span>
-<span class="w">        </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">Task</span><span class="p">.</span><span class="n">FromResult</span><span class="p">(</span><span class="n">existe</span><span class="p">);</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nf">ConsultaClientesFake</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">existe</span><span class="p">)</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">IConsultaClientes</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">Task</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ClienteExisteAsync</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">clienteId</span><span class="p">,</span><span class="w"> </span><span class="n">CancellationToken</span><span class="w"> </span><span class="n">ct</span><span class="p">)</span>
+<span class="w">        </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Task</span><span class="p">.</span><span class="n">FromResult</span><span class="p">(</span><span class="n">existe</span><span class="p">);</span>
+<span class="p">}</span>
 </code></pre>
 
-<pre class="highlight"><code><span class="k">using</span><span class="w"> </span><span class="nn">var</span><span class="w"> </span><span class="n">fabricaComClienteExistente</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">fabrica</span><span class="p">.</span><span class="n">WithWebHostBuilder</span><span class="p">(</span><span class="n">builder</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"></span>
-<span class="w">    </span><span class="n">builder</span><span class="p">.</span><span class="n">ConfigureServices</span><span class="p">(</span><span class="n">services</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"></span>
-<span class="w">        </span><span class="n">services</span><span class="p">.</span><span class="n">AddScoped</span><span class="p">&lt;</span><span class="n">IConsultaClientes</span><span class="p">&gt;(</span><span class="n">_</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ConsultaClientesFake</span><span class="p">(</span><span class="n">existe</span><span class="p">:</span><span class="w"> </span><span class="k">true</span><span class="p">))));</span><span class="w"></span>
+<pre class="highlight"><code><span class="k">using</span><span class="w"> </span><span class="nn">var</span><span class="w"> </span><span class="n">fabricaComClienteExistente</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fabrica</span><span class="p">.</span><span class="n">WithWebHostBuilder</span><span class="p">(</span><span class="n">builder</span><span class="w"> </span><span class="o">=&gt;</span>
+<span class="w">    </span><span class="n">builder</span><span class="p">.</span><span class="n">ConfigureServices</span><span class="p">(</span><span class="n">services</span><span class="w"> </span><span class="o">=&gt;</span>
+<span class="w">        </span><span class="n">services</span><span class="p">.</span><span class="n">AddScoped</span><span class="o">&lt;</span><span class="n">IConsultaClientes</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ConsultaClientesFake</span><span class="p">(</span><span class="n">existe</span><span class="p">:</span><span class="w"> </span><span class="k">true</span><span class="p">))));</span>
 </code></pre>
 
 <table>
@@ -369,22 +369,22 @@
 </table>
 <p><strong><code>[Range]</code> com <code>decimal</code>.</strong> Atributo só aceita constante, e <code>decimal</code> não é constante de atributo. Por isso os limites vão <strong>como texto</strong>. Sem os dois <code>...InvariantCulture</code>, <code>&quot;0.01&quot;</code> seria lido com a cultura do servidor; em pt-BR o ponto é separador de milhar e o valor virava <code>1</code>. Os dois <code>true</code> mandam ler os limites <strong>e</strong> o valor recebido com a cultura invariante (o ponto decimal do JSON).</p>
 <p><strong>Origem como <code>int</code>.</strong> Sua razão: &quot;número não dá erro de digitação&quot;. O <code>Enum.IsDefined</code> continua no construtor do domínio (segunda barreira). O <code>[Range(1, 6)]</code> não pode ler o enum (atributo só aceita constante), então o limite está escrito à mão <strong>e um teste de reflexão garante que ele acompanha o enum</strong>:</p>
-<pre class="highlight"><code><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">codigos</span><span class="p">.</span><span class="n">Min</span><span class="p">(),</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">range</span><span class="p">.</span><span class="n">Minimum</span><span class="p">);</span><span class="w"></span>
-<span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">codigos</span><span class="p">.</span><span class="n">Max</span><span class="p">(),</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">range</span><span class="p">.</span><span class="n">Maximum</span><span class="p">);</span><span class="w"></span>
+<pre class="highlight"><code><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">codigos</span><span class="p">.</span><span class="n">Min</span><span class="p">(),</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">range</span><span class="p">.</span><span class="n">Minimum</span><span class="p">);</span>
+<span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">codigos</span><span class="p">.</span><span class="n">Max</span><span class="p">(),</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">range</span><span class="p">.</span><span class="n">Maximum</span><span class="p">);</span>
 <span class="c1">// Sem buracos: o Range só é suficiente se os códigos forem contínuos</span>
-<span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">codigos</span><span class="p">.</span><span class="n">Max</span><span class="p">()</span><span class="w"> </span><span class="p">-</span><span class="w"> </span><span class="n">codigos</span><span class="p">.</span><span class="n">Min</span><span class="p">()</span><span class="w"> </span><span class="p">+</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">codigos</span><span class="p">.</span><span class="n">Count</span><span class="p">);</span><span class="w"></span>
+<span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">codigos</span><span class="p">.</span><span class="n">Max</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">codigos</span><span class="p">.</span><span class="n">Min</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">codigos</span><span class="p">.</span><span class="n">Count</span><span class="p">);</span>
 </code></pre>
 
 <p>Se alguém acrescentar <code>OrigemPedido.Telefone = 7</code> e esquecer o <code>Range</code>, o teste fica vermelho. Se alguém pular um número (1, 2, 4), o último <code>Assert</code> também.</p>
 <h3 id="37-ivalidatableobject-a-regra-que-olha-três-campos">3.7 <code>IValidatableObject</code>: a regra que olha três campos</h3>
 <p>Um atributo no campo só enxerga aquele campo. A regra &quot;o desconto deve ser <strong>menor</strong> que preço × quantidade&quot; olha três:</p>
-<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="n">IEnumerable</span><span class="p">&lt;</span><span class="n">ValidationResult</span><span class="p">&gt;</span><span class="w"> </span><span class="n">Validate</span><span class="p">(</span><span class="n">ValidationContext</span><span class="w"> </span><span class="n">validationContext</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ValorDesconto</span><span class="w"> </span><span class="p">&gt;=</span><span class="w"> </span><span class="n">PrecoUnitario</span><span class="w"> </span><span class="p">*</span><span class="w"> </span><span class="n">Quantidade</span><span class="p">)</span><span class="w"></span>
-<span class="w">        </span><span class="k">yield</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="nf">ValidationResult</span><span class="p">(</span><span class="w"></span>
-<span class="w">            </span><span class="s">&quot;O valor do desconto deve ser menor que o valor total do item&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="na">[nameof(ValorDesconto)]</span><span class="p">);</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="n">IEnumerable</span><span class="o">&lt;</span><span class="n">ValidationResult</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Validate</span><span class="p">(</span><span class="n">ValidationContext</span><span class="w"> </span><span class="n">validationContext</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ValorDesconto</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">PrecoUnitario</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Quantidade</span><span class="p">)</span>
+<span class="w">        </span><span class="k">yield</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="nf">ValidationResult</span><span class="p">(</span>
+<span class="w">            </span><span class="s">"O valor do desconto deve ser menor que o valor total do item"</span><span class="p">,</span>
+<span class="w">            </span><span class="na">[nameof(ValorDesconto)]</span><span class="p">);</span>
+<span class="p">}</span>
 </code></pre>
 
 <p>O segundo argumento (<code>[nameof(ValorDesconto)]</code>) diz <strong>qual campo</strong> aparece em <code>Errors</code> no 400. A regra é a mesma do construtor do <code>ItemPedido</code> (S24): a API barra primeiro e o domínio é a segunda defesa.</p>
@@ -411,8 +411,8 @@
 </table>
 <p><strong>Limite não coberto:</strong> <code>PrecoUnitario * Quantidade</code> pode <strong>estourar</strong> o <code>decimal</code> (preço 79228162514264337593543950335 × quantidade 2). O resultado seria uma exceção de estouro, e a API devolveria <strong>500</strong>. Fica anotado como <strong>dívida</strong> (preço e quantidade máximos), junto com o contrato <code>Pedidos</code> ↔ <code>Catalogo</code>.</p>
 <h3 id="38-o-teste-do-400-que-troca-um-campo-de-cada-vez">3.8 O teste do 400 que troca um campo de cada vez</h3>
-<pre class="highlight"><code><span class="kt">var</span><span class="w"> </span><span class="n">corpo</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">JsonObject</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">[</span><span class="s">&quot;origem&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="s">&quot;criadoPor&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;vendedor.teste&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
-<span class="n">corpo</span><span class="p">[</span><span class="n">campo</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">JsonNode</span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="n">valorInvalidoJson</span><span class="p">);</span><span class="w"></span>
+<pre class="highlight"><code><span class="kt">var</span><span class="w"> </span><span class="n">corpo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">JsonObject</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">[</span><span class="s">"origem"</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="s">"criadoPor"</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"vendedor.teste"</span><span class="p">,</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">};</span>
+<span class="n">corpo</span><span class="p">[</span><span class="n">campo</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">JsonNode</span><span class="p">.</span><span class="n">Parse</span><span class="p">(</span><span class="n">valorInvalidoJson</span><span class="p">);</span>
 </code></pre>
 
 <table>
@@ -651,7 +651,7 @@
 </ol>
 </details>
 </article>
-<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 19/11/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="../assets/search-index.js"></script>

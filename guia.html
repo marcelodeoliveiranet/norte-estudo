@@ -14,7 +14,7 @@
 <header class="topo">
   <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
   <a class="marca" href="index.html">Norte · Estudo</a>
-  <nav class="menu"><a href="index.html">Início</a><a href="guia.html" class=ativo>Guia</a><a href="estudos.html">Materiais</a></nav>
+  <nav class="menu"><a href="index.html">Início</a><a href="guia.html" class=ativo>Guia</a><a href="estudos.html">Materiais</a><a href="mapa-mental.html">Mapa mental</a></nav>
   <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
   <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
 </header>
@@ -43,9 +43,10 @@ tente explicar em voz alta a linha &quot;Em uma frase&quot; e a seção &quot;Na
 <li>🔎 <strong>Saber onde encontrar</strong> — sintaxe exata, nome de <code>using</code>, comando de CLI. Qualquer sênior
 consulta; o <code>Ctrl+.</code> e a documentação resolvem.</li>
 </ul>
-<p><strong>Última atualização:</strong> 03/11/2026 (<strong>Parte 8 v1.10: entradas 8.16 e 8.17</strong>, no fechamento da S38) · <strong>Versão:</strong> 1.25</p>
+<p><strong>Última atualização:</strong> 18/11/2026 (<strong>Parte 8 v1.11: entrada 8.18</strong>, no fechamento da S48) · <strong>Versão:</strong> 1.26</p>
 <hr />
 <h2 id="onde-estamos-atualizado-a-cada-sessão">Onde estamos (atualizado a cada sessão)</h2>
+<p><strong>Fim da S48:</strong> o M2 começou: o <code>Dominio/</code> do <code>Pedidos</code> foi separado em <code>Entidades/</code>, <code>ObjetosDeValor/</code> e <code>Enumeracoes/</code>, e a regra R2 (alçada de desconto) entrou no domínio com um objeto de valor (<code>PercentualDesconto</code>), o percentual calculado no item e <code>AvaliarAutorizacao(teto)</code> no item e no pedido. Conteúdo na <a href="parte-8.html">Parte 8</a>, entrada <a href="parte-8.html#818-objeto-de-valor-propriedade-calculada-e-a-regra-de-alçada-de-desconto-s48">8.18</a>.</p>
 <p><strong>Fim da S38:</strong> a API ganhou a <strong>fundação de observabilidade</strong> (ADR-016): logs, traces e métricas saem por <strong>OTLP</strong> (OpenTelemetry) para um <strong>painel Aspire</strong> em contêiner no <code>compose.yaml</code>; o serviço aparece como <code>norte-api</code>; duas lentidões provocadas de propósito (atraso no código e índice removido com 1 milhão de linhas) foram achadas pelo trace e pelo <code>EXPLAIN</code>; alerta só descrito. 192 testes. Conteúdo na <a href="parte-8.html">Parte 8</a>, entrada <a href="parte-8.html#817-fundação-de-observabilidade-painel-opentelemetry-ler-um-trace-e-achar-a-lentidão-s38">8.17</a>.</p>
 <p><strong>Fim da S37:</strong> índice trigram (<code>pg_trgm</code>, GIN) provado por <code>EXPLAIN</code>, OpenAPI/Scalar, <code>[LoggerMessage]</code> nos conflitos e o mapa das camadas da observabilidade. Conteúdo na <a href="parte-8.html">Parte 8</a>, entrada <a href="parte-8.html#816-índice-trigram-com-prova-por-explain-loggermessage-nos-conflitos-e-o-mapa-da-observabilidade-s37">8.16</a>.</p>
 <p><strong>Fim da S36:</strong> a <code>FichaProduto</code> ganhou <strong>concorrência otimista</strong>: o <code>xmin</code> do Postgres é a marca de versão (<code>TokenConcorrencia</code>, <code>IsRowVersion()</code>), a API devolve a marca no <code>ETag</code> e exige o <code>If-Match</code> no <code>PUT</code> e no <code>DELETE</code>; marca velha dá <strong>412</strong>, marca ausente dá <strong>428</strong>, e o 409 fica só para duplicidade (ADR-015); o <code>DELETE</code> passou a carregar a ficha para respeitar o <code>If-Match</code>; a propriedade <code>Versao</code> virou <code>TokenConcorrencia</code>. Transações explícitas ficam para quando houver estoque ou pagamento. 190 testes. Conteúdo na <a href="parte-8.html">Parte 8</a>, entrada <a href="parte-8.html#815-concorrência-otimista-na-ficha-de-produto-xmin-etag-if-match-412-e-428">8.15</a>.</p>
@@ -116,7 +117,7 @@ consulta; o <code>Ctrl+.</code> e a documentação resolvem.</li>
 <td><a href="parte-8.html"><code>GUIA-DOTNET-P8.md</code></a></td>
 <td>Parte 8 — O <code>Pedidos</code> recusa dado errado, junta itens e vai para o banco</td>
 <td>S24–</td>
-<td><strong>v1.10 (8.1–8.17)</strong></td>
+<td><strong>v1.11 (8.1–8.18)</strong></td>
 </tr>
 <tr>
 <td><a href="mapa.html"><code>GUIA-MAPA-NORTE.md</code></a></td>
@@ -252,6 +253,7 @@ da parte com a âncora.</p>
 <li><a href="parte-8.html#815-concorrência-otimista-na-ficha-de-produto-xmin-etag-if-match-412-e-428">8.15</a> <strong>Concorrência otimista na ficha de produto: <code>xmin</code>, <code>ETag</code>, <code>If-Match</code>, 412 e 428</strong> (S36)</li>
 <li><a href="parte-8.html#816-índice-trigram-com-prova-por-explain-loggermessage-nos-conflitos-e-o-mapa-da-observabilidade-s37">8.16</a> <strong>Índice trigram com prova por <code>EXPLAIN</code>, <code>[LoggerMessage]</code> nos conflitos e o mapa da observabilidade</strong> (S37)</li>
 <li><a href="parte-8.html#817-fundação-de-observabilidade-painel-opentelemetry-ler-um-trace-e-achar-a-lentidão-s38">8.17</a> <strong>Fundação de observabilidade: painel, OpenTelemetry, ler um trace e achar a lentidão</strong> (S38)</li>
+<li><a href="parte-8.html#818-objeto-de-valor-propriedade-calculada-e-a-regra-de-alçada-de-desconto-s48">8.18</a> <strong>Objeto de valor, propriedade calculada e a regra de alçada de desconto</strong> (S48)</li>
 <li>Juntando tudo, Teste-se e respostas (no fim da Parte 8)</li>
 </ul>
 </li>
@@ -394,11 +396,16 @@ da parte com a âncora.</p>
 <td>03/11/2026 (S37 e S38)</td>
 <td>Parte 8 v1.10: <strong>entradas 8.16</strong> (índice trigram com <code>EXPLAIN</code>, <code>[LoggerMessage]</code>, mapa das camadas) <strong>e 8.17</strong> (painel Aspire, OpenTelemetry, ler um trace, lentidão por métrica → trace → <code>EXPLAIN</code>); Teste-se (58–64); &quot;Ainda não visto&quot; atualizado</td>
 </tr>
+<tr>
+<td>1.26</td>
+<td>18/11/2026 (S48)</td>
+<td>Parte 8 v1.11: <strong>entrada 8.18</strong> (objeto de valor <code>PercentualDesconto</code>, propriedade calculada, arredondamento <code>AwayFromZero</code>, regra R2 no item e no pedido, pastas do <code>Dominio/</code>); &quot;onde estamos&quot; no M2</td>
+</tr>
 </tbody>
 </table>
 
 </article>
-<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 19/11/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="assets/search-index.js"></script>

@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ESTUDO S46 — Análise de marco e checkpoint do M1 · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s46.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a><a href="../mapa-mental.html">Mapa mental</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#estudo-s46--análise-de-marco-e-checkpoint-do-m1" data-id="estudo-s46--análise-de-marco-e-checkpoint-do-m1">ESTUDO S46 — Análise de marco e checkpoint do M1</a><a class="n2" href="#1-objetivo-e-resultado" data-id="1-objetivo-e-resultado">1. Objetivo e resultado</a><a class="n2" href="#2-mapa-dos-níveis" data-id="2-mapa-dos-níveis">2. Mapa dos níveis</a><a class="n2" href="#3-conceitos-de-para" data-id="3-conceitos-de-para">3. Conceitos (de-para)</a><a class="n2" href="#4-termos" data-id="4-termos">4. Termos</a><a class="n2" href="#5-dúvidas-que-apareceram" data-id="5-dúvidas-que-apareceram">5. Dúvidas que apareceram</a><a class="n2" href="#6-divergências" data-id="6-divergências">6. Divergências</a><a class="n2" href="#7-avaliação-da-sessão" data-id="7-avaliação-da-sessão">7. Avaliação da sessão</a><a class="n2" href="#8-pontos-a-melhorar" data-id="8-pontos-a-melhorar">8. Pontos a melhorar</a><a class="n2" href="#9-perguntas-de-recuperação" data-id="9-perguntas-de-recuperação">9. Perguntas de recuperação</a><a class="n2" href="#10-preparação-para-o-próximo-chat" data-id="10-preparação-para-o-próximo-chat">10. Preparação para o próximo chat</a></aside>
+<main class="conteudo"><article>
+<h1 id="estudo-s46--análise-de-marco-e-checkpoint-do-m1">ESTUDO S46 — Análise de marco e checkpoint do M1</h1>
+<blockquote>
+<p>Material de estudo da sessão S46 (17/11/2026). Tempo líquido: <strong>4h17</strong> (15:04 às 19:21; sem pausa informada; os 15 minutos entre 17:02 e 17:17 ficam a confirmar).</p>
+</blockquote>
+<h2 id="1-objetivo-e-resultado">1. Objetivo e resultado</h2>
+<p><strong>Objetivo:</strong> fazer a <strong>análise de marco</strong> e o <strong>checkpoint</strong> do M1, as duas etapas do roteiro final que faltavam antes da prova de transferência.</p>
+<p><strong>Resultado:</strong> as duas etapas foram feitas. Não houve código novo (<code>norte</code> continua em <code>4d401a7</code>, 309 testes). O M1 <strong>ainda não está aceito</strong>: faltam a prova de transferência e a conferência &quot;sem pista numa sessão diferente&quot;.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Conceito</th>
+<th>Sua nota (1–5)</th>
+<th>O que você mostrou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Monolito modular</td>
+<td>2</td>
+<td>(a)(b)(c) ✅ sem ajuda</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Minimal APIs</td>
+<td>2</td>
+<td>(a)(b)(c) ✅ (precisou ver o código para comparar com Controller)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Tratamento de erros</td>
+<td>2</td>
+<td>(a)(b)(c) ✅</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Validação × regra de negócio</td>
+<td>3,5</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>5</td>
+<td>EF Core</td>
+<td>3</td>
+<td>(a)(b)(c) ✅</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Concorrência otimista</td>
+<td>2</td>
+<td>✅ (trocou só o número do status, 428 por 412)</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Unidade × integração</td>
+<td>3,5</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Prova do vermelho</td>
+<td>4</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>9</td>
+<td>CI</td>
+<td>1</td>
+<td>não praticado no M1; vai para o M6</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Contrato entre módulos</td>
+<td>3</td>
+<td>(a)(b)(c) ✅</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Modelagem do <code>Pedido</code></td>
+<td>4</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Observabilidade</td>
+<td>2</td>
+<td>(a)(b)(c) ✅ sem ajuda</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Leitura:</strong> em nenhum conceito você se deu nota acima do que mostrou. Nos conceitos em que se deu 2, você explica o problema, a alternativa com o custo e o limite. É insegurança, não falta de domínio.</p>
+<p><strong>Quatro ajustes aprovados por você:</strong></p>
+<ol>
+<li>Reconstrução de sábado só com os itens do <strong>balde 1</strong> (de cabeça), com limite de cerca de 1h30.</li>
+<li>Fila de notas S4 (S20 a S45) <strong>encerrada</strong>; a nota só entra no fim de marco.</li>
+<li>Checkpoint começando pelos 6 conceitos não medidos (feito hoje).</li>
+<li><strong>412 × 428 × 409</strong> passam para o balde 2 (consultar); &quot;o que o CI garante&quot; vai para o bloco de CI do M6.</li>
+</ol>
+<p><strong>Decisão sobre CI/CD (opção B):</strong> fica no M6, mas calibrado. Meta: <strong>GitHub Actions nível 2</strong>, <strong>Azure DevOps nível 1</strong> (vocabulário), e na nuvem entender a entrega. Do curso de GitHub Actions que você comprou, o <strong>núcleo</strong> é ≈4h40 (blocos básicos, workflows e eventos, artefatos e cache, variáveis e segredos, segurança e permissões); o resto é opcional ou pode ser pulado.</p>
+<h2 id="2-mapa-dos-níveis">2. Mapa dos níveis</h2>
+<p>Critério de aceite do marco (instruções, Seção 9.2): entregável pronto com teste por regra nomeada; <strong>checkpoint</strong> do núcleo (feito hoje); <strong>prova de transferência</strong> (falta); itens do núcleo sem pista em <strong>sessão diferente</strong> da que ensinou (parcial). Nível-alvo: 2 (aplica com ajuda) para a maioria; 3 (aplica sozinho) só para o núcleo, e só se mede na prova de transferência.</p>
+<h2 id="3-conceitos-de-para">3. Conceitos (de-para)</h2>
+<table>
+<thead>
+<tr>
+<th>Prática antiga</th>
+<th>Prática de agora</th>
+<th>No Norte</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dizer &quot;entendi&quot;</td>
+<td>Explicar (a) o problema, (b) uma alternativa concreta e o custo, (c) o que a solução <strong>não</strong> resolve</td>
+<td>checkpoint de hoje</td>
+</tr>
+<tr>
+<td>&quot;Regra de negócio&quot; para tudo</td>
+<td><strong>Invariante</strong>: regra que o objeto garante sobre os <strong>próprios dados</strong>. Regra que depende de dado de fora não é invariante dele</td>
+<td>o construtor do <code>Pedido</code> recusa zero itens (invariante); &quot;o cliente existe&quot; não é</td>
+</tr>
+<tr>
+<td>CI verde = pronto</td>
+<td>O CI garante <strong>o que os testes cobrem, no ambiente do CI</strong>. Não garante produção nem o que nenhum teste verifica</td>
+<td><code>ci.yml</code>: build e testes</td>
+</tr>
+<tr>
+<td>Controller com classe obrigatória</td>
+<td>Minimal API: uma função mapeada no verbo. A classe do endpoint é <strong>convenção do time</strong></td>
+<td><code>CriarPedidoEndpoint.ExecutarAsync</code> em <code>MapPost</code></td>
+</tr>
+<tr>
+<td>Decorar tudo</td>
+<td>Três baldes: de cabeça (ideia e julgamento), conferir, consultar (números, nomes)</td>
+<td>status 412/428/409 no balde 2</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O que muda no código:</strong> nada. A sessão foi de medição e de plano.</p>
+<p><strong>Mapa do pipeline para o M6 (6 passos):</strong> compilar · testar com relatório · checagens de qualidade · segurança básica · empacotar (artefato ou imagem) · publicar em ambiente de teste com aprovação.</p>
+<h2 id="4-termos">4. Termos</h2>
+<ul>
+<li><strong>Invariante:</strong> regra que um objeto garante sobre os próprios dados, sempre. <strong>Palavra nova.</strong></li>
+<li><strong>Calibração:</strong> comparar a nota que você se dá com o que você mostra. <strong>Palavra nova.</strong></li>
+<li><strong>Acoplamento:</strong> quando uma parte depende dos detalhes de outra, e mudar uma quebra a outra.</li>
+<li><strong>Trace e span:</strong> o trace é a requisição inteira; cada etapa medida dentro dela é um <strong>span</strong> (não &quot;spam&quot;).</li>
+<li><strong>ADO.NET:</strong> a camada básica de acesso a banco do .NET. O Dapper é uma camada fina em cima dela.</li>
+<li><strong>Acoplamento de execução:</strong> o Pedidos chama Clientes de forma síncrona e no mesmo processo; se um falha ou demora, o outro sente.</li>
+</ul>
+<h2 id="5-dúvidas-que-apareceram">5. Dúvidas que apareceram</h2>
+<ul>
+<li><strong>&quot;Uma invariante não é qualquer regra de negócio?&quot;</strong> Não. Invariante é a regra que o objeto garante com os próprios dados. A ideia vem de projeto por contrato e não é exclusiva de DDD.</li>
+<li><strong>&quot;Se o CI passou, como ele não garante que funciona em produção?&quot;</strong> Ele garante o que os testes cobrem, no ambiente do CI. Produção tem outro ambiente e dados.</li>
+<li><strong>&quot;No Controller também dava para ter um arquivo por endpoint.&quot;</strong> Sim. A diferença é menor do que parece: menos cerimônia, a classe do endpoint não é obrigatória, e tudo roda sobre o mesmo ASP.NET Core.</li>
+<li><strong>&quot;Existe cenário em que não dá para usar o EF Core?&quot;</strong> Praticamente não: ele executa SQL puro, procedures e CTE. O mais próximo é carga em massa com <code>COPY</code> ou <code>LISTEN/NOTIFY</code> do Postgres, que se faz no driver (Npgsql).</li>
+<li><strong>&quot;O contrato não faz o Pedidos ficar sabendo de problema em Clientes?&quot;</strong> Faz, em execução, porque a chamada é síncrona. O que o contrato evita é o Pedidos conhecer as tabelas de Clientes.</li>
+</ul>
+<h2 id="6-divergências">6. Divergências</h2>
+<table>
+<thead>
+<tr>
+<th>Tema</th>
+<th>Posição de cada lado</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Nota do (c) de <code>ProblemDetails</code></td>
+<td>Mentor deu 🟡 após uma dica; aluno: o conteúdo do erro é decisão do time e a pergunta estava mal formulada</td>
+<td><strong>resolvido: ✅</strong>, o aluno tinha razão</td>
+</tr>
+<tr>
+<td>&quot;Trocar de banco&quot; como ganho do EF Core</td>
+<td>Aluno: abstração de banco; mentor: ganho fraco, o <code>xmin</code> é do Postgres</td>
+<td>resolvido: a abstração mais ampla vale, o ponto do <code>xmin</code> fica</td>
+</tr>
+<tr>
+<td>CI como falha</td>
+<td>Mentor deu 🟡; aluno: não praticou no M1</td>
+<td><strong>resolvido:</strong> sem prática, vai para o M6</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-avaliação-da-sessão">7. Avaliação da sessão</h2>
+<ul>
+<li><strong>O que você fez bem:</strong> explicou (a)(b)(c) de seis conceitos sem jargão; contestou o mentor com argumento várias vezes e acertou; pediu uma régua clara para o M1, que ficou registrada.</li>
+<li><strong>Onde travou e por quê:</strong> &quot;invariante&quot; (vocabulário novo); o que o CI garante (tema sem prática); comparar Minimal APIs com Controller de memória (você não usa Controller há anos); o número dos status 412 e 428.</li>
+<li><strong>O que o mentor conduziu mal:</strong> lembrete de pendência errado (o <code>norte-lab</code> já estava no GitHub); disse &quot;o entrevistador vai usar&quot; um termo sem evidência; comentários de detalhe que não mudavam nada; duas perguntas mal formuladas (alternativa ao monolito e (c) do <code>ProblemDetails</code>); notas 🟡 que tiveram de ser revistas; &quot;nem fica sabendo&quot; impreciso; tabela de quatro itens que confundiu; pergunta de CI repetida depois de a resposta já ter sido dada.</li>
+</ul>
+<h2 id="8-pontos-a-melhorar">8. Pontos a melhorar</h2>
+<ul>
+<li><strong>Aluno:</strong> reforçar &quot;invariante&quot; no M2; formular o que o CI não garante em uma frase.</li>
+<li><strong>Mentor:</strong> dar peso à ideia e não ao detalhe; conferir se a pergunta estava clara antes de dar nota; não medir o aluno em tema que ele só viu; não repetir pergunta depois de dar a resposta.</li>
+</ul>
+<h2 id="9-perguntas-de-recuperação">9. Perguntas de recuperação</h2>
+<ol>
+<li>O que é uma invariante e por que &quot;o cliente existe&quot; não é uma invariante do <code>Pedido</code>?</li>
+<li>O que o CI garante e o que ele não garante?</li>
+<li>O que o <code>ProblemDetails</code> padroniza e o que ele não decide?</li>
+<li>A classe do endpoint é obrigatória nas Minimal APIs? O que fica por conta do time?</li>
+<li>O que o contrato entre módulos resolve e o que não resolve?</li>
+<li>O trace de uma requisição lenta mostra o quê, e o que continua para você investigar?</li>
+</ol>
+<p><strong>Respostas:</strong></p>
+<ol>
+<li>Invariante é a regra que o objeto garante sobre os próprios dados (o <code>Pedido</code> recusa zero itens no construtor). &quot;O cliente existe&quot; depende de dado de fora do <code>Pedido</code>, então é regra de negócio, mas não invariante dele.</li>
+<li>Garante o que os testes cobrem, no ambiente do CI. Não garante produção nem o que nenhum teste verifica.</li>
+<li>Padroniza a forma do erro. Não decide o conteúdo (qual status, o que escrever no <code>detail</code>): isso é decisão do time.</li>
+<li>Não. A classe é convenção do Norte; o framework aceita lambda ou método solto. A estrutura (onde mora, como se agrupa) fica por conta do time.</li>
+<li>Resolve: o Pedidos não conhece as tabelas de Clientes e uma remodelação lá dentro não o obriga a mudar. Não resolve: a dependência em execução (síncrona, mesmo processo).</li>
+<li>Mostra <strong>onde</strong> o tempo foi gasto (qual etapa ou query). <strong>Por quê</strong> continua com o time: plano de execução, SQL gerado, índices.</li>
+</ol>
+<h2 id="10-preparação-para-o-próximo-chat">10. Preparação para o próximo chat</h2>
+<ul>
+<li><strong>Próximo passo:</strong> prova de transferência do M1 (≈1,5h, sozinho, num domínio que você nunca viu, no formato de pergunta de entrevista). Depois: revisão de mercado, os dois spikes de leitura e o documento de consulta do M1.</li>
+<li><strong>Fora do chat:</strong> nada pendente.</li>
+</ul>
+
+</article>
+<footer class="rodape">Atualizado em 19/11/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ESTUDO S48 — Abrindo o M2: entidade, objeto de valor e a regra de alçada de desconto (R2) · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s48.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a><a href="../mapa-mental.html">Mapa mental</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#estudo-s48--abrindo-o-m2-entidade-objeto-de-valor-e-a-regra-de-alçada-de-desconto-r2" data-id="estudo-s48--abrindo-o-m2-entidade-objeto-de-valor-e-a-regra-de-alçada-de-desconto-r2">ESTUDO S48 — Abrindo o M2: entidade, objeto de valor e a regra de al…</a><a class="n2" href="#1-objetivo-e-resultado" data-id="1-objetivo-e-resultado">1. Objetivo e resultado</a><a class="n2" href="#2-mapa-dos-níveis" data-id="2-mapa-dos-níveis">2. Mapa dos níveis</a><a class="n2" href="#3-conceitos-de-para" data-id="3-conceitos-de-para">3. Conceitos (de-para)</a><a class="n2" href="#4-termos" data-id="4-termos">4. Termos</a><a class="n2" href="#5-dúvidas-que-apareceram" data-id="5-dúvidas-que-apareceram">5. Dúvidas que apareceram</a><a class="n2" href="#6-divergências-e-decisões" data-id="6-divergências-e-decisões">6. Divergências e decisões</a><a class="n2" href="#7-avaliação-da-sessão" data-id="7-avaliação-da-sessão">7. Avaliação da sessão</a><a class="n2" href="#8-pontos-a-melhorar" data-id="8-pontos-a-melhorar">8. Pontos a melhorar</a><a class="n2" href="#9-perguntas-de-recuperação" data-id="9-perguntas-de-recuperação">9. Perguntas de recuperação</a><a class="n2" href="#10-preparação-para-o-próximo-chat" data-id="10-preparação-para-o-próximo-chat">10. Preparação para o próximo chat</a></aside>
+<main class="conteudo"><article>
+<h1 id="estudo-s48--abrindo-o-m2-entidade-objeto-de-valor-e-a-regra-de-alçada-de-desconto-r2">ESTUDO S48 — Abrindo o M2: entidade, objeto de valor e a regra de alçada de desconto (R2)</h1>
+<blockquote>
+<p>Material de estudo da sessão S48 (18/11/2026). Tempo líquido de estudo: <strong>4h21</strong> (13:48 a 15:38 e 20:55 a 23:26; pausa de 5h17).</p>
+</blockquote>
+<h2 id="1-objetivo-e-resultado">1. Objetivo e resultado</h2>
+<p><strong>Objetivo:</strong> abrir o M2 (entidade, objeto de valor, agregado; a invariante entra aqui).</p>
+<p><strong>Resultado:</strong> a sessão virou a <strong>regra de alçada de desconto (R2)</strong> no domínio de <code>Pedidos</code>, decidida junto com o aluno e escrita com teste. Antes disso, o <code>Dominio/</code> foi organizado em pastas por tipo. Três PRs mesclados, CI verde, <code>main</code> em <code>5fa902c</code>; 12 testes novos (o projeto de <code>Pedidos</code> foi de 92 para 104).</p>
+<table>
+<thead>
+<tr>
+<th>PR</th>
+<th>O que foi feito</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#132</td>
+<td><code>Dominio/</code> em três pastas: <code>Entidades/</code>, <code>ObjetosDeValor/</code> (quando houver) e <code>Enumeracoes/</code>; testes espelhados; <code>CLAUDE.md</code> e docs atualizados</td>
+</tr>
+<tr>
+<td>#133</td>
+<td>R2: <code>PercentualDesconto</code> (objeto de valor), <code>PercentualDeDesconto</code> e <code>AvaliarAutorizacao(teto)</code> no <code>ItemPedido</code>, <code>AvaliarAutorizacao(teto)</code> no <code>Pedido</code>, enum <code>AutorizacaoDeDesconto</code></td>
+</tr>
+<tr>
+<td>#134</td>
+<td>Convenção de testes: o <code>// Arrange</code> pode ser omitido quando não há preparação</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Como a R2 ficou (decisões do aluno):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Pergunta</th>
+<th>Decisão</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>O desconto é avaliado onde?</td>
+<td><strong>Por item</strong> (o pedido pergunta a cada item)</td>
+</tr>
+<tr>
+<td>De onde vem o teto?</td>
+<td><strong>Parâmetro</strong> por enquanto; a fonte (tabela de papéis) vem com o módulo de papéis, no M3</td>
+</tr>
+<tr>
+<td>O teto depende de quê?</td>
+<td>Só do <strong>papel</strong> (a margem do produto fica fora)</td>
+</tr>
+<tr>
+<td>Resultados possíveis</td>
+<td>Dois: <code>Autorizado</code> e <code>PrecisaDeAprovacao</code></td>
+</tr>
+<tr>
+<td>Igual ao teto?</td>
+<td>Passa (comparação &quot;menor ou igual&quot;)</td>
+</tr>
+<tr>
+<td>Percentual</td>
+<td>Arredondado a <strong>2 casas, meio ponto para cima</strong>; a regra compara o valor arredondado</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-mapa-dos-níveis">2. Mapa dos níveis</h2>
+<ul>
+<li><strong>Camada:</strong> domínio do módulo <code>Pedidos</code> (<code>Norte.Pedidos/Dominio/</code>).</li>
+<li><strong>M2, primeiros conceitos:</strong> entidade × objeto de valor, invariante, método na entidade × serviço de domínio. Agregado ainda sem formalização (o <code>Pedido</code> com seus itens já se comporta como um).</li>
+<li><strong>Guia:</strong> <a href="../parte-8.html#818-objeto-de-valor-propriedade-calculada-e-a-regra-de-alçada-de-desconto-s48">8.18</a>.</li>
+</ul>
+<h2 id="3-conceitos-de-para">3. Conceitos (de-para)</h2>
+<table>
+<thead>
+<tr>
+<th>Antes</th>
+<th>Depois</th>
+<th>Por quê</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>decimal</code> solto para o teto e para o percentual</td>
+<td><code>PercentualDesconto</code>: <code>internal sealed record</code>, só nasce com 0 a 100</td>
+<td>O compilador não deixa passar R$ 20 no lugar de 10%; o 150% nem chega a existir</td>
+</tr>
+<tr>
+<td>Todo tipo de <code>Dominio/</code> na mesma pasta</td>
+<td><code>Entidades/</code>, <code>ObjetosDeValor/</code>, <code>Enumeracoes/</code></td>
+<td>Ao bater o olho se sabe o que é cada coisa; o nome do arquivo não precisa mais carregar o &quot;tipo&quot;</td>
+</tr>
+<tr>
+<td>Percentual guardado no construtor</td>
+<td>Propriedade <strong>calculada</strong> (<code>=&gt;</code>) a partir de <code>ValorDesconto</code>, <code>PrecoUnitario</code> e <code>Quantidade</code></td>
+<td>Uma só fonte da verdade; não fica desatualizado se um campo mudar</td>
+</tr>
+<tr>
+<td><code>Math.Round(x, 2)</code></td>
+<td><code>Math.Round(x, 2, MidpointRounding.AwayFromZero)</code></td>
+<td>O padrão do .NET arredonda para o par (10,005 → 10,00); a regra do aluno é &quot;meio ponto sobe&quot; (10,005 → 10,01)</td>
+</tr>
+<tr>
+<td>Pedido recalculava a regra de cada item</td>
+<td>Pedido pergunta ao item e usa <code>Any</code></td>
+<td>A regra mora num lugar só, o <code>ItemPedido</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Invariante (com as palavras do aluno):</strong> regra de negócio que mora no domínio, normalmente numa entidade, no construtor ou nos métodos. <strong>&quot;O cliente existe&quot; não é invariante do <code>Pedido</code>:</strong> depende de dado de outro módulo e vem por consulta do contrato (ADR-012).</p>
+<p><strong>Método na entidade × serviço de domínio:</strong> se a regra usa só dados do próprio objeto (mais o que chega por parâmetro), é método. Se precisasse de outro agregado ou módulo, seria serviço de domínio. A R2 usa só o item (e o teto, recebido pronto): método.</p>
+<p><strong>Propriedade calculada × guardada:</strong> pergunta-chave: dá para refazer o valor só com os outros dados do mesmo objeto? Se sim, calcule. <code>ValorDesconto</code> e <code>PrecoUnitario</code> são guardados porque são decisões (desconto concedido, preço na hora do pedido).</p>
+<h2 id="4-termos">4. Termos</h2>
+<ul>
+<li><strong>Entidade:</strong> objeto com identidade e estado que muda (<code>Pedido</code>, <code>ItemPedido</code>).</li>
+<li><strong>Objeto de valor:</strong> objeto sem identidade, igual a outro com o mesmo valor, que só nasce válido (<code>PercentualDesconto</code>).</li>
+<li><strong>Invariante:</strong> regra que o objeto precisa cumprir sempre.</li>
+<li><strong>Propriedade calculada:</strong> propriedade só de leitura com <code>=&gt;</code>, sem campo por trás; a conta roda a cada leitura.</li>
+<li><strong>Arredondamento bancário:</strong> o padrão do .NET; o meio ponto vai para o par mais próximo.</li>
+<li><strong>Sobrecarga de operador / <code>IComparable&lt;T&gt;</code>:</strong> como um tipo ensina o C# a usar <code>&gt;</code> e <code>&lt;</code> (no Dart é o <code>operator</code>). Mostrado, <strong>não adotado</strong>.</li>
+<li><strong><code>#region</code>:</strong> bloco que o Visual Studio recolhe; <code>Ctrl+M, Ctrl+M</code> recolhe e expande; <code>Ctrl+K, Ctrl+C</code> comenta e <code>Ctrl+K, Ctrl+U</code> descomenta.</li>
+<li><strong><code>--filter</code> do <code>dotnet test</code>:</strong> <code>&quot;Name~parte1|Name~parte2&quot;</code>; a vírgula não separa filtros.</li>
+</ul>
+<h2 id="5-dúvidas-que-apareceram">5. Dúvidas que apareceram</h2>
+<ul>
+<li><em>O desconto é valor ou percentual?</em> Os dois, em lugares diferentes: <code>ValorDesconto</code> (R$) é o que o pedido guarda; o percentual é calculado e é o que a regra compara com o teto.</li>
+<li><em>O objeto de valor é usado no percentual?</em> Ele <strong>é</strong> o percentual: resultado do item e entrada (teto).</li>
+<li><em>Como sei quando algo é calculado?</em> A pergunta da Seção 3.</li>
+<li><em>E se um relatório precisar do percentual?</em> Opções: refazer a conta na consulta, coluna calculada no banco, ou guardar o valor. Para conta simples, refazer; para decisão que precisa ser auditada (o resultado da autorização), guardar. Relatório complexo tem modelo de leitura próprio.</li>
+<li><em>Dá para fazer <code>&gt;</code> entre dois objetos de valor?</em> Dá (<code>IComparable</code> e operadores), mas são seis membros num tipo de um campo; o aluno comparou <code>.Percentual</code>.</li>
+<li><em>Existe padrão de pastas na VSA?</em> A Vertical Slice não é especificação formal; existem as duas famílias (por tipo e por agregado). O aluno escolheu por tipo dentro de <code>Dominio/</code>.</li>
+</ul>
+<h2 id="6-divergências-e-decisões">6. Divergências e decisões</h2>
+<ul>
+<li><strong>Faixa do percentual 0 a 40 (aluno) × 0 a 100 (mentor):</strong> o mentor objetou (o 0 precisa valer; um item pode passar de 40; a R2 já tem o caminho &quot;precisa de aprovação&quot;). Ficou 0 a 100; a pergunta de negócio &quot;existe desconto máximo absoluto, sem aprovação possível?&quot; <strong>fica em aberto</strong>.</li>
+<li><strong>Arredondar antes de comparar (aluno) × comparar exato (mentor):</strong> o aluno argumentou pelo operador (a tela mostra o arredondado; 0,005 é &quot;praticamente zero&quot;) e convenceu; vale arredondado, e a tolerância é regra escrita.</li>
+<li><strong>Namespace:</strong> o mentor abriu uma exceção na reorganização (manteve <code>Norte.Pedidos.Dominio</code> nas pastas novas), contra a regra do <code>CLAUDE.md</code> (&quot;namespace acompanha a pasta&quot;). O aluno apontou o custo. <strong>Código novo</strong> acompanha a pasta; <strong>o resto</strong> vira PR próprio (plano, com IDE0130 no build).</li>
+<li><strong>Enums em pasta própria:</strong> o aluno achou o caso igual ao dos objetos de valor; ficou <code>Enumeracoes/</code>.</li>
+<li><strong>Arrange:</strong> o aluno questionou o comentário obrigatório; a convenção passou a aceitar omissão sem preparação (PR #134).</li>
+<li><strong>Objeto de valor para dinheiro:</strong> o aluno achou preciosismo para as entidades de hoje; não foi feito.</li>
+<li><strong>Itens do mesmo SKU:</strong> o mentor achou que juntar ficando com o desconto do último distorce o percentual (dois itens de 20% viram um de 10%). <strong>Em aberto</strong>, para decidir antes de fechar a R2.</li>
+</ul>
+<h2 id="7-avaliação-da-sessão">7. Avaliação da sessão</h2>
+<p><strong>O que o aluno fez bem:</strong> definiu invariante com as próprias palavras e separou invariante de consulta entre módulos; decidiu o modelo da R2 com argumento (teto como configuração, desconto por item, volume e queima de estoque como razões); defendeu as pastas por tipo e os enums à parte; defendeu o arredondamento pelo ponto de vista do operador; escreveu sozinho o objeto de valor, os testes dele, a propriedade calculada, o <code>AvaliarAutorizacao</code> e o enum; pediu o experimento <code>&gt;=</code> e viu o teste ficar vermelho no limite.</p>
+<p><strong>Onde travou:</strong> o teste do percentual do item (quatro ideias de uma vez: <code>Theory</code> com quatro parâmetros, decimais, propriedade ainda inexistente, arredondamento): &quot;Fico muito frustrado de não conseguir criar esse teste&quot;; o mentor escreveu esse teste e o do pedido a pedido dele. Nomes (<code>valor</code>, <code>desconto</code> e <code>percentual</code> se confundindo), o namespace da pasta e a sintaxe do <code>--filter</code>.</p>
+<p><strong>O que o mentor conduziu mal:</strong> régua alta numa resposta certa sobre invariante (🟡 revisto para ✅); perguntas de avaliação em assunto novo, uma delas composta; aceitou uma fala sem analisar; objetivo superespecificado; mandou ler documento em vez de mostrar; exceção de namespace aberta sem avisar; instrução ambígua que levou o <code>desconto</code> para a classe; especificação do teste do percentual grande demais; contagem de casos errada num texto de PR.</p>
+<h2 id="8-pontos-a-melhorar">8. Pontos a melhorar</h2>
+<ol>
+<li><strong>Aluno:</strong> quando o teste tiver mais de uma ideia nova, pedir o passo menor primeiro (o mentor também deve oferecer).</li>
+<li><strong>Aluno:</strong> dar a cada coisa o nome do que ela é (<code>percentual</code> é número 0 a 100; <code>ValorDesconto</code> é dinheiro).</li>
+<li><strong>Mentor:</strong> conferir a regra escrita antes de reorganizar e dizer qualquer exceção.</li>
+<li><strong>Mentor:</strong> mostrar o conteúdo em vez de mandar ler; um passo por mensagem em conceito novo.</li>
+<li><strong>Mentor:</strong> pergunta de avaliação só em assunto já exercitado.</li>
+</ol>
+<h2 id="9-perguntas-de-recuperação">9. Perguntas de recuperação</h2>
+<ol>
+<li>O que é uma invariante e por que &quot;o cliente existe&quot; não é invariante do <code>Pedido</code>?</li>
+</ol>
+<details><summary>Resposta</summary>Regra que o objeto precisa cumprir sempre, no construtor ou nos métodos da entidade. "O cliente existe" depende de dado de outro módulo; vem por consulta do contrato.</details>
+<ol start="2">
+<li>Por que <code>PercentualDesconto</code> é objeto de valor e <code>ItemPedido</code> é entidade?</li>
+</ol>
+<details><summary>Resposta</summary>O percentual não tem identidade: 10% é igual a outro 10%, e só nasce com 0 a 100. O item tem identidade e estado.</details>
+<ol start="3">
+<li>Quando algo é propriedade calculada e quando é guardado?</li>
+</ol>
+<details><summary>Resposta</summary>Se dá para refazer só com outros dados do mesmo objeto, calcule. Se foi dado ou decidido (o desconto concedido, o preço na hora do pedido), guarde.</details>
+<ol start="4">
+<li>Por que o <code>Math.Round</code> precisa de <code>MidpointRounding.AwayFromZero</code> na regra da alçada?</li>
+</ol>
+<details><summary>Resposta</summary>O padrão do .NET arredonda o meio ponto para o par (10,005 vira 10,00). A regra é "meio ponto sobe" (10,01), e a decisão compara o valor que a tela mostra.</details>
+<ol start="5">
+<li>Por que o <code>AvaliarAutorizacao</code> do <code>Pedido</code> não recalcula nada?</li>
+</ol>
+<details><summary>Resposta</summary>Pergunta a cada item (`Any`); a regra e o limite inclusivo ficam só no `ItemPedido`.</details>
+<ol start="6">
+<li>Por que o teste do desconto igual ao teto existe, e o que o experimento do <code>&gt;=</code> mostrou?</li>
+</ol>
+<details><summary>Resposta</summary>Protege o limite inclusivo. Trocando `>` por `>=`, o caso de desconto 10 ficou vermelho (esperado `Autorizado`, veio `PrecisaDeAprovacao`).</details>
+<h2 id="10-preparação-para-o-próximo-chat">10. Preparação para o próximo chat</h2>
+<ul>
+<li>Estado: <code>main</code> em <code>5fa902c</code>, três PRs mesclados, nenhum PR aberto; R2 no domínio (item e pedido), sem teto por papel (parâmetro) e sem endpoint.</li>
+<li><strong>Plano para a S49 (o aluno escolhe):</strong> (a) PR do namespace acompanhando a pasta no <code>Dominio/</code> com IDE0130 no build; (b) decidir o que fazer com o desconto ao juntar itens do mesmo SKU; (c) seguir o M2 (agregado e raiz, serviço de domínio).</li>
+<li>Pergunta de negócio aberta: existe desconto máximo absoluto, sem aprovação possível?</li>
+</ul>
+
+</article>
+<footer class="rodape">Atualizado em 19/11/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

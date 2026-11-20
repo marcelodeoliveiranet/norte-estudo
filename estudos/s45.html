@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ESTUDO S45 — System design e documentação do Norte · Norte · Estudo</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/codigo.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="../assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+</head>
+<body data-chave="estudos/s45.html" data-prefixo="../">
+<header class="topo">
+  <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
+  <a class="marca" href="../index.html">Norte · Estudo</a>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a><a href="../mapa-mental.html">Mapa mental</a></nav>
+  <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
+  <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
+</header>
+<div class="layout">
+<aside class="indice" id="indice"><div class="indice-titulo">Nesta página</div><a class="n1" href="#estudo-s45--system-design-e-documentação-do-norte" data-id="estudo-s45--system-design-e-documentação-do-norte">ESTUDO S45 — System design e documentação do Norte</a><a class="n2" href="#1-objetivo-e-resultado" data-id="1-objetivo-e-resultado">1. Objetivo e resultado</a><a class="n2" href="#2-mapa-dos-níveis" data-id="2-mapa-dos-níveis">2. Mapa dos níveis</a><a class="n2" href="#3-conceitos-de-para" data-id="3-conceitos-de-para">3. Conceitos (de-para)</a><a class="n2" href="#4-termos" data-id="4-termos">4. Termos</a><a class="n2" href="#5-dúvidas-que-apareceram" data-id="5-dúvidas-que-apareceram">5. Dúvidas que apareceram</a><a class="n2" href="#6-divergências-e-decisões" data-id="6-divergências-e-decisões">6. Divergências e decisões</a><a class="n2" href="#7-avaliação-da-sessão" data-id="7-avaliação-da-sessão">7. Avaliação da sessão</a><a class="n2" href="#8-pontos-a-melhorar" data-id="8-pontos-a-melhorar">8. Pontos a melhorar</a><a class="n2" href="#9-perguntas-de-recuperação" data-id="9-perguntas-de-recuperação">9. Perguntas de recuperação</a><a class="n2" href="#10-preparação-para-o-próximo-chat" data-id="10-preparação-para-o-próximo-chat">10. Preparação para o próximo chat</a></aside>
+<main class="conteudo"><article>
+<h1 id="estudo-s45--system-design-e-documentação-do-norte">ESTUDO S45 — System design e documentação do Norte</h1>
+<blockquote>
+<p>Material de estudo da sessão S45 (13/11/2026). Tempo líquido de estudo: <strong>3h02</strong> (09:28 a 12:30, sem pausas registradas).</p>
+</blockquote>
+<h2 id="1-objetivo-e-resultado">1. Objetivo e resultado</h2>
+<p><strong>Objetivo:</strong> dedicar o dia ao desenho do sistema (<em>system design</em>) e deixar o repositório <code>norte</code> documentado: arquitetura, decisões, README e o <code>CLAUDE.md</code> em dia.</p>
+<p><strong>Resultado:</strong> PRs #124 a #130 mesclados, CI verde, <strong>309 testes</strong>. <code>main</code> em <code>4d401a7</code>. O código mudou em um único ponto (um aviso do analisador) e o SDK do .NET passou a ser fixo.</p>
+<table>
+<thead>
+<tr>
+<th>PR</th>
+<th>O que entrou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#124</td>
+<td><code>docs/arquitetura/</code>: visão geral, módulos e fronteiras, dados, fluxos, arquitetura-alvo (todos com diagramas Mermaid)</td>
+</tr>
+<tr>
+<td>#125</td>
+<td>Correção do aviso <code>CA1860</code> em <code>Pedido.cs</code> e <code>global.json</code> fixando o SDK em 10.0.404 (o CI lê esse arquivo)</td>
+</tr>
+<tr>
+<td>#126</td>
+<td><code>docs/adr/README.md</code> (índice das ADRs) e <code>docs/arquitetura/qualidade-e-testes.md</code></td>
+</tr>
+<tr>
+<td>#127</td>
+<td><code>CLAUDE.md</code>, seções 2 e 3</td>
+</tr>
+<tr>
+<td>#128</td>
+<td><code>README.md</code> da raiz</td>
+</tr>
+<tr>
+<td>#129</td>
+<td><code>CLAUDE.md</code> seções 4, 5.1 e cabeçalho; ADR-017 (SDK fixo); URL do Scalar no README</td>
+</tr>
+<tr>
+<td>#130</td>
+<td><code>CLAUDE.md</code> seções 8 e 9 (desvios a apontar; Git sem autoria)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Decisões de escopo do dia (arquitetura-alvo):</strong></p>
+<ul>
+<li><strong>CNAB não será feito</strong> (cada banco exige os seus documentos).</li>
+<li><strong>Pagamento à vista</strong> passa pelo Stripe em modo de teste, com dados falsos (cartão, Pix e boleto). <strong>Pagamento a prazo/parcelado</strong> é só registro: o <code>Financeiro</code> grava N títulos no banco do Norte, sem cobrança por PSP.</li>
+<li><strong>Fora de escopo:</strong> juros, multa, renegociação.</li>
+<li><strong>Cliente web mínimo de demonstração</strong>, feito com ajuda de IA (Blazor ou React, decidido no M4), começando pela página pronta do Stripe (Checkout). Isso <strong>reverte</strong> o &quot;sem frontend&quot; que valia até hoje.</li>
+<li><strong>Sem licença</strong> no repositório (decisão do aluno).</li>
+</ul>
+<h2 id="2-mapa-dos-níveis">2. Mapa dos níveis</h2>
+<p>Nível de <strong>arquitetura</strong>: como as partes se encaixam e por quê. Entra no guia como leitura de apoio; o código do dia foi só uma linha. As ADRs 010 a 016 e a 017 (nova) são o registro das decisões.</p>
+<h2 id="3-conceitos-de-para">3. Conceitos (de-para)</h2>
+<table>
+<thead>
+<tr>
+<th>Prática antiga</th>
+<th>Prática de agora</th>
+<th>No Norte</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Documento de arquitetura num wiki ou Word, que envelhece fora do código</td>
+<td>Documentos em Markdown no repositório, com diagrama Mermaid, revisados por PR como o código</td>
+<td><code>docs/arquitetura/</code> e <code>docs/adr/</code></td>
+</tr>
+<tr>
+<td>&quot;Existe&quot; e &quot;está planejado&quot; misturados no mesmo texto</td>
+<td>Cada documento separa o que <strong>existe hoje</strong> do que é <strong>plano</strong></td>
+<td>tabela &quot;existe × planejado&quot; no README e a <code>arquitetura-alvo.md</code></td>
+</tr>
+<tr>
+<td>SDK do .NET &quot;o mais novo disponível&quot; em cada máquina</td>
+<td>Versão <strong>fixada</strong> em <code>global.json</code>, lida pelo CI</td>
+<td><code>global.json</code> com <code>rollForward: disable</code> (ADR-017)</td>
+</tr>
+<tr>
+<td>Regra de analisador muda sozinha quando o SDK muda</td>
+<td>Com o SDK fixo, regra nova só entra num PR de atualização</td>
+<td><code>AnalysisLevel latest</code> + SDK fixo</td>
+</tr>
+<tr>
+<td>Cobrança tratada como um campo do pedido</td>
+<td>Separar o <strong>meio</strong> (cartão, Pix, boleto: <code>Pagamentos</code>) da <strong>condição</strong> (à vista = 1 título, parcelado = N títulos: <code>Financeiro</code>)</td>
+<td><code>arquitetura-alvo.md</code>, diagramas de pagamentos</td>
+</tr>
+<tr>
+<td>Confiar na resposta do PSP</td>
+<td>A confirmação vem por <strong>webhook</strong>, que pode repetir, atrasar e chegar fora de ordem</td>
+<td>Inbox e idempotência previstas para o M4</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O que muda no código:</strong> só <code>Pedido.cs</code> (<code>if (itens.Count == 0)</code> no lugar de <code>Any()</code>), <code>global.json</code> novo e <code>ci.yml</code> lendo o <code>global.json</code>.</p>
+<h2 id="4-termos">4. Termos</h2>
+<ul>
+<li><strong>System design:</strong> desenhar as partes do sistema e como conversam, antes de escrever código.</li>
+<li><strong>Meio × condição de pagamento:</strong> o <em>meio</em> é como o dinheiro anda (cartão, Pix, boleto); a <em>condição</em> é quando e em quantas parcelas se deve (à vista, parcelado).</li>
+<li><strong>PSP (provedor de pagamento):</strong> empresa que cobra por você (aqui, o Stripe).</li>
+<li><strong>Webhook:</strong> o PSP chama a sua API para avisar que algo aconteceu. Pode chamar duas vezes, tarde ou fora de ordem.</li>
+<li><strong>Pinar (fixar) o SDK:</strong> escrever a versão exata no <code>global.json</code>, para a sua máquina e o CI usarem a mesma.</li>
+<li><strong><code>rollForward: disable</code>:</strong> o <code>dotnet</code> recusa qualquer versão diferente da escrita.</li>
+</ul>
+<h2 id="5-dúvidas-que-apareceram">5. Dúvidas que apareceram</h2>
+<ul>
+<li><strong>Por que o CI falhou com <code>CA1860</code> se <code>main</code> estava verde?</strong> O CI usava o SDK 10.0.404 (<code>10.0.x</code> flutuante) e a máquina local o 10.0.403. A hipótese inicial do mentor (branch atrasada em relação à <code>main</code>) estava errada. <strong>A causa exata da regra não foi provada:</strong> o build local com o 10.0.404 não reproduziu o aviso. O que está provado é que as duas pontas usavam versões diferentes.</li>
+<li><strong>Boleto e Pix funcionam na página pronta do Stripe?</strong> Sim, na documentação consultada hoje: o boleto abre uma página com o voucher e o Pix mostra as instruções; em modo de teste há &quot;Simulate scan&quot;. <strong>Não verificado:</strong> carteiras (Google Pay, Apple Pay) em modo de teste e biblioteca oficial para Blazor.</li>
+</ul>
+<h2 id="6-divergências-e-decisões">6. Divergências e decisões</h2>
+<ul>
+<li>O aluno manteve a regra &quot;só se escreve o que tem valor&quot;: CNAB, licença e o ADR do Stripe (Checkout × Elements) ficaram <strong>fora ou para depois</strong>.</li>
+<li>Decisão de <strong>fixar o SDK</strong> (ADR-017): o aluno propôs; o mentor concordou e registrou o preço (atualizar vira tarefa manual).</li>
+<li>O aluno corrigiu duas vezes a forma de entregar PR: título e corpo em blocos separados; e o comando com <code>gh pr create --web</code>.</li>
+</ul>
+<h2 id="7-avaliação-da-sessão">7. Avaliação da sessão</h2>
+<p>Objetivo cumprido: o <code>norte</code> tem arquitetura documentada, índice de decisões, README e <code>CLAUDE.md</code> coerentes com o código, e o build ficou reproduzível. Não foi uma sessão de código novo; nenhum exercício solo foi pedido.</p>
+<h2 id="8-pontos-a-melhorar">8. Pontos a melhorar</h2>
+<ul>
+<li>Diagnóstico do CI com hipótese afirmada antes de ver o log (a da branch atrasada).</li>
+<li>Texto de PR entregue em formato errado (duas vezes) antes de acertar.</li>
+<li><code>git merge</code> abriu o editor e travou o terminal; faltou avisar do <code>--no-edit</code>.</li>
+<li>Instabilidade da ponte pela manhã atrasou os arquivos; o mentor contornou usando o Claude local.</li>
+<li>A causa do <code>CA1860</code> ficou sem prova; está dito no ADR-017 e no PR.</li>
+</ul>
+<h2 id="9-perguntas-de-recuperação">9. Perguntas de recuperação</h2>
+<ol>
+<li><strong>Por que o CI falhou com <code>CA1860</code> e a <code>main</code> estava verde?</strong> Porque CI e máquina local usavam SDKs diferentes (10.0.404 e 10.0.403). A causa exata da regra não foi provada.</li>
+<li><strong>O que faz <code>rollForward: disable</code> no <code>global.json</code>?</strong> O <code>dotnet</code> recusa qualquer SDK que não seja exatamente o escrito. Com <code>AnalysisLevel latest</code>, isso impede regra nova de entrar sem PR.</li>
+<li><strong>Qual a diferença entre meio e condição de pagamento, e onde cada um mora?</strong> Meio (cartão, Pix, boleto) em <code>Pagamentos</code>, via PSP. Condição (à vista = 1 título, parcelado = N títulos) em <code>Financeiro</code>.</li>
+<li><strong>Por que a confirmação do Stripe vem por webhook e o que isso exige da API?</strong> O PSP avisa depois; a mensagem pode repetir, atrasar ou chegar fora de ordem. A API precisa ser idempotente (Inbox).</li>
+<li><strong>O que a regra &quot;mais de 5 módulos no fim do M3&quot; quer dizer?</strong> Se passar de cinco, algo foi criado cedo demais.</li>
+<li><strong>O que o README separa que antes ficava misturado?</strong> O que <strong>existe hoje</strong> do que é <strong>planejado</strong>.</li>
+</ol>
+<h2 id="10-preparação-para-o-próximo-chat">10. Preparação para o próximo chat</h2>
+<ul>
+<li>Próximo passo: roteiro final do M1 (análise de marco, checkpoint, prova de transferência, revisão de mercado, spikes de leitura, documento de consulta). Ver <code>LAB-STATE.md</code>.</li>
+<li>Fora do chat: nada pendente do aluno. O repositório privado do <code>norte-lab</code> e a limpeza de <code>site-gerador/</code> (<code>zi6Pk9aE</code>, <code>_to_delete/</code>) seguem como lembretes.</li>
+</ul>
+
+</article>
+<footer class="rodape">Atualizado em 19/11/2026. Material de estudo do laboratório Norte.</footer>
+</main>
+</div>
+<script src="../assets/search-index.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

@@ -14,7 +14,7 @@
 <header class="topo">
   <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
   <a class="marca" href="../index.html">Norte · Estudo</a>
-  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a><a href="../mapa-mental.html">Mapa mental</a></nav>
   <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
   <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
 </header>
@@ -116,8 +116,8 @@
 </tbody>
 </table>
 <p>Como entra no <code>.editorconfig</code>:</p>
-<pre class="highlight"><code><span class="na">dotnet_diagnostic.IDE0059.severity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">warning</span><span class="w"></span>
-<span class="na">dotnet_diagnostic.IDE0051.severity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">warning</span><span class="w"></span>
+<pre class="highlight"><code><span class="na">dotnet_diagnostic.IDE0059.severity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">warning</span>
+<span class="na">dotnet_diagnostic.IDE0051.severity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">warning</span>
 </code></pre>
 
 <p>Por que <code>warning</code> já quebra o build: o Norte tem <code>EnforceCodeStyleInBuild</code> (as regras de estilo rodam no <code>dotnet build</code>) e <code>TreatWarningsAsErrors</code> (todo aviso vira erro; ADR-004). Foi provado com uma sobra proposital de cada tipo: o build parou; com a sobra removida, voltou ao verde.</p>
@@ -149,12 +149,12 @@
 </table>
 <h3 id="32-interface-começa-com-i">3.2 Interface começa com <code>I</code></h3>
 <p>Mais uma regra do <code>.editorconfig</code>, agora de <strong>nome</strong>:</p>
-<pre class="highlight"><code><span class="na">dotnet_naming_rule.interfaces_comecam_com_i.symbols</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">interfaces</span><span class="w"></span>
-<span class="na">dotnet_naming_rule.interfaces_comecam_com_i.style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">prefixo_i</span><span class="w"></span>
-<span class="na">dotnet_naming_rule.interfaces_comecam_com_i.severity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">warning</span><span class="w"></span>
-<span class="na">dotnet_naming_symbols.interfaces.applicable_kinds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">interface</span><span class="w"></span>
-<span class="na">dotnet_naming_style.prefixo_i.required_prefix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">I</span><span class="w"></span>
-<span class="na">dotnet_naming_style.prefixo_i.capitalization</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">pascal_case</span><span class="w"></span>
+<pre class="highlight"><code><span class="na">dotnet_naming_rule.interfaces_comecam_com_i.symbols</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">interfaces</span>
+<span class="na">dotnet_naming_rule.interfaces_comecam_com_i.style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">prefixo_i</span>
+<span class="na">dotnet_naming_rule.interfaces_comecam_com_i.severity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">warning</span>
+<span class="na">dotnet_naming_symbols.interfaces.applicable_kinds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">interface</span>
+<span class="na">dotnet_naming_style.prefixo_i.required_prefix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">I</span>
+<span class="na">dotnet_naming_style.prefixo_i.capitalization</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">pascal_case</span>
 </code></pre>
 
 <table>
@@ -184,11 +184,11 @@
 <p>A ADR-008 (21/10) tinha escolhido: o domínio converte <strong>e</strong> o banco recusa minúsculas (<code>CHECK</code>). Hoje você reduziu o escopo para focar em programação: <strong>sem mexer no banco</strong>. A ADR-009 registra isso e marca a ADR-008 como &quot;superada em parte&quot; (ela não é apagada).</p>
 <p>Onde a conversão acontece:</p>
 <pre class="highlight"><code><span class="c1">// FichaProduto e ItemPedido: depois das validações</span>
-<span class="n">Sku</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sku</span><span class="p">.</span><span class="n">ToUpperInvariant</span><span class="p">();</span><span class="w"></span>
+<span class="n">Sku</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sku</span><span class="p">.</span><span class="n">ToUpperInvariant</span><span class="p">();</span>
 </code></pre>
 
 <pre class="highlight"><code><span class="c1">// FichaProdutoRepository: primeira linha de cada método que busca por SKU</span>
-<span class="n">sku</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sku</span><span class="p">.</span><span class="n">ToUpperInvariant</span><span class="p">();</span><span class="w"></span>
+<span class="n">sku</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sku</span><span class="p">.</span><span class="n">ToUpperInvariant</span><span class="p">();</span>
 <span class="c1">// ...só depois vem a consulta</span>
 </code></pre>
 
@@ -492,7 +492,7 @@
 </ol>
 </details>
 </article>
-<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 19/11/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="../assets/search-index.js"></script>

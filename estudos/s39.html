@@ -14,7 +14,7 @@
 <header class="topo">
   <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
   <a class="marca" href="../index.html">Norte · Estudo</a>
-  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a><a href="../mapa-mental.html">Mapa mental</a></nav>
   <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
   <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
 </header>
@@ -148,21 +148,21 @@
 <hr />
 <h2 id="4-o-elk-enxuto-o-que-foi-montado-e-o-que-ficou-de-fora">4. O ELK enxuto: o que foi montado e o que ficou de fora</h2>
 <p><strong>Montado (✅):</strong> Elasticsearch + Kibana + um coletor (<code>otel-collector-contrib</code>) com receptor OTLP e exportador <code>elasticsearch</code>. O coletor é quem traduz OTLP em documentos do Elasticsearch. Arquivo: <code>infra/elk/otel-collector.yaml</code>.</p>
-<pre class="highlight"><code><span class="nt">receivers</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">otlp</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">protocols</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">grpc</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> endpoint</span><span class="p">:</span><span class="w"> </span><span class="nv">0.0.0.0</span><span class="p p-Indicator">:</span><span class="nv">4317</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"></span>
-<span class="w">      </span><span class="nt">http</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> endpoint</span><span class="p">:</span><span class="w"> </span><span class="nv">0.0.0.0</span><span class="p p-Indicator">:</span><span class="nv">4318</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"></span>
-<span class="nt">processors</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">batch</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"></span>
-<span class="nt">exporters</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">elasticsearch</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://elasticsearch:9200</span><span class="w"></span>
-<span class="nt">service</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">pipelines</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">traces</span><span class="p">:</span><span class="w">  </span><span class="p p-Indicator">{</span><span class="nt"> receivers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">otlp</span><span class="p p-Indicator">],</span><span class="nt"> processors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">batch</span><span class="p p-Indicator">],</span><span class="nt"> exporters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">elasticsearch</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"></span>
-<span class="w">    </span><span class="nt">metrics</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> receivers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">otlp</span><span class="p p-Indicator">],</span><span class="nt"> processors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">batch</span><span class="p p-Indicator">],</span><span class="nt"> exporters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">elasticsearch</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"></span>
-<span class="w">    </span><span class="nt">logs</span><span class="p">:</span><span class="w">    </span><span class="p p-Indicator">{</span><span class="nt"> receivers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">otlp</span><span class="p p-Indicator">],</span><span class="nt"> processors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">batch</span><span class="p p-Indicator">],</span><span class="nt"> exporters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">elasticsearch</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"></span>
+<pre class="highlight"><code><span class="nt">receivers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">otlp</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">protocols</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">grpc</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> endpoint</span><span class="p">:</span><span class="w"> </span><span class="nv">0.0.0.0</span><span class="p p-Indicator">:</span><span class="nv">4317</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="w">      </span><span class="nt">http</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> endpoint</span><span class="p">:</span><span class="w"> </span><span class="nv">0.0.0.0</span><span class="p p-Indicator">:</span><span class="nv">4318</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="nt">processors</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">batch</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="nt">exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">elasticsearch</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://elasticsearch:9200</span>
+<span class="nt">service</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">pipelines</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">traces</span><span class="p">:</span><span class="w">  </span><span class="p p-Indicator">{</span><span class="nt"> receivers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">otlp</span><span class="p p-Indicator">],</span><span class="nt"> processors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">batch</span><span class="p p-Indicator">],</span><span class="nt"> exporters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">elasticsearch</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="w">    </span><span class="nt">metrics</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> receivers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">otlp</span><span class="p p-Indicator">],</span><span class="nt"> processors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">batch</span><span class="p p-Indicator">],</span><span class="nt"> exporters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">elasticsearch</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="w">    </span><span class="nt">logs</span><span class="p">:</span><span class="w">    </span><span class="p p-Indicator">{</span><span class="nt"> receivers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">otlp</span><span class="p p-Indicator">],</span><span class="nt"> processors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">batch</span><span class="p p-Indicator">],</span><span class="nt"> exporters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">elasticsearch</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="p p-Indicator">}</span>
 </code></pre>
 
 <p>Leitura em português: o coletor <strong>recebe</strong> OTLP, <strong>agrupa</strong> em lotes e <strong>grava</strong> no Elasticsearch, uma tubulação (<em>pipeline</em>) para cada sinal.</p>
@@ -343,7 +343,7 @@
 </ol>
 
 </article>
-<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 19/11/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="../assets/search-index.js"></script>

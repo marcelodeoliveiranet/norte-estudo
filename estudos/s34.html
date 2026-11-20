@@ -14,7 +14,7 @@
 <header class="topo">
   <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
   <a class="marca" href="../index.html">Norte · Estudo</a>
-  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a><a href="../mapa-mental.html">Mapa mental</a></nav>
   <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
   <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
 </header>
@@ -67,12 +67,12 @@
 <h2 id="3-conceitos">3. Conceitos</h2>
 <h3 id="31-assert-que-confere-os-itens-de-uma-lista-guia-813">3.1 Assert que confere os itens de uma lista (guia <a href="../parte-8.html#813-o-contrato-nos-dois-sentidos-o-sku-que-precisa-existir-e-o-módulo-representantes">8.13</a>)</h3>
 <p>Conferir só que &quot;a lista não está vazia&quot; não prova que os <strong>valores</strong> voltaram. O teste do <code>GET /pedidos/{id}</code> grava N itens, lê o corpo e compara item a item:</p>
-<pre class="highlight"><code><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">Enumerable</span><span class="p">.</span><span class="n">Range</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">quantidadeItensIncluidos</span><span class="p">))</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
+<pre class="highlight"><code><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">Enumerable</span><span class="p">.</span><span class="n">Range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">quantidadeItensIncluidos</span><span class="p">))</span>
+<span class="p">{</span>
 <span class="w">    </span><span class="c1">// o POST usa 10m + i de preço e i como quantidade; o Assert usa as mesmas fórmulas</span>
-<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">sku</span><span class="p">,</span><span class="w"> </span><span class="n">item</span><span class="p">.</span><span class="n">GetProperty</span><span class="p">(</span><span class="s">&quot;sku&quot;</span><span class="p">).</span><span class="n">GetString</span><span class="p">());</span><span class="w"></span>
-<span class="w">    </span><span class="p">...</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="n">Equal</span><span class="p">(</span><span class="n">sku</span><span class="p">,</span><span class="w"> </span><span class="n">item</span><span class="p">.</span><span class="n">GetProperty</span><span class="p">(</span><span class="s">"sku"</span><span class="p">).</span><span class="n">GetString</span><span class="p">());</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="p">}</span>
 </code></pre>
 
 <p>A falha da tarde foi <code>Expected: 1 Actual: 2</code>: o <code>POST</code> mandava <code>Quantidade: 2</code> fixo e o <code>Assert</code> esperava <code>i</code>. <strong>Regra:</strong> a fórmula do Arrange e a do Assert precisam ser a mesma. O 404 usa <code>ProblemDetails</code> tipado e um id que não existe (<code>int.MaxValue</code>).</p>
@@ -107,24 +107,24 @@
 <p>Sem o projeto de contratos, <code>Clientes</code> → <code>Pedidos</code> e <code>Pedidos</code> → <code>Clientes</code> seriam uma referência circular. <strong>Por isso o ADR-012 escolheu um projeto por módulo.</strong> Se há pedidos, o endpoint responde <strong>400</strong> &quot;Existem pedidos para esse cliente&quot; e não exclui.</p>
 <h3 id="33-o-helper-do-teste-devolve-a-fábrica-e-o-using-var-fica-no-teste">3.3 O helper do teste devolve a fábrica (e o <code>using var</code> fica no teste)</h3>
 <p>Para trocar o <code>IConsultaPedidos</code> por um fake, o teste cria uma fábrica derivada:</p>
-<pre class="highlight"><code><span class="k">private</span><span class="w"> </span><span class="n">WebApplicationFactory</span><span class="p">&lt;</span><span class="n">Program</span><span class="p">&gt;</span><span class="w"> </span><span class="n">CriarFabricaComPedidos</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">existemPedidos</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">fabrica</span><span class="p">.</span><span class="n">WithWebHostBuilder</span><span class="p">(</span><span class="n">builder</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"></span>
-<span class="w">        </span><span class="n">builder</span><span class="p">.</span><span class="n">ConfigureServices</span><span class="p">(</span><span class="n">services</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"></span>
-<span class="w">            </span><span class="n">services</span><span class="p">.</span><span class="n">AddScoped</span><span class="p">&lt;</span><span class="n">IConsultaPedidos</span><span class="p">&gt;(</span><span class="n">_</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ConsultaPedidosFake</span><span class="p">(</span><span class="n">existe</span><span class="p">:</span><span class="w"> </span><span class="n">existemPedidos</span><span class="p">))));</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<pre class="highlight"><code><span class="k">private</span><span class="w"> </span><span class="n">WebApplicationFactory</span><span class="o">&lt;</span><span class="n">Program</span><span class="o">&gt;</span><span class="w"> </span><span class="n">CriarFabricaComPedidos</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">existemPedidos</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">fabrica</span><span class="p">.</span><span class="n">WithWebHostBuilder</span><span class="p">(</span><span class="n">builder</span><span class="w"> </span><span class="o">=&gt;</span>
+<span class="w">        </span><span class="n">builder</span><span class="p">.</span><span class="n">ConfigureServices</span><span class="p">(</span><span class="n">services</span><span class="w"> </span><span class="o">=&gt;</span>
+<span class="w">            </span><span class="n">services</span><span class="p">.</span><span class="n">AddScoped</span><span class="o">&lt;</span><span class="n">IConsultaPedidos</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ConsultaPedidosFake</span><span class="p">(</span><span class="n">existe</span><span class="p">:</span><span class="w"> </span><span class="n">existemPedidos</span><span class="p">))));</span>
+<span class="p">}</span>
 </code></pre>
 
-<pre class="highlight"><code><span class="k">using</span><span class="w"> </span><span class="nn">var</span><span class="w"> </span><span class="n">fabricaComPedidos</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">CriarFabricaComPedidos</span><span class="p">(</span><span class="n">existemPedidos</span><span class="p">:</span><span class="w"> </span><span class="k">true</span><span class="p">);</span><span class="w"></span>
-<span class="kt">var</span><span class="w"> </span><span class="n">cliente</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">fabricaComPedidos</span><span class="p">.</span><span class="n">CreateClient</span><span class="p">();</span><span class="w"></span>
+<pre class="highlight"><code><span class="k">using</span><span class="w"> </span><span class="nn">var</span><span class="w"> </span><span class="n">fabricaComPedidos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CriarFabricaComPedidos</span><span class="p">(</span><span class="n">existemPedidos</span><span class="p">:</span><span class="w"> </span><span class="k">true</span><span class="p">);</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">cliente</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fabricaComPedidos</span><span class="p">.</span><span class="n">CreateClient</span><span class="p">();</span>
 </code></pre>
 
 <p><strong>Erro da tarde:</strong> um <code>using var</code> <strong>dentro</strong> do helper descartava a fábrica antes do teste usar o <code>HttpClient</code> (<code>ObjectDisposedException</code>, 3 testes vermelhos). A fábrica derivada precisa viver <strong>até o fim do teste</strong>; quem a descarta é o teste. (O mentor tinha aconselhado o contrário sem verificar.)</p>
 <h3 id="34-regra-c-o-sku-precisa-existir-no-catálogo">3.4 Regra C: o SKU precisa existir no Catálogo</h3>
-<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">interface</span><span class="w"> </span><span class="n">IConsultaCatalogo</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">Task</span><span class="p">&lt;</span><span class="kt">bool</span><span class="p">&gt;</span><span class="w"> </span><span class="n">NaoExisteSkuAsync</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">sku</span><span class="p">,</span><span class="w"> </span><span class="n">CancellationToken</span><span class="w"> </span><span class="n">ct</span><span class="p">);</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">interface</span><span class="w"> </span><span class="n">IConsultaCatalogo</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">Task</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">NaoExisteSkuAsync</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">sku</span><span class="p">,</span><span class="w"> </span><span class="n">CancellationToken</span><span class="w"> </span><span class="n">ct</span><span class="p">);</span>
+<span class="p">}</span>
 </code></pre>
 
 <p>Dois pontos de desenho:</p>
@@ -369,7 +369,7 @@
 </ol>
 </details>
 </article>
-<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 19/11/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="../assets/search-index.js"></script>

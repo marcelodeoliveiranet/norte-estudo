@@ -14,7 +14,7 @@
 <header class="topo">
   <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
   <a class="marca" href="../index.html">Norte · Estudo</a>
-  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a><a href="../mapa-mental.html">Mapa mental</a></nav>
   <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
   <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
 </header>
@@ -104,12 +104,12 @@
 <p><strong>Por que Warning para os dois tipos.</strong> Os dois significam &quot;alguém tentou algo que o sistema recusou por regra&quot;. Mesma gravidade, mesmo nível (decisão sua).</p>
 <p><strong>Por que o Representantes não loga valores.</strong> CPF e e-mail são dado pessoal (LGPD). Regra: <strong>nunca registrar dado pessoal em log</strong>. O CNPJ é de empresa, e o SKU é do catálogo: podem entrar.</p>
 <h3 id="32-loggermessage-em-vez-de-_loggerlogwarning">3.2 <code>[LoggerMessage]</code> em vez de <code>_logger.LogWarning(...)</code></h3>
-<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">partial</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">ClientesRepository</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
+<pre class="highlight"><code><span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">partial</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">ClientesRepository</span>
+<span class="p">{</span>
 <span class="w">    </span><span class="na">[LoggerMessage(EventId = 1, Level = LogLevel.Warning,</span>
-<span class="na">        Message = &quot;Violação de unicidade ao gravar o CNPJ {Cnpj}: outra requisição gravou o mesmo CNPJ primeiro&quot;)]</span><span class="w"></span>
-<span class="w">    </span><span class="k">private</span><span class="w"> </span><span class="k">partial</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">RegistrarViolacaoDeUnicidade</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">cnpj</span><span class="p">);</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="na">        Message = "Violação de unicidade ao gravar o CNPJ {Cnpj}: outra requisição gravou o mesmo CNPJ primeiro")]</span>
+<span class="w">    </span><span class="k">private</span><span class="w"> </span><span class="k">partial</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">RegistrarViolacaoDeUnicidade</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">cnpj</span><span class="p">);</span>
+<span class="p">}</span>
 </code></pre>
 
 <ul>
@@ -275,7 +275,7 @@
 </ol>
 </details>
 </article>
-<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 19/11/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="../assets/search-index.js"></script>

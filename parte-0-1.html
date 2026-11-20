@@ -14,7 +14,7 @@
 <header class="topo">
   <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
   <a class="marca" href="index.html">Norte · Estudo</a>
-  <nav class="menu"><a href="index.html">Início</a><a href="guia.html" class=ativo>Guia</a><a href="estudos.html">Materiais</a></nav>
+  <nav class="menu"><a href="index.html">Início</a><a href="guia.html" class=ativo>Guia</a><a href="estudos.html">Materiais</a><a href="mapa-mental.html">Mapa mental</a></nav>
   <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
   <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
 </header>
@@ -59,7 +59,7 @@ NÍVEL 2  MÓDULOS           Norte.Api (host)  +  Norte.Catalogo  +  Norte.Pedid
    │                       cada módulo = regras que valem juntas + dados próprios (critério: 1.12)
    │
 NÍVEL 3  FUNCIONALIDADES   dentro de cada módulo: CadastrarFichaProduto/, ConsultarFichaProduto/...
-   │                       (pasta por funcionalidade — o &quot;feature-first&quot; que você usava no Flutter)
+   │                       (pasta por funcionalidade — o "feature-first" que você usava no Flutter)
    │
 NÍVEL 4  CAMADAS           dentro de cada funcionalidade: endpoint → validação → handler →
                            domínio → EF Core → banco
@@ -72,10 +72,10 @@ NÍVEL 4  CAMADAS           dentro de cada funcionalidade: endpoint → validaç
 Norte.Api (host) ── app.MapCatalogo() ligou as rotas do módulo
    │
    ▼
-Norte.Catalogo ── grupo &quot;/catalogo&quot; ── endpoint &quot;/status&quot;
+Norte.Catalogo ── grupo "/catalogo" ── endpoint "/status"
    │
    ▼
-TypedResults.Ok(&quot;Catalogo ativo&quot;)  →  200 OK
+TypedResults.Ok("Catalogo ativo")  →  200 OK
 </code></pre>
 
 <p><strong>Onde estamos agora:</strong> ver o índice (<code>GUIA-DOTNET-MODERNO.md</code>), que é atualizado a cada sessão.</p>
@@ -153,19 +153,19 @@ compila &quot;tudo de uma vez&quot;.</p>
 </table>
 <p>O <code>Norte.slnx</code> real, no fim da S10 (aproximado):</p>
 <pre class="highlight"><code><span class="nt">&lt;Solution&gt;</span>
-  <span class="nt">&lt;Folder</span> <span class="na">Name=</span><span class="s">&quot;/Solution Items/&quot;</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;File</span> <span class="na">Path=</span><span class="s">&quot;CLAUDE.md&quot;</span> <span class="nt">/&gt;</span>
-  <span class="nt">&lt;/Folder&gt;</span>
-  <span class="nt">&lt;Folder</span> <span class="na">Name=</span><span class="s">&quot;/src/&quot;</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;Project</span> <span class="na">Path=</span><span class="s">&quot;src/Norte.Api/Norte.Api.csproj&quot;</span> <span class="nt">/&gt;</span>
-  <span class="nt">&lt;/Folder&gt;</span>
-  <span class="nt">&lt;Folder</span> <span class="na">Name=</span><span class="s">&quot;/src/Modulos/&quot;</span> <span class="nt">/&gt;</span>
-  <span class="nt">&lt;Folder</span> <span class="na">Name=</span><span class="s">&quot;/src/Modulos/Catalogo/&quot;</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;Project</span> <span class="na">Path=</span><span class="s">&quot;src/Modulos/Catalogo/Norte.Catalogo/Norte.Catalogo.csproj&quot;</span> <span class="nt">/&gt;</span>
-  <span class="nt">&lt;/Folder&gt;</span>
-  <span class="nt">&lt;Folder</span> <span class="na">Name=</span><span class="s">&quot;/src/Modulos/Pedidos/&quot;</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;Project</span> <span class="na">Path=</span><span class="s">&quot;src/Modulos/Pedidos/Norte.Pedidos/Norte.Pedidos.csproj&quot;</span> <span class="nt">/&gt;</span>
-  <span class="nt">&lt;/Folder&gt;</span>
+<span class="w">  </span><span class="nt">&lt;Folder</span><span class="w"> </span><span class="na">Name=</span><span class="s">"/Solution Items/"</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;File</span><span class="w"> </span><span class="na">Path=</span><span class="s">"CLAUDE.md"</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/Folder&gt;</span>
+<span class="w">  </span><span class="nt">&lt;Folder</span><span class="w"> </span><span class="na">Name=</span><span class="s">"/src/"</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;Project</span><span class="w"> </span><span class="na">Path=</span><span class="s">"src/Norte.Api/Norte.Api.csproj"</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/Folder&gt;</span>
+<span class="w">  </span><span class="nt">&lt;Folder</span><span class="w"> </span><span class="na">Name=</span><span class="s">"/src/Modulos/"</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;Folder</span><span class="w"> </span><span class="na">Name=</span><span class="s">"/src/Modulos/Catalogo/"</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;Project</span><span class="w"> </span><span class="na">Path=</span><span class="s">"src/Modulos/Catalogo/Norte.Catalogo/Norte.Catalogo.csproj"</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/Folder&gt;</span>
+<span class="w">  </span><span class="nt">&lt;Folder</span><span class="w"> </span><span class="na">Name=</span><span class="s">"/src/Modulos/Pedidos/"</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;Project</span><span class="w"> </span><span class="na">Path=</span><span class="s">"src/Modulos/Pedidos/Norte.Pedidos/Norte.Pedidos.csproj"</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/Folder&gt;</span>
 <span class="nt">&lt;/Solution&gt;</span>
 </code></pre>
 
@@ -229,9 +229,9 @@ folders — mostra sempre o disco —, por isso parece &quot;mais honesto&quot;.
 <code>.sln</code> (<code>dotnet new sln --format sln</code>). Custo do <code>.slnx</code>: ferramentas antigas de terceiros podem
 não reconhecer. VS 2026, VS Code, Rider e SDK 10 reconhecem.</p>
 <p><strong>Como usar (comandos da S9–S10):</strong></p>
-<pre class="highlight"><code>dotnet new sln -n Norte                                   <span class="c1"># cria Norte.slnx</span>
-dotnet sln add src/Norte.Api src/Modulos/Catalogo/Norte.Catalogo
-dotnet sln Norte.slnx remove Norte.Pedido/Norte.Pedido.csproj   <span class="c1"># tira da solution (não apaga)</span>
+<pre class="highlight"><code>dotnet<span class="w"> </span>new<span class="w"> </span>sln<span class="w"> </span>-n<span class="w"> </span>Norte<span class="w">                                   </span><span class="c1"># cria Norte.slnx</span>
+dotnet<span class="w"> </span>sln<span class="w"> </span>add<span class="w"> </span>src/Norte.Api<span class="w"> </span>src/Modulos/Catalogo/Norte.Catalogo
+dotnet<span class="w"> </span>sln<span class="w"> </span>Norte.slnx<span class="w"> </span>remove<span class="w"> </span>Norte.Pedido/Norte.Pedido.csproj<span class="w">   </span><span class="c1"># tira da solution (não apaga)</span>
 </code></pre>
 
 <p><strong>Na entrevista.</strong> Raramente perguntam; se aparecer: &quot;é o novo formato de solution, XML, padrão
@@ -408,7 +408,7 @@ projeto: ele só enxerga o que <code>Norte.Catalogo</code> declarar <code>public
 <span class="k">internal</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">FichaProduto</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span><span class="w">           </span><span class="c1">// detalhe interno: ninguém de fora vê</span>
 
 <span class="c1">// Em Norte.Pedidos</span>
-<span class="kt">var</span><span class="w"> </span><span class="n">ficha</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FichaProduto</span><span class="p">();</span><span class="w">   </span><span class="c1">// erro CS0122: inacessível devido ao nível de proteção</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">ficha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FichaProduto</span><span class="p">();</span><span class="w">   </span><span class="c1">// erro CS0122: inacessível devido ao nível de proteção</span>
 </code></pre>
 
 <p><strong>Erro real da S9:</strong> se a classe <code>CatalogoModulo</code> ficar sem <code>public</code>, o host não a encontra
@@ -476,45 +476,45 @@ daquela versão. Mas a maioria das empresas migrou para o .NET 6 <strong>mantend
 isso o de-para honesto para você é &quot;como você fazia&quot; × &quot;como se faz hoje&quot;.</p>
 <p><strong>Como você fazia:</strong></p>
 <pre class="highlight"><code><span class="c1">// Program.cs</span>
-<span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Program</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"></span>
-<span class="w">        </span><span class="n">Host</span><span class="p">.</span><span class="n">CreateDefaultBuilder</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="w"></span>
-<span class="w">            </span><span class="p">.</span><span class="n">ConfigureWebHostDefaults</span><span class="p">(</span><span class="n">web</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">web</span><span class="p">.</span><span class="n">UseStartup</span><span class="p">&lt;</span><span class="n">Startup</span><span class="p">&gt;())</span><span class="w"></span>
-<span class="w">            </span><span class="p">.</span><span class="n">Build</span><span class="p">()</span><span class="w"></span>
-<span class="w">            </span><span class="p">.</span><span class="n">Run</span><span class="p">();</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Program</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span>
+<span class="w">        </span><span class="n">Host</span><span class="p">.</span><span class="n">CreateDefaultBuilder</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+<span class="w">            </span><span class="p">.</span><span class="n">ConfigureWebHostDefaults</span><span class="p">(</span><span class="n">web</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">web</span><span class="p">.</span><span class="n">UseStartup</span><span class="o">&lt;</span><span class="n">Startup</span><span class="o">&gt;</span><span class="p">())</span>
+<span class="w">            </span><span class="p">.</span><span class="n">Build</span><span class="p">()</span>
+<span class="w">            </span><span class="p">.</span><span class="n">Run</span><span class="p">();</span>
+<span class="p">}</span>
 
 <span class="c1">// Startup.cs</span>
-<span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Startup</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
+<span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Startup</span>
+<span class="p">{</span>
 <span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">ConfigureServices</span><span class="p">(</span><span class="n">IServiceCollection</span><span class="w"> </span><span class="n">services</span><span class="p">)</span><span class="w">      </span><span class="c1">// FASE 1: registrar</span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">services</span><span class="p">.</span><span class="n">AddControllers</span><span class="p">();</span><span class="w"></span>
-<span class="w">        </span><span class="n">services</span><span class="p">.</span><span class="n">AddScoped</span><span class="p">&lt;</span><span class="n">IProdutoService</span><span class="p">,</span><span class="w"> </span><span class="n">ProdutoService</span><span class="p">&gt;();</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">services</span><span class="p">.</span><span class="n">AddControllers</span><span class="p">();</span>
+<span class="w">        </span><span class="n">services</span><span class="p">.</span><span class="n">AddScoped</span><span class="o">&lt;</span><span class="n">IProdutoService</span><span class="p">,</span><span class="w"> </span><span class="n">ProdutoService</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">Configure</span><span class="p">(</span><span class="n">IApplicationBuilder</span><span class="w"> </span><span class="n">app</span><span class="p">)</span><span class="w">                   </span><span class="c1">// FASE 2: pipeline e rotas</span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">app</span><span class="p">.</span><span class="n">UseRouting</span><span class="p">();</span><span class="w"></span>
-<span class="w">        </span><span class="n">app</span><span class="p">.</span><span class="n">UseEndpoints</span><span class="p">(</span><span class="n">endpoints</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">endpoints</span><span class="p">.</span><span class="n">MapControllers</span><span class="p">());</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">app</span><span class="p">.</span><span class="n">UseRouting</span><span class="p">();</span>
+<span class="w">        </span><span class="n">app</span><span class="p">.</span><span class="n">UseEndpoints</span><span class="p">(</span><span class="n">endpoints</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">endpoints</span><span class="p">.</span><span class="n">MapControllers</span><span class="p">());</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </code></pre>
 
 <p><strong>Como se faz hoje (o <code>Program.cs</code> do Norte, fim da S10):</strong></p>
-<pre class="highlight"><code><span class="k">using</span><span class="w"> </span><span class="nn">Norte.Catalogo</span><span class="p">;</span><span class="w"></span>
-<span class="k">using</span><span class="w"> </span><span class="nn">Norte.Pedidos</span><span class="p">;</span><span class="w"></span>
+<pre class="highlight"><code><span class="k">using</span><span class="w"> </span><span class="nn">Norte.Catalogo</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">Norte.Pedidos</span><span class="p">;</span>
 
-<span class="kt">var</span><span class="w"> </span><span class="n">builder</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">WebApplication</span><span class="p">.</span><span class="n">CreateBuilder</span><span class="p">(</span><span class="n">args</span><span class="p">);</span><span class="w">   </span><span class="c1">// cria o &quot;construtor&quot; da aplicação</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">builder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">WebApplication</span><span class="p">.</span><span class="n">CreateBuilder</span><span class="p">(</span><span class="n">args</span><span class="p">);</span><span class="w">   </span><span class="c1">// cria o "construtor" da aplicação</span>
 
 <span class="n">builder</span><span class="p">.</span><span class="n">Services</span><span class="p">.</span><span class="n">AddCatalogo</span><span class="p">();</span><span class="w">                     </span><span class="c1">// FASE 1 (= ConfigureServices)</span>
-<span class="n">builder</span><span class="p">.</span><span class="n">Services</span><span class="p">.</span><span class="n">AddPedidos</span><span class="p">();</span><span class="w"></span>
+<span class="n">builder</span><span class="p">.</span><span class="n">Services</span><span class="p">.</span><span class="n">AddPedidos</span><span class="p">();</span>
 
-<span class="kt">var</span><span class="w"> </span><span class="n">app</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">builder</span><span class="p">.</span><span class="n">Build</span><span class="p">();</span><span class="w">                          </span><span class="c1">// fecha a fase 1: os serviços ficam somente-leitura</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">app</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">builder</span><span class="p">.</span><span class="n">Build</span><span class="p">();</span><span class="w">                          </span><span class="c1">// fecha a fase 1: os serviços ficam somente-leitura</span>
 
 <span class="n">app</span><span class="p">.</span><span class="n">MapCatalogo</span><span class="p">();</span><span class="w">                                  </span><span class="c1">// FASE 2 (= Configure)</span>
-<span class="n">app</span><span class="p">.</span><span class="n">MapPedidos</span><span class="p">();</span><span class="w"></span>
+<span class="n">app</span><span class="p">.</span><span class="n">MapPedidos</span><span class="p">();</span>
 
 <span class="n">app</span><span class="p">.</span><span class="n">Run</span><span class="p">();</span><span class="w">                                          </span><span class="c1">// sobe o servidor (Kestrel) e fica escutando</span>
 </code></pre>
@@ -614,17 +614,17 @@ já vem instalado com o runtime.</p>
 </tr>
 </tbody>
 </table>
-<pre class="highlight"><code><span class="nt">&lt;Project</span> <span class="na">Sdk=</span><span class="s">&quot;Microsoft.NET.Sdk&quot;</span><span class="nt">&gt;</span>
+<pre class="highlight"><code><span class="nt">&lt;Project</span><span class="w"> </span><span class="na">Sdk=</span><span class="s">"Microsoft.NET.Sdk"</span><span class="nt">&gt;</span>
 
-  <span class="nt">&lt;PropertyGroup&gt;</span>
-    <span class="nt">&lt;TargetFramework&gt;</span>net10.0<span class="nt">&lt;/TargetFramework&gt;</span>
-    <span class="nt">&lt;ImplicitUsings&gt;</span>enable<span class="nt">&lt;/ImplicitUsings&gt;</span>
-    <span class="nt">&lt;Nullable&gt;</span>enable<span class="nt">&lt;/Nullable&gt;</span>
-  <span class="nt">&lt;/PropertyGroup&gt;</span>
+<span class="w">  </span><span class="nt">&lt;PropertyGroup&gt;</span>
+<span class="w">    </span><span class="nt">&lt;TargetFramework&gt;</span>net10.0<span class="nt">&lt;/TargetFramework&gt;</span>
+<span class="w">    </span><span class="nt">&lt;ImplicitUsings&gt;</span>enable<span class="nt">&lt;/ImplicitUsings&gt;</span>
+<span class="w">    </span><span class="nt">&lt;Nullable&gt;</span>enable<span class="nt">&lt;/Nullable&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/PropertyGroup&gt;</span>
 
-  <span class="nt">&lt;ItemGroup&gt;</span>
-    <span class="nt">&lt;FrameworkReference</span> <span class="na">Include=</span><span class="s">&quot;Microsoft.AspNetCore.App&quot;</span> <span class="nt">/&gt;</span>
-  <span class="nt">&lt;/ItemGroup&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ItemGroup&gt;</span>
+<span class="w">    </span><span class="nt">&lt;FrameworkReference</span><span class="w"> </span><span class="na">Include=</span><span class="s">"Microsoft.AspNetCore.App"</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/ItemGroup&gt;</span>
 
 <span class="nt">&lt;/Project&gt;</span>
 </code></pre>
@@ -687,13 +687,13 @@ seus endpoints — por isso a referência aparece em cada módulo.</p>
 </table>
 <p><strong>Como se escreve — três exigências:</strong></p>
 <pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">CatalogoModulo</span><span class="w">                    </span><span class="c1">// 1. classe static (e public, para outro projeto ver)</span>
-<span class="p">{</span><span class="w"></span>
+<span class="p">{</span>
 <span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">IServiceCollection</span><span class="w"> </span><span class="nf">AddCatalogo</span><span class="p">(</span><span class="w">     </span><span class="c1">// 2. método static (e public)</span>
-<span class="w">        </span><span class="k">this</span><span class="w"> </span><span class="n">IServiceCollection</span><span class="w"> </span><span class="n">services</span><span class="p">)</span><span class="w">             </span><span class="c1">// 3. &quot;this&quot; no primeiro parâmetro</span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">services</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="k">this</span><span class="w"> </span><span class="n">IServiceCollection</span><span class="w"> </span><span class="n">services</span><span class="p">)</span><span class="w">             </span><span class="c1">// 3. "this" no primeiro parâmetro</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">services</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </code></pre>
 
 <p><strong>Como se chama:</strong> o compilador transforma uma chamada na outra.</p>
@@ -760,25 +760,25 @@ fronteira criada pelos projetos separados vazaria pelo <code>Program.cs</code>.<
 <span class="k">using</span><span class="w"> </span><span class="nn">Microsoft.AspNetCore.Routing</span><span class="p">;</span><span class="w">              </span><span class="c1">// IEndpointRouteBuilder</span>
 <span class="k">using</span><span class="w"> </span><span class="nn">Microsoft.Extensions.DependencyInjection</span><span class="p">;</span><span class="w">  </span><span class="c1">// IServiceCollection</span>
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">Norte.Catalogo</span><span class="p">;</span><span class="w">                        </span><span class="c1">// tem de ser igual ao &quot;using&quot; do Program.cs</span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">Norte.Catalogo</span><span class="p">;</span><span class="w">                        </span><span class="c1">// tem de ser igual ao "using" do Program.cs</span>
 
 <span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">CatalogoModulo</span><span class="w">               </span><span class="c1">// public: é o contrato do módulo com o host</span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">IServiceCollection</span><span class="w"> </span><span class="nf">AddCatalogo</span><span class="p">(</span><span class="k">this</span><span class="w"> </span><span class="n">IServiceCollection</span><span class="w"> </span><span class="n">services</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">IServiceCollection</span><span class="w"> </span><span class="nf">AddCatalogo</span><span class="p">(</span><span class="k">this</span><span class="w"> </span><span class="n">IServiceCollection</span><span class="w"> </span><span class="n">services</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
 <span class="w">        </span><span class="c1">// registros do módulo entram aqui quando existirem</span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">services</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">services</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">IEndpointRouteBuilder</span><span class="w"> </span><span class="nf">MapCatalogo</span><span class="p">(</span><span class="k">this</span><span class="w"> </span><span class="n">IEndpointRouteBuilder</span><span class="w"> </span><span class="n">app</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">grupo</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="n">MapGroup</span><span class="p">(</span><span class="s">&quot;/catalogo&quot;</span><span class="p">);</span><span class="w">   </span><span class="c1">// tudo declarado em &quot;grupo&quot; começa com /catalogo</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">IEndpointRouteBuilder</span><span class="w"> </span><span class="nf">MapCatalogo</span><span class="p">(</span><span class="k">this</span><span class="w"> </span><span class="n">IEndpointRouteBuilder</span><span class="w"> </span><span class="n">app</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">grupo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="n">MapGroup</span><span class="p">(</span><span class="s">"/catalogo"</span><span class="p">);</span><span class="w">   </span><span class="c1">// tudo declarado em "grupo" começa com /catalogo</span>
 
-<span class="w">        </span><span class="n">grupo</span><span class="p">.</span><span class="n">MapGet</span><span class="p">(</span><span class="s">&quot;/status&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">Ok</span><span class="p">(</span><span class="s">&quot;Catalogo ativo&quot;</span><span class="p">));</span><span class="w">   </span><span class="c1">// GET /catalogo/status (provisório)</span>
+<span class="w">        </span><span class="n">grupo</span><span class="p">.</span><span class="n">MapGet</span><span class="p">(</span><span class="s">"/status"</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">Ok</span><span class="p">(</span><span class="s">"Catalogo ativo"</span><span class="p">));</span><span class="w">   </span><span class="c1">// GET /catalogo/status (provisório)</span>
 
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">app</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">app</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </code></pre>
 
 <p><strong>Por que <code>IEndpointRouteBuilder</code> e não <code>WebApplication</code>:</strong> <code>WebApplication</code> (o <code>app</code>) implementa
@@ -879,18 +879,18 @@ em melhora</strong>.</p>
 </table>
 <p><strong>O mesmo endpoint, nos dois estilos:</strong></p>
 <pre class="highlight"><code><span class="c1">// Como você fazia: controller</span>
-<span class="na">[ApiController]</span><span class="w"></span>
-<span class="na">[Route(&quot;catalogo&quot;)]</span><span class="w"></span>
-<span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">CatalogoController</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">ControllerBase</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="na">[HttpGet(&quot;status&quot;)]</span><span class="w"></span>
-<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">IActionResult</span><span class="w"> </span><span class="nf">Status</span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">Ok</span><span class="p">(</span><span class="s">&quot;Catalogo ativo&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="na">[ApiController]</span>
+<span class="na">[Route("catalogo")]</span>
+<span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">CatalogoController</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">ControllerBase</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="na">[HttpGet("status")]</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">IActionResult</span><span class="w"> </span><span class="nf">Status</span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Ok</span><span class="p">(</span><span class="s">"Catalogo ativo"</span><span class="p">);</span>
+<span class="p">}</span>
 </code></pre>
 
 <pre class="highlight"><code><span class="c1">// Agora: Minimal API</span>
-<span class="kt">var</span><span class="w"> </span><span class="n">grupo</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="n">MapGroup</span><span class="p">(</span><span class="s">&quot;/catalogo&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="n">grupo</span><span class="p">.</span><span class="n">MapGet</span><span class="p">(</span><span class="s">&quot;/status&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">Ok</span><span class="p">(</span><span class="s">&quot;Catalogo ativo&quot;</span><span class="p">));</span><span class="w"></span>
+<span class="kt">var</span><span class="w"> </span><span class="n">grupo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="n">MapGroup</span><span class="p">(</span><span class="s">"/catalogo"</span><span class="p">);</span>
+<span class="n">grupo</span><span class="p">.</span><span class="n">MapGet</span><span class="p">(</span><span class="s">"/status"</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">Ok</span><span class="p">(</span><span class="s">"Catalogo ativo"</span><span class="p">));</span>
 </code></pre>
 
 <p><strong>Quem liga a rota ao código (S10):</strong> antes, o <strong>MVC</strong>, sozinho, procurando por reflexão as classes
@@ -898,21 +898,21 @@ que terminam em <code>Controller</code>. Agora, <strong>você</strong>, explicit
 <code>MapCatalogo()</code> cria a rota, e a chamada <code>app.MapCatalogo()</code> no <code>Program.cs</code> a ativa.</p>
 <p><strong>As formas de escrever o código do endpoint:</strong></p>
 <pre class="highlight"><code><span class="c1">// 1. Lambda sem parâmetros (S9)</span>
-<span class="n">grupo</span><span class="p">.</span><span class="n">MapGet</span><span class="p">(</span><span class="s">&quot;/status&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">Ok</span><span class="p">(</span><span class="s">&quot;Catalogo ativo&quot;</span><span class="p">));</span><span class="w"></span>
+<span class="n">grupo</span><span class="p">.</span><span class="n">MapGet</span><span class="p">(</span><span class="s">"/status"</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">TypedResults</span><span class="p">.</span><span class="n">Ok</span><span class="p">(</span><span class="s">"Catalogo ativo"</span><span class="p">));</span>
 
 <span class="c1">// 2. Lambda com parâmetros: cada parâmetro vem de um lugar, inferido pelo framework</span>
-<span class="n">grupo</span><span class="p">.</span><span class="n">MapGet</span><span class="p">(</span><span class="s">&quot;/fichas/{id:int}&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">AlgumServico</span><span class="w"> </span><span class="n">servico</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">...);</span><span class="w"></span>
-<span class="c1">//          {id:int} na rota → &quot;int id&quot; vem da ROTA, pelo nome</span>
+<span class="n">grupo</span><span class="p">.</span><span class="n">MapGet</span><span class="p">(</span><span class="s">"/fichas/{id:int}"</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">AlgumServico</span><span class="w"> </span><span class="n">servico</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">...);</span>
+<span class="c1">//          {id:int} na rota → "int id" vem da ROTA, pelo nome</span>
 <span class="c1">//          AlgumServico registrado na DI → vem do CONTÊINER, pelo tipo</span>
 <span class="c1">//          (num POST, um tipo complexo vem do CORPO da requisição, em JSON)</span>
 
 <span class="c1">// 3. Método nomeado (forma usada nas funcionalidades reais: legível e testável)</span>
-<span class="n">grupo</span><span class="p">.</span><span class="n">MapGet</span><span class="p">(</span><span class="s">&quot;/fichas/{id:int}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ObterFicha</span><span class="p">);</span><span class="w"></span>
+<span class="n">grupo</span><span class="p">.</span><span class="n">MapGet</span><span class="p">(</span><span class="s">"/fichas/{id:int}"</span><span class="p">,</span><span class="w"> </span><span class="n">ObterFicha</span><span class="p">);</span>
 
-<span class="k">static</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="p">&lt;</span><span class="n">Results</span><span class="p">&lt;</span><span class="n">Ok</span><span class="p">&lt;</span><span class="n">FichaResponse</span><span class="p">&gt;,</span><span class="w"> </span><span class="n">NotFound</span><span class="p">&gt;&gt;</span><span class="w"> </span><span class="n">ObterFicha</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="p">...)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="p">...</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="k">static</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">Task</span><span class="o">&lt;</span><span class="n">Results</span><span class="o">&lt;</span><span class="n">Ok</span><span class="o">&lt;</span><span class="n">FichaResponse</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">NotFound</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">ObterFicha</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="p">...)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="p">}</span>
 </code></pre>
 
 <p><strong><code>MapGroup</code> (desde o .NET 7):</strong> agrupa endpoints sob um prefixo comum e permite aplicar
@@ -1027,7 +1027,7 @@ organizar por conta própria.&quot;</em></p>
 <strong>pasta selecionada</strong> quando o arquivo é criado. A pasta <code>obj</code> é de <strong>trabalho da compilação</strong>:
 ignorada pelo git e apagável pelo <code>dotnet clean</code>. Código nunca mora nela.</p>
 <p><strong>Ferramentas para ver o status de uma resposta:</strong></p>
-<pre class="highlight"><code>curl.exe -i http://localhost:5071/catalogo/status    <span class="c1"># no PowerShell, &quot;curl.exe&quot;</span>
+<pre class="highlight"><code>curl.exe<span class="w"> </span>-i<span class="w"> </span>http://localhost:5071/catalogo/status<span class="w">    </span><span class="c1"># no PowerShell, "curl.exe"</span>
 </code></pre>
 
 <p>ou <strong>F12</strong> no navegador → aba <strong>Rede/Network</strong> → recarregar.</p>
@@ -1043,12 +1043,12 @@ joalheria; S10 · experimento do <code>Build()</code>.</p>
 <p><strong>Em uma frase:</strong> a <code>main</code> recebe a base do repositório e o que já foi revisado; cada objetivo de
 sessão vive numa branch, que vira <strong>um</strong> pull request no fim.</p>
 <p><strong>Na S9:</strong></p>
-<pre class="highlight"><code>git switch -c feat/catalogo-ficha-produto      <span class="c1"># criar e trocar (substitui &quot;checkout -b&quot;)</span>
-git add .gitignore
-git commit -m <span class="s2">&quot;chore: adicionar .gitignore do .NET&quot;</span>
-git add Norte.slnx src
-git commit -m <span class="s2">&quot;build: criar solution com host Norte.Api e módulo Catalogo&quot;</span>
-git push -u origin feat/catalogo-ficha-produto  <span class="c1"># -u: liga a branch local à remota</span>
+<pre class="highlight"><code>git<span class="w"> </span>switch<span class="w"> </span>-c<span class="w"> </span>feat/catalogo-ficha-produto<span class="w">      </span><span class="c1"># criar e trocar (substitui "checkout -b")</span>
+git<span class="w"> </span>add<span class="w"> </span>.gitignore
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">"chore: adicionar .gitignore do .NET"</span>
+git<span class="w"> </span>add<span class="w"> </span>Norte.slnx<span class="w"> </span>src
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">"build: criar solution com host Norte.Api e módulo Catalogo"</span>
+git<span class="w"> </span>push<span class="w"> </span>-u<span class="w"> </span>origin<span class="w"> </span>feat/catalogo-ficha-produto<span class="w">  </span><span class="c1"># -u: liga a branch local à remota</span>
 </code></pre>
 
 <p><strong>Na S10 (mesma branch, por decisão do mentor):</strong> <code>chore: remover materiais de estudo do repositorio</code> · <code>docs(catalogo): documentar pontos de entrada do modulo</code> · <code>docs: adicionar CLAUDE.md com contexto do projeto</code> · <code>feat(pedidos): criar módulo e registrar no host</code>.
@@ -1158,12 +1158,12 @@ diferentes e &quot;um lado muda sem afetar o outro&quot; são reforço.)</p>
 </table>
 <p>Num módulo &quot;Comercial&quot;, uma classe <code>Pedido</code> teria de obedecer a &quot;muda&quot; e &quot;não muda&quot; ao mesmo
 tempo — a regra vira <code>if</code> espalhado:</p>
-<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">AlterarQuantidade</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">qtd</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Status</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="n">StatusPedido</span><span class="p">.</span><span class="n">Faturado</span><span class="w"> </span><span class="p">||</span><span class="w"> </span><span class="n">Status</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="n">StatusPedido</span><span class="p">.</span><span class="n">Vendido</span><span class="p">)</span><span class="w"></span>
-<span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="nf">InvalidOperationException</span><span class="p">(</span><span class="s">&quot;...&quot;</span><span class="p">);</span><span class="w"></span>
+<pre class="highlight"><code><span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">AlterarQuantidade</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">qtd</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">StatusPedido</span><span class="p">.</span><span class="n">Faturado</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">Status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">StatusPedido</span><span class="p">.</span><span class="n">Vendido</span><span class="p">)</span>
+<span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="nf">InvalidOperationException</span><span class="p">(</span><span class="s">"..."</span><span class="p">);</span>
 <span class="w">    </span><span class="c1">// ...</span>
-<span class="p">}</span><span class="w"></span>
+<span class="p">}</span>
 </code></pre>
 
 <p>Multiplicado por dezenas de métodos, é o <strong>service gigante</strong> dos sistemas antigos. Separar
@@ -1323,7 +1323,7 @@ adicionado à coleção depois do <code>Build()</code>.</li>
 </ol>
 </details>
 </article>
-<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 19/11/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="assets/search-index.js"></script>

@@ -14,7 +14,7 @@
 <header class="topo">
   <button id="abrir-indice" class="icone menu-btn" type="button" aria-label="Abrir índice">☰</button>
   <a class="marca" href="../index.html">Norte · Estudo</a>
-  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a></nav>
+  <nav class="menu"><a href="../index.html">Início</a><a href="../guia.html">Guia</a><a href="../estudos.html" class=ativo>Materiais</a><a href="../mapa-mental.html">Mapa mental</a></nav>
   <button id="tema" class="icone tema" type="button" aria-label="Alternar tema">◐</button>
   <div class="busca"><input id="busca" type="search" placeholder="Buscar no guia…" autocomplete="off"><div id="resultados" hidden></div></div>
 </header>
@@ -119,15 +119,15 @@
 </tbody>
 </table>
 <pre class="highlight"><code><span class="c1">// forma do validador (os nomes exatos no arquivo real podem diferir)</span>
-<span class="k">public</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">CadastrarRepresentanteRequestValidator</span><span class="w"></span>
-<span class="w">    </span><span class="p">:</span><span class="w"> </span><span class="n">AbstractValidator</span><span class="p">&lt;</span><span class="n">CadastrarRepresentanteRequest</span><span class="p">&gt;</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="nf">CadastrarRepresentanteRequestValidator</span><span class="p">()</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">RuleFor</span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">Nome</span><span class="p">).</span><span class="n">NotEmpty</span><span class="p">().</span><span class="n">MaximumLength</span><span class="p">(</span><span class="m">120</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="n">RuleFor</span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">Email</span><span class="p">).</span><span class="n">NotEmpty</span><span class="p">().</span><span class="n">EmailAddress</span><span class="p">();</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="k">public</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">CadastrarRepresentanteRequestValidator</span>
+<span class="w">    </span><span class="p">:</span><span class="w"> </span><span class="n">AbstractValidator</span><span class="o">&lt;</span><span class="n">CadastrarRepresentanteRequest</span><span class="o">&gt;</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="nf">CadastrarRepresentanteRequestValidator</span><span class="p">()</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">RuleFor</span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">Nome</span><span class="p">).</span><span class="n">NotEmpty</span><span class="p">().</span><span class="n">MaximumLength</span><span class="p">(</span><span class="mi">120</span><span class="p">);</span>
+<span class="w">        </span><span class="n">RuleFor</span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">Email</span><span class="p">).</span><span class="n">NotEmpty</span><span class="p">().</span><span class="n">EmailAddress</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </code></pre>
 
 <p><strong>A regra que o ADR-013 deixou escrita:</strong> <em>módulo com FluentValidation não chama <code>AddValidation()</code>, e <strong>todo request tem um validador e um teste do caso inválido</strong>.</em> A segunda metade existe porque o erro é fácil de cometer em silêncio: um request <strong>sem</strong> validador passa direto, sem aviso.</p>
@@ -193,8 +193,8 @@
 </table>
 <p>A resposta do <code>Pedidos</code> é uma consulta <code>EXISTS</code> (<code>AnyAsync</code>), como a do <code>Clientes</code> (S34):</p>
 <pre class="highlight"><code><span class="c1">// forma da implementação (internal, no módulo Pedidos)</span>
-<span class="k">return</span><span class="w"> </span><span class="n">contexto</span><span class="p">.</span><span class="n">Pedidos</span><span class="p">.</span><span class="n">AsNoTracking</span><span class="p">()</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="n">AnyAsync</span><span class="p">(</span><span class="n">p</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">RepresentanteId</span><span class="w"> </span><span class="p">==</span><span class="w"> </span><span class="n">representanteId</span><span class="p">,</span><span class="w"> </span><span class="n">ct</span><span class="p">);</span><span class="w"></span>
+<span class="k">return</span><span class="w"> </span><span class="n">contexto</span><span class="p">.</span><span class="n">Pedidos</span><span class="p">.</span><span class="n">AsNoTracking</span><span class="p">()</span>
+<span class="w">    </span><span class="p">.</span><span class="n">AnyAsync</span><span class="p">(</span><span class="n">p</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">RepresentanteId</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">representanteId</span><span class="p">,</span><span class="w"> </span><span class="n">ct</span><span class="p">);</span>
 </code></pre>
 
 <p>O <code>DELETE /representantes/{id}</code> agora segue esta ordem, e <strong>a ordem importa</strong> (cada recusa tem a sua mensagem):</p>
@@ -234,20 +234,20 @@
 <p><code>GET /catalogo/fichas-produto?pagina=abc</code> devolvia <strong>500</strong>. Pelo conceito da S14: o servidor não conseguiu <strong>ligar</strong> o texto <code>abc</code> a um <code>int</code>, e o ASP.NET Core lança <code>BadHttpRequestException</code>. Em <code>Development</code> o framework já converte isso em 400 (a opção <code>RouteHandlerOptions.ThrowOnBadRequest</code> fica <strong>ligada</strong> só lá); nos outros ambientes ela fica <strong>desligada</strong> e a exceção sobe até o <code>UseExceptionHandler()</code>, que a trata como &quot;erro inesperado&quot; → 500.</p>
 <p>A solução do ADR-014 é um tratador de exceção do host:</p>
 <pre class="highlight"><code><span class="c1">// forma do tipo (os nomes exatos no arquivo real podem diferir)</span>
-<span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">RequisicaoInvalidaExceptionHandler</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">IExceptionHandler</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">ValueTask</span><span class="p">&lt;</span><span class="kt">bool</span><span class="p">&gt;</span><span class="w"> </span><span class="n">TryHandleAsync</span><span class="p">(</span><span class="w"></span>
-<span class="w">        </span><span class="n">HttpContext</span><span class="w"> </span><span class="n">http</span><span class="p">,</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="n">excecao</span><span class="p">,</span><span class="w"> </span><span class="n">CancellationToken</span><span class="w"> </span><span class="n">ct</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">excecao</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">not</span><span class="w"> </span><span class="n">BadHttpRequestException</span><span class="p">)</span><span class="w"></span>
+<span class="k">internal</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">RequisicaoInvalidaExceptionHandler</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">IExceptionHandler</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">ValueTask</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">TryHandleAsync</span><span class="p">(</span>
+<span class="w">        </span><span class="n">HttpContext</span><span class="w"> </span><span class="n">http</span><span class="p">,</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="n">excecao</span><span class="p">,</span><span class="w"> </span><span class="n">CancellationToken</span><span class="w"> </span><span class="n">ct</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">excecao</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="n">BadHttpRequestException</span><span class="p">)</span>
 <span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">false</span><span class="p">;</span><span class="w">                       </span><span class="c1">// não é comigo: passa para o próximo</span>
 
-<span class="w">        </span><span class="n">http</span><span class="p">.</span><span class="n">Response</span><span class="p">.</span><span class="n">StatusCode</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">StatusCodes</span><span class="p">.</span><span class="n">Status400BadRequest</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="n">http</span><span class="p">.</span><span class="n">Response</span><span class="p">.</span><span class="n">WriteAsJsonAsync</span><span class="p">(</span><span class="w"></span>
-<span class="w">            </span><span class="k">new</span><span class="w"> </span><span class="n">ProblemDetails</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Status</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">400</span><span class="p">,</span><span class="w"> </span><span class="n">Title</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&quot;Requisição inválida&quot;</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="n">ct</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">http</span><span class="p">.</span><span class="n">Response</span><span class="p">.</span><span class="n">StatusCode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">StatusCodes</span><span class="p">.</span><span class="n">Status400BadRequest</span><span class="p">;</span>
+<span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="n">http</span><span class="p">.</span><span class="n">Response</span><span class="p">.</span><span class="n">WriteAsJsonAsync</span><span class="p">(</span>
+<span class="w">            </span><span class="k">new</span><span class="w"> </span><span class="n">ProblemDetails</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">400</span><span class="p">,</span><span class="w"> </span><span class="n">Title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"Requisição inválida"</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="n">ct</span><span class="p">);</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">true</span><span class="p">;</span><span class="w">                            </span><span class="c1">// tratei: pode parar</span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </code></pre>
 
 <table>
@@ -298,7 +298,7 @@
 </tbody>
 </table>
 <p><strong>Como o teste pôde ver o erro.</strong> Em <code>Testing</code> a opção <code>ThrowOnBadRequest</code> é <code>false</code>: o framework nem lança, e o teste nunca veria o defeito. O teste liga a opção <strong>só nele</strong> e <strong>mantém o ambiente <code>Testing</code></strong>:</p>
-<pre class="highlight"><code><span class="n">services</span><span class="p">.</span><span class="n">Configure</span><span class="p">&lt;</span><span class="n">RouteHandlerOptions</span><span class="p">&gt;(</span><span class="n">o</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">o</span><span class="p">.</span><span class="n">ThrowOnBadRequest</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">true</span><span class="p">);</span><span class="w"></span>
+<pre class="highlight"><code><span class="n">services</span><span class="p">.</span><span class="n">Configure</span><span class="o">&lt;</span><span class="n">RouteHandlerOptions</span><span class="o">&gt;</span><span class="p">(</span><span class="n">o</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">o</span><span class="p">.</span><span class="n">ThrowOnBadRequest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span><span class="p">);</span>
 </code></pre>
 
 <p>Duas armadilhas que apareceram até chegar nessa linha (vale guardar):</p>
@@ -335,12 +335,12 @@
 </table>
 <p><strong>A ideia do PR #82:</strong> o número 99999999.99 não é &quot;do domínio&quot;, é <strong>da coluna</strong>. Se alguém trocar a precisão da coluna e esquecer a constante, o limite passa a mentir. Então o teste <strong>lê a precisão do modelo do EF</strong>, sem abrir banco, e compara:</p>
 <pre class="highlight"><code><span class="c1">// forma do trecho (os nomes exatos no arquivo real podem diferir)</span>
-<span class="kt">var</span><span class="w"> </span><span class="n">propriedade</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">contexto</span><span class="p">.</span><span class="n">Model</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="n">FindEntityType</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">ItemPedido</span><span class="p">))!</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="n">FindProperty</span><span class="p">(</span><span class="s">&quot;PrecoUnitario&quot;</span><span class="p">)!;</span><span class="w"></span>
+<span class="kt">var</span><span class="w"> </span><span class="n">propriedade</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">contexto</span><span class="p">.</span><span class="n">Model</span>
+<span class="w">    </span><span class="p">.</span><span class="n">FindEntityType</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">ItemPedido</span><span class="p">))</span><span class="o">!</span>
+<span class="w">    </span><span class="p">.</span><span class="n">FindProperty</span><span class="p">(</span><span class="s">"PrecoUnitario"</span><span class="p">)</span><span class="o">!</span><span class="p">;</span>
 
-<span class="kt">var</span><span class="w"> </span><span class="n">precisao</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">propriedade</span><span class="p">.</span><span class="n">GetPrecision</span><span class="p">();</span><span class="w">   </span><span class="c1">// 10</span>
-<span class="kt">var</span><span class="w"> </span><span class="n">escala</span><span class="w">   </span><span class="p">=</span><span class="w"> </span><span class="n">propriedade</span><span class="p">.</span><span class="n">GetScale</span><span class="p">();</span><span class="w">       </span><span class="c1">// 2</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">precisao</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">propriedade</span><span class="p">.</span><span class="n">GetPrecision</span><span class="p">();</span><span class="w">   </span><span class="c1">// 10</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">escala</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">propriedade</span><span class="p">.</span><span class="n">GetScale</span><span class="p">();</span><span class="w">       </span><span class="c1">// 2</span>
 </code></pre>
 
 <p>A partir de precisão 10 e escala 2 o teste calcula o maior valor (8 dígitos inteiros e 2 decimais) e confere se <code>Constantes.PrecoMaximo</code> é igual. <strong>Prova do vermelho:</strong> mudar a precisão da coluna ou a constante deixa o teste vermelho.</p>
@@ -519,7 +519,7 @@
 </ol>
 </details>
 </article>
-<footer class="rodape">Atualizado em 10/11/2026. Material de estudo do laboratório Norte.</footer>
+<footer class="rodape">Atualizado em 19/11/2026. Material de estudo do laboratório Norte.</footer>
 </main>
 </div>
 <script src="../assets/search-index.js"></script>

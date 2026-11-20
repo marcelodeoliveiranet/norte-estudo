@@ -1,14 +1,14 @@
 :root{
   --bg:#070d13; --painel:#0d1822; --borda:#2d526e; --borda-suave:#1b2d3c;
   --texto:#b9c6d3; --forte:#d6e4ff; --titulo:#cfe0ff; --mudo:#7f93a6;
-  --link:#6cb2ff; --acento:#3b8ee0; --ok:#3fb27f; --cod:#0a131b;
+  --link:#6cb2ff; --acento:#3b8ee0; --ok:#3fb27f; --cod:#0a131b; --andamento:#e0a43a;
   --fonte:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
   --mono:ui-monospace,Consolas,"Cascadia Code",monospace;
 }
 :root[data-tema="claro"]{
   --bg:#f6f8fb; --painel:#ffffff; --borda:#9fb8cf; --borda-suave:#dbe4ee;
   --texto:#334155; --forte:#0f172a; --titulo:#0b2a55; --mudo:#64748b;
-  --link:#1769c2; --acento:#1769c2; --ok:#1c8a5a; --cod:#f1f5f9;
+  --link:#1769c2; --acento:#1769c2; --ok:#1c8a5a; --cod:#f1f5f9; --andamento:#b9770e;
 }
 *{box-sizing:border-box}
 html{scroll-padding-top:72px}
@@ -84,3 +84,24 @@ details.respostas summary{cursor:pointer;color:var(--link);padding:8px 0;font-we
   body.indice-aberto .indice{transform:none}
   .busca{width:auto;flex:1}
 }
+/* Mapa mental de estudo */
+.conteudo.largo{max-width:none}
+.mm-rolagem{overflow-x:auto;border:1px solid var(--borda-suave);border-radius:14px;background:var(--painel);margin:8px 0}
+svg.mm{display:block;min-width:1080px;max-width:100%;height:auto;font-family:var(--fonte)}
+.mm-centro{fill:var(--bg);stroke:var(--acento);stroke-width:2}
+.mm-centro-txt{fill:var(--forte);font-size:15px;font-weight:700}
+.mm-lig{fill:none;stroke:var(--borda);stroke-width:1.5}
+.mm-pt.feito{fill:var(--ok);stroke:var(--ok);stroke-width:2}
+.mm-pt.andamento{fill:none;stroke:var(--andamento);stroke-width:2}
+.mm-meio{fill:var(--andamento)}
+.mm-pt.afazer{fill:none;stroke:var(--mudo);stroke-width:2}
+.mm-marco{fill:var(--mudo);font-size:11px}
+.mm-txt{font-size:13px;fill:var(--texto)}
+.mm-txt.feito{fill:var(--forte)}
+.mm-legenda{display:flex;gap:18px;flex-wrap:wrap}
+.mm-chip{display:inline-flex;align-items:center;gap:6px}
+i.mm-pt{display:inline-block;width:12px;height:12px;border-radius:50%;border:2px solid var(--mudo);box-sizing:border-box}
+i.mm-pt.feito{background:var(--ok);border-color:var(--ok)}
+i.mm-pt.andamento{border-color:var(--andamento);background:linear-gradient(90deg,var(--andamento) 50%,transparent 50%)}
+details.mm-lista{margin:6px 0 18px}
+details.mm-lista summary{cursor:pointer;color:var(--link)}
